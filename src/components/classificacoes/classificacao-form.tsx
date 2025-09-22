@@ -152,7 +152,7 @@ export function ClassificacaoForm({
   // Preparar opções para os comboboxes
   const politicasOptions: ComboboxOption[] = useMemo(() => {
     return politicasAtivas.map(politica => ({
-      value: politica.id
+      value: politica.id,
       label: politica.nome
     }))
   }, [politicasAtivas])
