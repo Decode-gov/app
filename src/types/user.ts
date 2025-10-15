@@ -3,7 +3,7 @@ import z from "zod"
 // Schema unificado para formulário
 export const usuarioFormSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
-  email: z.string().email("Email deve ser válido"),
+  email: z.email("Email deve ser válido"),
   senha: z.string().optional(),
   status: z.enum(["ativo", "inativo"]),
 })

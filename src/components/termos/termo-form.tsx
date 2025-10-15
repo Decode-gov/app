@@ -1,101 +1,128 @@
-"use client"
+﻿"use client"
 
-import { useState } from "react"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { zodResolver } from '@hookform/resolvers/zod'
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { Loader2 } from "lucide-react"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { Loader2 } from "lucide-react"
-import { termoFormSchema, type Termo, type TermoFormData } from "@/types/termo"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button"
+import { DefinicaoResponse } from "@/types/api"
+import { useCreateDefinicao, useUpdateDefinicao } from "@/hooks/api/use-definicoes"
+
+const formSchema = z.object({
+  termo: z.string().min(1, "Termo é obrigatório"),
+  definicao: z.string().min(1, "Definição é obrigatória"),
+  exemploUso: z.string().optional(),
+  sinonimos: z.string().optional(),
+  fonteOrigem: z.string().optional(),
+  ativo: z.boolean().default(true),
+})
+
+type FormData = z.infer<typeof formSchema>
 
 interface TermoFormProps {
   open: boolean
-  onClose: () => void
-  termo?: Termo | null
-  onSubmit: (data: TermoFormData) => Promise<void>
+  onOpenChange: (open: boolean) => void
+  termo?: DefinicaoResponse
 }
 
-export function TermoForm({ open, onClose, termo, onSubmit }: TermoFormProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const isEditing = !!termo
+export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
+  const createMutation = useCreateDefinicao()
+  const updateMutation = useUpdateDefinicao()
 
-  const form = useForm<TermoFormData>({
-    resolver: zodResolver(termoFormSchema),
-    values: {
-      nome: termo?.nome || "",
-      descricao: termo?.descricao || "",
-      sigla: termo?.sigla || "",
-      ativo: termo?.ativo ?? true,
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      termo: "",
+      definicao: "",
+      exemploUso: "",
+      sinonimos: "",
+      fonteOrigem: "",
+      ativo: true,
     },
   })
 
-  const handleSubmit = async (data: TermoFormData) => {
+  useEffect(() => {
+    if (termo) {
+      form.reset({
+        termo: termo.termo,
+        definicao: termo.definicao,
+        exemploUso: termo.exemploUso || "",
+        sinonimos: termo.sinonimos || "",
+        fonteOrigem: termo.fonteOrigem || "",
+        ativo: termo.ativo,
+      })
+    } else {
+      form.reset({
+        termo: "",
+        definicao: "",
+        exemploUso: "",
+        sinonimos: "",
+        fonteOrigem: "",
+        ativo: true,
+      })
+    }
+  }, [termo, form])
+
+  const onSubmit = async (data: FormData) => {
     try {
-      setIsLoading(true)
-      await onSubmit(data)
+      if (termo) {
+        await updateMutation.mutateAsync({ id: termo.id, data })
+      } else {
+        await createMutation.mutateAsync(data)
+      }
+      onOpenChange(false)
+      form.reset()
     } catch (error) {
       console.error("Erro ao salvar termo:", error)
-    } finally {
-      setIsLoading(false)
     }
   }
 
-  const handleClose = () => {
-    onClose()
-  }
+  const isSubmitting = createMutation.isPending || updateMutation.isPending
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px] bg-background/95 backdrop-blur-md border-border/50">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-foreground">
-            {isEditing ? "Editar Termo" : "Novo Termo"}
+          <DialogTitle>
+            {termo ? "Editar Termo" : "Novo Termo"}
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            {isEditing
+          <DialogDescription>
+            {termo
               ? "Atualize as informações do termo."
-              : "Preencha as informações para criar um novo termo."
-            }
+              : "Preencha os campos para cadastrar um novo termo."}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="nome"
+              name="termo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome</FormLabel>
+                  <FormLabel>Termo *</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Digite o nome do termo"
-                      {...field}
-                      className="bg-background/50 backdrop-blur-sm border-border/60 focus:border-primary/50"
-                    />
+                    <Input placeholder="Digite o termo" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -104,15 +131,15 @@ export function TermoForm({ open, onClose, termo, onSubmit }: TermoFormProps) {
 
             <FormField
               control={form.control}
-              name="descricao"
+              name="definicao"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descrição</FormLabel>
+                  <FormLabel>Definição *</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Digite a descrição do termo"
+                      placeholder="Digite a definição"
+                      className="min-h-[100px]"
                       {...field}
-                      className="bg-background/50 backdrop-blur-sm border-border/60 focus:border-primary/50 min-h-[100px]"
                     />
                   </FormControl>
                   <FormMessage />
@@ -122,15 +149,49 @@ export function TermoForm({ open, onClose, termo, onSubmit }: TermoFormProps) {
 
             <FormField
               control={form.control}
-              name="sigla"
+              name="exemploUso"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Sigla (Opcional)</FormLabel>
+                  <FormLabel>Exemplo de Uso</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Digite a sigla do termo"
+                    <Textarea
+                      placeholder="Digite um exemplo"
+                      className="min-h-[80px]"
                       {...field}
-                      className="bg-background/50 backdrop-blur-sm border-border/60 focus:border-primary/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="sinonimos"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sinônimos</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Separados por vírgula" 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="fonteOrigem"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Fonte de Origem</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Digite a fonte" 
+                      {...field} 
                     />
                   </FormControl>
                   <FormMessage />
@@ -142,46 +203,34 @@ export function TermoForm({ open, onClose, termo, onSubmit }: TermoFormProps) {
               control={form.control}
               name="ativo"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select 
-                    onValueChange={(value) => field.onChange(value === "true")} 
-                    value={field.value.toString()}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50 backdrop-blur-sm border-border/60 focus:border-primary/50">
-                        <SelectValue placeholder="Selecione o status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="true">Ativo</SelectItem>
-                      <SelectItem value="false">Inativo</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Termo ativo</FormLabel>
+                  </div>
                 </FormItem>
               )}
             />
 
-            <div className="flex justify-end space-x-2 pt-4">
+            <DialogFooter>
               <Button
                 type="button"
                 variant="outline"
-                onClick={handleClose}
-                disabled={isLoading}
-                className="bg-background/50 backdrop-blur-sm border-border/60 hover:bg-accent/50"
+                onClick={() => onOpenChange(false)}
+                disabled={isSubmitting}
               >
                 Cancelar
               </Button>
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isEditing ? "Atualizar" : "Criar"}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {termo ? "Atualizar" : "Cadastrar"}
               </Button>
-            </div>
+            </DialogFooter>
           </form>
         </Form>
       </DialogContent>

@@ -22,8 +22,9 @@ import {
   HelpCircle,
   Table, FileSpreadsheet,
   Server,
-  Archive,
-  Layers
+  FileText,
+  Activity,
+  CheckCircle
 } from "lucide-react"
 import { DecodeGovIcon } from "@/components/ui/decode-gov-icon"
 import Link from "next/link"
@@ -33,7 +34,7 @@ const menuItems = [
   {
     title: "Dashboard",
     icon: Home,
-    url: "/dashboard",
+    url: "/",
   },
   {
     title: "Gestão de Usuários",
@@ -41,48 +42,64 @@ const menuItems = [
     url: "/usuarios",
   },
   {
+    title: "Necessidades de Negócio",
+    items: [
+      { title: "Necessidades de Informação", icon: HelpCircle, url: "/necessidades-informacao" },
+    ],
+  },
+  {
     title: "Definições e Termos",
     items: [
-      { title: "Termos de Negócio", icon: BookOpen, url: "/definicoes" },
-      { title: "Classificações", icon: Tag, url: "/classificacoes-informacao" },
+      { title: "Termos de Negócio", icon: BookOpen, url: "/termos-negocio" },
+      { title: "Referencial de Classificação", icon: Tag, url: "/referencial-classificacao" },
+      { title: "Classificação das Informações", icon: Tag, url: "/classificacoes-informacao" },
+      { title: "Listas de Referência", icon: FileSpreadsheet, url: "/listas-referencia" },
     ],
   },
   {
     title: "Governança",
     items: [
-      { title: "Papéis", icon: UserCheck, url: "/papeis" },
       { title: "Políticas Internas", icon: Shield, url: "/politicas-internas" },
+      { title: "Papéis de Governança", icon: UserCheck, url: "/papeis" },
+      { title: "Domínios/Comunidades", icon: Building, url: "/dominios" },
+      { title: "Atribuições Papel↔Domínio", icon: Workflow, url: "/atribuicoes-papel-dominio" },
+    ],
+  },
+  {
+    title: "Regras e Qualidade",
+    items: [
       { title: "Regras de Negócio", icon: FileCheck, url: "/regras-negocio" },
+      { title: "Dimensões de Qualidade", icon: BarChart3, url: "/dimensoes-qualidade" },
+      { title: "Regras de Qualidade", icon: CheckCircle, url: "/regras-qualidade" },
+      { title: "Métricas de Qualidade", icon: Activity, url: "/metricas-qualidade" },
     ],
   },
   {
-    title: "Estrutura Organizacional",
+    title: "Ativos Tecnológicos",
     items: [
-      { title: "Domínios/Comunidades", icon: Building, url: "/comunidades" },
-      { title: "Processos", icon: Workflow, url: "/processos" },
+      { title: "Ativos Tecnológicos", icon: Server, url: "/ativos-tecnologicos" },
+      { title: "Tabelas e Colunas", icon: Table, url: "/tabelas-colunas" },
     ],
   },
   {
-    title: "Ativos de Dados",
+    title: "Regulação e Conformidade",
     items: [
-      { title: "Tabelas e Colunas", icon: Table, url: "/tabelas" },
-      { title: "Colunas Técnicas", icon: Layers, url: "/colunas" },
-      { title: "Tipos de Dados", icon: FileSpreadsheet, url: "/tipos-dados" },
-    ],
-  },
-  {
-    title: "Infraestrutura",
-    items: [
-      { title: "Sistemas", icon: Server, url: "/sistemas" },
-      { title: "Bases de Dados", icon: Database, url: "/bancos" },
-      { title: "Repositórios", icon: Archive, url: "/repositorios-documento" },
+      { title: "Regulação", icon: FileText, url: "/regulacao" },
+      { title: "Criticidade Regulatória", icon: Activity, url: "/criticidade-regulatoria" },
     ],
   },
   {
     title: "Análise e Métricas",
     items: [
       { title: "KPIs", icon: BarChart3, url: "/kpis" },
-      { title: "Necessidades de Informação", icon: HelpCircle, url: "/necessidades-informacao" },
+      { title: "Produtos de Dados", icon: Database, url: "/produtos-dados" },
+    ],
+  },
+  {
+    title: "Gestão Documental",
+    items: [
+      { title: "Documentos", icon: FileText, url: "/documentos" },
+      { title: "Partes Envolvidas", icon: Users, url: "/partes-envolvidas" },
     ],
   },
 ]

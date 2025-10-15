@@ -2,34 +2,34 @@
 
 import { useState } from "react"
 import {
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-    type ColumnDef,
-    type SortingState,
-    type ColumnFiltersState,
-    type VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type SortingState,
+  type ColumnFiltersState,
+  type VisibilityState,
 } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ArrowUpDown, ChevronDown, Edit, MoreHorizontal, Trash2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Edit, MoreHorizontal, Trash2 } from "lucide-react"
 import { Classificacao } from "@/types/classificacao"
 
 interface ClassificacaoTableProps {
@@ -229,65 +229,27 @@ export function ClassificacaoTable({ data, onEdit, onDelete }: ClassificacaoTabl
             </>
           )}
         </div>
-        <div className="flex items-center space-x-6 lg:space-x-8">
-          <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium text-foreground">Linhas por página</p>
-            <select
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value))
-              }}
-              className="h-8 w-[70px] rounded border border-border/60 bg-background px-2 text-sm"
-            >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex w-[100px] items-center justify-center text-sm font-medium text-foreground">
-            Página {table.getState().pagination.pageIndex + 1} de{" "}
-            {table.getPageCount()}
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex bg-background/50 border-border/60 hover:bg-accent/50"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <span className="sr-only">Ir para primeira página</span>
-              <ChevronDown className="h-4 w-4 rotate-90" />
-            </Button>
-            <Button
-              variant="outline"
-              className="h-8 w-8 p-0 bg-background/50 border-border/60 hover:bg-accent/50"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              <span className="sr-only">Ir para página anterior</span>
-              <ChevronDown className="h-4 w-4 rotate-90" />
-            </Button>
-            <Button
-              variant="outline"
-              className="h-8 w-8 p-0 bg-background/50 border-border/60 hover:bg-accent/50"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <span className="sr-only">Ir para próxima página</span>
-              <ChevronDown className="h-4 w-4 -rotate-90" />
-            </Button>
-            <Button
-              variant="outline"
-              className="hidden h-8 w-8 p-0 lg:flex bg-background/50 border-border/60 hover:bg-accent/50"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            >
-              <span className="sr-only">Ir para última página</span>
-              <ChevronDown className="h-4 w-4 -rotate-90" />
-            </Button>
-          </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className="bg-background/50 backdrop-blur-sm border-border/60 hover:bg-accent/50"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Anterior
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className="bg-background/50 backdrop-blur-sm border-border/60 hover:bg-accent/50"
+          >
+            Próximo
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>

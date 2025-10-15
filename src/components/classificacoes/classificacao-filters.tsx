@@ -37,7 +37,7 @@ export function ClassificacaoFilters({
   const hasActiveFilters = searchTerm || statusFilter !== "todos" || politicaFilter !== "todos"
 
   return (
-    <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border/60 p-4 space-y-4">
+    <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center animate-slide-in-left">
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -82,19 +82,6 @@ export function ClassificacaoFilters({
             <X className="h-4 w-4 mr-1" />
             Limpar
           </Button>
-        )}
-      </div>
-      
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>
-          {resultsCount === 1 
-            ? "1 classificação encontrada" 
-            : `${resultsCount} classificações encontradas`}
-        </span>
-        {hasActiveFilters && (
-          <span className="text-primary">
-            Filtros ativos
-          </span>
         )}
       </div>
     </div>

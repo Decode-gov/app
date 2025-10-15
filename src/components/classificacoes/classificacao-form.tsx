@@ -26,7 +26,8 @@ import { Combobox, type ComboboxOption } from "@/components/ui/combobox"
 import { Plus } from "lucide-react"
 import { classificacaoFormSchema, type ClassificacaoFormData, type Classificacao, type Politica } from "@/types/classificacao"
 import { type Termo } from "@/types/termo"
-import { TermoCreateDialog } from "./termo-create-dialog"
+import { PoliticaCreateDialog } from "../politicas/politica-create-dialog"
+import { TermoCreateDialog } from "../termos/termo-create-dialog"
 
 interface ClassificacaoFormProps {
   open: boolean
@@ -127,7 +128,9 @@ export function ClassificacaoForm({
   isSubmitting = false,
 }: ClassificacaoFormProps) {
   const [termoDialogOpen, setTermoDialogOpen] = useState(false)
+  const [politicaDialogOpen, setPoliticaDialogOpen] = useState(false)
   const [termosDisponiveis, setTermosDisponiveis] = useState<Termo[]>(mockTermos)
+  const [politicasDisponiveis, setPoliticasDisponiveis] = useState<Politica[]>(mockPoliticas)
 
   const isEditing = !!classificacao
 
@@ -142,8 +145,8 @@ export function ClassificacaoForm({
   })
 
   const politicasAtivas = useMemo(() => {
-    return mockPoliticas
-  }, [])
+    return politicasDisponiveis
+  }, [politicasDisponiveis])
 
   const termosAtivos = useMemo(() => {
     return termosDisponiveis.filter(termo => termo.ativo)
@@ -179,6 +182,11 @@ export function ClassificacaoForm({
   const handleTermoCreated = (novoTermo: Termo) => {
     setTermosDisponiveis(prev => [...prev, novoTermo])
     form.setValue("termoId", novoTermo.id)
+  }
+
+  const handlePoliticaCreated = (novaPolitica: Politica) => {
+    setPoliticasDisponiveis(prev => [...prev, novaPolitica])
+    form.setValue("politicaId", novaPolitica.id)
   }
 
   return (
@@ -241,17 +249,32 @@ export function ClassificacaoForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">Política *</FormLabel>
-                      <FormControl>
-                        <Combobox
-                          options={politicasOptions}
-                          value={field.value}
-                          onValueChange={field.onChange}
-                          placeholder="Selecione uma política"
-                          searchPlaceholder="Buscar política..."
-                          emptyMessage="Nenhuma política encontrada."
-                          className="bg-background/50 border-border/60"
-                        />
-                      </FormControl>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <Combobox
+                            options={politicasOptions}
+                            value={field.value}
+                            onValueChange={field.onChange}
+                            placeholder="Selecione uma política"
+                            searchPlaceholder="Buscar política..."
+                            emptyMessage="Nenhuma política encontrada."
+                            className="bg-background/50 border-border/60"
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            console.log('Abrindo dialog de política...')
+                            setPoliticaDialogOpen(true)
+                          }}
+                          className="bg-background/50 border-border/60 hover:bg-accent/50 flex-shrink-0"
+                          title="Criar nova política"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -327,6 +350,12 @@ export function ClassificacaoForm({
         open={termoDialogOpen}
         onOpenChange={setTermoDialogOpen}
         onTermoCreated={handleTermoCreated}
+      />
+
+      <PoliticaCreateDialog
+        open={politicaDialogOpen}
+        onOpenChange={setPoliticaDialogOpen}
+        onPoliticaCreated={handlePoliticaCreated}
       />
     </>
   )

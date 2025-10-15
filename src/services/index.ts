@@ -1,0 +1,42 @@
+// Export legacy services for backward compatibility
+export { produtosDadosService } from './produtos-dados'
+export { regrasNegocioService, regraNegocioService } from './regras-negocio'
+export { dimensoesQualidadeService } from './dimensoes-qualidade'
+export { kpisService } from './kpis'
+export { necessidadeInformacaoService } from './necessidades-informacao'
+
+// Export new service classes
+export { usuarioService } from './usuarios'
+export { colunaService } from './colunas'
+export { kpiService } from './kpis'
+export { processoService } from './processos'
+export { definicaoService } from './definicoes'
+export { papelService } from './papeis'
+export { comunidadeService } from './comunidades'
+export { tabelaService } from './tabelas'
+export { sistemaService } from './sistemas'
+export { bancoService } from './bancos'
+export { politicaInternaService } from './politicas-internas'
+export { tipoDadosService } from './tipos-dados'
+export { classificacaoService } from './classificacoes-informacao'
+export { listaClassificacaoService } from './listas-classificacao'
+export { atribuicaoService } from './atribuicoes'
+export { documentoService } from './documentos'
+export { auditoriaService } from './auditoria'
+
+// Export new services
+export { listaReferenciaService } from './listas-referencia'
+export { dimensaoQualidadeService } from './dimensoes-qualidade-new'
+export { regraQualidadeService } from './regras-qualidade'
+export { parteEnvolvidaService } from './partes-envolvidas'
+export { regulacaoService } from './regulacao'
+export { criticidadeRegulatoriaService } from './criticidade-regulatoria'
+export { atividadeService } from './atividades'
+export { operacaoService } from './operacoes'
+export { dashboardService } from './dashboard'
+export { importacaoExportacaoService } from './importacao-exportacao'
+export { mfaService } from './mfa'
+export { repositorioDocumentoService } from './repositorios-documento'
+
+// Export base service class for custom implementations
+export { BaseService } from './base'
