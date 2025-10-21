@@ -1,28 +1,22 @@
 ﻿"use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
+import { Plus } from "lucide-react"
 import { useCreateListaClassificacao, useUpdateListaClassificacao } from "@/hooks/api/use-listas-classificacao"
-import { usePoliticasAll } from "@/hooks/api/use-politicas"
+import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
 import { ListaClassificacaoResponse } from "@/types/api"
+import { ListaClassificacaoSchema, type CreateListaClassificacaoFormData } from "@/schemas"
+import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form"
 
-const referencialSchema = z.object({
-  categoria: z.enum(["Publico", "Interno", "Confidencial", "Restrito"], {
-    required_error: "Categoria é obrigatória",
-  }),
-  descricao: z.string().min(1, "Descrição é obrigatória").max(2000),
-  politicaId: z.string().min(1, "Política é obrigatória"),
-})
-
-type ReferencialFormValues = z.infer<typeof referencialSchema>
+type ReferencialFormValues = CreateListaClassificacaoFormData
 
 interface ReferencialFormProps {
   open: boolean
@@ -39,12 +33,15 @@ const CATEGORIAS = [
 
 export function ReferencialForm({ open, onOpenChange, referencial }: ReferencialFormProps) {
   const isEditing = !!referencial
+  const [isPoliticaFormOpen, setIsPoliticaFormOpen] = useState(false)
   const createReferencial = useCreateListaClassificacao()
   const updateReferencial = useUpdateListaClassificacao()
-  const { data: politicas } = usePoliticasAll()
+  const { data: politicasData } = usePoliticasInternas()
+  
+  const politicas = politicasData?.data || []
 
   const form = useForm<ReferencialFormValues>({
-    resolver: zodResolver(referencialSchema),
+    resolver: zodResolver(ListaClassificacaoSchema),
     defaultValues: {
       categoria: "Publico",
       descricao: "",
@@ -149,28 +146,39 @@ export function ReferencialForm({ open, onOpenChange, referencial }: Referencial
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Política *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione a política">
-                          {field.value && politicas && (
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline">
-                                {politicas.find(p => p.id === field.value)?.nome}
-                              </Badge>
-                            </div>
-                          )}
-                        </SelectValue>
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {politicas?.map(politica => (
-                        <SelectItem key={politica.id} value={politica.id}>
-                          {politica.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="flex-1">
+                          <SelectValue placeholder="Selecione a política">
+                            {field.value && politicas && (
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline">
+                                  {politicas.find(p => p.id === field.value)?.nome}
+                                </Badge>
+                              </div>
+                            )}
+                          </SelectValue>
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {politicas?.map(politica => (
+                          <SelectItem key={politica.id} value={politica.id}>
+                            {politica.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setIsPoliticaFormOpen(true)}
+                      className="shrink-0"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
                   <FormDescription>Política interna associada a esta classificação</FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -188,6 +196,11 @@ export function ReferencialForm({ open, onOpenChange, referencial }: Referencial
           </form>
         </Form>
       </DialogContent>
+      
+      <PoliticaInternaForm 
+        open={isPoliticaFormOpen} 
+        onOpenChange={setIsPoliticaFormOpen} 
+      />
     </Dialog>
   )
 }

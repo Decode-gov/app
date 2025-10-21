@@ -23,7 +23,7 @@ import {
     FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+
 import {
     Select,
     SelectContent,
@@ -35,19 +35,15 @@ import { Plus } from "lucide-react"
 import { useCreateKpi, useUpdateKpi } from "@/hooks/api/use-kpis"
 import { useProcessos } from "@/hooks/api/use-processos"
 import { useComunidades } from "@/hooks/api/use-comunidades"
-import { useUsuarios } from "@/hooks/api/use-usuarios"
 import { KpiResponse } from "@/types/api"
-import { Badge } from "@/components/ui/badge"
+
 import { ProcessoForm } from "@/components/processos/processo-form"
 import { ComunidadeForm } from "@/components/dominios/comunidade-form"
-import { UsuarioForm } from "@/components/users/usuario-form"
 
 const kpiSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório").max(255),
-  descricao: z.string().max(1000).optional(),
-  processoId: z.string().min(1, "Processo é obrigatório"),
-  comunidadeId: z.string().min(1, "Comunidade é obrigatória"),
-  usuarioId: z.string().min(1, "Usuário é obrigatório"),
+  processoId: z.string().optional(),
+  comunidadeId: z.string().optional(),
 })
 
 type KpiFormValues = z.infer<typeof kpiSchema>
@@ -61,22 +57,18 @@ interface KpiFormProps {
 export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
   const [processoDialogOpen, setProcessoDialogOpen] = useState(false)
   const [comunidadeDialogOpen, setComunidadeDialogOpen] = useState(false)
-  const [usuarioDialogOpen, setUsuarioDialogOpen] = useState(false)
   
   const createMutation = useCreateKpi()
   const updateMutation = useUpdateKpi()
   const { data: processosData } = useProcessos()
   const { data: comunidadesData } = useComunidades()
-  const { data: usuariosData } = useUsuarios()
   
   const form = useForm<KpiFormValues>({
     resolver: zodResolver(kpiSchema),
     defaultValues: {
       nome: "",
-      descricao: "",
       processoId: "",
       comunidadeId: "",
-      usuarioId: "",
     },
   })
 
@@ -85,18 +77,14 @@ export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
       if (kpi) {
         form.reset({
           nome: kpi.nome,
-          descricao: kpi.descricao || "",
-          processoId: kpi.processoId,
-          comunidadeId: kpi.comunidadeId,
-          usuarioId: kpi.usuarioId,
+          processoId: kpi.processoId || "",
+          comunidadeId: kpi.comunidadeId || "",
         })
       } else {
         form.reset({
           nome: "",
-          descricao: "",
           processoId: "",
           comunidadeId: "",
-          usuarioId: "",
         })
       }
     }
@@ -129,7 +117,6 @@ export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
   const isSubmitting = createMutation.isPending || updateMutation.isPending
   const processos = processosData?.data || []
   const comunidades = comunidadesData?.data || []
-  const usuarios = usuariosData?.data || []
 
   return (
     <>
@@ -168,31 +155,10 @@ export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
 
               <FormField
                 control={form.control}
-                name="descricao"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Descrição</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Descrição do KPI..."
-                        className="min-h-[80px]"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormDescription className="text-xs">
-                      Máximo 1000 caracteres
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="processoId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Processo *</FormLabel>
+                    <FormLabel>Processo</FormLabel>
                     <div className="flex gap-2">
                       <div className="flex-1">
                         <Select onValueChange={field.onChange} value={field.value}>
@@ -263,14 +229,7 @@ export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
                             ) : (
                               comunidades.map((comunidade) => (
                                 <SelectItem key={comunidade.id} value={comunidade.id}>
-                                  <div className="flex flex-col">
-                                    <span>{comunidade.nome}</span>
-                                    {comunidade.descricao && (
-                                      <span className="text-xs text-muted-foreground line-clamp-1">
-                                        {comunidade.descricao}
-                                      </span>
-                                    )}
-                                  </div>
+                                  {comunidade.nome}
                                 </SelectItem>
                               ))
                             )}
@@ -289,65 +248,6 @@ export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
                     </div>
                     <FormDescription className="text-xs">
                       Comunidade responsável pelo KPI
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="usuarioId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Usuário Responsável *</FormLabel>
-                    <div className="flex gap-2">
-                      <div className="flex-1">
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o usuário" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {usuarios.length === 0 ? (
-                              <div className="p-2 text-sm text-muted-foreground text-center">
-                                Nenhum usuário encontrado
-                              </div>
-                            ) : (
-                              usuarios.map((usuario) => (
-                                <SelectItem key={usuario.id} value={usuario.id}>
-                                  <div className="flex items-center gap-2">
-                                    <div className="flex flex-col">
-                                      <span>{usuario.nome}</span>
-                                      <span className="text-xs text-muted-foreground">
-                                        {usuario.email}
-                                      </span>
-                                    </div>
-                                    {usuario.ativo ? (
-                                      <Badge variant="outline" className="text-xs">Ativo</Badge>
-                                    ) : (
-                                      <Badge variant="secondary" className="text-xs">Inativo</Badge>
-                                    )}
-                                  </div>
-                                </SelectItem>
-                              ))
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setUsuarioDialogOpen(true)}
-                        title="Criar novo usuário"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <FormDescription className="text-xs">
-                      Usuário responsável pelo acompanhamento do KPI
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -380,11 +280,6 @@ export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
       <ComunidadeForm 
         open={comunidadeDialogOpen}
         onOpenChange={setComunidadeDialogOpen}
-      />
-
-      <UsuarioForm 
-        open={usuarioDialogOpen}
-        onOpenChange={setUsuarioDialogOpen}
       />
     </>
   )

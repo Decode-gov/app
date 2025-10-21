@@ -6,21 +6,21 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Plus, Search, Eye, Edit, Trash2, BookOpen } from "lucide-react"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table"
 import { useNecessidadesInformacao, useDeleteNecessidadeInformacao } from "@/hooks/api/use-necessidades-informacao"
 import { NecessidadeForm } from "@/components/necessidades/necessidade-form"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
 import { NecessidadeInformacaoResponse } from "@/types/api"
@@ -170,8 +170,9 @@ export default function NecessidadesInformacaoPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Descrição</TableHead>
+                  <TableHead>Questão Gerencial</TableHead>
+                  <TableHead>Origem Questão</TableHead>
+                  <TableHead>Comunidade</TableHead>
                   <TableHead>Criado em</TableHead>
                   <TableHead className="w-[70px]">Ações</TableHead>
                 </TableRow>
@@ -180,14 +181,17 @@ export default function NecessidadesInformacaoPage() {
                 {necessidades.map((necessidade) => (
                   <TableRow key={necessidade.id}>
                     <TableCell className="font-medium max-w-[300px]">
-                      <div className="truncate" title={necessidade.nome}>
-                        {necessidade.nome}
+                      <div className="truncate" title={necessidade.questaoGerencial}>
+                        {necessidade.questaoGerencial}
                       </div>
                     </TableCell>
-                    <TableCell className="max-w-[400px]">
-                      <div className="truncate" title={necessidade.descricao || ''}>
-                        {necessidade.descricao || '-'}
+                    <TableCell className="max-w-[200px]">
+                      <div className="truncate" title={necessidade.origemQuestao}>
+                        {necessidade.origemQuestao}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      {necessidade.comunidade?.nome || '-'}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {new Date(necessidade.createdAt).toLocaleDateString('pt-BR')}

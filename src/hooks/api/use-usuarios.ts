@@ -109,9 +109,7 @@ export function useDeleteUsuario() {
 export function useLogin() {
   return useMutation({
     mutationFn: (data: LoginBody) => usuarioService.login(data),
-    onSuccess: (response: LoginResponse) => {
-      // Armazenar token no localStorage ou context
-      localStorage.setItem('authToken', response.token);
+    onSuccess: () => {
       toast.success('Login realizado com sucesso!');
     },
     onError: (error: ApiError) => {
@@ -146,8 +144,6 @@ export function useLogout() {
   return useMutation({
     mutationFn: () => usuarioService.logout(),
     onSuccess: () => {
-      // Limpar token e cache
-      localStorage.removeItem('authToken');
       queryClient.clear();
       toast.success('Logout realizado com sucesso!');
     },

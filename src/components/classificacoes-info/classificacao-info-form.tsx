@@ -123,7 +123,7 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
   const isSubmitting = createMutation.isPending || updateMutation.isPending
 
   // Filtrar políticas ativas
-  const politicasAtivas = politicasData?.data.filter(p => p.status === 'ATIVA') || []
+  const politicasAtivas = politicasData?.data.filter(p => p.status === 'Vigente') || []
   const termos = termosData?.data || []
 
   return (

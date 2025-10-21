@@ -3,41 +3,33 @@
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+
 import { Loader2 } from "lucide-react"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog"
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
+
 import { Button } from "@/components/ui/button"
 import { DefinicaoResponse } from "@/types/api"
 import { useCreateDefinicao, useUpdateDefinicao } from "@/hooks/api/use-definicoes"
+import { CreateDefinicaoSchema, type CreateDefinicaoFormData } from "@/schemas"
 
-const formSchema = z.object({
-  termo: z.string().min(1, "Termo é obrigatório"),
-  definicao: z.string().min(1, "Definição é obrigatória"),
-  exemploUso: z.string().optional(),
-  sinonimos: z.string().optional(),
-  fonteOrigem: z.string().optional(),
-  ativo: z.boolean().default(true),
-})
-
-type FormData = z.infer<typeof formSchema>
+type FormData = CreateDefinicaoFormData
 
 interface TermoFormProps {
   open: boolean
@@ -50,14 +42,11 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
   const updateMutation = useUpdateDefinicao()
 
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(CreateDefinicaoSchema),
     defaultValues: {
       termo: "",
       definicao: "",
-      exemploUso: "",
-      sinonimos: "",
-      fonteOrigem: "",
-      ativo: true,
+      sigla: "",
     },
   })
 
@@ -66,19 +55,13 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
       form.reset({
         termo: termo.termo,
         definicao: termo.definicao,
-        exemploUso: termo.exemploUso || "",
-        sinonimos: termo.sinonimos || "",
-        fonteOrigem: termo.fonteOrigem || "",
-        ativo: termo.ativo,
+        sigla: termo.sigla || "",
       })
     } else {
       form.reset({
         termo: "",
         definicao: "",
-        exemploUso: "",
-        sinonimos: "",
-        fonteOrigem: "",
-        ativo: true,
+        sigla: "",
       })
     }
   }, [termo, form])
@@ -122,7 +105,7 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
                 <FormItem>
                   <FormLabel>Termo *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Digite o termo" {...field} />
+                    <Input placeholder="Digite o termo (único)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,7 +120,7 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
                   <FormLabel>Definição *</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Digite a definição"
+                      placeholder="Digite a definição do termo..."
                       className="min-h-[100px]"
                       {...field}
                     />
@@ -149,73 +132,19 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
 
             <FormField
               control={form.control}
-              name="exemploUso"
+              name="sigla"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Exemplo de Uso</FormLabel>
+                  <FormLabel>Sigla</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Digite um exemplo"
-                      className="min-h-[80px]"
-                      {...field}
-                    />
+                    <Input placeholder="Digite a sigla/abreviação" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="sinonimos"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sinônimos</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Separados por vírgula" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
-            <FormField
-              control={form.control}
-              name="fonteOrigem"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Fonte de Origem</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="Digite a fonte" 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="ativo"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Termo ativo</FormLabel>
-                  </div>
-                </FormItem>
-              )}
-            />
 
             <DialogFooter>
               <Button

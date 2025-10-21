@@ -23,12 +23,13 @@ export const editUsuarioSchema = usuarioFormSchema.extend({
 export type UsuarioFormData = z.infer<typeof usuarioFormSchema>
 export type EditUsuarioFormData = z.infer<typeof editUsuarioSchema>
 
-// Tipo do usuário
+// Tipo do usuário (response da API)
 export type Usuario = {
   id: string
   nome: string
   email: string
-  status: "ativo" | "inativo"
+  ativo: boolean
+  createdAt: string
 }
 
 // Estatísticas dos usuários

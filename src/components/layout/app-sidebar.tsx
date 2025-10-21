@@ -24,11 +24,15 @@ import {
   Server,
   FileText,
   Activity,
-  CheckCircle
+  CheckCircle,
+  LogOut,
+  Loader2
 } from "lucide-react"
 import { DecodeGovIcon } from "@/components/ui/decode-gov-icon"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { useLogout } from "@/hooks/api/use-usuarios"
+import { Button } from "@/components/ui/button"
 
 const menuItems = [
   {
@@ -106,6 +110,16 @@ const menuItems = [
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const { mutate: logout, isPending: isLoggingOut } = useLogout()
+
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: () => {
+        router.push("/login")
+      },
+    })
+  }
 
   return (
     <Sidebar variant="inset" className="border-r border-sidebar-border/60">
@@ -170,11 +184,29 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter className="border-t border-sidebar-border/60 bg-sidebar/50 backdrop-blur-sm">
-        <div className="px-4 py-3">
+        <div className="px-4 py-3 space-y-3">
+          <Button
+            variant="outline"
+            className="w-full justify-start gap-2 border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-all duration-200"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+          >
+            {isLoggingOut ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Saindo...</span>
+              </>
+            ) : (
+              <>
+                <LogOut className="h-4 w-4" />
+                <span>Sair do Sistema</span>
+              </>
+            )}
+          </Button>
           <div className="text-xs text-muted-foreground/80">
             Sistema de Governança de Dados
           </div>
-          <div className="text-xs text-muted-foreground/60 flex items-center gap-1 mt-1">
+          <div className="text-xs text-muted-foreground/60 flex items-center gap-1">
             <span>v1.0</span>
             <span className="text-primary">•</span>
             <span>2024</span>

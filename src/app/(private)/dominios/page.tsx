@@ -1,7 +1,7 @@
 ﻿"use client"
 
 import { useState } from "react"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Network } from "lucide-react"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Network, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -11,6 +11,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -35,21 +42,24 @@ import { ptBR } from "date-fns/locale"
 export default function DominiosPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [editingComunidade, setEditingComunidade] = useState<ComunidadeResponse | undefined>()
-  const [search, setSearch] = useState("")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [parentFilter, setParentFilter] = useState<string>("")
 
-  const { data: comunidadesData, isLoading } = useComunidades()
+  // Filtros server-side via query params
+  const { data: comunidadesData, isLoading, error } = useComunidades({
+    page: 1,
+    limit: 1000,
+    nome: searchTerm || undefined,
+    parentId: parentFilter && parentFilter !== "ROOT" ? parentFilter : undefined,
+  })
   const deleteMutation = useDeleteComunidade()
 
   const comunidades = comunidadesData?.data || []
-
-  const filteredComunidades = comunidades.filter((comunidade) => {
-    const matchesSearch = 
-      search === "" ||
-      comunidade.nome.toLowerCase().includes(search.toLowerCase()) ||
-      comunidade.descricao?.toLowerCase().includes(search.toLowerCase())
-    
-    return matchesSearch
-  })
+  
+  // Se filtro ROOT está ativo, filtrar apenas comunidades sem pai (client-side)
+  const filteredComunidades = parentFilter === "ROOT" 
+    ? comunidades.filter(c => !c.parentId)
+    : comunidades
 
   const handleEdit = (comunidade: ComunidadeResponse) => {
     setEditingComunidade(comunidade)
@@ -85,15 +95,84 @@ export default function DominiosPage() {
     return filteredComunidades.filter(c => c.parentId === parentId)
   }
 
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="animate-fade-in">
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            Domínios / Comunidades
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Gerencie as comunidades e sua hierarquia de governança de dados
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="h-4 w-[100px] bg-muted rounded" />
+                <div className="h-8 w-8 bg-muted rounded-lg" />
+              </CardHeader>
+              <CardContent>
+                <div className="h-8 w-[60px] bg-muted rounded mb-2" />
+                <div className="h-3 w-[120px] bg-muted rounded" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <Card>
+          <CardContent className="space-y-4 pt-6">
+            <div className="flex items-center gap-2">
+              <div className="h-10 w-[300px] bg-muted rounded" />
+              <div className="h-10 w-[200px] bg-muted rounded" />
+            </div>
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-16 w-full bg-muted rounded" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-destructive">
+            Domínios / Comunidades
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Erro ao carregar comunidades
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
-      {/* Stats Card */}
+      <div className="animate-fade-in">
+        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          Domínios / Comunidades
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          Gerencie as comunidades e sua hierarquia de governança de dados
+        </p>
+      </div>
+
+      {/* Cards de estatísticas */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Comunidades
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Comunidades</CardTitle>
+            <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+              <Network className="h-4 w-4 text-primary transition-colors duration-300" />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{comunidades.length}</div>
@@ -102,94 +181,104 @@ export default function DominiosPage() {
             </p>
           </CardContent>
         </Card>
-        <Card>
+        
+        <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Comunidades Raiz
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Comunidades Raiz</CardTitle>
+            <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
+              <Network className="h-4 w-4 text-blue-600 transition-colors duration-300" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{getRootComunidades().length}</div>
-            <p className="text-xs text-muted-foreground">
-              Sem comunidade pai
-            </p>
+            <div className="text-2xl font-bold text-blue-600">{getRootComunidades().length}</div>
+            <p className="text-xs text-muted-foreground">Sem comunidade pai</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filters and Actions */}
-      <Card>
+      {/* Tabela de dados */}
+      <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
         <CardHeader>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center justify-between">
             <div>
               <CardTitle>Domínios / Comunidades</CardTitle>
               <CardDescription>
-                Gerencie as comunidades e sua hierarquia
+                Lista de todas as comunidades cadastradas
               </CardDescription>
             </div>
-            <Button onClick={handleNewComunidade}>
-              <Plus className="mr-2 h-4 w-4" />
+            <Button className="gap-2" onClick={handleNewComunidade}>
+              <Plus className="h-4 w-4" />
               Nova Comunidade
             </Button>
           </div>
-
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar comunidades..."
-              className="pl-8"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
         </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar comunidades..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <Select
+              value={parentFilter || "ALL"}
+              onValueChange={(value) => setParentFilter(value === "ALL" ? "" : value)}
+            >
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Filtrar por hierarquia" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">Todas as hierarquias</SelectItem>
+                <SelectItem value="ROOT">Apenas raiz (sem pai)</SelectItem>
+                {comunidades
+                  .filter(c => !c.parentId)
+                  .map((parent) => (
+                    <SelectItem key={parent.id} value={parent.id}>
+                      {parent.nome}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <CardContent>
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <p className="text-sm text-muted-foreground">Carregando...</p>
-            </div>
-          ) : filteredComunidades.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <p className="text-sm text-muted-foreground">
-                {search
-                  ? "Nenhuma comunidade encontrada com os filtros aplicados."
-                  : "Nenhuma comunidade cadastrada."}
-              </p>
-              {!search && (
-                <Button onClick={handleNewComunidade} variant="outline" className="mt-4">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Cadastrar primeira comunidade
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Hierarquia</TableHead>
+                  <TableHead className="text-center">Papéis</TableHead>
+                  <TableHead className="text-center">KPIs</TableHead>
+                  <TableHead>Criado em</TableHead>
+                  <TableHead className="w-[70px]">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredComunidades.length === 0 ? (
                   <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Hierarquia</TableHead>
-                    <TableHead>Descrição</TableHead>
-                    <TableHead>Criado em</TableHead>
-                    <TableHead className="w-[70px]">Ações</TableHead>
+                    <TableCell colSpan={6} className="text-center text-muted-foreground">
+                      Nenhuma comunidade encontrada
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredComunidades.map((comunidade) => {
+                ) : (
+                  filteredComunidades.map((comunidade) => {
                     const parentNome = getParentNome(comunidade.parentId)
                     const hasChildren = getChildrenComunidades(comunidade.id).length > 0
+                    const papeisCount = comunidade._count?.papeis || 0
+                    const kpisCount = comunidade._count?.kpis || 0
                     
                     return (
                       <TableRow key={comunidade.id}>
                         <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            {comunidade.parentId && <span className="text-muted-foreground"></span>}
+                          <div className="flex items-center gap-2 max-w-[200px]">
                             {comunidade.nome}
                             {hasChildren && (
                               <Badge variant="outline" className="text-xs">
                                 <Network className="h-3 w-3 mr-1" />
-                                Possui filhos
+                                {comunidade._count?.children || 0}
                               </Badge>
                             )}
                           </div>
@@ -203,25 +292,31 @@ export default function DominiosPage() {
                             <Badge variant="outline" className="text-xs">Raiz</Badge>
                           )}
                         </TableCell>
-                        <TableCell>
-                          <div className="max-w-[300px] truncate text-sm text-muted-foreground">
-                            {comunidade.descricao || ""}
-                          </div>
+                        <TableCell className="text-center">
+                          <Badge variant="secondary" className="text-xs">
+                            {papeisCount}
+                          </Badge>
                         </TableCell>
-                        <TableCell>
-                          <span className="text-sm text-muted-foreground">
-                            {format(new Date(comunidade.createdAt), "dd/MM/yyyy", { locale: ptBR })}
-                          </span>
+                        <TableCell className="text-center">
+                          <Badge variant="secondary" className="text-xs">
+                            {kpisCount}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {format(new Date(comunidade.createdAt), "dd/MM/yyyy", { locale: ptBR })}
                         </TableCell>
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
+                              <Button variant="ghost" className="h-8 w-8 p-0">
                                 <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Abrir menu</span>
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
+                              <DropdownMenuItem>
+                                <Eye className="mr-2 h-4 w-4" />
+                                Ver detalhes
+                              </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => handleEdit(comunidade)}>
                                 <Edit className="mr-2 h-4 w-4" />
                                 Editar
@@ -238,17 +333,23 @@ export default function DominiosPage() {
                         </TableCell>
                       </TableRow>
                     )
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
+      {/* Formulário de Criação/Edição */}
       <ComunidadeForm
         open={formOpen}
-        onOpenChange={setFormOpen}
+        onOpenChange={(open) => {
+          setFormOpen(open)
+          if (!open) {
+            setEditingComunidade(undefined)
+          }
+        }}
         comunidade={editingComunidade}
       />
     </div>

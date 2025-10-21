@@ -21,8 +21,13 @@ export default function PapeisPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [selectedPapel, setSelectedPapel] = useState<PapelResponse | undefined>()
 
-  const { data: papeisData, isLoading, error } = usePapeis()
-  const { data: politicasData } = usePoliticasInternas()
+  const { data: papeisData, isLoading, error } = usePapeis({
+    page: 1,
+    limit: 1000,
+    nome: searchTerm || undefined,
+    politicaId: politicaFilter || undefined
+  })
+  const { data: politicasData } = usePoliticasInternas({ page: 1, limit: 1000 })
   const deletePapel = useDeletePapel()
 
   // Extração dos arrays de dados
@@ -35,13 +40,8 @@ export default function PapeisPage() {
     }
   }
 
-  // Filtrar dados localmente
-  const filteredData = papeis.filter((papel) => {
-    const matchesSearch = papel.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          papel.descricao.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesPolitica = !politicaFilter || papel.politicaId === politicaFilter
-    return matchesSearch && matchesPolitica
-  })
+  // Dados já filtrados pela API
+  const filteredData = papeis
 
   // Obter nome da política
   const getPoliticaNome = (politicaId: string) => {
@@ -116,62 +116,32 @@ export default function PapeisPage() {
       </div>
 
       {/* Cards de estatísticas */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2">
         <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total</CardTitle>
-            <div className="p-2 rounded-lg bg-accent/10 group-hover:bg-accent/20 transition-colors duration-300">
-              <UserCheck className="h-4 w-4 text-accent group-hover:text-accent-foreground transition-colors duration-300" />
+            <CardTitle className="text-sm font-medium">Total de Papéis</CardTitle>
+            <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+              <UserCheck className="h-4 w-4 text-primary transition-colors duration-300" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{papeisData?.total || 0}</div>
+            <div className="text-2xl font-bold">{papeis.length}</div>
             <p className="text-xs text-muted-foreground">papéis cadastrados</p>
           </CardContent>
         </Card>
 
         <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Com Política</CardTitle>
+            <CardTitle className="text-sm font-medium">Políticas Associadas</CardTitle>
             <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
               <UserCheck className="h-4 w-4 text-blue-600 transition-colors duration-300" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              {papeis.filter(p => p.politicaId).length}
+              {politicas.length}
             </div>
-            <p className="text-xs text-muted-foreground">com política definida</p>
-          </CardContent>
-        </Card>
-
-        <Card className="group hover:shadow-lg transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sem Política</CardTitle>
-            <div className="p-2 rounded-lg bg-orange-100 group-hover:bg-orange-200 transition-colors duration-300">
-              <UserCheck className="h-4 w-4 text-orange-600 transition-colors duration-300" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
-              {papeis.filter(p => !p.politicaId).length}
-            </div>
-            <p className="text-xs text-muted-foreground">sem política definida</p>
-          </CardContent>
-        </Card>
-
-        <Card className="group hover:shadow-lg transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ativos</CardTitle>
-            <div className="p-2 rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-              <UserCheck className="h-4 w-4 text-green-600 transition-colors duration-300" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {papeis.length}
-            </div>
-            <p className="text-xs text-muted-foreground">papéis ativos</p>
+            <p className="text-xs text-muted-foreground">políticas disponíveis</p>
           </CardContent>
         </Card>
       </div>
@@ -206,12 +176,12 @@ export default function PapeisPage() {
                 className="pl-8"
               />
             </div>
-            <Select value={politicaFilter} onValueChange={setPoliticaFilter}>
+            <Select value={politicaFilter || "ALL"} onValueChange={(value) => setPoliticaFilter(value === "ALL" ? "" : value)}>
               <SelectTrigger className="w-[250px]">
                 <SelectValue placeholder="Filtrar por política" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas as políticas</SelectItem>
+                <SelectItem value="ALL">Todas as políticas</SelectItem>
                 {politicas.map((politica) => (
                   <SelectItem key={politica.id} value={politica.id}>
                     {politica.nome}
@@ -226,64 +196,76 @@ export default function PapeisPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Nome</TableHead>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead>Política Associada</TableHead>
+                  <TableHead>Comunidade</TableHead>
+                  <TableHead>Política</TableHead>
+                  <TableHead>Onboarding</TableHead>
                   <TableHead>Criado em</TableHead>
                   <TableHead className="w-[70px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData?.map((papel) => (
-                  <TableRow key={papel.id}>
-                    <TableCell className="font-medium">
-                      <div className="max-w-[200px] truncate" title={papel.nome}>
-                        {papel.nome}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="max-w-[300px] truncate" title={papel.descricao}>
-                        {papel.descricao}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="max-w-[250px] truncate">
-                        {getPoliticaNome(papel.politicaId)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {new Date(papel.createdAt).toLocaleDateString('pt-BR')}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Ver detalhes
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => {
-                            setSelectedPapel(papel)
-                            setFormOpen(true)
-                          }}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            className="text-destructive"
-                            onClick={() => handleDelete(papel.id)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Excluir
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                {filteredData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center text-muted-foreground">
+                      Nenhum papel encontrado
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  filteredData.map((papel) => (
+                    <TableRow key={papel.id}>
+                      <TableCell className="font-medium">
+                        <div className="max-w-[200px] truncate" title={papel.nome}>
+                          {papel.nome}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {papel.comunidade?.nome || '-'}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className="max-w-[200px] truncate">
+                          {getPoliticaNome(papel.politicaId)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={papel.onboarding ? "default" : "outline"}>
+                          {papel.onboarding ? "Sim" : "Não"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {new Date(papel.createdAt).toLocaleDateString('pt-BR')}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>
+                              <Eye className="mr-2 h-4 w-4" />
+                              Ver detalhes
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => {
+                              setSelectedPapel(papel)
+                              setFormOpen(true)
+                            }}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Editar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              className="text-destructive"
+                              onClick={() => handleDelete(papel.id)}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Excluir
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>

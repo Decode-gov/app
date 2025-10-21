@@ -108,8 +108,6 @@ export interface UsuarioResponse {
   nome: string;
   email: string;
   ativo: boolean;
-  status: "ativo" | "inativo";
-  papeis?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -139,10 +137,18 @@ export type UpdateKpiBody = UpdateKPIFormData
 export interface KpiResponse {
   id: string;
   nome: string;
-  descricao?: string;
-  processoId: string;
-  comunidadeId: string;
-  usuarioId: string;
+  comunidadeId?: string;
+  processoId?: string;
+  comunidade?: {
+    id: string;
+    nome: string;
+    parentId?: string;
+  };
+  processo?: {
+    id: string;
+    nome: string;
+    descricao?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -172,6 +178,7 @@ export interface DefinicaoResponse {
   id: string;
   termo: string;
   definicao: string;
+  sigla?: string;
   exemploUso?: string;
   sinonimos?: string;
   fonteOrigem?: string;
@@ -188,9 +195,24 @@ export type UpdatePapelBody = UpdatePapelFormData
 
 export interface PapelResponse {
   id: string;
+  listaPapelId: string;
+  comunidadeId: string;
   nome: string;
-  descricao: string;
+  descricao?: string;
   politicaId: string;
+  documentoAtribuicao?: string;
+  comiteAprovadorId?: string;
+  onboarding: boolean;
+  politica?: {
+    id: string;
+    nome: string;
+    descricao?: string;
+  };
+  comunidade?: {
+    id: string;
+    nome: string;
+    parentId?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -203,8 +225,16 @@ export type UpdateNecessidadeInformacaoBody = UpdateNecessidadeInformacaoFormDat
 
 export interface NecessidadeInformacaoResponse {
   id: string;
-  nome: string;
-  descricao?: string;
+  questaoGerencial: string;
+  elementoEstrategico?: string;
+  elementoTatico?: string;
+  origemQuestao: string;
+  comunidadeId: string;
+  comunidade?: {
+    id: string;
+    nome: string;
+    parentId?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -217,14 +247,19 @@ export type UpdateRegraNegocioBody = UpdateRegraNegocioFormData
 
 export interface RegraNegocioResponse {
   id: string;
-  nome: string;
+  processoId: string;
   descricao: string;
-  entidadeTipo: 'Politica' | 'Papel' | 'Atribuicao' | 'Processo' | 'Termo' | 'KPI' | 'RegraNegocio' | 'RegraQualidade' | 'Dominio' | 'Sistema' | 'Tabela' | 'Coluna';
-  entidadeId: string;
+  entidadeTipo?: 'Politica' | 'Papel' | 'Atribuicao' | 'Processo' | 'Termo' | 'KPI' | 'RegraNegocio' | 'RegraQualidade' | 'Dominio' | 'Sistema' | 'Tabela' | 'Coluna';
+  entidadeId?: string;
   politicaId?: string;
   regulacaoId?: string;
   status?: 'ATIVA' | 'INATIVA' | 'EM_DESENVOLVIMENTO' | 'DESCONTINUADA';
   tipoRegra?: 'VALIDACAO' | 'TRANSFORMACAO' | 'CALCULO' | 'CONTROLE' | 'NEGOCIO';
+  processo?: {
+    id: string;
+    nome: string;
+    descricao?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -238,10 +273,19 @@ export type UpdateComunidadeBody = UpdateComunidadeFormData
 export interface ComunidadeResponse {
   id: string;
   nome: string;
-  descricao?: string;
   parentId?: string;
   createdAt: string;
   updatedAt: string;
+  // Relacionamentos retornados pela API
+  parent?: ComunidadeResponse;
+  children?: ComunidadeResponse[];
+  papeis?: PapelResponse[];
+  kpis?: KpiResponse[];
+  _count?: {
+    children: number;
+    papeis: number;
+    kpis: number;
+  };
 }
 
 // ============================================================================
@@ -301,11 +345,20 @@ export type UpdatePoliticaInternaBody = UpdatePoliticaInternaFormData
 export interface PoliticaInternaResponse {
   id: string;
   nome: string;
-  descricao?: string;
-  escopo: 'SEGURANCA' | 'QUALIDADE' | 'GOVERNANCA' | 'OUTRO';
-  status: 'ATIVA' | 'REVOGADA' | 'EM_REVISAO';
+  descricao: string;
+  categoria: string;
+  objetivo: string;
+  escopo: string;
+  dominioDadosId?: string;
+  responsavel: string;
+  dataCriacao: string;
   dataInicioVigencia: string;
   dataTermino?: string;
+  status: 'Em_elaboracao' | 'Vigente' | 'Revogada';
+  versao: string;
+  anexosUrl?: string;
+  relacionamento?: string;
+  observacoes?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -385,13 +438,29 @@ export interface ListaClassificacaoResponse {
 export type AtribuicaoBody = CreateAtribuicaoFormData
 export type UpdateAtribuicaoBody = UpdateAtribuicaoFormData
 
+export type TipoEntidadeAtribuicao = 'Politica' | 'Papel' | 'Atribuicao' | 'Processo' | 'Termo' | 'KPI' | 'RegraNegocio' | 'RegraQualidade' | 'Dominio' | 'Sistema' | 'Tabela' | 'Coluna';
+
 export interface AtribuicaoResponse {
   id: string;
-  dominioId: string;
   papelId: string;
-  documentoAtribuicao: string;
-  comiteAprovador: string;
+  dominioId: string;
+  tipoEntidade: TipoEntidadeAtribuicao;
+  documentoAtribuicao?: string;
+  comiteAprovadorId?: string;
   onboarding: boolean;
+  dataInicioVigencia: string;
+  dataTermino?: string;
+  observacoes?: string;
+  papel: {
+    id: string;
+    nome: string;
+    descricao?: string;
+  };
+  dominio: {
+    id: string;
+    nome: string;
+    descricao?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -469,10 +538,7 @@ export type UpdateListaReferenciaBody = UpdateListaReferenciaFormData
 export interface ListaReferenciaResponse {
   id: string;
   nome: string;
-  descricao: string;
-  termoId: string;
-  tabelaId?: string;
-  colunaId?: string;
+  descricao?: string;
   createdAt: string;
   updatedAt: string;
 }

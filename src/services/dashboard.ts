@@ -15,7 +15,7 @@ class DashboardService {
    * Busca métricas gerais do dashboard
    */
   async getMetricas(periodo?: string, usuario?: string): Promise<DashboardMetricas> {
-    const response = await api.get(this.endpoint, {
+    const response = await api.get(`${this.endpoint}/metricas`, {
       params: { periodo, usuario }
     });
     return response.data;

@@ -4,28 +4,28 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select"
 import { Loader2 } from "lucide-react"
 import { usuarioFormSchema, type Usuario, type UsuarioFormData } from "@/types/user"
@@ -47,7 +47,7 @@ export function UserForm({ open, onClose, user, onSubmit }: UserFormProps) {
       nome: user?.nome || "",
       email: user?.email || "",
       senha: "",
-      status: (user?.status || "ativo") as "ativo" | "inativo",
+      status: (user ? (user.ativo ? "ativo" : "inativo") : "ativo") as "ativo" | "inativo",
     },
   })
 

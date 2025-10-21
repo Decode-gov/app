@@ -81,13 +81,17 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
 
   const onSubmit = async (data: SistemaFormValues) => {
     try {
+      const payload = {
+        nome: data.sistema,
+        descricao: data.bancoDados,
+      }
       if (sistema) {
         await updateMutation.mutateAsync({
           id: sistema.id,
-          data,
+          data: payload,
         })
       } else {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync(payload)
       }
       form.reset()
       onOpenChange(false)

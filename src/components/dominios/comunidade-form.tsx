@@ -6,37 +6,35 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
 import { useCreateComunidade, useUpdateComunidade, useComunidades } from "@/hooks/api/use-comunidades"
 import { ComunidadeResponse } from "@/types/api"
 
 const comunidadeSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório").max(255),
-  descricao: z.string().max(1000).optional(),
   parentId: z.string().optional(),
 })
 
@@ -57,7 +55,6 @@ export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFor
     resolver: zodResolver(comunidadeSchema),
     defaultValues: {
       nome: "",
-      descricao: "",
       parentId: "",
     },
   })
@@ -67,13 +64,11 @@ export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFor
       if (comunidade) {
         form.reset({
           nome: comunidade.nome,
-          descricao: comunidade.descricao || "",
           parentId: comunidade.parentId || "",
         })
       } else {
         form.reset({
           nome: "",
-          descricao: "",
           parentId: "",
         })
       }
@@ -151,49 +146,24 @@ export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFor
 
             <FormField
               control={form.control}
-              name="descricao"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descrição</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Descrição da comunidade..."
-                      className="min-h-[80px]"
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormDescription className="text-xs">
-                    Máximo 1000 caracteres
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="parentId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Comunidade Pai (Opcional)</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select 
+                    onValueChange={(value) => field.onChange(value === "NONE" ? "" : value)} 
+                    value={field.value || "NONE"}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione a comunidade pai" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">Nenhuma (raiz)</SelectItem>
+                      <SelectItem value="NONE">Nenhuma (raiz)</SelectItem>
                       {availableParents.map((parent) => (
                         <SelectItem key={parent.id} value={parent.id}>
-                          <div className="flex flex-col">
-                            <span>{parent.nome}</span>
-                            {parent.descricao && (
-                              <span className="text-xs text-muted-foreground line-clamp-1">
-                                {parent.descricao}
-                              </span>
-                            )}
-                          </div>
+                          {parent.nome}
                         </SelectItem>
                       ))}
                     </SelectContent>

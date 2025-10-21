@@ -172,7 +172,7 @@ export default function ClassificacoesInformacaoPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">Todas as políticas</SelectItem>
-                    {politicas.filter(p => p.status === "ATIVA").map(politica => (
+                    {politicas.filter(p => p.status === "Vigente").map(politica => (
                       <SelectItem key={politica.id} value={politica.id}>
                         {politica.nome}
                       </SelectItem>

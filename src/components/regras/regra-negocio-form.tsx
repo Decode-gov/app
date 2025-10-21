@@ -80,24 +80,13 @@ export function RegraNegocioForm({ open, onOpenChange, regra }: RegraNegocioForm
   useEffect(() => {
     if (regra) {
       form.reset({
-        nome: regra.nome,
-        descricao: regra.descricao,
-        entidadeTipo: regra.entidadeTipo,
-        entidadeId: regra.entidadeId,
-        politicaId: regra.politicaId || "",
-        regulacaoId: regra.regulacaoId || "",
-        status: regra.status || "",
-        tipoRegra: regra.tipoRegra || "",
+        processoId: regra.processoId || "",
+        descricao: regra.descricao || "",
       })
     } else {
       form.reset({
-        nome: "",
+        processoId: "",
         descricao: "",
-        entidadeTipo: undefined,
-        entidadeId: "",
-        politicaId: "",
-        regulacaoId: "",
-        status: "",
         tipoRegra: "",
       })
     }

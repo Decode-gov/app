@@ -24,13 +24,24 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { useCreateNecessidadeInformacao, useUpdateNecessidadeInformacao } from "@/hooks/api/use-necessidades-informacao"
+import { useComunidades } from "@/hooks/api/use-comunidades"
 import { NecessidadeInformacaoResponse } from "@/types/api"
 import { Loader2 } from "lucide-react"
 
 const necessidadeSchema = z.object({
-  nome: z.string().min(1, "Nome é obrigatório").max(255, "Nome deve ter no máximo 255 caracteres"),
-  descricao: z.string().max(2000, "Descrição deve ter no máximo 2000 caracteres").optional(),
+  questaoGerencial: z.string().min(1, "Questão gerencial é obrigatória").max(2000, "Questão gerencial deve ter no máximo 2000 caracteres"),
+  elementoEstrategico: z.string().max(500, "Elemento estratégico deve ter no máximo 500 caracteres").optional(),
+  elementoTatico: z.string().max(500, "Elemento tático deve ter no máximo 500 caracteres").optional(),
+  origemQuestao: z.string().min(1, "Origem da questão é obrigatória").max(255, "Origem deve ter no máximo 255 caracteres"),
+  comunidadeId: z.string().min(1, "Comunidade é obrigatória"),
 })
 
 type NecessidadeFormValues = z.infer<typeof necessidadeSchema>
@@ -44,25 +55,35 @@ interface NecessidadeFormProps {
 export function NecessidadeForm({ open, onOpenChange, necessidade }: NecessidadeFormProps) {
   const createMutation = useCreateNecessidadeInformacao()
   const updateMutation = useUpdateNecessidadeInformacao()
+  const { data: comunidadesData } = useComunidades({ page: 1, limit: 1000 })
   
   const form = useForm<NecessidadeFormValues>({
     resolver: zodResolver(necessidadeSchema),
     defaultValues: {
-      nome: "",
-      descricao: "",
+      questaoGerencial: "",
+      elementoEstrategico: "",
+      elementoTatico: "",
+      origemQuestao: "",
+      comunidadeId: "",
     },
   })
 
   useEffect(() => {
     if (necessidade) {
       form.reset({
-        nome: necessidade.nome,
-        descricao: necessidade.descricao || "",
+        questaoGerencial: necessidade.questaoGerencial,
+        elementoEstrategico: necessidade.elementoEstrategico || "",
+        elementoTatico: necessidade.elementoTatico || "",
+        origemQuestao: necessidade.origemQuestao,
+        comunidadeId: necessidade.comunidadeId,
       })
     } else {
       form.reset({
-        nome: "",
-        descricao: "",
+        questaoGerencial: "",
+        elementoEstrategico: "",
+        elementoTatico: "",
+        origemQuestao: "",
+        comunidadeId: "",
       })
     }
   }, [necessidade, form])
@@ -102,18 +123,19 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="nome"
+              name="questaoGerencial"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome *</FormLabel>
+                  <FormLabel>Questão Gerencial *</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Nome da necessidade de informação..."
+                    <Textarea
+                      placeholder="Descreva a questão gerencial..."
+                      className="min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
                   <FormDescription>
-                    Nome identificador da necessidade de informação
+                    Questão principal que precisa ser respondida
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -122,20 +144,75 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
 
             <FormField
               control={form.control}
-              name="descricao"
+              name="elementoEstrategico"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descrição</FormLabel>
+                  <FormLabel>Elemento Estratégico</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Descreva a necessidade de informação..."
-                      className="min-h-[100px]"
+                    <Input
+                      placeholder="Elemento estratégico relacionado..."
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Descrição detalhada da necessidade de informação
-                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="elementoTatico"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Elemento Tático</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Elemento tático relacionado..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="origemQuestao"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Origem da Questão *</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="De onde surgiu a questão..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="comunidadeId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Comunidade *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a comunidade" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {comunidadesData?.data?.map((comunidade) => (
+                        <SelectItem key={comunidade.id} value={comunidade.id}>
+                          {comunidade.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

@@ -49,13 +49,13 @@ export function UserTable({ data, searchTerm, selectedStatus, onEdit, onDelete }
       header: "Email",
     },
     {
-      accessorKey: "status",
+      accessorKey: "ativo",
       header: "Status",
       cell: ({ row }) => {
-        const status = row.getValue("status") as string
+        const ativo = row.getValue("ativo") as boolean
         return (
-          <Badge variant={status === "ativo" ? "default" : "secondary"}>
-            {status}
+          <Badge variant={ativo ? "default" : "secondary"}>
+            {ativo ? "Ativo" : "Inativo"}
           </Badge>
         )
       },
@@ -105,7 +105,8 @@ export function UserTable({ data, searchTerm, selectedStatus, onEdit, onDelete }
       
       const matchesStatus = !selectedStatus || 
         selectedStatus === "todos" || 
-        usuario.status === selectedStatus
+        (selectedStatus === "ativo" && usuario.ativo) ||
+        (selectedStatus === "inativo" && !usuario.ativo)
       
       return matchesSearch && matchesStatus
     })

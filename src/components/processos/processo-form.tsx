@@ -6,30 +6,30 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog"
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+    FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select"
 import { Plus } from "lucide-react"
 import { useCreateProcesso, useUpdateProcesso } from "@/hooks/api/use-processos"
@@ -192,11 +192,6 @@ export function ProcessoForm({ open, onOpenChange, processo }: ProcessoFormProps
                                 <SelectItem key={comunidade.id} value={comunidade.id}>
                                   <div className="flex flex-col">
                                     <span>{comunidade.nome}</span>
-                                    {comunidade.descricao && (
-                                      <span className="text-xs text-muted-foreground line-clamp-1">
-                                        {comunidade.descricao}
-                                      </span>
-                                    )}
                                   </div>
                                 </SelectItem>
                               ))

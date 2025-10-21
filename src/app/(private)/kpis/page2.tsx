@@ -84,9 +84,8 @@ export default function KpisPage() {
   const comunidades = comunidadesData?.data || []
   const processos = processosData?.data || []
 
-  const kpisComFormula = kpis.filter(k => k.formula).length
-  const kpisComResponsavel = kpis.filter(k => k.responsavelId).length
-  const dominiosUnicos = [...new Set(kpis.map(k => k.dominioId))].length
+  const kpisComProcesso = kpis.filter(k => k.processoId).length
+  const kpisComComunidade = kpis.filter(k => k.comunidadeId).length
 
   return (
     <>

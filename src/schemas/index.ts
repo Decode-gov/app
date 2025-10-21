@@ -16,34 +16,48 @@ const stringRequired = (min: number, campo: string) =>
 const stringOptional = () => z.string().optional()
 
 const uuidRequired = (campo: string) =>
-  z.string().min(1, `${campo} Ã© obrigatÃ³rio`)
+  z.uuid().min(1, `${campo} é obrigatória`)
 
 const dateStringRequired = (campo: string) =>
-  z.string().min(1, `${campo} Ã© obrigatÃ³ria`)
+  z.iso.datetime({ message: `${campo} deve ser uma data válida` })
 
 // ============================================================================
-// 1) NECESSIDADE DE INFORMAÃ‡ÃƒO
+// 1) NECESSIDADE DE INFORMAÇÃO
 // ============================================================================
 
 export const NecessidadeInformacaoSchema = z.object({
-  nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
+  questaoGerencial: stringRequired(1, "Questão Gerencial"),
+  elementoEstrategico: stringOptional(),
+  elementoTatico: stringOptional(),
+  origemQuestao: stringRequired(1, "Origem da Questão"),
+  comunidadeId: uuidRequired("Comunidade"),
 })
 
 export const CreateNecessidadeInformacaoSchema = NecessidadeInformacaoSchema
 export const UpdateNecessidadeInformacaoSchema = NecessidadeInformacaoSchema.partial()
 
 // ============================================================================
-// 2) POLÃTICAS INTERNAS
+// 2) POLÍTICAS INTERNAS
 // ============================================================================
 
 export const PoliticaInternaSchema = z.object({
   nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
-  escopo: z.enum(['SEGURANCA', 'QUALIDADE', 'GOVERNANCA', 'OUTRO']),
-  status: z.enum(['ATIVA', 'REVOGADA', 'EM_REVISAO']),
-  dataInicioVigencia: dateStringRequired("Data de início de vigência"),
+  descricao: stringRequired(1, "Descrição"),
+  categoria: stringRequired(1, "Categoria"),
+  objetivo: stringRequired(1, "Objetivo"),
+  escopo: stringRequired(1, "Escopo"),
+  dominioDadosId: stringOptional(),
+  responsavel: stringRequired(1, "Responsável"),
+  dataCriacao: dateStringRequired("Data de Criação"),
+  dataInicioVigencia: dateStringRequired("Data de Início de Vigência"),
   dataTermino: stringOptional(),
+  status: z.enum(['Em_elaboracao', 'Vigente', 'Revogada'], {
+    message: "Status deve ser: Em elaboracao, Vigente ou Revogada"
+  }),
+  versao: stringRequired(1, "Versão"),
+  anexosUrl: stringOptional(),
+  relacionamento: stringOptional(),
+  observacoes: stringOptional(),
 })
 
 export const CreatePoliticaInternaSchema = PoliticaInternaSchema
@@ -54,9 +68,14 @@ export const UpdatePoliticaInternaSchema = PoliticaInternaSchema.partial()
 // ============================================================================
 
 export const PapelSchema = z.object({
+  listaPapelId: uuidRequired("Lista de Papel"),
+  comunidadeId: uuidRequired("Comunidade"),
   nome: stringRequired(1, "Nome"),
-  descricao: stringRequired(1, "Descrição"),
+  descricao: stringOptional(),
   politicaId: uuidRequired("Política"),
+  documentoAtribuicao: stringOptional(),
+  comiteAprovadorId: stringOptional(),
+  onboarding: z.boolean().default(false),
 })
 
 export const CreatePapelSchema = PapelSchema
@@ -68,7 +87,6 @@ export const UpdatePapelSchema = PapelSchema.partial()
 
 export const ComunidadeSchema = z.object({
   nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
   parentId: stringOptional(),
 })
 
@@ -80,8 +98,17 @@ export const UpdateComunidadeSchema = ComunidadeSchema.partial()
 // ============================================================================
 
 export const AtribuicaoSchema = z.object({
-  nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
+  papelId: stringRequired(1, "Papel"),
+  dominioId: stringRequired(1, "Domínio"),
+  tipoEntidade: z.enum(['Politica', 'Papel', 'Atribuicao', 'Processo', 'Termo', 'KPI', 'RegraNegocio', 'RegraQualidade', 'Dominio', 'Sistema', 'Tabela', 'Coluna'], {
+    message: "Tipo de entidade é obrigatório",
+  }),
+  documentoAtribuicao: stringOptional(),
+  comiteAprovadorId: stringOptional(),
+  onboarding: z.boolean().default(false),
+  dataInicioVigencia: z.string().min(1, "Data de início de vigência é obrigatória"),
+  dataTermino: stringOptional(),
+  observacoes: stringOptional(),
 })
 
 export const CreateAtribuicaoSchema = AtribuicaoSchema
@@ -92,8 +119,8 @@ export const UpdateAtribuicaoSchema = AtribuicaoSchema.partial()
 // ============================================================================
 
 export const DefinicaoSchema = z.object({
-  nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
+  termo: stringRequired(1, "Termo"),
+  definicao: stringRequired(1, "Definição"),
   sigla: stringOptional(),
 })
 
@@ -105,8 +132,11 @@ export const UpdateDefinicaoSchema = DefinicaoSchema.partial()
 // ============================================================================
 
 export const ListaClassificacaoSchema = z.object({
-  nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
+  categoria: z.enum(['Publico', 'Interno', 'Confidencial', 'Restrito'], {
+    message: "Categoria é obrigatória"
+  }),
+  descricao: stringRequired(1, "Descrição"),
+  politicaId: stringRequired(1, "Política"),
 })
 
 export const CreateListaClassificacaoSchema = ListaClassificacaoSchema
@@ -237,9 +267,8 @@ export const UpdateDimensaoQualidadeSchema = DimensaoQualidadeSchema.partial()
 // ============================================================================
 
 export const RegraNegocioSchema = z.object({
-  nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
   processoId: uuidRequired("Processo"),
+  descricao: stringRequired(1, "Descrição"),
 })
 
 export const CreateRegraNegocioSchema = RegraNegocioSchema
@@ -302,15 +331,13 @@ export const CreateCriticidadeRegulatoriaSchema = CriticidadeRegulatoriaSchema
 export const UpdateCriticidadeRegulatoriaSchema = CriticidadeRegulatoriaSchema.partial()
 
 // ============================================================================
-// 19) KPIs
+// 18) KPIS
 // ============================================================================
 
 export const KPISchema = z.object({
   nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
-  processoId: uuidRequired("Processo"),
-  comunidadeId: uuidRequired("Comunidade"),
-  usuarioId: uuidRequired("Usuário"),
+  comunidadeId: stringOptional(),
+  processoId: stringOptional(),
 })
 
 export const CreateKPISchema = KPISchema

@@ -2,10 +2,9 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Table2, Database } from "lucide-react"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Database } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -61,23 +60,6 @@ export default function TabelasColunasPage() {
   const bancos = bancosData?.data || []
   const necessidades = necessidadesData?.data || []
 
-  const filteredColunas = sistemaFilter
-    ? colunas.filter(c => c.sistemaId === sistemaFilter)
-    : colunas
-
-  const tabelasAgrupadas = filteredColunas.reduce<Record<string, ColunaResponse[]>>((acc, coluna) => {
-    const key = `${coluna.sistemaId}-${coluna.tabela}`
-    if (!acc[key]) {
-      acc[key] = []
-    }
-    acc[key].push(coluna)
-    return acc
-  }, {})
-
-  const tabelasUnicas = Object.keys(tabelasAgrupadas).length
-  const sistemasUnicos = [...new Set(colunas.map(c => c.sistemaId))].length
-  const colunasComNecessidade = colunas.filter(c => c.questaoGerencialId).length
-
   return (
     <>
       <div className="space-y-6">
@@ -104,44 +86,7 @@ export default function TabelasColunasPage() {
             </CardContent>
           </Card>
 
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Tabelas</CardTitle>
-              <div className="p-2 rounded-lg bg-orange-100 group-hover:bg-orange-200 transition-colors duration-300">
-                <Table2 className="h-4 w-4 text-orange-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{tabelasUnicas}</div>
-              <p className="text-xs text-muted-foreground">tabelas únicas</p>
-            </CardContent>
-          </Card>
 
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Sistemas</CardTitle>
-              <div className="p-2 rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <Database className="h-4 w-4 text-green-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{sistemasUnicos}</div>
-              <p className="text-xs text-muted-foreground">sistemas com colunas</p>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Com Necessidade</CardTitle>
-              <div className="p-2 rounded-lg bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
-                <Database className="h-4 w-4 text-purple-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{colunasComNecessidade}</div>
-              <p className="text-xs text-muted-foreground">com necessidade de informação</p>
-            </CardContent>
-          </Card>
         </div>
 
         <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
@@ -206,45 +151,17 @@ export default function TabelasColunasPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredColunas.map((coluna: ColunaResponse) => {
-                      const termo = definicoes.find(d => d.id === coluna.termoId)
-                      const sistema = sistemas.find(s => s.id === coluna.sistemaId)
-                      const banco = bancos.find(b => b.id === coluna.bancoId)
-                      const necessidade = necessidades.find(n => n.id === coluna.questaoGerencialId)
-
+                    {(colunasData?.data || []).map((coluna: ColunaResponse) => {
                       return (
                         <TableRow key={coluna.id}>
-                          <TableCell className="font-medium">
-                            {termo ? (
-                              <Badge variant="secondary">{termo.termo}</Badge>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                          </TableCell>
+                          <TableCell className="font-medium">{coluna.nome}</TableCell>
+                          <TableCell>{coluna.tabelaId}</TableCell>
+                          <TableCell>-</TableCell>
+                          <TableCell>-</TableCell>
                           <TableCell>
-                            {sistema ? sistema.sistema : <span className="text-muted-foreground">-</span>}
-                          </TableCell>
-                          <TableCell>
-                            {banco ? (
-                              <Badge variant="outline">{banco.nome}</Badge>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <span className="font-mono text-sm">{coluna.tabela}</span>
-                          </TableCell>
-                          <TableCell>
-                            <span className="font-mono text-sm font-medium">{coluna.coluna}</span>
-                          </TableCell>
-                          <TableCell>
-                            {necessidade ? (
-                              <div className="max-w-[200px] truncate" title={necessidade.questaoGerencial}>
-                                {necessidade.questaoGerencial}
-                              </div>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
+                            <div className="max-w-[200px] truncate" title={coluna.descricao}>
+                              {coluna.descricao || '-'}
+                            </div>
                           </TableCell>
                           <TableCell>
                             <DropdownMenu>

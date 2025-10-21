@@ -1,57 +1,57 @@
 import { useState, useMemo } from "react"
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable,
 } from "@tanstack/react-table"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ChevronLeft, ChevronRight, MoreHorizontal, Edit, Trash2, BookOpen, Filter } from "lucide-react"
-import { type Termo } from "@/types/termo"
+import { type DefinicaoResponse } from "@/types/api"
 
 interface TermoTableProps {
-  data: Termo[]
+  data: DefinicaoResponse[]
   searchTerm: string
   selectedStatus: string | null
-  onEdit: (termo: Termo) => void
-  onDelete: (termo: Termo) => void
+  onEdit: (termo: DefinicaoResponse) => void
+  onDelete: (termo: DefinicaoResponse) => void
 }
 
 export function TermoTable({ data, searchTerm, selectedStatus, onEdit, onDelete }: TermoTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const columns: ColumnDef<Termo>[] = useMemo(() => [
+  const columns: ColumnDef<DefinicaoResponse>[] = useMemo(() => [
     {
-      accessorKey: "nome",
-      header: "Definição",
+      accessorKey: "termo",
+      header: "Termo",
     },
     {
-      accessorKey: "descricao",
-      header: "Categorização",
+      accessorKey: "definicao",
+      header: "Definição",
       cell: ({ row }) => {
-        const descricao = row.getValue("descricao") as string
+        const definicao = row.getValue("definicao") as string
         return (
-          <div className="max-w-[300px] truncate" title={descricao}>
-            {descricao}
+          <div className="max-w-[300px] truncate" title={definicao}>
+            {definicao}
           </div>
         )
       },
@@ -122,8 +122,8 @@ export function TermoTable({ data, searchTerm, selectedStatus, onEdit, onDelete 
   const filteredData = useMemo(() => {
     return data.filter((termo) => {
       const matchesSearch = !searchTerm || 
-        termo.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        termo.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        termo.termo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        termo.definicao.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (termo.sigla && termo.sigla.toLowerCase().includes(searchTerm.toLowerCase()))
       
       const matchesStatus = !selectedStatus || 

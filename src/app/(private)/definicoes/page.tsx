@@ -6,55 +6,20 @@ import { TermoStatsCards } from "@/components/termos/termo-stats-cards"
 import { TermoFilters } from "@/components/termos/termo-filters"
 import { TermoForm } from "@/components/termos/termo-form"
 import { ConfirmDeleteDialog } from "@/components/termos/confirm-delete-dialog"
-import { type Termo, type TermoFormData } from "@/types/termo"
 import { TermoTable } from "@/components/termos/termo-table"
-
-// Dados de exemplo para simular a API
-const mockTermos: Termo[] = [
-  {
-    id: "1",
-    nome: "Dado Pessoal",
-    descricao: "Informação relacionada a pessoa natural identificada ou identificável",
-    sigla: "DP",
-    ativo: true,
-  },
-  {
-    id: "2",
-    nome: "Titular de Dados",
-    descricao: "Pessoa natural a quem se referem os dados pessoais que são objeto de tratamento",
-    sigla: "TD",
-    ativo: true,
-  },
-  {
-    id: "3",
-    nome: "Controlador",
-    descricao: "Pessoa natural ou jurídica, de direito público ou privado, a quem competem as decisões referentes ao tratamento de dados pessoais",
-    sigla: null,
-    ativo: true,
-  },
-  {
-    id: "4",
-    nome: "Operador",
-    descricao: "Pessoa natural ou jurídica, de direito público ou privado, que realiza o tratamento de dados pessoais em nome do controlador",
-    sigla: null,
-    ativo: true,
-  },
-  {
-    id: "5",
-    nome: "Anonimização",
-    descricao: "Utilização de meios técnicos razoáveis e disponíveis no momento do tratamento, por meio dos quais um dado perde a possibilidade de associação, direta ou indireta, a um indivíduo",
-    sigla: null,
-    ativo: false,
-  },
-]
+import { useDefinicoes, useDeleteDefinicao } from "@/hooks/api/use-definicoes"
+import { type DefinicaoResponse } from "@/types/api"
 
 export default function TermosPage() {
-  const [termos, setTermos] = useState<Termo[]>(mockTermos)
+  const { data: response } = useDefinicoes()
+  const deleteMutation = useDeleteDefinicao()
+  const termos = response?.data ?? []
+
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [editingTermo, setEditingTermo] = useState<Termo | null>(null)
-  const [termoToDelete, setTermoToDelete] = useState<Termo | null>(null)
+  const [editingTermo, setEditingTermo] = useState<DefinicaoResponse | undefined>(undefined)
+  const [termoToDelete, setTermoToDelete] = useState<DefinicaoResponse | null>(null)
 
   // Estatísticas dos termos
   const stats = useMemo(() => {
@@ -65,47 +30,23 @@ export default function TermosPage() {
   }, [termos])
 
   const handleNewTermo = () => {
-    setEditingTermo(null)
+    setEditingTermo(undefined)
     setIsFormOpen(true)
   }
 
-  const handleEditTermo = (termo: Termo) => {
+  const handleEditTermo = (termo: DefinicaoResponse) => {
     setEditingTermo(termo)
     setIsFormOpen(true)
   }
 
-  const handleDeleteTermo = (termo: Termo) => {
+  const handleDeleteTermo = (termo: DefinicaoResponse) => {
     setTermoToDelete(termo)
   }
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (termoToDelete) {
-      setTermos(prev => prev.filter(t => t.id !== termoToDelete.id))
+      await deleteMutation.mutateAsync(termoToDelete.id)
       setTermoToDelete(null)
-    }
-  }
-
-  const handleSubmitTermo = async (data: TermoFormData) => {
-    try {
-      if (editingTermo) {
-        // Editar termo existente
-        setTermos(prev => prev.map(t => 
-          t.id === editingTermo.id 
-            ? { ...t, ...data } 
-            : t
-        ))
-      } else {
-        // Criar novo termo
-        const newTermo: Termo = {
-          id: `termo-${Math.random().toString(36).substr(2, 9)}`,
-          ...data,
-        }
-        setTermos(prev => [...prev, newTermo])
-      }
-      setIsFormOpen(false)
-      setEditingTermo(null)
-    } catch (error) {
-      console.error("Erro ao salvar termo:", error)
     }
   }
 
@@ -150,9 +91,8 @@ export default function TermosPage() {
 
       <TermoForm
         open={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
+        onOpenChange={setIsFormOpen}
         termo={editingTermo}
-        onSubmit={handleSubmitTermo}
       />
 
       <ConfirmDeleteDialog

@@ -37,7 +37,7 @@ export function TermoCreateDialog({
     <TermoForm
       open={open}
       onClose={handleClose}
-      termo={null}
+      termo={undefined}
       onSubmit={handleSubmit}
     />
   )

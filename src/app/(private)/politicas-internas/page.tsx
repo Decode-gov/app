@@ -47,7 +47,13 @@ export default function PoliticasPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [selectedPolitica, setSelectedPolitica] = useState<PoliticaInternaResponse | undefined>()
 
-  const { data: politicasData, isLoading, error } = usePoliticasInternas()
+  const { data: politicasData, isLoading, error } = usePoliticasInternas({
+    page: 1,
+    limit: 1000,
+    escopo: escopoFilter || undefined,
+    status: statusFilter || undefined,
+    nome: searchTerm || undefined
+  })
   const deletePolitica = useDeletePoliticaInterna()
 
   // Extração do array de dados
@@ -59,14 +65,8 @@ export default function PoliticasPage() {
     }
   }
 
-  // Filtrar dados localmente
-  const filteredData = politicas.filter((politica) => {
-    const matchesSearch = politica.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (politica.descricao?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
-    const matchesStatus = !statusFilter || politica.status === statusFilter
-    const matchesEscopo = !escopoFilter || politica.escopo === escopoFilter
-    return matchesSearch && matchesStatus && matchesEscopo
-  })
+  // Dados já filtrados pela API
+  const filteredData = politicas
 
   if (isLoading) {
     return (
@@ -81,7 +81,7 @@ export default function PoliticasPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 3 }).map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <Skeleton className="h-4 w-[100px]" />
@@ -149,22 +149,22 @@ export default function PoliticasPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {politicas.filter(p => p.status === "ATIVA").length}
+              {politicas.filter(p => p.status === "Vigente").length}
             </div>
-            <p className="text-xs text-muted-foreground">políticas ativas</p>
+            <p className="text-xs text-muted-foreground">políticas vigentes</p>
           </CardContent>
         </Card>
 
         <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Em Revisão</CardTitle>
+            <CardTitle className="text-sm font-medium">Em Elaboração</CardTitle>
             <div className="p-2 rounded-lg bg-slate-100 group-hover:bg-slate-200 transition-colors duration-300">
               <Shield className="h-4 w-4 text-slate-600 transition-colors duration-300" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-slate-700">
-              {politicas.filter(p => p.status === "EM_REVISAO").length}
+              {politicas.filter(p => p.status === "Em_elaboracao").length}
             </div>
             <p className="text-xs text-muted-foreground">em elaboração</p>
           </CardContent>
@@ -179,7 +179,7 @@ export default function PoliticasPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {politicas.filter(p => p.status === "REVOGADA").length}
+              {politicas.filter(p => p.status === "Revogada").length}
             </div>
             <p className="text-xs text-muted-foreground">revogadas</p>
           </CardContent>
@@ -216,24 +216,24 @@ export default function PoliticasPage() {
                 className="pl-8"
               />
             </div>
-            <Select value={escopoFilter} onValueChange={setEscopoFilter}>
+            <Select value={escopoFilter || "ALL"} onValueChange={(value) => setEscopoFilter(value === "ALL" ? "" : value)}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filtrar por escopo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os escopos</SelectItem>
+                <SelectItem value="ALL">Todos os escopos</SelectItem>
                 <SelectItem value="SEGURANCA">Segurança</SelectItem>
                 <SelectItem value="QUALIDADE">Qualidade</SelectItem>
                 <SelectItem value="GOVERNANCA">Governança</SelectItem>
                 <SelectItem value="OUTRO">Outro</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter || "ALL"} onValueChange={(value) => setStatusFilter(value === "ALL" ? "" : value)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Filtrar por status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os status</SelectItem>
+                <SelectItem value="ALL">Todos os status</SelectItem>
                 <SelectItem value="ATIVA">Ativa</SelectItem>
                 <SelectItem value="REVOGADA">Revogada</SelectItem>
                 <SelectItem value="EM_REVISAO">Em Revisão</SelectItem>
@@ -250,11 +250,18 @@ export default function PoliticasPage() {
                   <TableHead>Escopo</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Início da Vigência</TableHead>
+                  <TableHead>Término</TableHead>
                   <TableHead className="w-[70px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData?.map((politica) => (
+                {filteredData.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center text-muted-foreground">
+                      Nenhuma política interna encontrada
+                    </TableCell>
+                  </TableRow>
+                ) : filteredData?.map((politica) => (
                   <TableRow key={politica.id}>
                     <TableCell className="font-medium">
                       <div className="max-w-[200px] truncate" title={politica.nome}>
@@ -276,6 +283,12 @@ export default function PoliticasPage() {
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {new Date(politica.dataInicioVigencia).toLocaleDateString('pt-BR')}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {politica.dataTermino 
+                        ? new Date(politica.dataTermino).toLocaleDateString('pt-BR') 
+                        : '—'
+                      }
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

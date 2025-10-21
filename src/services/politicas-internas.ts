@@ -1,6 +1,6 @@
 import { BaseService } from './base';
 import { api } from "@/lib/api";
-import type { PoliticaInterna, SelectOption } from "@/types";
+import type { SelectOption } from "@/types";
 import type {
   PoliticaInternaResponse,
   PoliticaInternaBody,
@@ -24,8 +24,8 @@ export class PoliticaInternaService extends BaseService<
    */
   async getSelectOptions(): Promise<SelectOption[]> {
     const response = await api.get("/politicas-internas")
-    return response.data.data.map((item: PoliticaInterna) => ({
-      value: item.id.toString(),
+    return response.data.data.map((item: PoliticaInternaResponse) => ({
+      value: item.id,
       label: item.nome
     }))
   }

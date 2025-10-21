@@ -32,8 +32,8 @@ export default function UsuariosPage() {
   // Estatísticas dos usuários
   const stats = useMemo(() => {
     const total = usuarios.length
-    const ativos = usuarios.filter(u => u.status === "ativo").length
-    const inativos = usuarios.filter(u => u.status === "inativo").length
+    const ativos = usuarios.filter(u => u.ativo).length
+    const inativos = usuarios.filter(u => !u.ativo).length
     return { total, ativos, inativos }
   }, [usuarios])
 
@@ -82,7 +82,9 @@ export default function UsuariosPage() {
         // Criar novo usuário
         await createMutation.mutateAsync({
           nome: data.nome,
-          email: data.email
+          email: data.email,
+          senha: data.senha ?? "mudar123",
+          ativo: data.status === "ativo"
         })
         toast.success("Usuário criado com sucesso!")
       }

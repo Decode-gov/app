@@ -203,7 +203,7 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
                       <SelectItem value="">Nenhuma</SelectItem>
                       {colunasFiltered.map((coluna) => (
                         <SelectItem key={coluna.id} value={coluna.id}>
-                          {coluna.tabela}.{coluna.coluna}
+                          {coluna.nome}
                         </SelectItem>
                       ))}
                     </SelectContent>

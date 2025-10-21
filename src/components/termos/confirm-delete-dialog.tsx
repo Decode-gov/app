@@ -8,12 +8,12 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { type Termo } from "@/types/termo"
+import { type DefinicaoResponse } from "@/types/api"
 
 interface ConfirmDeleteDialogProps {
   open: boolean
   onClose: () => void
-  termo: Termo | null
+  termo: DefinicaoResponse | null
   onConfirm: () => void
 }
 
@@ -25,7 +25,7 @@ export function ConfirmDeleteDialog({ open, onClose, termo, onConfirm }: Confirm
           <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
           <AlertDialogDescription>
             Tem certeza de que deseja excluir o termo{" "}
-            <span className="font-semibold text-foreground">{termo?.nome}</span>?
+            <span className="font-semibold text-foreground">{termo?.termo}</span>?
             Esta ação não pode ser desfeita.
           </AlertDialogDescription>
         </AlertDialogHeader>

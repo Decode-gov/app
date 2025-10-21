@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useListasClassificacao, useDeleteListaClassificacao } from "@/hooks/api/use-listas-classificacao"
-import { usePoliticasAll } from "@/hooks/api/use-politicas"
+import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
 import { ListaClassificacaoResponse } from "@/types/api"
 import { ReferencialForm } from "@/components/referencial/referencial-form"
 
@@ -24,8 +24,8 @@ const CATEGORIA_CONFIG = {
 
 export default function ReferencialClassificacaoPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [categoriaFilter, setCategoriaFilter] = useState<string>("")
-  const [politicaFilter, setPoliticaFilter] = useState<string>("")
+  const [categoriaFilter, setCategoriaFilter] = useState<string>("all")
+  const [politicaFilter, setPoliticaFilter] = useState<string>("all")
   const [page] = useState(1)
   const [limit] = useState(10)
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -37,12 +37,14 @@ export default function ReferencialClassificacaoPage() {
     search: searchTerm || undefined,
   }
   
-  if (categoriaFilter) queryParams.categoria = categoriaFilter
-  if (politicaFilter) queryParams.politicaId = politicaFilter
+  if (categoriaFilter && categoriaFilter !== "all") queryParams.categoria = categoriaFilter
+  if (politicaFilter && politicaFilter !== "all") queryParams.politicaId = politicaFilter
 
   const { data: referenciaisData, isLoading, error } = useListasClassificacao(queryParams)
-  const { data: politicas } = usePoliticasAll()
+  const { data: politicasData } = usePoliticasInternas()
   const deleteReferencial = useDeleteListaClassificacao()
+  
+  const politicas = politicasData?.data || []
 
   const handleEdit = (referencial: ListaClassificacaoResponse) => {
     setSelectedReferencial(referencial)
@@ -214,11 +216,11 @@ export default function ReferencialClassificacaoPage() {
                 />
               </div>
               <Select value={categoriaFilter} onValueChange={setCategoriaFilter}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Filtrar por categoria" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas as categorias</SelectItem>
+                  <SelectItem value="all">Todas as categorias</SelectItem>
                   <SelectItem value="Publico">Público</SelectItem>
                   <SelectItem value="Interno">Interno</SelectItem>
                   <SelectItem value="Confidencial">Confidencial</SelectItem>
@@ -231,7 +233,7 @@ export default function ReferencialClassificacaoPage() {
                     <SelectValue placeholder="Filtrar por política" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todas as políticas</SelectItem>
+                    <SelectItem value="all">Todas as políticas</SelectItem>
                     {politicas.map(politica => (
                       <SelectItem key={politica.id} value={politica.id}>
                         {politica.nome}

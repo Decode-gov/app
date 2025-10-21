@@ -83,8 +83,8 @@ export function DominioForm({ open, onOpenChange, comunidade }: DominioFormProps
       if (comunidade) {
         form.reset({
           nome: comunidade.nome,
-          descricao: comunidade.descricao,
-          categoria: comunidade.categoria || "",
+          descricao: "",
+          categoria: "",
         })
       } else {
         form.reset({

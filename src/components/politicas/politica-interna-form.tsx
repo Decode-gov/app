@@ -40,15 +40,23 @@ import { cn } from "@/lib/utils"
 import { useCreatePoliticaInterna, useUpdatePoliticaInterna } from "@/hooks/api/use-politicas-internas"
 import { PoliticaInternaResponse } from "@/types/api"
 
-// Schema de formulário (usa Date objects, diferente da API que usa strings ISO)
-// Baseado no PoliticaInternaSchema de @/schemas mas adaptado para forms
+// Schema de formulário para UI (usa Date objects)
 const politicaInternaFormSchema = z.object({
-  nome: z.string().min(1, "Nome é obrigatório").max(255, "Nome deve ter no máximo 255 caracteres"),
-  descricao: z.string().max(2000, "Descrição deve ter no máximo 2000 caracteres").optional(),
-  escopo: z.enum(['SEGURANCA', 'QUALIDADE', 'GOVERNANCA', 'OUTRO']),
-  status: z.enum(['ATIVA', 'REVOGADA', 'EM_REVISAO']),
+  nome: z.string().min(1, "Nome é obrigatório").max(255),
+  descricao: z.string().min(1, "Descrição é obrigatória").max(2000),
+  categoria: z.string().min(1, "Categoria é obrigatória"),
+  objetivo: z.string().min(1, "Objetivo é obrigatório"),
+  escopo: z.string().min(1, "Escopo é obrigatório"),
+  dominioDadosId: z.string().optional(),
+  responsavel: z.string().min(1, "Responsável é obrigatório"),
+  dataCriacao: z.date({message: "Data de criação é obrigatória"}),
   dataInicioVigencia: z.date({message: "Data de início é obrigatória"}),
-  dataTermino: z.date().optional(),
+  dataTermino: z.string().optional(),
+  status: z.enum(['Em_elaboracao', 'Vigente', 'Revogada']),
+  versao: z.string().min(1, "Versão é obrigatória"),
+  anexosUrl: z.string().optional(),
+  relacionamento: z.string().optional(),
+  observacoes: z.string().optional(),
 })
 
 type PoliticaInternaFormValues = z.infer<typeof politicaInternaFormSchema>
@@ -64,14 +72,24 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
   const updateMutation = useUpdatePoliticaInterna()
   
   const form = useForm<PoliticaInternaFormValues>({
-    resolver: zodResolver(politicaInternaFormSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(politicaInternaFormSchema) as any,
     defaultValues: {
       nome: "",
       descricao: "",
-      escopo: "GOVERNANCA",
-      status: "EM_REVISAO",
+      categoria: "",
+      objetivo: "",
+      escopo: "",
+      dominioDadosId: "",
+      responsavel: "",
+      dataCriacao: new Date(),
       dataInicioVigencia: new Date(),
-      dataTermino: undefined,
+      dataTermino: "",
+      status: "Em_elaboracao",
+      versao: "",
+      anexosUrl: "",
+      relacionamento: "",
+      observacoes: "",
     },
   })
 
@@ -81,20 +99,38 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
       if (politica) {
         form.reset({
           nome: politica.nome,
-          descricao: politica.descricao || "",
+          descricao: politica.descricao,
+          categoria: politica.categoria,
+          objetivo: politica.objetivo,
           escopo: politica.escopo,
-          status: politica.status,
+          dominioDadosId: politica.dominioDadosId || "",
+          responsavel: politica.responsavel,
+          dataCriacao: new Date(politica.dataCriacao),
           dataInicioVigencia: new Date(politica.dataInicioVigencia),
-          dataTermino: politica.dataTermino ? new Date(politica.dataTermino) : undefined,
+          dataTermino: politica.dataTermino || "",
+          status: politica.status,
+          versao: politica.versao,
+          anexosUrl: politica.anexosUrl || "",
+          relacionamento: politica.relacionamento || "",
+          observacoes: politica.observacoes || "",
         })
       } else {
         form.reset({
           nome: "",
           descricao: "",
-          escopo: "GOVERNANCA",
-          status: "EM_REVISAO",
+          categoria: "",
+          objetivo: "",
+          escopo: "",
+          dominioDadosId: "",
+          responsavel: "",
+          dataCriacao: new Date(),
           dataInicioVigencia: new Date(),
-          dataTermino: undefined,
+          dataTermino: "",
+          status: "Em_elaboracao",
+          versao: "",
+          anexosUrl: "",
+          relacionamento: "",
+          observacoes: "",
         })
       }
     }
@@ -104,8 +140,9 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
     try {
       const payload = {
         ...data,
-        dataInicioVigencia: data.dataInicioVigencia.toISOString(),
-        dataTermino: data.dataTermino?.toISOString(),
+        dataCriacao: data.dataCriacao.toISOString().split('T')[0],
+        dataInicioVigencia: data.dataInicioVigencia.toISOString().split('T')[0],
+        dataTermino: data.dataTermino || undefined,
       }
 
       if (politica) {
@@ -172,13 +209,13 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
               )}
             />
 
-            {/* Descrição (obrigatória) */}
+            {/* Descrição (opcional) */}
             <FormField
               control={form.control}
               name="descricao"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">Descrição *</FormLabel>
+                  <FormLabel className="text-foreground">Descrição</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Descreva o propósito e conteúdo desta política..."
@@ -245,14 +282,56 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
+              {/* Data de Criação (obrigatória) */}
+              <FormField
+                control={form.control}
+                name="dataCriacao"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="text-foreground">Data de Criação *</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full pl-3 text-left font-normal bg-background/50 border-border/60",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "dd/MM/yyyy", { locale: ptBR })
+                            ) : (
+                              <span>Selecione data</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          locale={ptBR}
+                          disabled={(date) => date > new Date()}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               {/* Data de Início da Vigência (obrigatória) */}
               <FormField
                 control={form.control}
                 name="dataInicioVigencia"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel className="text-foreground">Data de Início da Vigência *</FormLabel>
+                    <FormLabel className="text-foreground">Data de Início *</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -298,44 +377,176 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel className="text-foreground">Data de Término</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full pl-3 text-left font-normal bg-background/50 border-border/60",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "dd/MM/yyyy", { locale: ptBR })
-                            ) : (
-                              <span>Selecione uma data (opcional)</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          locale={ptBR}
-                          disabled={(date) => date < new Date("1900-01-01")}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        {...field}
+                        className="bg-background/50 border-border/60"
+                      />
+                    </FormControl>
                     <FormDescription className="text-xs text-muted-foreground">
-                      Data de término da vigência (se aplicável)
+                      Data de término da vigência (opcional, formato: AAAA-MM-DD)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+
+            {/* Categoria (obrigatória) */}
+            <FormField
+              control={form.control}
+              name="categoria"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground">Categoria *</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Ex: Proteção de Dados, Segurança da Informação"
+                      {...field}
+                      className="bg-background/50 border-border/60"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Objetivo (obrigatório) */}
+            <FormField
+              control={form.control}
+              name="objetivo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground">Objetivo *</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Descreva o objetivo principal desta política..."
+                      className="min-h-[80px] bg-background/50 border-border/60"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              {/* Responsável (obrigatório) */}
+              <FormField
+                control={form.control}
+                name="responsavel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">Responsável *</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Nome do responsável"
+                        {...field}
+                        className="bg-background/50 border-border/60"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Versão (obrigatória) */}
+              <FormField
+                control={form.control}
+                name="versao"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">Versão *</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Ex: 1.0, 2.1"
+                        {...field}
+                        className="bg-background/50 border-border/60"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Domínio de Dados ID (opcional) */}
+            <FormField
+              control={form.control}
+              name="dominioDadosId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground">Domínio de Dados ID</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="UUID do domínio de dados (opcional)"
+                      {...field}
+                      className="bg-background/50 border-border/60"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Anexos URL (opcional) */}
+            <FormField
+              control={form.control}
+              name="anexosUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground">URL dos Anexos</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="https://..."
+                      type="url"
+                      {...field}
+                      className="bg-background/50 border-border/60"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Relacionamento (opcional) */}
+            <FormField
+              control={form.control}
+              name="relacionamento"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground">Relacionamento</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Relacionamento com outras políticas ou normas"
+                      {...field}
+                      className="bg-background/50 border-border/60"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Observações (opcional) */}
+            <FormField
+              control={form.control}
+              name="observacoes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground">Observações</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Observações adicionais..."
+                      className="min-h-[80px] bg-background/50 border-border/60"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <DialogFooter className="gap-2">
               <Button

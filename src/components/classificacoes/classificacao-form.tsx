@@ -5,20 +5,20 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog"
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -27,7 +27,7 @@ import { Plus } from "lucide-react"
 import { classificacaoFormSchema, type ClassificacaoFormData, type Classificacao, type Politica } from "@/types/classificacao"
 import { type Termo } from "@/types/termo"
 import { PoliticaCreateDialog } from "../politicas/politica-create-dialog"
-import { TermoCreateDialog } from "../termos/termo-create-dialog"
+// import { TermoCreateDialog } from "../termos/termo-create-dialog"
 
 interface ClassificacaoFormProps {
   open: boolean
@@ -346,11 +346,11 @@ export function ClassificacaoForm({
         </DialogContent>
       </Dialog>
 
-      <TermoCreateDialog
+      {/* <TermoCreateDialog
         open={termoDialogOpen}
         onOpenChange={setTermoDialogOpen}
         onTermoCreated={handleTermoCreated}
-      />
+      /> */}
 
       <PoliticaCreateDialog
         open={politicaDialogOpen}

@@ -3,49 +3,41 @@
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
 import { useCreateAtribuicao, useUpdateAtribuicao } from "@/hooks/api/use-atribuicoes"
-import { useComunidades } from "@/hooks/api/use-comunidades"
 import { usePapeis } from "@/hooks/api/use-papeis"
-import { AtribuicaoResponse } from "@/types/api"
-import { Badge } from "@/components/ui/badge"
+import { useComunidades } from "@/hooks/api/use-comunidades"
+import { AtribuicaoResponse, TipoEntidadeAtribuicao } from "@/types/api"
+import { AtribuicaoSchema, CreateAtribuicaoFormData } from "@/schemas"
 
-const atribuicaoSchema = z.object({
-  dominioId: z.string().min(1, "Domínio é obrigatório"),
-  papelId: z.string().min(1, "Papel é obrigatório"),
-  documentoAtribuicao: z.string().min(1, "Documento de atribuição é obrigatório"),
-  comiteAprovador: z.string().min(1, "Comitê aprovador é obrigatório"),
-  onboarding: z.boolean(),
-})
-
-type AtribuicaoFormValues = z.infer<typeof atribuicaoSchema>
+type AtribuicaoFormValues = CreateAtribuicaoFormData
 
 interface AtribuicaoFormProps {
   open: boolean
@@ -53,35 +45,63 @@ interface AtribuicaoFormProps {
   atribuicao?: AtribuicaoResponse
 }
 
+const tiposEntidade: TipoEntidadeAtribuicao[] = [
+  'Politica', 'Papel', 'Atribuicao', 'Processo', 'Termo', 'KPI',
+  'RegraNegocio', 'RegraQualidade', 'Dominio', 'Sistema', 'Tabela', 'Coluna'
+];
+
 export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFormProps) {
   const isEditing = !!atribuicao
   const createAtribuicao = useCreateAtribuicao()
   const updateAtribuicao = useUpdateAtribuicao()
-  const { data: dominiosData } = useComunidades()
-  const { data: papeisData } = usePapeis()
 
-  const form = useForm<AtribuicaoFormValues>({
-    resolver: zodResolver(atribuicaoSchema),
+  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
+  const { data: comunidadesData } = useComunidades({ page: 1, limit: 1000 })
+
+  const papeis = papeisData?.data ?? []
+  const dominios = comunidadesData?.data ?? []
+
+  const form = useForm<CreateAtribuicaoFormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(AtribuicaoSchema) as any,
     defaultValues: {
-      dominioId: "",
       papelId: "",
+      dominioId: "",
+      tipoEntidade: "Atribuicao" as TipoEntidadeAtribuicao,
       documentoAtribuicao: "",
-      comiteAprovador: "",
+      comiteAprovadorId: "",
       onboarding: false,
+      dataInicioVigencia: new Date().toISOString().split('T')[0],
+      dataTermino: "",
+      observacoes: "",
     },
   })
 
   useEffect(() => {
     if (atribuicao && open) {
       form.reset({
-        dominioId: atribuicao.dominioId,
         papelId: atribuicao.papelId,
-        documentoAtribuicao: atribuicao.documentoAtribuicao,
-        comiteAprovador: atribuicao.comiteAprovador,
+        dominioId: atribuicao.dominioId,
+        tipoEntidade: atribuicao.tipoEntidade,
+        documentoAtribuicao: atribuicao.documentoAtribuicao || "",
+        comiteAprovadorId: atribuicao.comiteAprovadorId || "",
         onboarding: atribuicao.onboarding,
+        dataInicioVigencia: atribuicao.dataInicioVigencia.split('T')[0],
+        dataTermino: atribuicao.dataTermino ? atribuicao.dataTermino.split('T')[0] : "",
+        observacoes: atribuicao.observacoes || "",
       })
     } else if (!open) {
-      form.reset()
+      form.reset({
+        papelId: "",
+        dominioId: "",
+        tipoEntidade: "Atribuicao" as TipoEntidadeAtribuicao,
+        documentoAtribuicao: "",
+        comiteAprovadorId: "",
+        onboarding: false,
+        dataInicioVigencia: new Date().toISOString().split('T')[0],
+        dataTermino: "",
+        observacoes: "",
+      })
     }
   }, [atribuicao, open, form])
 
@@ -99,148 +119,207 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
     }
   }
 
-  const getDominioNome = (dominioId: string) => {
-    const dominio = dominiosData?.data?.find(d => d.id === dominioId)
-    return dominio?.nome || dominioId
-  }
-
-  const getPapelNome = (papelId: string) => {
-    const papel = papeisData?.data?.find(p => p.id === papelId)
-    return papel?.nome || papelId
-  }
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Editar Atribuição" : "Nova Atribuição"}
           </DialogTitle>
           <DialogDescription>
             {isEditing
-              ? "Atualize os dados da atribuição entre papel e domínio."
-              : "Preencha os dados para criar uma nova atribuição entre papel e domínio."}
+              ? "Atualize os dados da atribuição."
+              : "Preencha os dados para criar uma nova atribuição."}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Papel */}
+              <FormField
+                control={form.control}
+                name="papelId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Papel *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um papel" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {papeis.map((papel) => (
+                          <SelectItem key={papel.id} value={papel.id}>
+                            {papel.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Domínio */}
+              <FormField
+                control={form.control}
+                name="dominioId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Domínio *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um domínio" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {dominios.map((dominio) => (
+                          <SelectItem key={dominio.id} value={dominio.id}>
+                            {dominio.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Tipo de Entidade */}
             <FormField
               control={form.control}
-              name="dominioId"
+              name="tipoEntidade"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Domínio *</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <FormLabel>Tipo de Entidade *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecione o domínio" />
+                        <SelectValue placeholder="Selecione o tipo de entidade" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {dominiosData?.data?.map((dominio) => (
-                        <SelectItem key={dominio.id} value={dominio.id}>
-                          <div className="flex items-center gap-2">
-                            <span>{dominio.nome}</span>
-                            {dominio.categoria && (
-                              <Badge variant="outline" className="text-xs">
-                                {dominio.categoria}
-                              </Badge>
-                            )}
-                          </div>
+                      {tiposEntidade.map((tipo) => (
+                        <SelectItem key={tipo} value={tipo}>
+                          {tipo}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>
-                    Selecione o domínio/comunidade para esta atribuição
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="papelId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Papel *</FormLabel>
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o papel" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {papeisData?.data?.map((papel) => (
-                        <SelectItem key={papel.id} value={papel.id}>
-                          {papel.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Selecione o papel de governança para esta atribuição
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+            {/* Documento de Atribuição */}
             <FormField
               control={form.control}
               name="documentoAtribuicao"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Documento de Atribuição *</FormLabel>
+                  <FormLabel>Documento de Atribuição</FormLabel>
                   <FormControl>
-                    <Input placeholder="URL ou caminho do documento" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Informe a URL ou caminho do documento que formaliza esta atribuição
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="comiteAprovador"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Comitê Aprovador *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Nome do comitê aprovador" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Informe o nome do comitê ou instância que aprovou esta atribuição
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="onboarding"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
+                    <Textarea
+                      placeholder="Cole o documento ou URL do documento"
+                      className="min-h-[80px]"
+                      {...field}
                     />
                   </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      Onboarding Ativo
-                    </FormLabel>
-                    <FormDescription>
-                      Indica se o processo de onboarding está habilitado para esta atribuição
-                    </FormDescription>
-                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              {/* Comitê Aprovador ID */}
+              <FormField
+                control={form.control}
+                name="comiteAprovadorId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ID do Comitê Aprovador</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Digite o ID do comitê" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Onboarding */}
+              <FormField
+                control={form.control}
+                name="onboarding"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel>Onboarding</FormLabel>
+                      <FormDescription className="text-xs">
+                        Requer processo de onboarding
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {/* Data Início Vigência */}
+              <FormField
+                control={form.control}
+                name="dataInicioVigencia"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Data Início Vigência *</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Data Término */}
+              <FormField
+                control={form.control}
+                name="dataTermino"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Data Término</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Observações */}
+            <FormField
+              control={form.control}
+              name="observacoes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Observações</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Digite observações adicionais"
+                      className="min-h-[100px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -260,8 +339,8 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
                 {createAtribuicao.isPending || updateAtribuicao.isPending
                   ? "Salvando..."
                   : isEditing
-                  ? "Atualizar"
-                  : "Criar"}
+                    ? "Atualizar"
+                    : "Criar"}
               </Button>
             </DialogFooter>
           </form>

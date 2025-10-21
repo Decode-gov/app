@@ -59,13 +59,9 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
 
   const onSubmit = async (data: SistemaFormValues) => {
     try {
-      // Converter strings vazias em undefined
       const payload = {
-        ...data,
-        bancoDados: data.bancoDados || undefined,
-        repositorio: data.repositorio || undefined,
-        tecnologia: data.tecnologia || undefined,
-        responsavelTecnico: data.responsavelTecnico || undefined,
+        nome: data.sistema,
+        descricao: data.bancoDados,
       }
 
       if (isEditing) {
