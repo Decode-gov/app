@@ -241,13 +241,41 @@ export const UpdateListaReferenciaSchema = ListaReferenciaSchema.partial()
 // 12) DOCUMENTOS (POLIMÓRFICO)
 // ============================================================================
 
+const TipoEntidadeEnum = z.enum([
+  'Politica',
+  'Papel',
+  'Atribuicao',
+  'Processo',
+  'Termo',
+  'KPI',
+  'RegraNegocio',
+  'RegraQualidade',
+  'Dominio',
+  'Sistema',
+  'Tabela',
+  'Coluna'
+])
+
 export const DocumentoSchema = z.object({
-  nome: stringRequired(1, "Nome"),
+  entidadeId: uuidRequired("Entidade"),
+  tipoEntidade: TipoEntidadeEnum,
+  nomeArquivo: stringRequired(1, "Nome do Arquivo"),
+  tamanhoBytes: z.number().int().positive("Tamanho deve ser positivo"),
+  tipoArquivo: stringRequired(1, "Tipo de Arquivo"),
+  caminhoArquivo: stringRequired(1, "Caminho do Arquivo"),
   descricao: stringOptional(),
+  metadados: stringOptional(),
+  checksum: stringOptional(),
+  versao: z.number().int().positive().default(1),
+  ativo: z.boolean().default(true),
 })
 
 export const CreateDocumentoSchema = DocumentoSchema
-export const UpdateDocumentoSchema = DocumentoSchema.partial()
+export const UpdateDocumentoSchema = z.object({
+  descricao: stringOptional(),
+  metadados: stringOptional(),
+  ativo: z.boolean().optional(),
+})
 
 // ============================================================================
 // 13) DIMENSÕES DE QUALIDADE
@@ -322,9 +350,8 @@ export const UpdateRegulacaoSchema = RegulacaoSchema.partial()
 
 export const CriticidadeRegulatoriaSchema = z.object({
   regulacaoId: uuidRequired("Regulação"),
-  epigrafe: stringRequired(1, "Epígrafe"),
-  criticidade: z.enum(['BAIXA', 'MEDIA', 'ALTA', 'CRITICA']),
-  justificativa: stringOptional(),
+  regraQualidadeId: uuidRequired("Regra de Qualidade"),
+  grauCriticidade: z.enum(['BAIXA', 'MEDIA', 'ALTA', 'CRITICA']),
 })
 
 export const CreateCriticidadeRegulatoriaSchema = CriticidadeRegulatoriaSchema
@@ -428,13 +455,26 @@ export const ChangePasswordSchema = z.object({
 
 export const RepositorioDocumentoSchema = z.object({
   nome: stringRequired(1, "Nome"),
+  tipo: stringRequired(1, "Tipo"),
+  localizacao: stringRequired(1, "Localização"),
+  responsavel: stringRequired(1, "Responsável"),
   descricao: stringOptional(),
-  tipo: z.enum(['LOCAL', 'S3', 'SHAREPOINT', 'GOOGLE_DRIVE']),
-  configuracao: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
 })
 
 export const CreateRepositorioDocumentoSchema = RepositorioDocumentoSchema
 export const UpdateRepositorioDocumentoSchema = RepositorioDocumentoSchema.partial()
+
+// ============================================================================
+// DOCUMENTO REPOSITÓRIO (TERMO ↔ REPOSITÓRIO)
+// ============================================================================
+
+export const DocumentoRepositorioSchema = z.object({
+  termoId: uuidRequired("Termo"),
+  repositorioId: uuidRequired("Repositório"),
+})
+
+export const CreateDocumentoRepositorioSchema = DocumentoRepositorioSchema
+export const UpdateDocumentoRepositorioSchema = DocumentoRepositorioSchema.partial()
 
 // ============================================================================
 // MFA (AUTENTICAÇÃO MULTIFATOR)
@@ -599,6 +639,11 @@ export type ChangePasswordFormData = z.infer<typeof ChangePasswordSchema>
 export type RepositorioDocumentoFormData = z.infer<typeof RepositorioDocumentoSchema>
 export type CreateRepositorioDocumentoFormData = z.infer<typeof CreateRepositorioDocumentoSchema>
 export type UpdateRepositorioDocumentoFormData = z.infer<typeof UpdateRepositorioDocumentoSchema>
+
+// Documento Repositório (Termo ↔ Repositório)
+export type DocumentoRepositorioFormData = z.infer<typeof DocumentoRepositorioSchema>
+export type CreateDocumentoRepositorioFormData = z.infer<typeof CreateDocumentoRepositorioSchema>
+export type UpdateDocumentoRepositorioFormData = z.infer<typeof UpdateDocumentoRepositorioSchema>
 
 // MFA
 export type MfaFormData = z.infer<typeof MfaSchema>

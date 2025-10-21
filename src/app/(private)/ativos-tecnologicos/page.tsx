@@ -146,7 +146,7 @@ export default function AtivosTecnologicosPage() {
         </div>
 
         <Tabs defaultValue="sistemas" className="w-full">
-          <TabsList className="grid w-full md:w-[400px] grid-cols-2">
+          <TabsList className="grid w-full md:w-[400px] grid-cols-2 bg-foreground/10">
             <TabsTrigger value="sistemas">Sistemas</TabsTrigger>
             <TabsTrigger value="bancos">Bancos de Dados</TabsTrigger>
           </TabsList>

@@ -1,37 +1,38 @@
 ﻿"use client"
 
 import { useState } from "react"
-import { Plus, Search, MoreHorizontal, Edit, Trash2 } from "lucide-react"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card"
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
+import { Skeleton } from "@/components/ui/skeleton"
 import { useKpis, useDeleteKpi } from "@/hooks/api/use-kpis"
 import { useProcessos } from "@/hooks/api/use-processos"
 import { useComunidades } from "@/hooks/api/use-comunidades"
@@ -47,7 +48,7 @@ export default function KpisPage() {
   const [processoFilter, setProcessoFilter] = useState<string>("all")
   const [comunidadeFilter, setComunidadeFilter] = useState<string>("all")
 
-  const { data: kpisData, isLoading } = useKpis()
+  const { data: kpisData, isLoading, error } = useKpis()
   const { data: processosData } = useProcessos()
   const { data: comunidadesData } = useComunidades()
   const deleteMutation = useDeleteKpi()
@@ -102,53 +103,120 @@ export default function KpisPage() {
     return comunidade?.nome || "N/A"
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Stats Card */}
-      <div className="grid gap-4 md:grid-cols-1">
-        <Card>
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="animate-fade-in">
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            KPIs
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Gerencie os indicadores chave de performance
+          </p>
+        </div>
+
+        <Card className="animate-pulse">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de KPIs
-            </CardTitle>
+            <Skeleton className="h-4 w-[100px]" />
+            <Skeleton className="h-8 w-8 rounded-lg" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{kpis.length}</div>
-            <p className="text-xs text-muted-foreground">
-              {filteredKpis.length} {filteredKpis.length === 1 ? 'resultado encontrado' : 'resultados encontrados'}
-            </p>
+            <Skeleton className="h-8 w-[60px] mb-2" />
+            <Skeleton className="h-3 w-[120px]" />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-10 w-[300px]" />
+              <Skeleton className="h-10 w-[100px]" />
+            </div>
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
+    )
+  }
 
-      {/* Filters and Actions */}
-      <Card>
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-destructive">
+            KPIs
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Erro ao carregar KPIs
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="animate-fade-in">
+        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          KPIs
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          Gerencie os indicadores chave de performance no sistema DECODE-GOV
+        </p>
+      </div>
+
+      {/* Card de estatística */}
+      <Card className="group hover:shadow-lg transition-all duration-300">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Total de KPIs</CardTitle>
+          <div className="p-2 rounded-lg bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
+            <TrendingUp className="h-4 w-4 text-purple-600 transition-colors duration-300" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-purple-600">
+            {kpis.length}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {filteredKpis.length} {filteredKpis.length === 1 ? 'resultado encontrado' : 'resultados encontrados'}
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Tabela de dados */}
+      <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
         <CardHeader>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center justify-between">
             <div>
-              <CardTitle>KPIs</CardTitle>
+              <CardTitle>Indicadores Chave de Performance</CardTitle>
               <CardDescription>
-                Gerencie os indicadores chave de performance
+                Lista de todos os KPIs cadastrados
               </CardDescription>
             </div>
-            <Button onClick={handleNewKpi}>
-              <Plus className="mr-2 h-4 w-4" />
+            <Button className="gap-2" onClick={handleNewKpi}>
+              <Plus className="h-4 w-4" />
               Novo KPI
             </Button>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-            <div className="relative">
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar KPIs..."
-                className="pl-8"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                className="pl-8"
               />
             </div>
             <Select value={processoFilter} onValueChange={setProcessoFilter}>
-              <SelectTrigger>
+              <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Filtrar por processo" />
               </SelectTrigger>
               <SelectContent>
@@ -161,7 +229,7 @@ export default function KpisPage() {
               </SelectContent>
             </Select>
             <Select value={comunidadeFilter} onValueChange={setComunidadeFilter}>
-              <SelectTrigger>
+              <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Filtrar por comunidade" />
               </SelectTrigger>
               <SelectContent>
@@ -174,76 +242,67 @@ export default function KpisPage() {
               </SelectContent>
             </Select>
           </div>
-        </CardHeader>
 
-        <CardContent>
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <p className="text-sm text-muted-foreground">Carregando...</p>
-            </div>
-          ) : filteredKpis.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <p className="text-sm text-muted-foreground">
-                {search || processoFilter !== "all" || comunidadeFilter !== "all"
-                  ? "Nenhum KPI encontrado com os filtros aplicados."
-                  : "Nenhum KPI cadastrado."}
-              </p>
-              {!search && processoFilter === "all" && comunidadeFilter === "all" && (
-                <Button onClick={handleNewKpi} variant="outline" className="mt-4">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Cadastrar primeiro KPI
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Processo</TableHead>
+                  <TableHead>Comunidade</TableHead>
+                  <TableHead>Criado em</TableHead>
+                  <TableHead className="w-[70px]">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredKpis.length === 0 ? (
                   <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Processo</TableHead>
-                    <TableHead>Comunidade</TableHead>
-                    <TableHead>Criado em</TableHead>
-                    <TableHead className="w-[70px]">Ações</TableHead>
+                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                      {search || processoFilter !== "all" || comunidadeFilter !== "all"
+                        ? "Nenhum KPI encontrado com os filtros aplicados"
+                        : "Nenhum KPI cadastrado"}
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredKpis.map((kpi) => (
+                ) : (
+                  filteredKpis.map((kpi) => (
                     <TableRow key={kpi.id}>
-                      <TableCell className="font-medium">
-                        {kpi.nome}
+                      <TableCell className="font-medium max-w-[300px]">
+                        <div className="truncate" title={kpi.nome}>
+                          {kpi.nome}
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <span className="text-sm">
+                      <TableCell className="max-w-[200px]">
+                        <div className="truncate" title={kpi.processoId ? getProcessoNome(kpi.processoId) : '-'}>
                           {kpi.processoId ? getProcessoNome(kpi.processoId) : '-'}
-                        </span>
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <span className="text-sm">
+                      <TableCell className="max-w-[200px]">
+                        <div className="truncate" title={kpi.comunidadeId ? getComunidadeNome(kpi.comunidadeId) : '-'}>
                           {kpi.comunidadeId ? getComunidadeNome(kpi.comunidadeId) : '-'}
-                        </span>
+                        </div>
                       </TableCell>
-                      <TableCell>
-                        <span className="text-sm text-muted-foreground">
-                          {format(new Date(kpi.createdAt), "dd/MM/yyyy", { locale: ptBR })}
-                        </span>
+                      <TableCell className="text-muted-foreground">
+                        {format(new Date(kpi.createdAt), "dd/MM/yyyy", { locale: ptBR })}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button variant="ghost" className="h-8 w-8 p-0">
                               <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Abrir menu</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            <DropdownMenuItem>
+                              <Eye className="mr-2 h-4 w-4" />
+                              Ver detalhes
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleEdit(kpi)}>
                               <Edit className="mr-2 h-4 w-4" />
                               Editar
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              onClick={() => handleDelete(kpi.id)}
                               className="text-destructive"
+                              onClick={() => handleDelete(kpi.id)}
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
                               Excluir
@@ -252,17 +311,23 @@ export default function KpisPage() {
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
+      {/* Formulário de Criação/Edição */}
       <KpiForm
         open={formOpen}
-        onOpenChange={setFormOpen}
+        onOpenChange={(open) => {
+          setFormOpen(open)
+          if (!open) {
+            setEditingKpi(undefined)
+          }
+        }}
         kpi={editingKpi}
       />
     </div>

@@ -1,44 +1,46 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useCreatePoliticaInterna, useUpdatePoliticaInterna } from "@/hooks/api/use-politicas-internas"
+import { useComunidades } from "@/hooks/api/use-comunidades"
 import { PoliticaInternaResponse } from "@/types/api"
+import { DominioForm } from "@/components/dominios/dominio-form"
 
 // Schema de formulário para UI (usa Date objects)
 const politicaInternaFormSchema = z.object({
@@ -68,8 +70,13 @@ interface PoliticaInternaFormProps {
 }
 
 export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaInternaFormProps) {
+  const [dominioDialogOpen, setDominioDialogOpen] = useState(false)
+  
   const createMutation = useCreatePoliticaInterna()
   const updateMutation = useUpdatePoliticaInterna()
+  const { data: comunidadesData } = useComunidades({ page: 1, limit: 1000 })
+  
+  const comunidades = comunidadesData?.data || []
   
   const form = useForm<PoliticaInternaFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -80,7 +87,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
       categoria: "",
       objetivo: "",
       escopo: "",
-      dominioDadosId: "",
+      dominioDadosId: undefined,
       responsavel: "",
       dataCriacao: new Date(),
       dataInicioVigencia: new Date(),
@@ -103,7 +110,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
           categoria: politica.categoria,
           objetivo: politica.objetivo,
           escopo: politica.escopo,
-          dominioDadosId: politica.dominioDadosId || "",
+          dominioDadosId: politica.dominioDadosId || undefined,
           responsavel: politica.responsavel,
           dataCriacao: new Date(politica.dataCriacao),
           dataInicioVigencia: new Date(politica.dataInicioVigencia),
@@ -121,7 +128,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
           categoria: "",
           objetivo: "",
           escopo: "",
-          dominioDadosId: "",
+          dominioDadosId: undefined,
           responsavel: "",
           dataCriacao: new Date(),
           dataInicioVigencia: new Date(),
@@ -171,22 +178,23 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
   const isSubmitting = createMutation.isPending || updateMutation.isPending
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-sm border-border/60">
-        <DialogHeader>
-          <DialogTitle className="text-foreground">
-            {politica ? "Editar Política Interna" : "Nova Política Interna"}
-          </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
-            {politica 
-              ? "Atualize as informações da política de governança."
-              : "Preencha os dados para criar uma nova política de governança."
-            }
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-sm border-border/60">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">
+              {politica ? "Editar Política Interna" : "Nova Política Interna"}
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              {politica 
+                ? "Atualize as informações da política de governança."
+                : "Preencha os dados para criar uma nova política de governança."
+              }
+            </DialogDescription>
+          </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* Nome (obrigatório) */}
             <FormField
               control={form.control}
@@ -358,7 +366,6 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                           onSelect={field.onChange}
                           locale={ptBR}
                           disabled={(date) => date < new Date("1900-01-01")}
-                          initialFocus
                         />
                       </PopoverContent>
                     </Popover>
@@ -471,20 +478,53 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
               />
             </div>
 
-            {/* Domínio de Dados ID (opcional) */}
+            {/* Domínio de Dados (opcional) */}
             <FormField
               control={form.control}
               name="dominioDadosId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-foreground">Domínio de Dados ID</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="UUID do domínio de dados (opcional)"
-                      {...field}
-                      className="bg-background/50 border-border/60"
-                    />
-                  </FormControl>
+                  <FormLabel className="text-foreground">Domínio de Dados</FormLabel>
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <Select 
+                        onValueChange={(value) => field.onChange(value || undefined)} 
+                        value={field.value || undefined}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="bg-background/50 border-border/60">
+                            <SelectValue placeholder="Selecione o domínio de dados" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {comunidades.length === 0 ? (
+                            <div className="p-2 text-sm text-muted-foreground text-center">
+                              Nenhum domínio encontrado
+                            </div>
+                          ) : (
+                            comunidades.map((comunidade) => (
+                              <SelectItem key={comunidade.id} value={comunidade.id}>
+                                {comunidade.nome}
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setDominioDialogOpen(true)}
+                      className="bg-background/50 border-border/60 hover:bg-accent/50 flex-shrink-0"
+                      title="Criar novo domínio"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <FormDescription className="text-xs text-muted-foreground">
+                    Selecione o domínio de dados associado (opcional)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -570,5 +610,12 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
         </Form>
       </DialogContent>
     </Dialog>
+
+    {/* Dialog para criar domínio inline */}
+    <DominioForm 
+      open={dominioDialogOpen}
+      onOpenChange={setDominioDialogOpen}
+    />
+  </>
   )
 }

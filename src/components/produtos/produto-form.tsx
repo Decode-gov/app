@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -10,10 +10,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDes
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Plus } from "lucide-react"
 import { useCreateProdutoDados, useUpdateProdutoDados } from "@/hooks/api/use-produtos-dados"
 import { useComunidades } from "@/hooks/api/use-comunidades"
 import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
 import { ProdutoDadosResponse } from "@/types/api"
+import { DominioForm } from "@/components/dominios/dominio-form"
+import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form"
 
 const formSchema = z.object({
   nome: z.string({ message: "Nome é obrigatório" }).min(1, "Nome é obrigatório"),
@@ -32,6 +35,9 @@ interface ProdutoFormProps {
 }
 
 export function ProdutoForm({ open, onOpenChange, produto }: ProdutoFormProps) {
+  const [dominioDialogOpen, setDominioDialogOpen] = useState(false)
+  const [politicaDialogOpen, setPoliticaDialogOpen] = useState(false)
+  
   const isEditing = !!produto
   const createProduto = useCreateProdutoDados()
   const updateProduto = useUpdateProdutoDados()
@@ -47,9 +53,9 @@ export function ProdutoForm({ open, onOpenChange, produto }: ProdutoFormProps) {
     defaultValues: {
       nome: "",
       descricao: "",
-      dominioId: "",
-      politicaId: "",
-      regulacaoId: "",
+      dominioId: undefined,
+      politicaId: undefined,
+      regulacaoId: undefined,
     },
   })
 
@@ -58,17 +64,17 @@ export function ProdutoForm({ open, onOpenChange, produto }: ProdutoFormProps) {
       form.reset({
         nome: produto.nome || "",
         descricao: produto.descricao || "",
-        dominioId: produto.dominioId || "",
-        politicaId: produto.politicaId || "",
-        regulacaoId: produto.regulacaoId || "",
+        dominioId: produto.dominioId || undefined,
+        politicaId: produto.politicaId || undefined,
+        regulacaoId: produto.regulacaoId || undefined,
       })
     } else {
       form.reset({
         nome: "",
         descricao: "",
-        dominioId: "",
-        politicaId: "",
-        regulacaoId: "",
+        dominioId: undefined,
+        politicaId: undefined,
+        regulacaoId: undefined,
       })
     }
   }, [produto, form])
@@ -101,19 +107,20 @@ export function ProdutoForm({ open, onOpenChange, produto }: ProdutoFormProps) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{isEditing ? "Editar" : "Novo"} Produto de Dados</DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Edite as informações do produto de dados"
-              : "Preencha os campos para criar um novo produto de dados"}
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{isEditing ? "Editar" : "Novo"} Produto de Dados</DialogTitle>
+            <DialogDescription>
+              {isEditing
+                ? "Edite as informações do produto de dados"
+                : "Preencha os campos para criar um novo produto de dados"}
+            </DialogDescription>
+          </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="nome"
@@ -153,21 +160,46 @@ export function ProdutoForm({ open, onOpenChange, produto }: ProdutoFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Domínio (Opcional)</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || ""}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o domínio" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="">Nenhum</SelectItem>
-                      {comunidades.map((comunidade) => (
-                        <SelectItem key={comunidade.id} value={comunidade.id}>
-                          {comunidade.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <Select 
+                        onValueChange={(value) => field.onChange(value || undefined)} 
+                        value={field.value || undefined}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o domínio" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {comunidades.length === 0 ? (
+                            <div className="p-2 text-sm text-muted-foreground text-center">
+                              Nenhum domínio encontrado
+                            </div>
+                          ) : (
+                            comunidades.map((comunidade) => (
+                              <SelectItem key={comunidade.id} value={comunidade.id}>
+                                {comunidade.nome}
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setDominioDialogOpen(true)}
+                      className="flex-shrink-0"
+                      title="Criar novo domínio"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <FormDescription className="text-xs">
+                    Deixe em branco se não houver domínio associado
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -179,21 +211,46 @@ export function ProdutoForm({ open, onOpenChange, produto }: ProdutoFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Política (Opcional)</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || ""}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione a política" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="">Nenhuma</SelectItem>
-                      {politicas.map((politica) => (
-                        <SelectItem key={politica.id} value={politica.id}>
-                          {politica.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <Select 
+                        onValueChange={(value) => field.onChange(value || undefined)} 
+                        value={field.value || undefined}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione a política" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {politicas.length === 0 ? (
+                            <div className="p-2 text-sm text-muted-foreground text-center">
+                              Nenhuma política encontrada
+                            </div>
+                          ) : (
+                            politicas.map((politica) => (
+                              <SelectItem key={politica.id} value={politica.id}>
+                                {politica.nome}
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setPoliticaDialogOpen(true)}
+                      className="flex-shrink-0"
+                      title="Criar nova política"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <FormDescription className="text-xs">
+                    Deixe em branco se não houver política associada
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -215,5 +272,18 @@ export function ProdutoForm({ open, onOpenChange, produto }: ProdutoFormProps) {
         </Form>
       </DialogContent>
     </Dialog>
+
+    {/* Dialog para criar domínio inline */}
+    <DominioForm 
+      open={dominioDialogOpen}
+      onOpenChange={setDominioDialogOpen}
+    />
+
+    {/* Dialog para criar política inline */}
+    <PoliticaInternaForm 
+      open={politicaDialogOpen}
+      onOpenChange={setPoliticaDialogOpen}
+    />
+  </>
   )
 }

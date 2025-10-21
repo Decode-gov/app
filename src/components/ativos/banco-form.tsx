@@ -135,7 +135,13 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Sistema</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select 
+                    onValueChange={(value) => {
+                      // Converter "none" de volta para string vazia
+                      field.onChange(value === "none" ? "" : value)
+                    }} 
+                    value={field.value || "none"}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione o sistema (opcional)">
@@ -148,7 +154,7 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">Nenhum sistema</SelectItem>
+                      <SelectItem value="none">Nenhum sistema</SelectItem>
                       {sistemas.length === 0 ? (
                         <div className="p-2 text-sm text-muted-foreground text-center">
                           Nenhum sistema cadastrado

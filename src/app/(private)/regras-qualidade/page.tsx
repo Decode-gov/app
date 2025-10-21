@@ -148,7 +148,7 @@ export default function RegrasQualidadePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
+              <div className="relative flex-1 max-w-sm">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Buscar regras..."
@@ -172,35 +172,64 @@ export default function RegrasQualidadePage() {
               </Select>
             </div>
 
-            {isLoading ? (
-              <Skeleton className="h-[400px] w-full" />
-            ) : error ? (
-              <p className="text-center text-muted-foreground py-8">
-                Erro ao carregar regras. Tente novamente.
-              </p>
-            ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Descrição</TableHead>
+                    <TableHead>Dimensão</TableHead>
+                    <TableHead>Tabela</TableHead>
+                    <TableHead>Responsável</TableHead>
+                    <TableHead>Data de Criação</TableHead>
+                    <TableHead className="w-[70px]">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoading ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <TableRow key={i}>
+                        <TableCell>
+                          <Skeleton className="h-4 w-[250px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-5 w-[100px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-5 w-[100px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-5 w-[100px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-[100px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-8 w-8" />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : error ? (
                     <TableRow>
-                      <TableHead>Descrição</TableHead>
-                      <TableHead>Dimensão</TableHead>
-                      <TableHead>Tabela</TableHead>
-                      <TableHead>Responsável</TableHead>
-                      <TableHead>Data de Criação</TableHead>
-                      <TableHead className="w-[70px]">Ações</TableHead>
+                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                        Erro ao carregar regras. Tente novamente.
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {regras.map((regra: RegraQualidadeResponse) => {
+                  ) : regras.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                        Nenhuma regra encontrada
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    regras.map((regra: RegraQualidadeResponse) => {
                       const dimensao = dimensoes.find(d => d.id === regra.dimensaoId)
                       const tabela = regra.tabelaId ? tabelas.find(t => t.id === regra.tabelaId) : null
                       const responsavel = regra.responsavelId ? papeis.find(p => p.id === regra.responsavelId) : null
 
                       return (
                         <TableRow key={regra.id}>
-                          <TableCell className="font-medium">
-                            <div className="max-w-[300px] truncate" title={regra.descricao}>
+                          <TableCell className="font-medium max-w-[300px]">
+                            <div className="truncate" title={regra.descricao}>
                               {regra.descricao}
                             </div>
                           </TableCell>
@@ -252,11 +281,11 @@ export default function RegrasQualidadePage() {
                           </TableCell>
                         </TableRow>
                       )
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>

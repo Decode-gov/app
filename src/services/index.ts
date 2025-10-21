@@ -1,7 +1,6 @@
 // Export legacy services for backward compatibility
 export { produtosDadosService } from './produtos-dados'
 export { regrasNegocioService, regraNegocioService } from './regras-negocio'
-export { dimensoesQualidadeService } from './dimensoes-qualidade'
 export { kpisService } from './kpis'
 export { necessidadeInformacaoService } from './necessidades-informacao'
 
@@ -26,7 +25,7 @@ export { auditoriaService } from './auditoria'
 
 // Export new services
 export { listaReferenciaService } from './listas-referencia'
-export { dimensaoQualidadeService } from './dimensoes-qualidade-new'
+export { dimensaoQualidadeService, dimensoesQualidadeService } from './dimensoes-qualidade-new'
 export { regraQualidadeService } from './regras-qualidade'
 export { parteEnvolvidaService } from './partes-envolvidas'
 export { regulacaoService } from './regulacao'

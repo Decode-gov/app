@@ -14,7 +14,7 @@ class CriticidadeRegulatoriaService extends BaseService<
   UpdateCriticidadeRegulatoriaBody
 > {
   constructor() {
-    super('/criticidade-regulatoria');
+    super('/criticidades-regulatorias');
   }
 }
 

@@ -123,78 +123,95 @@ export default function TermosNegocioPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Termos de Negócio</h1>
-          <p className="text-muted-foreground">
-            Gerencie o glossário de termos e definições do sistema
-          </p>
-        </div>
-        <Button onClick={handleNewTermo}>
-          <Plus className="mr-2 h-4 w-4" />
-          Novo Termo
-        </Button>
+      <div className="animate-fade-in">
+        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          Termos de Negócio
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          Gerencie o glossário de termos e definições do sistema DECODE-GOV
+        </p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
+        <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total de Termos</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
+              <BookOpen className="h-4 w-4 text-blue-600 transition-colors duration-300" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{termos.length}</div>
+            <div className="text-2xl font-bold text-blue-600">{termos.length}</div>
+            <p className="text-xs text-muted-foreground">termos cadastrados</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Termos Ativos</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
+              <BookOpen className="h-4 w-4 text-green-600 transition-colors duration-300" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{termos.filter(t => t.ativo).length}</div>
+            <div className="text-2xl font-bold text-green-600">{termos.filter(t => t.ativo).length}</div>
+            <p className="text-xs text-muted-foreground">termos ativos</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Termos Inativos</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 rounded-lg bg-gray-100 group-hover:bg-gray-200 transition-colors duration-300">
+              <BookOpen className="h-4 w-4 text-gray-600 transition-colors duration-300" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{termos.filter(t => !t.ativo).length}</div>
+            <div className="text-2xl font-bold text-gray-600">{termos.filter(t => !t.ativo).length}</div>
+            <p className="text-xs text-muted-foreground">termos inativos</p>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar por termo ou definição..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-8"
-          />
-        </div>
-        <Select value={ativoFilter} onValueChange={setAtivoFilter}>
-          <SelectTrigger className="w-full md:w-[250px]">
-            <SelectValue placeholder="Filtrar por status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os status</SelectItem>
-            <SelectItem value="ativo">Ativos</SelectItem>
-            <SelectItem value="inativo">Inativos</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Table */}
-      <Card>
-        <Table>
+      <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Termos de Negócio</CardTitle>
+            </div>
+            <Button className="gap-2" onClick={handleNewTermo}>
+              <Plus className="h-4 w-4" />
+              Novo Termo
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por termo ou definição..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <Select value={ativoFilter} onValueChange={setAtivoFilter}>
+              <SelectTrigger className="w-full md:w-[250px]">
+                <SelectValue placeholder="Filtrar por status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os status</SelectItem>
+                <SelectItem value="ativo">Ativos</SelectItem>
+                <SelectItem value="inativo">Inativos</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="rounded-md border">
+            <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Termo</TableHead>
@@ -205,46 +222,46 @@ export default function TermosNegocioPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-            {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[200px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[300px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-[80px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[100px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-8 w-8" />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : filteredTermos.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
-                  Nenhum termo encontrado
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredTermos.map((termo) => (
-                <TableRow key={termo.id}>
-                  <TableCell className="font-medium">{termo.termo}</TableCell>
-                  <TableCell className="max-w-[400px] truncate">
-                    {termo.definicao || '-'}
-                  </TableCell>
-                  <TableCell>
-                    {termo.sigla ? (
-                      <Badge variant="outline">{termo.sigla}</Badge>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
-                  </TableCell>
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton className="h-4 w-[200px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-[300px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-5 w-[80px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-[100px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-8 w-8" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : filteredTermos.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-muted-foreground">
+                      Nenhum termo encontrado
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredTermos.map((termo) => (
+                    <TableRow key={termo.id}>
+                      <TableCell className="font-medium">{termo.termo}</TableCell>
+                      <TableCell className="max-w-[400px] truncate">
+                        {termo.definicao || '-'}
+                      </TableCell>
+                      <TableCell>
+                        {termo.sigla ? (
+                          <Badge variant="outline">{termo.sigla}</Badge>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
                       <TableCell className="text-muted-foreground">
                         {format(new Date(termo.createdAt), "dd/MM/yyyy", { locale: ptBR })}
                       </TableCell>
@@ -275,7 +292,9 @@ export default function TermosNegocioPage() {
                 )}
               </TableBody>
             </Table>
-          </Card>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Form Dialog */}
       <TermoForm open={formOpen} onOpenChange={handleCloseForm} termo={selectedTermo} />

@@ -99,13 +99,13 @@ const menuItems = [
       { title: "Produtos de Dados", icon: Database, url: "/produtos-dados" },
     ],
   },
-  {
-    title: "Gestão Documental",
-    items: [
-      { title: "Documentos", icon: FileText, url: "/documentos" },
-      { title: "Partes Envolvidas", icon: Users, url: "/partes-envolvidas" },
-    ],
-  },
+  // {
+  //   title: "Gestão Documental",
+  //   items: [
+  //     { title: "Documentos", icon: FileText, url: "/documentos" },
+  //     { title: "Partes Envolvidas", icon: Users, url: "/partes-envolvidas" },
+  //   ],
+  // },
 ]
 
 export function AppSidebar() {

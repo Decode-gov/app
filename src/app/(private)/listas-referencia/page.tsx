@@ -63,63 +63,77 @@ export default function ListasReferenciaPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Listas de Referência</h1>
-          <p className="text-muted-foreground">
-            Gerencie listas de referência do sistema
-          </p>
-        </div>
-        <Button onClick={() => setFormOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Nova Lista
-        </Button>
+      <div className="animate-fade-in">
+        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          Listas de Referência
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          Gerencie listas de referência do sistema DECODE-GOV
+        </p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+        <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total de Listas</CardTitle>
-            <List className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
+              <List className="h-4 w-4 text-blue-600 transition-colors duration-300" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
+            <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
+            <p className="text-xs text-muted-foreground">listas cadastradas</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Com Descrição</CardTitle>
-            <List className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
+              <List className="h-4 w-4 text-green-600 transition-colors duration-300" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.comDescricao}</div>
+            <div className="text-2xl font-bold text-green-600">{stats.comDescricao}</div>
+            <p className="text-xs text-muted-foreground">com descrição</p>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center">
-        <div className="relative flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar por nome ou descrição..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-8"
-          />
-        </div>
       </div>
 
       {/* Table */}
-      <Card>
-        <Table>
+      <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Listas de Referência</CardTitle>
+            </div>
+            <Button className="gap-2" onClick={() => setFormOpen(true)}>
+              <Plus className="h-4 w-4" />
+              Nova Lista
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por nome ou descrição..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+          </div>
+
+          <div className="rounded-md border">
+            <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Nome</TableHead>
               <TableHead>Descrição</TableHead>
-              <TableHead className="w-[70px]"></TableHead>
+              <TableHead className="w-[70px]">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -179,6 +193,8 @@ export default function ListasReferenciaPage() {
             )}
           </TableBody>
         </Table>
+          </div>
+        </CardContent>
       </Card>
 
       {/* Form Dialog */}

@@ -14,7 +14,7 @@ class RegulacaoService extends BaseService<
   UpdateRegulacaoBody
 > {
   constructor() {
-    super('/regulacao');
+    super('/regulacoes-completas');
   }
 }
 

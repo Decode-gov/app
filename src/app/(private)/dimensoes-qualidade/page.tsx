@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Target, Layers } from "lucide-react"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Target } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -55,8 +55,6 @@ export default function DimensoesQualidadePage() {
   const dimensoes = dimensoesData?.data || []
   const politicas = politicasData?.data || []
 
-  const politicasUnicas = [...new Set(dimensoes.map(d => d.politicaId))].length
-
   return (
     <>
       <div className="space-y-6">
@@ -69,49 +67,23 @@ export default function DimensoesQualidadePage() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total</CardTitle>
-              <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <Target className="h-4 w-4 text-blue-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{dimensoesData?.total || 0}</div>
-              <p className="text-xs text-muted-foreground">dimensões cadastradas</p>
-            </CardContent>
-          </Card>
+        {/* Card de estatística */}
+        <Card className="group hover:shadow-lg transition-all duration-300">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total de Dimensões</CardTitle>
+            <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
+              <Target className="h-4 w-4 text-blue-600 transition-colors duration-300" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {dimensoesData?.total || 0}
+            </div>
+            <p className="text-xs text-muted-foreground">dimensões cadastradas</p>
+          </CardContent>
+        </Card>
 
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Políticas</CardTitle>
-              <div className="p-2 rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <Layers className="h-4 w-4 text-green-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{politicasUnicas}</div>
-              <p className="text-xs text-muted-foreground">políticas relacionadas</p>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Média por Política</CardTitle>
-              <div className="p-2 rounded-lg bg-orange-100 group-hover:bg-orange-200 transition-colors duration-300">
-                <Target className="h-4 w-4 text-orange-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">
-                {politicasUnicas > 0 ? Math.round((dimensoesData?.total || 0) / politicasUnicas) : 0}
-              </div>
-              <p className="text-xs text-muted-foreground">dimensões por política</p>
-            </CardContent>
-          </Card>
-        </div>
-
+        {/* Tabela de dados */}
         <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -129,7 +101,7 @@ export default function DimensoesQualidadePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
+              <div className="relative flex-1 max-w-sm">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Buscar dimensões..."
@@ -153,38 +125,63 @@ export default function DimensoesQualidadePage() {
               </Select>
             </div>
 
-            {isLoading ? (
-              <Skeleton className="h-[400px] w-full" />
-            ) : error ? (
-              <p className="text-center text-muted-foreground py-8">
-                Erro ao carregar dimensões. Tente novamente.
-              </p>
-            ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Descrição</TableHead>
+                    <TableHead>Política</TableHead>
+                    <TableHead>Data de Criação</TableHead>
+                    <TableHead className="w-[70px]">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoading ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <TableRow key={i}>
+                        <TableCell>
+                          <Skeleton className="h-4 w-[200px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-[300px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-5 w-[100px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-4 w-[100px]" />
+                        </TableCell>
+                        <TableCell>
+                          <Skeleton className="h-8 w-8" />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : error ? (
                     <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead>Descrição</TableHead>
-                      <TableHead>Política</TableHead>
-                      <TableHead>Data de Criação</TableHead>
-                      <TableHead className="w-[70px]">Ações</TableHead>
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                        Erro ao carregar dimensões. Tente novamente.
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {dimensoes.map((dimensao: DimensaoQualidadeResponse) => {
+                  ) : dimensoes.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                        Nenhuma dimensão encontrada
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    dimensoes.map((dimensao: DimensaoQualidadeResponse) => {
                       const politica = politicas.find(p => p.id === dimensao.politicaId)
 
                       return (
                         <TableRow key={dimensao.id}>
-                          <TableCell className="font-medium">
-                            <div className="flex items-center gap-2">
-                              <Target className="h-4 w-4 text-blue-500" />
+                          <TableCell className="font-medium max-w-[300px]">
+                            <div className="truncate" title={dimensao.nome}>
                               {dimensao.nome}
                             </div>
                           </TableCell>
-                          <TableCell>
-                            <div className="max-w-[400px] truncate" title={dimensao.descricao}>
+                          <TableCell className="max-w-[400px]">
+                            <div className="truncate" title={dimensao.descricao}>
                               {dimensao.descricao}
                             </div>
                           </TableCell>
@@ -222,11 +219,11 @@ export default function DimensoesQualidadePage() {
                           </TableCell>
                         </TableRow>
                       )
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>

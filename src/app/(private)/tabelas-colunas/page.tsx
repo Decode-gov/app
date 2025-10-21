@@ -10,10 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useColunas, useDeleteColuna } from "@/hooks/api/use-colunas"
-import { useDefinicoes } from "@/hooks/api/use-definicoes"
 import { useSistemas } from "@/hooks/api/use-sistemas"
-import { useBancos } from "@/hooks/api/use-bancos"
-import { useNecessidadesInformacao } from "@/hooks/api/use-necessidades-informacao"
 import { ColunaResponse } from "@/types/api"
 import { ColunaForm } from "@/components/colunas/coluna-form"
 
@@ -31,10 +28,7 @@ export default function TabelasColunasPage() {
     search: searchTerm || undefined,
   })
   
-  const { data: definicoesData } = useDefinicoes({ page: 1, limit: 1000 })
   const { data: sistemasData } = useSistemas({ page: 1, limit: 1000 })
-  const { data: bancosData } = useBancos({ page: 1, limit: 1000 })
-  const { data: necessidadesData } = useNecessidadesInformacao({ page: 1, limit: 1000 })
 
   const deleteColuna = useDeleteColuna()
 
@@ -55,10 +49,7 @@ export default function TabelasColunasPage() {
   }
 
   const colunas = colunasData?.data || []
-  const definicoes = definicoesData?.data || []
   const sistemas = sistemasData?.data || []
-  const bancos = bancosData?.data || []
-  const necessidades = necessidadesData?.data || []
 
   return (
     <>
@@ -105,8 +96,8 @@ export default function TabelasColunasPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex gap-4">
-              <div className="relative flex-1">
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1 max-w-sm">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Buscar colunas..."
@@ -115,83 +106,102 @@ export default function TabelasColunasPage() {
                   className="pl-8"
                 />
               </div>
-              <Select value={sistemaFilter || "todos"} onValueChange={(value) => setSistemaFilter(value === "todos" ? "" : value)}>
-                <SelectTrigger className="w-[250px]">
-                  <SelectValue placeholder="Filtrar por sistema" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos os sistemas</SelectItem>
-                  {sistemas.map((sistema) => (
-                    <SelectItem key={sistema.id} value={sistema.id}>
-                      {sistema.sistema}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div>
+                <Select value={sistemaFilter || "todos"} onValueChange={(value) => setSistemaFilter(value === "todos" ? "" : value)}>
+                  <SelectTrigger className="w-[250px]">
+                    <SelectValue placeholder="Filtrar por sistema" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todos os sistemas</SelectItem>
+                    {sistemas.map((sistema) => (
+                      <SelectItem key={sistema.id} value={sistema.id}>
+                        {sistema.sistema}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            {isLoadingColunas ? (
-              <Skeleton className="h-[400px] w-full" />
-            ) : errorColunas ? (
-              <p className="text-center text-muted-foreground py-8">
-                Erro ao carregar colunas. Tente novamente.
-              </p>
-            ) : (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Termo</TableHead>
+                    <TableHead>Sistema</TableHead>
+                    <TableHead>Banco</TableHead>
+                    <TableHead> Tabela</TableHead>
+                    <TableHead>Coluna</TableHead>
+                    <TableHead>Necessidade</TableHead>
+                    <TableHead className="w-[70px]">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoadingColunas ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <TableRow key={i}>
+                        <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-[200px]" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-[40px]" /></TableCell>
+                      </TableRow>
+                    ))
+                  ) : errorColunas ? (
                     <TableRow>
-                      <TableHead>Termo</TableHead>
-                      <TableHead>Sistema</TableHead>
-                      <TableHead>Banco</TableHead>
-                      <TableHead>Tabela</TableHead>
-                      <TableHead>Coluna</TableHead>
-                      <TableHead>Necessidade</TableHead>
-                      <TableHead className="w-[70px]">Ações</TableHead>
+                      <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                        Erro ao carregar colunas. Tente novamente.
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {(colunasData?.data || []).map((coluna: ColunaResponse) => {
-                      return (
-                        <TableRow key={coluna.id}>
-                          <TableCell className="font-medium">{coluna.nome}</TableCell>
-                          <TableCell>{coluna.tabelaId}</TableCell>
-                          <TableCell>-</TableCell>
-                          <TableCell>-</TableCell>
-                          <TableCell>
-                            <div className="max-w-[200px] truncate" title={coluna.descricao}>
-                              {coluna.descricao || '-'}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleEdit(coluna)}>
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  Editar
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  className="text-destructive"
-                                  onClick={() => handleDelete(coluna.id)}
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Excluir
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
+                  ) : (colunas.length === 0) ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                        Nenhuma coluna encontrada
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    colunas.map((coluna: ColunaResponse) => (
+                      <TableRow key={coluna.id}>
+                        <TableCell className="font-medium">{coluna.nome}</TableCell>
+                        <TableCell>{coluna.tabelaId}</TableCell>
+                        <TableCell>-</TableCell>
+                        <TableCell>-</TableCell>
+                        <TableCell>
+                          <div className="max-w-[200px] truncate" title={coluna.descricao}>
+                            {coluna.descricao || '-'}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => handleEdit(coluna)}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Editar
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                className="text-destructive"
+                                onClick={() => handleDelete(coluna.id)}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Excluir
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                        <TableCell className="w-[70px]" />
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </div>

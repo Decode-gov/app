@@ -473,11 +473,16 @@ export type UpdateDocumentoBody = UpdateDocumentoFormData
 
 export interface DocumentoResponse {
   id: string;
-  titulo: string;
-  descricao: string;
-  url: string;
-  entidadeTipo: 'Politica' | 'Papel' | 'Atribuicao' | 'Processo' | 'Termo' | 'KPI' | 'RegraNegocio' | 'RegraQualidade' | 'Dominio' | 'Sistema' | 'Tabela' | 'Coluna';
   entidadeId: string;
+  tipoEntidade: 'Politica' | 'Papel' | 'Atribuicao' | 'Processo' | 'Termo' | 'KPI' | 'RegraNegocio' | 'RegraQualidade' | 'Dominio' | 'Sistema' | 'Tabela' | 'Coluna';
+  nomeArquivo: string;
+  tamanhoBytes: number;
+  tipoArquivo: string;
+  caminhoArquivo: string;
+  descricao?: string;
+  metadados?: string;
+  checksum?: string;
+  versao: number;
   ativo: boolean;
   createdAt: string;
   updatedAt: string;
@@ -617,9 +622,10 @@ export type UpdateCriticidadeRegulatoriaBody = UpdateCriticidadeRegulatoriaFormD
 export interface CriticidadeRegulatoriaResponse {
   id: string;
   regulacaoId: string;
-  epigrafe: string;
-  criticidade: 'BAIXA' | 'MEDIA' | 'ALTA' | 'CRITICA';
-  justificativa?: string;
+  regraQualidadeId: string;
+  grauCriticidade: 'BAIXA' | 'MEDIA' | 'ALTA' | 'CRITICA';
+  regulacao?: RegulacaoResponse;
+  regraQualidade?: RegraQualidadeResponse;
   createdAt: string;
   updatedAt: string;
 }
@@ -766,10 +772,26 @@ export type UpdateRepositorioDocumentoBody = UpdateRepositorioDocumentoFormData
 export interface RepositorioDocumentoResponse {
   id: string;
   nome: string;
+  tipo: string;
+  localizacao: string;
+  responsavel: string;
   descricao?: string;
-  tipo: 'LOCAL' | 'S3' | 'SHAREPOINT' | 'GOOGLE_DRIVE';
-  configuracao: Record<string, string | number | boolean>;
   ativo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DocumentoRepositorioResponse {
+  id: string;
+  termoId: string;
+  repositorioId: string;
+  termo?: {
+    id: string;
+    termo: string;
+    definicao?: string;
+    sigla?: string;
+  };
+  repositorio?: RepositorioDocumentoResponse;
   createdAt: string;
   updatedAt: string;
 }

@@ -167,14 +167,17 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tabela (Opcional)</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                  <Select 
+                    onValueChange={(value) => field.onChange(value === "none" ? "" : value)} 
+                    value={field.value || "none"}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione a tabela" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">Nenhuma</SelectItem>
+                      <SelectItem value="none">Nenhuma</SelectItem>
                       {tabelas.map((tabela) => (
                         <SelectItem key={tabela.id} value={tabela.id}>
                           {tabela.nome}
@@ -193,14 +196,17 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Coluna (Opcional)</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                  <Select 
+                    onValueChange={(value) => field.onChange(value === "none" ? "" : value)} 
+                    value={field.value || "none"}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione a coluna" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">Nenhuma</SelectItem>
+                      <SelectItem value="none">Nenhuma</SelectItem>
                       {colunasFiltered.map((coluna) => (
                         <SelectItem key={coluna.id} value={coluna.id}>
                           {coluna.nome}
@@ -219,14 +225,17 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Responsável (Opcional)</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                  <Select 
+                    onValueChange={(value) => field.onChange(value === "none" ? "" : value)} 
+                    value={field.value || "none"}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione o responsável" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">Nenhum</SelectItem>
+                      <SelectItem value="none">Nenhum</SelectItem>
                       {papeis.map((papel) => (
                         <SelectItem key={papel.id} value={papel.id}>
                           {papel.nome}
