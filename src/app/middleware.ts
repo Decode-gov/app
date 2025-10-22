@@ -17,8 +17,11 @@ export const config = {
       source: "/*",
       regexp: "^/(.*)",
       locale: false,
-      has: [{ type: "cookie", key: "authToken", value: "active" }],
-      missing: [{ type: "cookie", key: "authToken", value: "active" }],
+      has: [
+        { type: "header", key: "Authorization", value: "Bearer Token" },
+        { type: "query", key: "userId", value: "123" },
+      ],
+      missing: [{ type: "cookie", key: "session", value: "active" }],
     },
   ],
 };
