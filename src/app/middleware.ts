@@ -13,15 +13,12 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - login (public login page)
-     * - Files with extensions (.png, .jpg, .jpeg, .gif, .svg, .ico, .webp)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|login|.*\\.(png|jpg|jpeg|gif|svg|ico|webp)$).*)'
-  ]
+    {
+      source: "/*",
+      regexp: "^/(.*)",
+      locale: false,
+      has: [{ type: "cookie", key: "authToken", value: "active" }],
+      missing: [{ type: "cookie", key: "authToken", value: "active" }],
+    },
+  ],
 };
