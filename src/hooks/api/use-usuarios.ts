@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { usuarioService, LoginBody, RegisterBody, ChangePasswordBody, LoginResponse } from '@/services/usuarios';
-import { CreateUsuarioBody, UpdateUsuarioBody, QueryParams, ApiError } from '@/types/api';
+import { usuarioService, LoginBody, RegisterBody, ChangePasswordBody } from '@/services/usuarios';
+import { UpdateUsuarioBody, QueryParams, ApiError } from '@/types/api';
 
 /**
  * Chaves de query para usuários

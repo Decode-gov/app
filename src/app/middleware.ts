@@ -21,7 +21,7 @@ export const config = {
         { type: "header", key: "Authorization", value: "Bearer Token" },
         { type: "query", key: "userId", value: "123" },
       ],
-      missing: [{ type: "cookie", key: "session", value: "active" }],
+      missing: [{ type: "cookie", key: "authToken", value: "active" }],
     },
   ],
 };
