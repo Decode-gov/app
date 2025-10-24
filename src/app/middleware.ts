@@ -2,26 +2,23 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("authToken")?.value;
-
-  if (!token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  const sessionCookie = request.cookies.get("authToken");
+  const pathname = request.nextUrl.pathname;
+   // Se não tem cookie de sessão e não está na página de login, redireciona para login
+  if (!sessionCookie?.value && pathname !== '/login') {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  return NextResponse.next();
+  // Se tem cookie de sessão e está na página de login, redireciona para dashboard
+  if (sessionCookie?.value && pathname === '/login') {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  return NextResponse.next()
 }
 
 export const config = {
   matcher: [
-    {
-      source: "/*",
-      regexp: "^/(.*)",
-      locale: false,
-      has: [
-        { type: "header", key: "Authorization", value: "Bearer Token" },
-        { type: "query", key: "userId", value: "123" },
-      ],
-      missing: [{ type: "cookie", key: "authToken", value: "active" }],
-    },
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.svg$).*)',
   ],
 };
