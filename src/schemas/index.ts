@@ -41,23 +41,21 @@ export const UpdateNecessidadeInformacaoSchema = NecessidadeInformacaoSchema.par
 // ============================================================================
 
 export const PoliticaInternaSchema = z.object({
-  nome: stringRequired(1, "Nome"),
-  descricao: stringRequired(1, "Descrição"),
-  categoria: stringRequired(1, "Categoria"),
-  objetivo: stringRequired(1, "Objetivo"),
-  escopo: stringRequired(1, "Escopo"),
-  dominioDadosId: stringOptional(),
-  responsavel: stringRequired(1, "Responsável"),
-  dataCriacao: dateStringRequired("Data de Criação"),
-  dataInicioVigencia: dateStringRequired("Data de Início de Vigência"),
-  dataTermino: stringOptional(),
-  status: z.enum(['Em_elaboracao', 'Vigente', 'Revogada'], {
-    message: "Status deve ser: Em elaboracao, Vigente ou Revogada"
-  }),
-  versao: stringRequired(1, "Versão"),
-  anexosUrl: stringOptional(),
-  relacionamento: stringOptional(),
-  observacoes: stringOptional(),
+  nome: z.string().min(1, "Nome é obrigatório").max(255),
+  descricao: z.string().min(1, "Descrição é obrigatória").max(2000),
+  categoria: z.string().min(1, "Categoria é obrigatória"),
+  objetivo: z.string().min(1, "Objetivo é obrigatório"),
+  escopo: z.string().min(1, "Escopo é obrigatório"),
+  dominioDadosId: z.string().optional(),
+  responsavel: z.string().min(1, "Responsável é obrigatório"),
+  dataCriacao: z.coerce.date({message: "Data de criação é obrigatória"}),
+  dataInicioVigencia: z.coerce.date({message: "Data de início é obrigatória"}),
+  dataTermino: z.coerce.date().optional(),
+  status: z.enum(['Em_elaboracao', 'Vigente', 'Revogada']),
+  versao: z.string().min(1, "Versão é obrigatória"),
+  anexosUrl: z.string().optional(),
+  relacionamento: z.string().optional(),
+  observacoes: z.string().optional(),
 })
 
 export const CreatePoliticaInternaSchema = PoliticaInternaSchema

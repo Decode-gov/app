@@ -351,9 +351,9 @@ export interface PoliticaInternaResponse {
   escopo: string;
   dominioDadosId?: string;
   responsavel: string;
-  dataCriacao: string;
-  dataInicioVigencia: string;
-  dataTermino?: string;
+  dataCriacao: Date;
+  dataInicioVigencia: Date;
+  dataTermino?: Date;
   status: 'Em_elaboracao' | 'Vigente' | 'Revogada';
   versao: string;
   anexosUrl?: string;

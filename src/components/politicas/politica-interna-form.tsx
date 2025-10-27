@@ -51,9 +51,9 @@ const politicaInternaFormSchema = z.object({
   escopo: z.string().min(1, "Escopo é obrigatório"),
   dominioDadosId: z.string().optional(),
   responsavel: z.string().min(1, "Responsável é obrigatório"),
-  dataCriacao: z.date({message: "Data de criação é obrigatória"}),
-  dataInicioVigencia: z.date({message: "Data de início é obrigatória"}),
-  dataTermino: z.string().optional(),
+  dataCriacao: z.coerce.date({message: "Data de criação é obrigatória"}),
+  dataInicioVigencia: z.coerce.date({message: "Data de início é obrigatória"}),
+  dataTermino: z.coerce.date().optional(),
   status: z.enum(['Em_elaboracao', 'Vigente', 'Revogada']),
   versao: z.string().min(1, "Versão é obrigatória"),
   anexosUrl: z.string().optional(),
@@ -91,7 +91,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
       responsavel: "",
       dataCriacao: new Date(),
       dataInicioVigencia: new Date(),
-      dataTermino: "",
+      dataTermino: new Date(),
       status: "Em_elaboracao",
       versao: "",
       anexosUrl: "",
@@ -114,7 +114,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
           responsavel: politica.responsavel,
           dataCriacao: new Date(politica.dataCriacao),
           dataInicioVigencia: new Date(politica.dataInicioVigencia),
-          dataTermino: politica.dataTermino || "",
+          dataTermino: politica.dataTermino || new Date(),
           status: politica.status,
           versao: politica.versao,
           anexosUrl: politica.anexosUrl || "",
@@ -132,7 +132,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
           responsavel: "",
           dataCriacao: new Date(),
           dataInicioVigencia: new Date(),
-          dataTermino: "",
+          dataTermino: new Date(),
           status: "Em_elaboracao",
           versao: "",
           anexosUrl: "",
@@ -145,20 +145,14 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
 
   const onSubmit = async (data: PoliticaInternaFormValues) => {
     try {
-      const payload = {
-        ...data,
-        dataCriacao: data.dataCriacao.toISOString().split('T')[0],
-        dataInicioVigencia: data.dataInicioVigencia.toISOString().split('T')[0],
-        dataTermino: data.dataTermino || undefined,
-      }
 
       if (politica) {
         await updateMutation.mutateAsync({
           id: politica.id,
-          data: payload,
+          data,
         })
       } else {
-        await createMutation.mutateAsync(payload)
+        await createMutation.mutateAsync(data)
       }
 
       form.reset()
@@ -316,7 +310,6 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                           onSelect={field.onChange}
                           locale={ptBR}
                           disabled={(date) => date > new Date()}
-                          initialFocus
                         />
                       </PopoverContent>
                     </Popover>
@@ -376,13 +369,35 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel className="text-foreground">Data de Término</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                        className="bg-background/50 border-border/60"
-                      />
-                    </FormControl>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full pl-3 text-left font-normal bg-background/50 border-border/60",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "dd/MM/yyyy", { locale: ptBR })
+                            ) : (
+                              <span>Selecione uma data</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          locale={ptBR}
+                          disabled={(date) => date < new Date("1900-01-01")}
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <FormDescription className="text-xs text-muted-foreground">
                       Data de término da vigência (opcional, formato: AAAA-MM-DD)
                     </FormDescription>
