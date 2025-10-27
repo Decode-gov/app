@@ -10,7 +10,6 @@ import type {
   ChangePasswordResponse,
 } from '@/types/api';
 import type { CreateUsuarioFormData as RegisterBody } from '@/schemas';
-import { clearCookieSession } from '@/lib/auth';
 
 // Re-exportar tipos para uso nos hooks
 export type { LoginBody, LoginResponse, ChangePasswordBody, RegisterBody };
@@ -57,7 +56,7 @@ export class UsuarioService extends BaseService<
   async logout(): Promise<void> {
     try {
       await api.post(`${this.endpoint}/logout`);
-      await clearCookieSession()
+      // await clearCookieSession()
     } catch (error) {
       throw this.handleError(error);
     }
