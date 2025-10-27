@@ -247,19 +247,11 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">Escopo *</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="bg-background/50 border-border/60">
-                          <SelectValue placeholder="Selecione o escopo" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="SEGURANCA">Segurança</SelectItem>
-                        <SelectItem value="QUALIDADE">Qualidade</SelectItem>
-                        <SelectItem value="GOVERNANCA">Governança</SelectItem>
-                        <SelectItem value="OUTRO">Outro</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input
+                      placeholder="Descreva o escopo da política"
+                      {...field}
+                      className="bg-background/50 border-border/60"
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -279,9 +271,9 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="EM_REVISAO">Em Revisão</SelectItem>
-                        <SelectItem value="ATIVA">Ativa</SelectItem>
-                        <SelectItem value="REVOGADA">Revogada</SelectItem>
+                        <SelectItem value="Em_elaboracao">Em elaboração</SelectItem>
+                        <SelectItem value="Vigente">Vigente</SelectItem>
+                        <SelectItem value="Revogada">Revogada</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
