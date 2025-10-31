@@ -15,7 +15,7 @@ import { useCreateProdutoDados, useUpdateProdutoDados } from "@/hooks/api/use-pr
 import { useComunidades } from "@/hooks/api/use-comunidades"
 import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
 import { ProdutoDadosResponse } from "@/types/api"
-import { DominioForm } from "@/components/dominios/dominio-form"
+
 import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form"
 
 const formSchema = z.object({
@@ -273,11 +273,6 @@ export function ProdutoForm({ open, onOpenChange, produto }: ProdutoFormProps) {
       </DialogContent>
     </Dialog>
 
-    {/* Dialog para criar domínio inline */}
-    <DominioForm 
-      open={dominioDialogOpen}
-      onOpenChange={setDominioDialogOpen}
-    />
 
     {/* Dialog para criar política inline */}
     <PoliticaInternaForm 
