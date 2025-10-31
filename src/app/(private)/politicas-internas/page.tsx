@@ -43,14 +43,12 @@ const escopoLabels: Record<string, string> = {
 export default function PoliticasPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("")
-  const [escopoFilter, setEscopoFilter] = useState<string>("")
   const [formOpen, setFormOpen] = useState(false)
   const [selectedPolitica, setSelectedPolitica] = useState<PoliticaInternaResponse | undefined>()
 
   const { data: politicasData, isLoading, error } = usePoliticasInternas({
     page: 1,
     limit: 1000,
-    escopo: escopoFilter || undefined,
     status: statusFilter || undefined,
     nome: searchTerm || undefined
   })
@@ -216,18 +214,6 @@ export default function PoliticasPage() {
                 className="pl-8"
               />
             </div>
-            <Select value={escopoFilter || "ALL"} onValueChange={(value) => setEscopoFilter(value === "ALL" ? "" : value)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filtrar por escopo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Todos os escopos</SelectItem>
-                <SelectItem value="SEGURANCA">Segurança</SelectItem>
-                <SelectItem value="QUALIDADE">Qualidade</SelectItem>
-                <SelectItem value="GOVERNANCA">Governança</SelectItem>
-                <SelectItem value="OUTRO">Outro</SelectItem>
-              </SelectContent>
-            </Select>
             <Select value={statusFilter || "ALL"} onValueChange={(value) => setStatusFilter(value === "ALL" ? "" : value)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Filtrar por status" />
