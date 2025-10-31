@@ -73,7 +73,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
   
   const createMutation = useCreatePoliticaInterna()
   const updateMutation = useUpdatePoliticaInterna()
-  const { data: comunidadesData } = useComunidades({ page: 1, limit: 1000 })
+  const { data: comunidadesData } = useComunidades({ })
   
   const comunidades = comunidadesData?.data || []
   

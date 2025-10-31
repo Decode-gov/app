@@ -18,6 +18,9 @@ const stringOptional = () => z.string().optional()
 const uuidRequired = (campo: string) =>
   z.uuid().min(1, `${campo} é obrigatória`)
 
+const uuidOptional = () =>
+  z.uuid().optional()
+
 const dateStringRequired = (campo: string) =>
   z.iso.datetime({ message: `${campo} deve ser uma data válida` })
 
@@ -116,6 +119,7 @@ export const UpdateAtribuicaoSchema = z.object({
 export const DefinicaoSchema = z.object({
   termo: stringRequired(1, "Termo"),
   definicao: stringRequired(1, "Definição"),
+  comunidadeId: uuidRequired("Selecionar um domínio de dados"),
   sigla: stringOptional(),
 })
 

@@ -179,6 +179,12 @@ export interface DefinicaoResponse {
   termo: string;
   definicao: string;
   sigla?: string;
+  comunidadeId?: string;
+  comunidade?: {
+    id: string;
+    nome: string;
+    parentId?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
