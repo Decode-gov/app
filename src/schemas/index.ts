@@ -30,7 +30,6 @@ export const NecessidadeInformacaoSchema = z.object({
   elementoEstrategico: stringOptional(),
   elementoTatico: stringOptional(),
   origemQuestao: stringRequired(1, "Origem da Questão"),
-  comunidadeId: uuidRequired("Comunidade"),
 })
 
 export const CreateNecessidadeInformacaoSchema = NecessidadeInformacaoSchema
@@ -41,21 +40,21 @@ export const UpdateNecessidadeInformacaoSchema = NecessidadeInformacaoSchema.par
 // ============================================================================
 
 export const PoliticaInternaSchema = z.object({
-  nome: z.string().min(1, "Nome é obrigatório").max(255),
-  descricao: z.string().min(1, "Descrição é obrigatória").max(2000),
-  categoria: z.string().min(1, "Categoria é obrigatória"),
-  objetivo: z.string().min(1, "Objetivo é obrigatório"),
-  escopo: z.string().min(1, "Escopo é obrigatório"),
-  dominioDadosId: z.string().optional(),
-  responsavel: z.string().min(1, "Responsável é obrigatório"),
-  dataCriacao: z.coerce.date({message: "Data de criação é obrigatória"}),
-  dataInicioVigencia: z.coerce.date({message: "Data de início é obrigatória"}),
-  dataTermino: z.coerce.date().optional(),
+  nome: z.string().min(1).optional(),
+  descricao: z.string().min(1).optional(),
+  categoria: z.string().min(1).optional(),
+  objetivo: z.string().min(1).optional(),
+  escopo: z.string().min(1).optional(),
+  dominioDadosId: z.uuid().nullable().optional(),
+  responsavel: z.string().min(1).optional(),
+  dataCriacao: z.coerce.date(),
+  dataInicioVigencia: z.coerce.date(),
+  dataTermino: z.coerce.date().nullable().optional(),
   status: z.enum(['Em_elaboracao', 'Vigente', 'Revogada']),
-  versao: z.string().min(1, "Versão é obrigatória"),
-  anexosUrl: z.string().optional(),
-  relacionamento: z.string().optional(),
-  observacoes: z.string().optional(),
+  versao: z.string().min(1),
+  anexosUrl: z.url().nullable().optional(),
+  relacionamento: z.string().nullable().optional(),
+  observacoes: z.string().nullable().optional()
 })
 
 export const CreatePoliticaInternaSchema = PoliticaInternaSchema
@@ -66,14 +65,10 @@ export const UpdatePoliticaInternaSchema = PoliticaInternaSchema.partial()
 // ============================================================================
 
 export const PapelSchema = z.object({
-  listaPapelId: uuidRequired("Lista de Papel"),
-  comunidadeId: uuidRequired("Comunidade"),
+  listaPapelId: uuidRequired("Lista de Papel").optional(),
   nome: stringRequired(1, "Nome"),
   descricao: stringOptional(),
-  politicaId: uuidRequired("Política"),
-  documentoAtribuicao: stringOptional(),
-  comiteAprovadorId: stringOptional(),
-  onboarding: z.boolean().default(false),
+  politicaId: uuidRequired("Política")
 })
 
 export const CreatePapelSchema = PapelSchema
@@ -85,11 +80,11 @@ export const UpdatePapelSchema = PapelSchema.partial()
 
 export const ComunidadeSchema = z.object({
   nome: stringRequired(1, "Nome"),
-  parentId: stringOptional(),
+  parentId: z.uuid().optional().nullable(),
 })
 
 export const CreateComunidadeSchema = ComunidadeSchema
-export const UpdateComunidadeSchema = ComunidadeSchema.partial()
+export const UpdateComunidadeSchema = ComunidadeSchema
 
 // ============================================================================
 // 5) ATRIBUIÇÕES PAPEL↔DOMÍNIO
@@ -98,19 +93,21 @@ export const UpdateComunidadeSchema = ComunidadeSchema.partial()
 export const AtribuicaoSchema = z.object({
   papelId: stringRequired(1, "Papel"),
   dominioId: stringRequired(1, "Domínio"),
-  tipoEntidade: z.enum(['Politica', 'Papel', 'Atribuicao', 'Processo', 'Termo', 'KPI', 'RegraNegocio', 'RegraQualidade', 'Dominio', 'Sistema', 'Tabela', 'Coluna'], {
-    message: "Tipo de entidade é obrigatório",
-  }),
-  documentoAtribuicao: stringOptional(),
-  comiteAprovadorId: stringOptional(),
+  documentoAtribuicao: stringRequired(1, "Documento de atribuição"),
+  comiteAprovadorId: stringRequired(1, "Comitê aprovador"),
   onboarding: z.boolean().default(false),
-  dataInicioVigencia: z.string().min(1, "Data de início de vigência é obrigatória"),
-  dataTermino: stringOptional(),
-  observacoes: stringOptional(),
+  responsavel: stringRequired(1, "Responsável"),
 })
 
 export const CreateAtribuicaoSchema = AtribuicaoSchema
-export const UpdateAtribuicaoSchema = AtribuicaoSchema.partial()
+export const UpdateAtribuicaoSchema = z.object({
+  papelId: stringOptional(),
+  dominioId: stringOptional(),
+  documentoAtribuicao: stringOptional(),
+  comiteAprovadorId: stringOptional(),
+  onboarding: z.boolean().optional(),
+  responsavel: stringOptional(),
+})
 
 // ============================================================================
 // 6) TERMOS DE NEGÓCIO (DEFINIÇÕES)

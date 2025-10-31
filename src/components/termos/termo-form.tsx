@@ -6,20 +6,20 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Loader2 } from "lucide-react"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -46,7 +46,7 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
     defaultValues: {
       termo: "",
       definicao: "",
-      sigla: "",
+      sigla: undefined,
     },
   })
 
@@ -55,13 +55,13 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
       form.reset({
         termo: termo.termo,
         definicao: termo.definicao,
-        sigla: termo.sigla || "",
+        sigla: termo.sigla || undefined,
       })
     } else {
       form.reset({
         termo: "",
         definicao: "",
-        sigla: "",
+        sigla: undefined,
       })
     }
   }, [termo, form])
@@ -103,9 +103,9 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
               name="termo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Termo *</FormLabel>
+                  <FormLabel>Definição do termo *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Digite o termo (único)" {...field} />
+                    <Input placeholder="Digite a definição do termo..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -117,10 +117,10 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
               name="definicao"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Definição *</FormLabel>
+                  <FormLabel>Categorização do termo *</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Digite a definição do termo..."
+                      placeholder="Digite a categorização do termo..."
                       className="min-h-[100px]"
                       {...field}
                     />
@@ -143,8 +143,6 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
                 </FormItem>
               )}
             />
-
-
 
             <DialogFooter>
               <Button

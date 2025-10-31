@@ -179,10 +179,6 @@ export interface DefinicaoResponse {
   termo: string;
   definicao: string;
   sigla?: string;
-  exemploUso?: string;
-  sinonimos?: string;
-  fonteOrigem?: string;
-  ativo: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -274,18 +270,8 @@ export interface ComunidadeResponse {
   id: string;
   nome: string;
   parentId?: string;
-  createdAt: string;
-  updatedAt: string;
-  // Relacionamentos retornados pela API
   parent?: ComunidadeResponse;
   children?: ComunidadeResponse[];
-  papeis?: PapelResponse[];
-  kpis?: KpiResponse[];
-  _count?: {
-    children: number;
-    papeis: number;
-    kpis: number;
-  };
 }
 
 // ============================================================================
@@ -438,19 +424,28 @@ export interface ListaClassificacaoResponse {
 export type AtribuicaoBody = CreateAtribuicaoFormData
 export type UpdateAtribuicaoBody = UpdateAtribuicaoFormData
 
-export type TipoEntidadeAtribuicao = 'Politica' | 'Papel' | 'Atribuicao' | 'Processo' | 'Termo' | 'KPI' | 'RegraNegocio' | 'RegraQualidade' | 'Dominio' | 'Sistema' | 'Tabela' | 'Coluna';
+export interface ComiteAprovador {
+  id: string;
+  nome: string;
+}
+
+// Alias para response API
+export type ComiteAprovadorResponse = ComiteAprovador
+
+export type CreateComiteAprovadorData = {
+  nome: string;
+}
+
+export type UpdateComiteAprovadorData = CreateComiteAprovadorData
 
 export interface AtribuicaoResponse {
   id: string;
   papelId: string;
   dominioId: string;
-  tipoEntidade: TipoEntidadeAtribuicao;
-  documentoAtribuicao?: string;
-  comiteAprovadorId?: string;
+  documentoAtribuicao: string;
+  comiteAprovadorId: string;
   onboarding: boolean;
-  dataInicioVigencia: string;
-  dataTermino?: string;
-  observacoes?: string;
+  responsavel: string;
   papel: {
     id: string;
     nome: string;
@@ -461,6 +456,7 @@ export interface AtribuicaoResponse {
     nome: string;
     descricao?: string;
   };
+  comiteAprovador?: ComiteAprovador;
   createdAt: string;
   updatedAt: string;
 }

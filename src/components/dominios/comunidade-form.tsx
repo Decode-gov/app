@@ -115,12 +115,12 @@ export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFor
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
-            {comunidade ? "Editar Comunidade" : "Nova Comunidade"}
+            {comunidade ? "Editar domínio de dados" : "Novo domínio de dados"}
           </DialogTitle>
           <DialogDescription>
             {comunidade 
-              ? "Atualize as informações da comunidade."
-              : "Preencha os dados para criar uma nova comunidade."
+              ? "Atualize as informações do domínio de dados."
+              : "Preencha os dados para criar um novo domínio de dados."
             }
           </DialogDescription>
         </DialogHeader>

@@ -52,15 +52,6 @@ const menuItems = [
     ],
   },
   {
-    title: "Definições e Termos",
-    items: [
-      { title: "Termos de Negócio", icon: BookOpen, url: "/termos-negocio" },
-      { title: "Referencial de Classificação", icon: Tag, url: "/referencial-classificacao" },
-      { title: "Classificação das Informações", icon: Tag, url: "/classificacoes-informacao" },
-      { title: "Listas de Referência", icon: FileSpreadsheet, url: "/listas-referencia" },
-    ],
-  },
-  {
     title: "Governança",
     items: [
       { title: "Políticas Internas", icon: Shield, url: "/politicas-internas" },
@@ -69,6 +60,16 @@ const menuItems = [
       { title: "Atribuições Papel↔Domínio", icon: Workflow, url: "/atribuicoes-papel-dominio" },
     ],
   },
+  {
+    title: "Definições e Termos",
+    items: [
+      { title: "Termos de Negócio", icon: BookOpen, url: "/termos-negocio" },
+      { title: "Referencial de Classificação", icon: Tag, url: "/referencial-classificacao" },
+      { title: "Classificação das Informações", icon: Tag, url: "/classificacoes-informacao" },
+      { title: "Listas de Referência", icon: FileSpreadsheet, url: "/listas-referencia" },
+    ],
+  },
+  
   {
     title: "Regras e Qualidade",
     items: [

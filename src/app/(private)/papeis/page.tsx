@@ -2,30 +2,23 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Plus, Search, MoreHorizontal, Eye, Edit, Trash2, UserCheck } from "lucide-react"
+import { Plus, UserCheck } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { usePapeis, useDeletePapel } from "@/hooks/api/use-papeis"
 import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
 import { PapelGovernancaForm } from "@/components/papeis/papel-governanca-form"
+import { PapeisDataTable } from "@/components/papeis/papeis-data-table"
+import { createColumns } from "@/components/papeis/columns"
 import { PapelResponse } from "@/types/api"
 
 export default function PapeisPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [politicaFilter, setPoliticaFilter] = useState<string>("")
   const [formOpen, setFormOpen] = useState(false)
   const [selectedPapel, setSelectedPapel] = useState<PapelResponse | undefined>()
 
   const { data: papeisData, isLoading, error } = usePapeis({
     page: 1,
     limit: 1000,
-    nome: searchTerm || undefined,
-    politicaId: politicaFilter || undefined
   })
   const { data: politicasData } = usePoliticasInternas({ page: 1, limit: 1000 })
   const deletePapel = useDeletePapel()
@@ -34,20 +27,30 @@ export default function PapeisPage() {
   const papeis = papeisData?.data ?? []
   const politicas = politicasData?.data ?? []
 
+  const handleEdit = (papel: PapelResponse) => {
+    setSelectedPapel(papel)
+    setFormOpen(true)
+  }
+
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este papel?")) {
       await deletePapel.mutateAsync(id)
     }
   }
 
-  // Dados já filtrados pela API
-  const filteredData = papeis
-
   // Obter nome da política
   const getPoliticaNome = (politicaId: string) => {
     const politica = politicas.find(p => p.id === politicaId)
     return politica?.nome || "Política não encontrada"
   }
+
+  const columns = createColumns({
+    onEdit: handleEdit,
+    onDelete: handleDelete,
+    getPoliticaNome,
+  })
+
+  const politicaOptions = politicas.map(p => ({ id: p.id, nome: p.nome }))
 
   if (isLoading) {
     return (
@@ -166,109 +169,11 @@ export default function PapeisPage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar papéis..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8"
-              />
-            </div>
-            <Select value={politicaFilter || "ALL"} onValueChange={(value) => setPoliticaFilter(value === "ALL" ? "" : value)}>
-              <SelectTrigger className="w-[250px]">
-                <SelectValue placeholder="Filtrar por política" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Todas as políticas</SelectItem>
-                {politicas.map((politica) => (
-                  <SelectItem key={politica.id} value={politica.id}>
-                    {politica.nome}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Comunidade</TableHead>
-                  <TableHead>Política</TableHead>
-                  <TableHead>Onboarding</TableHead>
-                  <TableHead>Criado em</TableHead>
-                  <TableHead className="w-[70px]">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredData.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center text-muted-foreground">
-                      Nenhum papel encontrado
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredData.map((papel) => (
-                    <TableRow key={papel.id}>
-                      <TableCell className="font-medium">
-                        <div className="max-w-[200px] truncate" title={papel.nome}>
-                          {papel.nome}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {papel.comunidade?.nome || '-'}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary" className="max-w-[200px] truncate">
-                          {getPoliticaNome(papel.politicaId)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={papel.onboarding ? "default" : "outline"}>
-                          {papel.onboarding ? "Sim" : "Não"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {new Date(papel.createdAt).toLocaleDateString('pt-BR')}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Eye className="mr-2 h-4 w-4" />
-                              Ver detalhes
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {
-                              setSelectedPapel(papel)
-                              setFormOpen(true)
-                            }}>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Editar
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              className="text-destructive"
-                              onClick={() => handleDelete(papel.id)}
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Excluir
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <PapeisDataTable
+            columns={columns}
+            data={papeis}
+            politicaOptions={politicaOptions}
+          />
         </CardContent>
       </Card>
 

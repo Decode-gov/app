@@ -40,25 +40,24 @@ import { cn } from "@/lib/utils"
 import { useCreatePoliticaInterna, useUpdatePoliticaInterna } from "@/hooks/api/use-politicas-internas"
 import { useComunidades } from "@/hooks/api/use-comunidades"
 import { PoliticaInternaResponse } from "@/types/api"
-import { DominioForm } from "@/components/dominios/dominio-form"
+import { ComunidadeForm } from "@/components/dominios/comunidade-form"
 
-// Schema de formulário para UI (usa Date objects)
 const politicaInternaFormSchema = z.object({
-  nome: z.string().min(1, "Nome é obrigatório").max(255),
-  descricao: z.string().min(1, "Descrição é obrigatória").max(2000),
-  categoria: z.string().min(1, "Categoria é obrigatória"),
-  objetivo: z.string().min(1, "Objetivo é obrigatório"),
-  escopo: z.string().min(1, "Escopo é obrigatório"),
-  dominioDadosId: z.string().optional(),
-  responsavel: z.string().min(1, "Responsável é obrigatório"),
-  dataCriacao: z.coerce.date({message: "Data de criação é obrigatória"}),
-  dataInicioVigencia: z.coerce.date({message: "Data de início é obrigatória"}),
+  nome: z.string().min(1).optional(),
+  descricao: z.string().min(1).optional(),
+  categoria: z.string().min(1).optional(),
+  objetivo: z.string().min(1).optional(),
+  escopo: z.string().min(1).optional(),
+  dominioDadosId: z.uuid().optional(),
+  responsavel: z.string().min(1).optional(),
+  dataCriacao: z.coerce.date(),
+  dataInicioVigencia: z.coerce.date(),
   dataTermino: z.coerce.date().optional(),
   status: z.enum(['Em_elaboracao', 'Vigente', 'Revogada']),
-  versao: z.string().min(1, "Versão é obrigatória"),
+  versao: z.string().min(1),
   anexosUrl: z.string().optional(),
   relacionamento: z.string().optional(),
-  observacoes: z.string().optional(),
+  observacoes: z.string().optional()
 })
 
 type PoliticaInternaFormValues = z.infer<typeof politicaInternaFormSchema>
@@ -91,7 +90,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
       responsavel: "",
       dataCriacao: new Date(),
       dataInicioVigencia: new Date(),
-      dataTermino: new Date(),
+      dataTermino: undefined,
       status: "Em_elaboracao",
       versao: "",
       anexosUrl: "",
@@ -114,12 +113,11 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
           responsavel: politica.responsavel,
           dataCriacao: new Date(politica.dataCriacao),
           dataInicioVigencia: new Date(politica.dataInicioVigencia),
-          dataTermino: politica.dataTermino || new Date(),
           status: politica.status,
           versao: politica.versao,
-          anexosUrl: politica.anexosUrl || "",
-          relacionamento: politica.relacionamento || "",
-          observacoes: politica.observacoes || "",
+          anexosUrl: politica.anexosUrl || undefined,
+          relacionamento: politica.relacionamento || undefined,
+          observacoes: politica.observacoes || undefined,
         })
       } else {
         form.reset({
@@ -132,7 +130,6 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
           responsavel: "",
           dataCriacao: new Date(),
           dataInicioVigencia: new Date(),
-          dataTermino: new Date(),
           status: "Em_elaboracao",
           versao: "",
           anexosUrl: "",
@@ -260,7 +257,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                     <FormLabel className="text-foreground">Status *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger className="bg-background/50 border-border/60">
+                        <SelectTrigger className="bg-background/50 border-border/60 w-full">
                           <SelectValue placeholder="Selecione o status" />
                         </SelectTrigger>
                       </FormControl>
@@ -295,7 +292,9 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                             )}
                           >
                             {field.value ? (
-                              format(field.value, "dd/MM/yyyy", { locale: ptBR })
+                              format(field.value, "dd/MM/yyyy", { 
+                                locale: ptBR 
+                              })
                             ) : (
                               <span>Selecione data</span>
                             )}
@@ -354,9 +353,6 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                         />
                       </PopoverContent>
                     </Popover>
-                    <FormDescription className="text-xs text-muted-foreground">
-                      Data de início da vigência da política
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -391,16 +387,13 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value}
+                          selected={field.value ?? new Date()}
                           onSelect={field.onChange}
                           locale={ptBR}
                           disabled={(date) => date < new Date("1900-01-01")}
                         />
                       </PopoverContent>
                     </Popover>
-                    <FormDescription className="text-xs text-muted-foreground">
-                      Data de término da vigência (opcional, formato: AAAA-MM-DD)
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -499,7 +492,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                         value={field.value || undefined}
                       >
                         <FormControl>
-                          <SelectTrigger className="bg-background/50 border-border/60">
+                          <SelectTrigger className="bg-background/50 border-border/60 w-full">
                             <SelectValue placeholder="Selecione o domínio de dados" />
                           </SelectTrigger>
                         </FormControl>
@@ -619,7 +612,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
     </Dialog>
 
     {/* Dialog para criar domínio inline */}
-    <DominioForm 
+    <ComunidadeForm 
       open={dominioDialogOpen}
       onOpenChange={setDominioDialogOpen}
     />

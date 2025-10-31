@@ -32,18 +32,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
-import { AtribuicaoResponse, TipoEntidadeAtribuicao } from "@/types/api"
-
-const tiposEntidade: TipoEntidadeAtribuicao[] = [
-  'Politica', 'Papel', 'Atribuicao', 'Processo', 'Termo', 'KPI', 
-  'RegraNegocio', 'RegraQualidade', 'Dominio', 'Sistema', 'Tabela', 'Coluna'
-];
+import { AtribuicaoResponse } from "@/types/api"
 
 export default function AtribuicoesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [papelFilter, setPapelFilter] = useState("")
   const [dominioFilter, setDominioFilter] = useState("")
-  const [tipoEntidadeFilter, setTipoEntidadeFilter] = useState("")
   const [formOpen, setFormOpen] = useState(false)
   const [selectedAtribuicao, setSelectedAtribuicao] = useState<AtribuicaoResponse | undefined>()
 
@@ -52,7 +46,6 @@ export default function AtribuicoesPage() {
     limit: 1000,
     papelId: papelFilter && papelFilter !== "all" ? papelFilter : undefined,
     dominioId: dominioFilter && dominioFilter !== "all" ? dominioFilter : undefined,
-    tipoEntidade: tipoEntidadeFilter && tipoEntidadeFilter !== "all" ? (tipoEntidadeFilter as TipoEntidadeAtribuicao) : undefined,
   })
   const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
   const { data: comunidadesData } = useComunidades({ page: 1, limit: 1000 })
@@ -71,7 +64,7 @@ export default function AtribuicoesPage() {
     return (
       atribuicao.papel.nome.toLowerCase().includes(searchLower) ||
       atribuicao.dominio.nome.toLowerCase().includes(searchLower) ||
-      atribuicao.tipoEntidade.toLowerCase().includes(searchLower)
+      atribuicao.responsavel.toLowerCase().includes(searchLower)
     )
   })
 
@@ -191,7 +184,7 @@ export default function AtribuicoesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-600">
-              {atribuicoes.filter(a => !a.dataTermino || new Date(a.dataTermino) > new Date()).length}
+              {atribuicoes.length}
             </div>
             <p className="text-xs text-muted-foreground">atribuições ativas</p>
           </CardContent>
@@ -260,30 +253,14 @@ export default function AtribuicoesPage() {
               </SelectContent>
             </Select>
 
-            {/* Filtro por Tipo de Entidade */}
-            <Select value={tipoEntidadeFilter} onValueChange={setTipoEntidadeFilter}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Filtrar por Tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os Tipos</SelectItem>
-                {tiposEntidade.map((tipo) => (
-                  <SelectItem key={tipo} value={tipo}>
-                    {tipo}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
             {/* Botão Limpar Filtros */}
-            {(papelFilter || dominioFilter || tipoEntidadeFilter || searchTerm) && (
+            {(papelFilter || dominioFilter || searchTerm) && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => {
                   setPapelFilter("")
                   setDominioFilter("")
-                  setTipoEntidadeFilter("")
                   setSearchTerm("")
                 }}
                 className="gap-2"
@@ -300,8 +277,8 @@ export default function AtribuicoesPage() {
                 <TableRow>
                   <TableHead>Papel</TableHead>
                   <TableHead>Domínio</TableHead>
-                  <TableHead>Tipo de Entidade</TableHead>
-                  <TableHead>Data Início Vigência</TableHead>
+                  <TableHead>Responsável</TableHead>
+                  <TableHead>Comitê Aprovador</TableHead>
                   <TableHead className="text-center">Onboarding</TableHead>
                   <TableHead className="w-[70px]">Ações</TableHead>
                 </TableRow>
@@ -326,12 +303,12 @@ export default function AtribuicoesPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="inline-flex items-center px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                        {atribuicao.tipoEntidade}
+                      <div className="max-w-[200px] truncate" title={atribuicao.responsavel}>
+                        {atribuicao.responsavel}
                       </div>
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {new Date(atribuicao.dataInicioVigencia).toLocaleDateString('pt-BR')}
+                      {atribuicao.comiteAprovador?.nome || atribuicao.comiteAprovadorId}
                     </TableCell>
                     <TableCell className="text-center">
                       {atribuicao.onboarding ? (

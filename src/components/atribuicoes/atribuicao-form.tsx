@@ -1,6 +1,6 @@
 ﻿"use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
@@ -31,11 +31,16 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
+import { Plus } from "lucide-react"
 import { useCreateAtribuicao, useUpdateAtribuicao } from "@/hooks/api/use-atribuicoes"
 import { usePapeis } from "@/hooks/api/use-papeis"
 import { useComunidades } from "@/hooks/api/use-comunidades"
-import { AtribuicaoResponse, TipoEntidadeAtribuicao } from "@/types/api"
+import { useComitesAprovadores } from "@/hooks/api/use-comites-aprovadores"
+import { AtribuicaoResponse } from "@/types/api"
 import { AtribuicaoSchema, CreateAtribuicaoFormData } from "@/schemas"
+import { PapelGovernancaForm } from "@/components/papeis/papel-governanca-form"
+import { ComunidadeForm } from "@/components/dominios/comunidade-form"
+import { ComiteAprovadorForm } from "@/components/comites/comite-aprovador-form"
 
 type AtribuicaoFormValues = CreateAtribuicaoFormData
 
@@ -45,21 +50,22 @@ interface AtribuicaoFormProps {
   atribuicao?: AtribuicaoResponse
 }
 
-const tiposEntidade: TipoEntidadeAtribuicao[] = [
-  'Politica', 'Papel', 'Atribuicao', 'Processo', 'Termo', 'KPI',
-  'RegraNegocio', 'RegraQualidade', 'Dominio', 'Sistema', 'Tabela', 'Coluna'
-];
-
 export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFormProps) {
   const isEditing = !!atribuicao
+  const [papelDialogOpen, setPapelDialogOpen] = useState(false)
+  const [dominioDialogOpen, setDominioDialogOpen] = useState(false)
+  const [comiteDialogOpen, setComiteDialogOpen] = useState(false)
+  
   const createAtribuicao = useCreateAtribuicao()
   const updateAtribuicao = useUpdateAtribuicao()
 
-  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
-  const { data: comunidadesData } = useComunidades({ page: 1, limit: 1000 })
+  const { data: papeisData } = usePapeis({  })
+  const { data: comunidadesData } = useComunidades({  })
+  const { data: comitesData } = useComitesAprovadores({ })
 
   const papeis = papeisData?.data ?? []
   const dominios = comunidadesData?.data ?? []
+  const comites = comitesData?.data ?? []
 
   const form = useForm<CreateAtribuicaoFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -67,13 +73,10 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
     defaultValues: {
       papelId: "",
       dominioId: "",
-      tipoEntidade: "Atribuicao" as TipoEntidadeAtribuicao,
       documentoAtribuicao: "",
       comiteAprovadorId: "",
       onboarding: false,
-      dataInicioVigencia: new Date().toISOString().split('T')[0],
-      dataTermino: "",
-      observacoes: "",
+      responsavel: "",
     },
   })
 
@@ -82,25 +85,19 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
       form.reset({
         papelId: atribuicao.papelId,
         dominioId: atribuicao.dominioId,
-        tipoEntidade: atribuicao.tipoEntidade,
-        documentoAtribuicao: atribuicao.documentoAtribuicao || "",
-        comiteAprovadorId: atribuicao.comiteAprovadorId || "",
+        documentoAtribuicao: atribuicao.documentoAtribuicao,
+        comiteAprovadorId: atribuicao.comiteAprovadorId,
         onboarding: atribuicao.onboarding,
-        dataInicioVigencia: atribuicao.dataInicioVigencia.split('T')[0],
-        dataTermino: atribuicao.dataTermino ? atribuicao.dataTermino.split('T')[0] : "",
-        observacoes: atribuicao.observacoes || "",
+        responsavel: atribuicao.responsavel,
       })
     } else if (!open) {
       form.reset({
         papelId: "",
         dominioId: "",
-        tipoEntidade: "Atribuicao" as TipoEntidadeAtribuicao,
         documentoAtribuicao: "",
         comiteAprovadorId: "",
         onboarding: false,
-        dataInicioVigencia: new Date().toISOString().split('T')[0],
-        dataTermino: "",
-        observacoes: "",
+        responsavel: "",
       })
     }
   }, [atribuicao, open, form])
@@ -135,7 +132,7 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {/* Papel */}
               <FormField
                 control={form.control}
@@ -143,20 +140,31 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Papel *</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione um papel" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {papeis.map((papel) => (
-                          <SelectItem key={papel.id} value={papel.id}>
-                            {papel.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex gap-2">
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione um papel" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {papeis.map((papel) => (
+                            <SelectItem key={papel.id} value={papel.id}>
+                              {papel.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setPapelDialogOpen(true)}
+                        title="Criar novo papel"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -169,51 +177,36 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Domínio *</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione um domínio" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {dominios.map((dominio) => (
-                          <SelectItem key={dominio.id} value={dominio.id}>
-                            {dominio.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex gap-2">
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione um domínio" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {dominios.map((dominio) => (
+                            <SelectItem key={dominio.id} value={dominio.id}>
+                              {dominio.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setDominioDialogOpen(true)}
+                        title="Criar novo domínio"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-
-            {/* Tipo de Entidade */}
-            <FormField
-              control={form.control}
-              name="tipoEntidade"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tipo de Entidade *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o tipo de entidade" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {tiposEntidade.map((tipo) => (
-                        <SelectItem key={tipo} value={tipo}>
-                          {tipo}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             {/* Documento de Atribuição */}
             <FormField
@@ -221,7 +214,7 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
               name="documentoAtribuicao"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Documento de Atribuição</FormLabel>
+                  <FormLabel>Documento de Atribuição *</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Cole o documento ou URL do documento"
@@ -235,69 +228,52 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
             />
 
             <div className="grid grid-cols-2 gap-4">
-              {/* Comitê Aprovador ID */}
+              {/* Comitê Aprovador */}
               <FormField
                 control={form.control}
                 name="comiteAprovadorId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>ID do Comitê Aprovador</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Digite o ID do comitê" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Onboarding */}
-              <FormField
-                control={form.control}
-                name="onboarding"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                    <div className="space-y-0.5">
-                      <FormLabel>Onboarding</FormLabel>
-                      <FormDescription className="text-xs">
-                        Requer processo de onboarding
-                      </FormDescription>
+                    <FormLabel>Comitê Aprovador *</FormLabel>
+                    <div className="flex gap-2">
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Selecione um comitê" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {comites.map((comite) => (
+                            <SelectItem key={comite.id} value={comite.id}>
+                              {comite.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setComiteDialogOpen(true)}
+                        title="Criar novo comitê aprovador"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              {/* Data Início Vigência */}
-              <FormField
-                control={form.control}
-                name="dataInicioVigencia"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Data Início Vigência *</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Data Término */}
+              {/* Responsável */}
               <FormField
                 control={form.control}
-                name="dataTermino"
+                name="responsavel"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Data Término</FormLabel>
+                    <FormLabel>Responsável *</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input placeholder="Digite o nome do responsável" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -305,21 +281,24 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
               />
             </div>
 
-            {/* Observações */}
+            {/* Onboarding */}
             <FormField
               control={form.control}
-              name="observacoes"
+              name="onboarding"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Observações</FormLabel>
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                  <div className="space-y-0.5">
+                    <FormLabel>Onboarding</FormLabel>
+                    <FormDescription className="text-xs">
+                      Requer processo de onboarding
+                    </FormDescription>
+                  </div>
                   <FormControl>
-                    <Textarea
-                      placeholder="Digite observações adicionais"
-                      className="min-h-[100px]"
-                      {...field}
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -346,6 +325,20 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
           </form>
         </Form>
       </DialogContent>
+
+      {/* Dialogs para criar novos registros */}
+      <PapelGovernancaForm
+        open={papelDialogOpen}
+        onOpenChange={setPapelDialogOpen}
+      />
+      <ComunidadeForm
+        open={dominioDialogOpen}
+        onOpenChange={setDominioDialogOpen}
+      />
+      <ComiteAprovadorForm
+        open={comiteDialogOpen}
+        onOpenChange={setComiteDialogOpen}
+      />
     </Dialog>
   )
 }
