@@ -56,7 +56,7 @@ const menuItems = [
     items: [
       { title: "Políticas Internas", icon: Shield, url: "/politicas-internas" },
       { title: "Papéis de Governança", icon: UserCheck, url: "/papeis" },
-      { title: "Domínios/Comunidades", icon: Building, url: "/dominios" },
+      { title: "Domínios de dados", icon: Building, url: "/dominios" },
       { title: "Atribuições Papel↔Domínio", icon: Workflow, url: "/atribuicoes-papel-dominio" },
     ],
   },
