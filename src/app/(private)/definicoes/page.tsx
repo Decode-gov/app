@@ -5,8 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { TermoStatsCards } from "@/components/termos/termo-stats-cards"
 import { TermoFilters } from "@/components/termos/termo-filters"
 import { TermoForm } from "@/components/termos/termo-form"
-import { ConfirmDeleteDialog } from "@/components/termos/confirm-delete-dialog"
-import { TermoTable } from "@/components/termos/termo-table"
+import { ConfirmDeleteDialog } from "@/components/termos/confirm-delete-dialog"
 import { useDefinicoes, useDeleteDefinicao } from "@/hooks/api/use-definicoes"
 import { type DefinicaoResponse } from "@/types/api"
 
