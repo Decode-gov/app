@@ -54,32 +54,6 @@ export function DominiosDataTable<TData, TValue>({
     },
   })
 
-  // Filtro customizado para hierarquia
-  const filteredData = parentFilter
-    ? data.filter((item) => {
-        const comunidade = item as { parentId?: string }
-        if (parentFilter === "ROOT") {
-          return !comunidade.parentId
-        }
-        return comunidade.parentId === parentFilter
-      })
-    : data
-
-  // Atualizar tabela com dados filtrados
-  const filteredTable = useReactTable({
-    data: filteredData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      columnFilters,
-    },
-  })
-
-  const activeTable = parentFilter ? filteredTable : table
-
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
@@ -87,9 +61,9 @@ export function DominiosDataTable<TData, TValue>({
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar domínios de dados..."
-            value={(activeTable.getColumn("nome")?.getFilterValue() as string) ?? ""}
+            value={(table.getColumn("nome")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
-              activeTable.getColumn("nome")?.setFilterValue(event.target.value)
+              table.getColumn("nome")?.setFilterValue(event.target.value)
             }
             className="pl-8"
           />
@@ -97,9 +71,8 @@ export function DominiosDataTable<TData, TValue>({
         <Select
           value={parentFilter || "ALL"}
           onValueChange={(value) => {
-            setParentFilter(value === "ALL" ? "" : value)
-            // Limpar filtro de nome ao mudar hierarquia
-            activeTable.getColumn("parentId")?.setFilterValue("")
+            setParentFilter(value)
+            table.getColumn("parentId")?.setFilterValue(value === "ALL" ? "" : value)
           }}
         >
           <SelectTrigger className="w-[200px]">
@@ -119,7 +92,7 @@ export function DominiosDataTable<TData, TValue>({
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {activeTable.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
@@ -137,8 +110,8 @@ export function DominiosDataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {activeTable.getRowModel().rows?.length ? (
-              activeTable.getRowModel().rows.map((row) => (
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}

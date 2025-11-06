@@ -4,15 +4,13 @@ import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { DefinicaoResponse } from "@/types/api"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
 
 interface ColumnsProps {
   onEdit: (termo: DefinicaoResponse) => void

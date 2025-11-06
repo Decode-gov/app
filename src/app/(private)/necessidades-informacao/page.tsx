@@ -3,30 +3,13 @@
 import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Plus, Search, Eye, Edit, Trash2, BookOpen } from "lucide-react"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import { Plus, BookOpen } from "lucide-react"
 import { useNecessidadesInformacao, useDeleteNecessidadeInformacao } from "@/hooks/api/use-necessidades-informacao"
-import { NecessidadeForm } from "@/components/necessidades/necessidade-form"
+import { NecessidadeForm, NecessidadesTable } from "@/components/necessidades"
 import { Skeleton } from "@/components/ui/skeleton"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { MoreHorizontal } from "lucide-react"
 import { NecessidadeInformacaoResponse } from "@/types/api"
 
 export default function NecessidadesInformacaoPage() {
-  const [searchTerm, setSearchTerm] = useState("")
   const [page] = useState(1)
   const [limit] = useState(10)
   const [formOpen, setFormOpen] = useState(false)
@@ -35,12 +18,16 @@ export default function NecessidadesInformacaoPage() {
   const { data: necessidadesData, isLoading, error } = useNecessidadesInformacao({
     page,
     limit,
-    search: searchTerm,
   })
   const deleteNecessidade = useDeleteNecessidadeInformacao()
 
   // Extração do array de dados
   const necessidades = necessidadesData?.data ?? []
+
+  const handleEdit = (necessidade: NecessidadeInformacaoResponse) => {
+    setSelectedNecessidade(necessidade)
+    setFormOpen(true)
+  }
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta necessidade de informação?")) {
@@ -154,86 +141,13 @@ export default function NecessidadesInformacaoPage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar necessidades..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8"
-              />
-            </div>
-          </div>
-
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Questão Gerencial</TableHead>
-                  <TableHead>Origem Questão</TableHead>
-                  <TableHead>Comunidade</TableHead>
-                  <TableHead>Criado em</TableHead>
-                  <TableHead className="w-[70px]">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {necessidades.map((necessidade) => (
-                  <TableRow key={necessidade.id}>
-                    <TableCell className="font-medium max-w-[300px]">
-                      <div className="truncate" title={necessidade.questaoGerencial}>
-                        {necessidade.questaoGerencial}
-                      </div>
-                    </TableCell>
-                    <TableCell className="max-w-[200px]">
-                      <div className="truncate" title={necessidade.origemQuestao}>
-                        {necessidade.origemQuestao}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {necessidade.comunidade?.nome || '-'}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {new Date(necessidade.createdAt).toLocaleDateString('pt-BR')}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Ver detalhes
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => {
-                            setSelectedNecessidade(necessidade as NecessidadeInformacaoResponse)
-                            setFormOpen(true)
-                          }}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            className="text-destructive"
-                            onClick={() => handleDelete(necessidade.id)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Excluir
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <NecessidadesTable 
+            data={necessidades}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         </CardContent>
-      </Card>
-
-      {/* Formulário de Criação/Edição */}
+      </Card>      {/* Formulário de Criação/Edição */}
       <NecessidadeForm 
         open={formOpen}
         onOpenChange={(open) => {

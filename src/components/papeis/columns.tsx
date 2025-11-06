@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { PapelResponse } from "@/types/api"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 
 interface ColumnsProps {
   onEdit: (papel: PapelResponse) => void
@@ -41,7 +42,16 @@ export const createColumns = ({
     header: "Descrição",
     cell: ({ row }) => {
       const papel = row.original
-      return <span>{papel.descricao || '-'}</span>
+      return (
+        <Tooltip>
+          <TooltipTrigger>
+            <span className="line-clamp-2">{papel.descricao || '-'}</span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{papel.descricao || '-'}</p>
+          </TooltipContent>
+        </Tooltip>
+      )
     },
   },
   {

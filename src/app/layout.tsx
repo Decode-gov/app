@@ -18,7 +18,7 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "DECODE-GOV - Sistema de Governança de Dados",
-  description: "Sistema integrado para gestão e governança de dados corporativos",
+  description: "Dados, ética, controle, democratização em Governança de dados.",
 };
 
 export default function RootLayout({

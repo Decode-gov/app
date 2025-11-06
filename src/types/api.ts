@@ -231,14 +231,8 @@ export interface NecessidadeInformacaoResponse {
   elementoEstrategico?: string;
   elementoTatico?: string;
   origemQuestao: string;
-  comunidadeId: string;
-  comunidade?: {
-    id: string;
-    nome: string;
-    parentId?: string;
-  };
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date | null;
 }
 
 // ============================================================================

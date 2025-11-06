@@ -26,7 +26,7 @@ export default function DecodeGovLayout({
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block text-muted-foreground/60" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage className="text-foreground/80">Governança de Dados</BreadcrumbPage>
+                  <BreadcrumbPage className="text-foreground/80">Dados, ética, controle, democratização em Governança de dados.</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
