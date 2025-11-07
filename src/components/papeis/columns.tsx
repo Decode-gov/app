@@ -69,9 +69,9 @@ export const createColumns = ({
         const politicaNome = getPoliticaNome(politicaId)
 
         return (
-          <Badge variant="secondary" className="max-w-[200px] truncate">
+          <div className="max-w-max truncate">
             {politicaNome}
-          </Badge>
+          </div>
         )
       },
     },
