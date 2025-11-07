@@ -45,14 +45,10 @@ export const createColumns = ({
         return (
           <Tooltip>
             <TooltipTrigger>
-              <div className="w-28">
-                <span className="font-medium max-w-[200px] truncate">{papel.descricao || '-'}</span>
-              </div>
+              <span className="font-medium max-w-[200px] truncate">{papel.descricao || '-'}</span>
             </TooltipTrigger>
             <TooltipContent>
-              <div className="w-auto">
-                <p className="text-wrap">{papel.descricao || '-'}</p>
-              </div>
+              <p className="text-wrap">{papel.descricao || '-'}</p>
             </TooltipContent>
           </Tooltip>
         )
