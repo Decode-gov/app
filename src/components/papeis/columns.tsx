@@ -31,9 +31,16 @@ export const createColumns = ({
         const papel = row.original
 
         return (
-          <div className="font-medium max-w-[200px] truncate" title={papel.nome}>
-            {papel.nome}
-          </div>
+          <Tooltip>
+            <TooltipTrigger>
+              <div className="font-medium max-w-[200px] truncate" title={papel.nome}>
+                {papel.nome}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="truncate">{papel.nome || '-'}</p>
+            </TooltipContent>
+          </Tooltip>
         )
       },
     },
@@ -45,10 +52,10 @@ export const createColumns = ({
         return (
           <Tooltip>
             <TooltipTrigger>
-              <span className="font-medium max-w-[200px] truncate">{papel.descricao || '-'}</span>
+              <div className="font-medium max-w-[500px] truncate">{papel.descricao || '-'}</div>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="text-wrap">{papel.descricao || '-'}</p>
+              <p className="truncate">{papel.descricao || '-'}</p>
             </TooltipContent>
           </Tooltip>
         )
