@@ -22,8 +22,6 @@ export function usePapeis(params?: QueryParams) {
   return useQuery({
     queryKey: papelQueryKeys.list(params),
     queryFn: () => papelService.list(params),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
   });
 }
 
