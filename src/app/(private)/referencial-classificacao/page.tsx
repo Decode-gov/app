@@ -128,7 +128,7 @@ export default function ReferencialClassificacaoPage() {
       <div className="space-y-6">
         <div className="animate-fade-in">
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Referencial de Classificação
+            Tipologia de Classificação das Informações adotada pela organização
           </h1>
           <p className="text-muted-foreground mt-2">
             Gerencie os referenciais de classificação de informação do sistema DECODE-GOV

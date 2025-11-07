@@ -45,7 +45,7 @@ export const createColumns = ({
         return (
           <Tooltip>
             <TooltipTrigger>
-              <div className="w-auto">
+              <div className="w-28">
                 <span className="text-nowrap line-clamp-1">{papel.descricao || '-'}</span>
               </div>
             </TooltipTrigger>
