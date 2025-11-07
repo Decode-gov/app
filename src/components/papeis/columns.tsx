@@ -38,7 +38,7 @@ export const createColumns = ({
               </div>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="truncate">{papel.nome || '-'}</p>
+              <div className="truncate">{papel.nome || '-'}</div>
             </TooltipContent>
           </Tooltip>
         )
@@ -55,7 +55,7 @@ export const createColumns = ({
               <div className="font-medium max-w-[500px] truncate">{papel.descricao || '-'}</div>
             </TooltipTrigger>
             <TooltipContent>
-              <p className="truncate">{papel.descricao || '-'}</p>
+              <div className="truncate">{papel.descricao || '-'}</div>
             </TooltipContent>
           </Tooltip>
         )

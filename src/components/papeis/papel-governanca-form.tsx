@@ -123,7 +123,7 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-sm border-border/60">
+        <DialogContent className="overflow-y-auto bg-background/95 backdrop-blur-sm border-border/60">
           <DialogHeader>
             <DialogTitle className="text-foreground">
               {papel ? "Editar Papel de Governança" : "Novo Papel de Governança"}
