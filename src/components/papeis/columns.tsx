@@ -45,10 +45,10 @@ export const createColumns = ({
       return (
         <Tooltip>
           <TooltipTrigger>
-            <span className="line-clamp-2">{papel.descricao || '-'}</span>
+            <span className="text-nowrap line-clamp-1">{papel.descricao || '-'}</span>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{papel.descricao || '-'}</p>
+            <p className="text-wrap">{papel.descricao || '-'}</p>
           </TooltipContent>
         </Tooltip>
       )
