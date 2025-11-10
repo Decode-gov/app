@@ -1,78 +1,76 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Plus, Search, Edit, Trash2, Workflow, X } from "lucide-react"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Plus, Workflow } from "lucide-react"
 import { useAtribuicoes, useDeleteAtribuicao } from "@/hooks/api/use-atribuicoes"
 import { usePapeis } from "@/hooks/api/use-papeis"
 import { useComunidades } from "@/hooks/api/use-comunidades"
 import { AtribuicaoForm } from "@/components/atribuicoes/atribuicao-form"
+import { AtribuicoesTable } from "@/components/atribuicoes/atribuicoes-table"
+import { getAtribuicoesColumns } from "@/components/atribuicoes/atribuicoes-table-columns"
 import { Skeleton } from "@/components/ui/skeleton"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { MoreHorizontal } from "lucide-react"
 import { AtribuicaoResponse } from "@/types/api"
 
 export default function AtribuicoesPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [papelFilter, setPapelFilter] = useState("")
-  const [dominioFilter, setDominioFilter] = useState("")
   const [formOpen, setFormOpen] = useState(false)
   const [selectedAtribuicao, setSelectedAtribuicao] = useState<AtribuicaoResponse | undefined>()
 
   const { data: atribuicoesData, isLoading, error } = useAtribuicoes({
     page: 1,
     limit: 1000,
-    papelId: papelFilter && papelFilter !== "all" ? papelFilter : undefined,
-    dominioId: dominioFilter && dominioFilter !== "all" ? dominioFilter : undefined,
   })
   const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
   const { data: comunidadesData } = useComunidades({ page: 1, limit: 1000 })
   const deleteAtribuicao = useDeleteAtribuicao()
 
-  const papeis = papeisData?.data ?? []
-  const dominios = comunidadesData?.data ?? []
+  // Memoização dos dados
+  const papeis = useMemo(() => papeisData?.data ?? [], [papeisData?.data])
+  const dominios = useMemo(() => comunidadesData?.data ?? [], [comunidadesData?.data])
+  const atribuicoes = useMemo(() => atribuicoesData?.data ?? [], [atribuicoesData?.data])
 
-  // Extração do array de dados
-  const atribuicoes = atribuicoesData?.data ?? []
-
-  // Filtro local apenas para busca por texto nos nomes
-  const filteredData = atribuicoes.filter((atribuicao) => {
-    if (!searchTerm) return true
-    const searchLower = searchTerm.toLowerCase()
-    return (
-      atribuicao.papel.nome.toLowerCase().includes(searchLower) ||
-      atribuicao.dominio.nome.toLowerCase().includes(searchLower) ||
-      atribuicao.responsavel.toLowerCase().includes(searchLower)
-    )
-  })
+  // Handlers para as ações da tabela
+  const handleEdit = (atribuicao: AtribuicaoResponse) => {
+    setSelectedAtribuicao(atribuicao)
+    setFormOpen(true)
+  }
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta atribuição?")) {
       await deleteAtribuicao.mutateAsync(id)
     }
   }
+
+  // Colunas da tabela
+  const columns = useMemo(
+    () => getAtribuicoesColumns({ onEdit: handleEdit, onDelete: handleDelete }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
+
+  // Opções de filtros
+  const filterOptions = useMemo(
+    () => [
+      {
+        column: "papel.nome",
+        label: "Filtrar por Papel",
+        options: papeis.map((papel) => ({
+          label: papel.nome,
+          value: papel.nome,
+        })),
+      },
+      {
+        column: "dominio.nome",
+        label: "Filtrar por Domínio",
+        options: dominios.map((dominio) => ({
+          label: dominio.nome,
+          value: dominio.nome,
+        })),
+      },
+    ],
+    [papeis, dominios]
+  )
 
   if (isLoading) {
     return (
@@ -210,152 +208,18 @@ export default function AtribuicoesPage() {
             </Button>
           </div>
         </CardHeader>
-<CardContent className="space-y-4">
-          <div className="flex flex-wrap items-center gap-4">
-            {/* Busca por texto */}
-            <div className="relative flex-1 min-w-[200px] max-w-sm">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por nome..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8"
-              />
-            </div>
-
-            {/* Filtro por Papel */}
-            <Select value={papelFilter} onValueChange={setPapelFilter}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Filtrar por Papel" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os Papéis</SelectItem>
-                {papeis.map((papel) => (
-                  <SelectItem key={papel.id} value={papel.id}>
-                    {papel.nome}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Filtro por Domínio */}
-            <Select value={dominioFilter} onValueChange={setDominioFilter}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Filtrar por Domínio" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os Domínios</SelectItem>
-                {dominios.map((dominio) => (
-                  <SelectItem key={dominio.id} value={dominio.id}>
-                    {dominio.nome}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Botão Limpar Filtros */}
-            {(papelFilter || dominioFilter || searchTerm) && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setPapelFilter("")
-                  setDominioFilter("")
-                  setSearchTerm("")
-                }}
-                className="gap-2"
-              >
-                <X className="h-4 w-4" />
-                Limpar Filtros
-              </Button>
-            )}
-          </div>
-
-<div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Papel</TableHead>
-                  <TableHead>Domínio</TableHead>
-                  <TableHead>Responsável</TableHead>
-                  <TableHead>Comitê Aprovador</TableHead>
-                  <TableHead className="text-center">Onboarding</TableHead>
-                  <TableHead className="w-[70px]">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredData.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center text-muted-foreground">
-                      Nenhuma atribuição encontrada
-                    </TableCell>
-                  </TableRow>
-                ) : filteredData?.map((atribuicao) => (
-                  <TableRow key={atribuicao.id}>
-                    <TableCell className="font-medium">
-                      <div className="max-w-[200px] truncate" title={atribuicao.papel.nome}>
-                        {atribuicao.papel.nome}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="max-w-[200px] truncate" title={atribuicao.dominio.nome}>
-                        {atribuicao.dominio.nome}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="max-w-[200px] truncate" title={atribuicao.responsavel}>
-                        {atribuicao.responsavel}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {atribuicao.comiteAprovador?.nome || atribuicao.comiteAprovadorId}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {atribuicao.onboarding ? (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
-                          Sim
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium">
-                          Não
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => {
-                            setSelectedAtribuicao(atribuicao)
-                            setFormOpen(true)
-                          }}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            className="text-destructive"
-                            onClick={() => handleDelete(atribuicao.id)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Excluir
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+        <CardContent>
+          <AtribuicoesTable
+            columns={columns}
+            data={atribuicoes}
+            searchPlaceholder="Buscar por nome..."
+            filters={filterOptions}
+          />
         </CardContent>
       </Card>
 
       {/* Formulário de Criação/Edição */}
-      <AtribuicaoForm 
+      <AtribuicaoForm
         open={formOpen}
         onOpenChange={(open) => {
           setFormOpen(open)

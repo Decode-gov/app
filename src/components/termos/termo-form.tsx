@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { Loader2, Plus } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -15,12 +15,10 @@ import {
 } from "@/components/ui/dialog"
 import {
   Form,
-  FormControl,
-  FormDescription,
-  FormField,
+  FormControl, FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -29,8 +27,6 @@ import { Button } from "@/components/ui/button"
 import { DefinicaoResponse } from "@/types/api"
 import { useCreateDefinicao, useUpdateDefinicao } from "@/hooks/api/use-definicoes"
 import { CreateDefinicaoSchema, type CreateDefinicaoFormData } from "@/schemas"
-import { useComunidades } from "@/hooks/api"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { ComunidadeForm } from "../dominios/comunidade-form"
 
 type FormData = CreateDefinicaoFormData
@@ -46,14 +42,12 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
 
   const createMutation = useCreateDefinicao()
   const updateMutation = useUpdateDefinicao()
-  const { data: comunidadesData } = useComunidades({})
 
   const form = useForm<FormData>({
     resolver: zodResolver(CreateDefinicaoSchema),
     defaultValues: {
       termo: "",
       definicao: "",
-      comunidadeId: undefined,
       sigla: undefined,
     },
   })
@@ -64,14 +58,12 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
         termo: termo.termo,
         definicao: termo.definicao,
         sigla: termo.sigla || undefined,
-        comunidadeId: termo.comunidadeId || undefined,
       })
     } else {
       form.reset({
         termo: "",
         definicao: "",
         sigla: undefined,
-        comunidadeId: undefined
       })
     }
   }, [termo, form])
@@ -109,57 +101,7 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Domínio de Dados */}
-              <FormField
-                control={form.control}
-                name="comunidadeId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Domínio de Dados</FormLabel>
-                    <div className="flex gap-2">
-                      <div className="flex-1">
-                        <Select
-                          onValueChange={(value) => field.onChange(value || undefined)}
-                          value={field.value || undefined}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="bg-background/50 border-border/60 w-full">
-                              <SelectValue placeholder="Selecione o domínio de dados" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {comunidadesData?.data.length === 0 ? (
-                              <div className="p-2 text-sm text-muted-foreground text-center">
-                                Nenhum domínio encontrado
-                              </div>
-                            ) : (
-                              comunidadesData?.data.map((comunidade) => (
-                                <SelectItem key={comunidade.id} value={comunidade.id}>
-                                  {comunidade.nome}
-                                </SelectItem>
-                              ))
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setDominioDialogOpen(true)}
-                        className="bg-background/50 border-border/60 hover:bg-accent/50 flex-shrink-0"
-                        title="Criar novo domínio"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <FormDescription className="text-xs text-muted-foreground">
-                      Selecione o domínio de dados associado a este termo.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              
               <FormField
                 control={form.control}
                 name="termo"

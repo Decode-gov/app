@@ -64,9 +64,8 @@ const menuItems = [
     title: "Definições e Termos",
     items: [
       { title: "Termos de Negócio", icon: BookOpen, url: "/termos-negocio" },
-      { title: "Referencial de Classificação", icon: Tag, url: "/referencial-classificacao" },
+      { title: "Tipologia de Classificação", icon: Tag, url: "/referencial-classificacao" },
       { title: "Classificação das Informações", icon: Tag, url: "/classificacoes-informacao" },
-      { title: "Listas de Referência", icon: FileSpreadsheet, url: "/listas-referencia" },
     ],
   },
   

@@ -114,27 +114,6 @@ export function useDeleteClassificacao() {
 }
 
 /**
- * Hook para atualizar apenas o termo de uma classificação
- */
-export function useUpdateTermoClassificacao() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, termoId }: { id: string; termoId: string }) =>
-      classificacaoService.updateTermo(id, { termoId }),
-    onSuccess: (updatedItem, { id }) => {
-      queryClient.invalidateQueries({ queryKey: classificacaoQueryKeys.all });
-      queryClient.setQueryData(classificacaoQueryKeys.detail(id), updatedItem);
-      toast.success('Termo da classificação atualizado com sucesso!');
-    },
-    onError: (error: ApiError) => {
-      console.error('Erro ao atualizar termo da classificação:', error);
-      toast.error(error.message || 'Erro ao atualizar termo da classificação');
-    },
-  });
-}
-
-/**
  * Hook para atribuir termo a uma classificação
  */
 export function useAtribuirTermoClassificacao() {

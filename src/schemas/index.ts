@@ -119,7 +119,6 @@ export const UpdateAtribuicaoSchema = z.object({
 export const DefinicaoSchema = z.object({
   termo: stringRequired(1, "Termo"),
   definicao: stringRequired(1, "Definição"),
-  comunidadeId: uuidRequired("Selecionar um domínio de dados"),
   sigla: stringOptional(),
 })
 
@@ -131,9 +130,7 @@ export const UpdateDefinicaoSchema = DefinicaoSchema.partial()
 // ============================================================================
 
 export const ListaClassificacaoSchema = z.object({
-  categoria: z.enum(['Publico', 'Interno', 'Confidencial', 'Restrito'], {
-    message: "Categoria é obrigatória"
-  }),
+  classificacao: stringRequired(1, "Classificação da informação"),
   descricao: stringRequired(1, "Descrição"),
   politicaId: stringRequired(1, "Política"),
 })
@@ -146,19 +143,12 @@ export const UpdateListaClassificacaoSchema = ListaClassificacaoSchema.partial()
 // ============================================================================
 
 export const ClassificacaoInformacaoSchema = z.object({
-  nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
-  politicaId: uuidRequired("Política"),
-  termoId: stringOptional(),
+  classificacaoId: uuidRequired("Lista de classificação"),
+  termoId: uuidRequired("Termo"),
 })
 
 export const CreateClassificacaoInformacaoSchema = ClassificacaoInformacaoSchema
 export const UpdateClassificacaoInformacaoSchema = ClassificacaoInformacaoSchema.partial()
-
-// Schema especial para atualizar apenas o termo
-export const UpdateTermoClassificacaoSchema = z.object({
-  termoId: uuidRequired("Termo"),
-})
 
 // ============================================================================
 // 9) ATIVOS TECNOLÓGICOS - SISTEMAS
@@ -534,7 +524,6 @@ export type UpdateListaClassificacaoFormData = z.infer<typeof UpdateListaClassif
 export type ClassificacaoInformacaoFormData = z.infer<typeof ClassificacaoInformacaoSchema>
 export type CreateClassificacaoInformacaoFormData = z.infer<typeof CreateClassificacaoInformacaoSchema>
 export type UpdateClassificacaoInformacaoFormData = z.infer<typeof UpdateClassificacaoInformacaoSchema>
-export type UpdateTermoClassificacaoFormData = z.infer<typeof UpdateTermoClassificacaoSchema>
 
 // 9) Sistemas
 export type SistemaFormData = z.infer<typeof SistemaSchema>

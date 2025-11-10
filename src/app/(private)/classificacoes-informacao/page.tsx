@@ -11,18 +11,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useClassificacoes, useDeleteClassificacao } from "@/hooks/api/use-classificacoes-informacao"
-import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
-import { useDefinicoes } from "@/hooks/api/use-definicoes"
-import { ClassificacaoResponse } from "@/types/api"
+import { useListasClassificacao } from "@/hooks/api/use-listas-classificacao"
+import { ClassificacaoInformacaoResponse } from "@/types/api"
 import { ClassificacaoInfoForm } from "@/components/classificacoes-info/classificacao-info-form"
 
 export default function ClassificacoesInformacaoPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [politicaFilter, setPoliticaFilter] = useState<string>("")
+  const [listaFilter, setListaFilter] = useState<string>("")
   const [page] = useState(1)
   const [limit] = useState(10)
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [selectedClassificacao, setSelectedClassificacao] = useState<ClassificacaoResponse | undefined>()
+  const [selectedClassificacao, setSelectedClassificacao] = useState<ClassificacaoInformacaoResponse | undefined>()
 
   const queryParams: Record<string, string | number | boolean | undefined> = {
     page,
@@ -30,14 +29,14 @@ export default function ClassificacoesInformacaoPage() {
     search: searchTerm || undefined,
   }
   
-  if (politicaFilter) queryParams.politicaId = politicaFilter
+  if (listaFilter && listaFilter !== "all") queryParams.classificacaoId = listaFilter
 
   const { data: classificacoesData, isLoading, error } = useClassificacoes(queryParams)
-  const { data: politicasData } = usePoliticasInternas({ page: 1, limit: 1000 })
-  const { data: termosData } = useDefinicoes({ page: 1, limit: 1000 })
+  const { data: listasData } = useListasClassificacao()
+
   const deleteClassificacao = useDeleteClassificacao()
 
-  const handleEdit = (classificacao: ClassificacaoResponse) => {
+  const handleEdit = (classificacao: ClassificacaoInformacaoResponse) => {
     setSelectedClassificacao(classificacao)
     setIsFormOpen(true)
   }
@@ -107,8 +106,7 @@ export default function ClassificacoesInformacaoPage() {
   }
 
   const classificacoes = classificacoesData?.data || []
-  const politicas = politicasData?.data || []
-  const termos = termosData?.data || []
+  const listas = listasData?.data || []
   
   const totalClassificacoes = classificacoes.length
 
@@ -165,16 +163,16 @@ export default function ClassificacoesInformacaoPage() {
                   className="pl-8"
                 />
               </div>
-              {politicas && politicas.length > 0 && (
-                <Select value={politicaFilter} onValueChange={setPoliticaFilter}>
+              {listas && listas.length > 0 && (
+                <Select value={listaFilter || "all"} onValueChange={setListaFilter}>
                   <SelectTrigger className="w-[220px]">
-                    <SelectValue placeholder="Filtrar por política" />
+                    <SelectValue placeholder="Filtrar por tipologia" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todas as políticas</SelectItem>
-                    {politicas.filter(p => p.status === "Vigente").map(politica => (
-                      <SelectItem key={politica.id} value={politica.id}>
-                        {politica.nome}
+                    <SelectItem value="all">Todas as tipologias</SelectItem>
+                    {listas.map(lista => (
+                      <SelectItem key={lista.id} value={lista.id}>
+                        {lista.classificacao}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -186,79 +184,83 @@ export default function ClassificacoesInformacaoPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Política</TableHead>
+                    <TableHead>Lista de Classificação</TableHead>
                     <TableHead>Termo Associado</TableHead>
+                    <TableHead>Política</TableHead>
                     <TableHead>Criado em</TableHead>
                     <TableHead className="w-[70px]">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {classificacoes.map((classificacao: ClassificacaoResponse) => {
-                    const politica = politicas.find(p => p.id === classificacao.politicaId)
-                    const termo = termos.find(t => t.id === classificacao.termoId)
-                    
-                    return (
-                      <TableRow key={classificacao.id}>
-                        <TableCell className="font-medium">
+                  {classificacoes.map((classificacao: ClassificacaoInformacaoResponse) => (
+                    <TableRow key={classificacao.id}>
+                      <TableCell className="font-medium">
+                        {classificacao.classificacao ? (
                           <div className="flex flex-col gap-1">
-                            <span>{classificacao.nome}</span>
-                            {classificacao.descricao && (
+                            <span>{classificacao.classificacao.classificacao}</span>
+                            {classificacao.classificacao.descricao && (
                               <span className="text-xs text-muted-foreground line-clamp-1">
-                                {classificacao.descricao}
+                                {classificacao.classificacao.descricao}
                               </span>
                             )}
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          {politica ? (
-                            <Badge variant="outline">{politica.nome}</Badge>
-                          ) : (
-                            <span className="text-muted-foreground">-</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {termo ? (
-                            <div className="flex flex-col gap-1">
-                              <Badge variant="secondary">{termo.termo}</Badge>
-                              {termo.definicao && (
-                                <span className="text-xs text-muted-foreground line-clamp-1">
-                                  {termo.definicao}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-muted-foreground">-</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {new Date(classificacao.createdAt).toLocaleDateString("pt-BR")}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleEdit(classificacao)}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Editar
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                className="text-destructive"
-                                onClick={() => handleDelete(classificacao.id)}
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Excluir
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {classificacao.termo ? (
+                          <div className="flex flex-col gap-1">
+                            <Badge variant="secondary">{classificacao.termo.termo}</Badge>
+                            {classificacao.termo.sigla && (
+                              <Badge variant="outline" className="text-xs w-fit">
+                                {classificacao.termo.sigla}
+                              </Badge>
+                            )}
+                            {classificacao.termo.definicao && (
+                              <span className="text-xs text-muted-foreground line-clamp-1">
+                                {classificacao.termo.definicao}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {classificacao.classificacao?.politica ? (
+                          <Badge variant="outline">{classificacao.classificacao.politica.nome}</Badge>
+                        ) : (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {new Date(classificacao.createdAt).toLocaleDateString("pt-BR")}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEdit(classificacao)}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Editar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              className="text-destructive"
+                              onClick={() => handleDelete(classificacao.id)}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Excluir
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>

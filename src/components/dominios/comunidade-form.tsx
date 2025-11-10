@@ -155,7 +155,7 @@ export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFor
                     value={field.value || "NONE"}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione a comunidade pai" />
                       </SelectTrigger>
                     </FormControl>

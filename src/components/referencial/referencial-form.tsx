@@ -15,6 +15,7 @@ import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
 import { ListaClassificacaoResponse } from "@/types/api"
 import { ListaClassificacaoSchema, type CreateListaClassificacaoFormData } from "@/schemas"
 import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form"
+import { Input } from "../ui/input"
 
 type ReferencialFormValues = CreateListaClassificacaoFormData
 
@@ -23,13 +24,6 @@ interface ReferencialFormProps {
   onOpenChange: (open: boolean) => void
   referencial?: ListaClassificacaoResponse
 }
-
-const CATEGORIAS = [
-  { value: "Publico", label: "Público", color: "bg-green-500" },
-  { value: "Interno", label: "Interno", color: "bg-blue-500" },
-  { value: "Confidencial", label: "Confidencial", color: "bg-orange-500" },
-  { value: "Restrito", label: "Restrito", color: "bg-red-500" },
-] as const
 
 export function ReferencialForm({ open, onOpenChange, referencial }: ReferencialFormProps) {
   const isEditing = !!referencial
@@ -43,7 +37,7 @@ export function ReferencialForm({ open, onOpenChange, referencial }: Referencial
   const form = useForm<ReferencialFormValues>({
     resolver: zodResolver(ListaClassificacaoSchema),
     defaultValues: {
-      categoria: "Publico",
+      classificacao: "",
       descricao: "",
       politicaId: "",
     },
@@ -52,7 +46,7 @@ export function ReferencialForm({ open, onOpenChange, referencial }: Referencial
   useEffect(() => {
     if (referencial && open) {
       form.reset({
-        categoria: referencial.categoria,
+        classificacao: referencial.classificacao,
         descricao: referencial.descricao,
         politicaId: referencial.politicaId,
       })
@@ -75,9 +69,6 @@ export function ReferencialForm({ open, onOpenChange, referencial }: Referencial
     }
   }
 
-  const categoriaAtual = form.watch("categoria")
-  const categoriaConfig = CATEGORIAS.find(c => c.value === categoriaAtual)
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
@@ -91,35 +82,11 @@ export function ReferencialForm({ open, onOpenChange, referencial }: Referencial
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="categoria"
+              name="classificacao"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Categoria *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione a categoria">
-                          {field.value && (
-                            <div className="flex items-center gap-2">
-                              <Badge className={`${categoriaConfig?.color} text-white`}>
-                                {CATEGORIAS.find(c => c.value === field.value)?.label}
-                              </Badge>
-                            </div>
-                          )}
-                        </SelectValue>
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {CATEGORIAS.map(cat => (
-                        <SelectItem key={cat.value} value={cat.value}>
-                          <div className="flex items-center gap-2">
-                            <Badge className={`${cat.color} text-white`}>{cat.label}</Badge>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>Nível de sensibilidade da informação</FormDescription>
+                  <FormLabel>Classificação da informação *</FormLabel>
+                  <Input placeholder="Classificação da informação" {...field} />
                   <FormMessage />
                 </FormItem>
               )}

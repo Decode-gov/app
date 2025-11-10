@@ -29,7 +29,6 @@ import type {
   // Classificações de Informação
   CreateClassificacaoInformacaoFormData,
   UpdateClassificacaoInformacaoFormData,
-  UpdateTermoClassificacaoFormData,
   // Sistemas
   CreateSistemaFormData,
   UpdateSistemaFormData,
@@ -179,12 +178,6 @@ export interface DefinicaoResponse {
   termo: string;
   definicao: string;
   sigla?: string;
-  comunidadeId?: string;
-  comunidade?: {
-    id: string;
-    nome: string;
-    parentId?: string;
-  };
   createdAt: string;
   updatedAt: string;
 }
@@ -370,17 +363,19 @@ export interface TipoDadosResponse {
 // ============================================================================
 export type CreateClassificacaoBody = CreateClassificacaoInformacaoFormData
 export type UpdateClassificacaoBody = UpdateClassificacaoInformacaoFormData
-export type UpdateTermoClassificacaoBody = UpdateTermoClassificacaoFormData
 
-export interface ClassificacaoResponse {
+export interface ClassificacaoInformacaoResponse {
   id: string;
-  nome: string;
-  descricao?: string;
-  politicaId: string;
-  termoId?: string;
+  classificacaoId: string;
+  termoId: string;
+  classificacao?: ListaClassificacaoResponse;
+  termo?: DefinicaoResponse;
   createdAt: string;
   updatedAt: string;
 }
+
+// Alias para manter compatibilidade
+export type ClassificacaoResponse = ClassificacaoInformacaoResponse
 
 // ============================================================================
 // TIPOS PARA PRODUTOS DE DADOS
@@ -411,9 +406,10 @@ export type UpdateListaClassificacaoBody = UpdateListaClassificacaoFormData
 
 export interface ListaClassificacaoResponse {
   id: string;
-  categoria: 'Publico' | 'Interno' | 'Confidencial' | 'Restrito';
+  classificacao: string;
   descricao: string;
   politicaId: string;
+  politica: PoliticaInternaResponse
   createdAt: string;
   updatedAt: string;
 }

@@ -53,18 +53,6 @@ export const createColumns = ({
     },
   },
   {
-    accessorKey: "comunidade.nome",
-    header: "Domínio de Dados",
-    cell: ({ row }) => {
-      const nome = row.getValue("comunidade.nome") as string | undefined
-      return nome ? (
-        <Badge variant="outline">{nome}</Badge>
-      ) : (
-        <span className="text-muted-foreground">-</span>
-      )
-    },
-  },
-  {
     id: "actions",
     header: "",
     cell: ({ row }) => {

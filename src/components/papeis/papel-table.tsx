@@ -31,8 +31,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ChevronLeft, ChevronRight, Pencil, MoreHorizontal, Trash2 } from "lucide-react"
 import { type Papel } from "@/types/papel"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
 
 interface PapelTableProps {
   data: Papel[]

@@ -3,73 +3,60 @@
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
 import { Plus } from "lucide-react"
 import { useCreateClassificacao, useUpdateClassificacao } from "@/hooks/api/use-classificacoes-informacao"
-import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
+import { useListasClassificacao } from "@/hooks/api/use-listas-classificacao"
 import { useDefinicoes } from "@/hooks/api/use-definicoes"
-import { ClassificacaoResponse } from "@/types/api"
+import { ClassificacaoInformacaoResponse } from "@/types/api"
 import { Badge } from "@/components/ui/badge"
-import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form"
 import { TermoForm } from "@/components/termos/termo-form"
+import { CreateClassificacaoInformacaoSchema } from "@/schemas"
+import type { CreateClassificacaoInformacaoFormData } from "@/schemas"
 
-// Schema alinhado com a especificação do prompt e tipos da API
-const classificacaoSchema = z.object({
-  nome: z.string().min(1, "Nome é obrigatório").max(255, "Nome deve ter no máximo 255 caracteres"),
-  descricao: z.string().max(1000, "Descrição deve ter no máximo 1000 caracteres").optional(),
-  politicaId: z.string().min(1, "Política é obrigatória"),
-  termoId: z.string().optional(),
-})
-
-type ClassificacaoFormValues = z.infer<typeof classificacaoSchema>
+type ClassificacaoFormValues = CreateClassificacaoInformacaoFormData
 
 interface ClassificacaoInfoFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  classificacao?: ClassificacaoResponse
+  classificacao?: ClassificacaoInformacaoResponse
 }
 
 export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: ClassificacaoInfoFormProps) {
-  const [politicaDialogOpen, setPoliticaDialogOpen] = useState(false)
   const [termoDialogOpen, setTermoDialogOpen] = useState(false)
   const createMutation = useCreateClassificacao()
   const updateMutation = useUpdateClassificacao()
-  const { data: politicasData } = usePoliticasInternas()
+  const { data: listasData } = useListasClassificacao()
   const { data: termosData } = useDefinicoes()
   
   const form = useForm<ClassificacaoFormValues>({
-    resolver: zodResolver(classificacaoSchema),
+    resolver: zodResolver(CreateClassificacaoInformacaoSchema),
     defaultValues: {
-      nome: "",
-      descricao: "",
-      politicaId: "",
+      classificacaoId: "",
       termoId: "",
     },
   })
@@ -79,16 +66,12 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
     if (open) {
       if (classificacao) {
         form.reset({
-          nome: classificacao.nome,
-          descricao: classificacao.descricao || "",
-          politicaId: classificacao.politicaId,
-          termoId: classificacao.termoId || "",
+          classificacaoId: classificacao.classificacaoId,
+          termoId: classificacao.termoId,
         })
       } else {
         form.reset({
-          nome: "",
-          descricao: "",
-          politicaId: "",
+          classificacaoId: "",
           termoId: "",
         })
       }
@@ -122,8 +105,8 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending
 
-  // Filtrar políticas ativas
-  const politicasAtivas = politicasData?.data.filter(p => p.status === 'Vigente') || []
+  // Obter dados
+  const listas = listasData?.data || []
   const termos = termosData?.data || []
 
   return (
@@ -144,78 +127,31 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Nome (obrigatório) */}
+              {/* Lista de Classificação (obrigatória) */}
               <FormField
                 control={form.control}
-                name="nome"
+                name="classificacaoId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">Nome *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Ex: Dados Pessoais Sensíveis"
-                        {...field}
-                        className="bg-background/50 border-border/60 focus:border-primary/60"
-                      />
-                    </FormControl>
-                    <FormDescription className="text-xs text-muted-foreground">
-                      Máximo 255 caracteres
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Descrição (opcional) */}
-              <FormField
-                control={form.control}
-                name="descricao"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Descrição</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Descreva a classificação de informação..."
-                        className="min-h-[100px] bg-background/50 border-border/60 focus:border-primary/60"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription className="text-xs text-muted-foreground">
-                      Máximo 1000 caracteres
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Política (obrigatória) */}
-              <FormField
-                control={form.control}
-                name="politicaId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-foreground">Política Interna *</FormLabel>
+                    <FormLabel className="text-foreground">Lista de Classificação *</FormLabel>
                     <div className="flex gap-2">
                       <div className="flex-1">
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
-                            <SelectTrigger className="bg-background/50 border-border/60">
-                              <SelectValue placeholder="Selecione a política" />
+                            <SelectTrigger className="bg-background/50 border-border/60 w-full">
+                              <SelectValue placeholder="Selecione a lista de classificação" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {politicasAtivas.length === 0 ? (
+                            {listas.length === 0 ? (
                               <div className="p-2 text-sm text-muted-foreground text-center">
-                                Nenhuma política ativa encontrada
+                                Nenhuma lista de classificação encontrada
                               </div>
                             ) : (
-                              politicasAtivas.map((politica) => (
-                                <SelectItem key={politica.id} value={politica.id}>
-                                  <div className="flex items-center gap-2">
-                                    <span>{politica.nome}</span>
-                                    <Badge variant="outline" className="text-xs">
-                                      {politica.escopo}
-                                    </Badge>
+                              listas.map((lista) => (
+                                <SelectItem key={lista.id} value={lista.id}>
+                                  <div className="flex flex-col">
+                                    <span>{lista.classificacao}</span>
                                   </div>
                                 </SelectItem>
                               ))
@@ -227,34 +163,34 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
                         type="button"
                         variant="outline"
                         size="icon"
-                        onClick={() => setPoliticaDialogOpen(true)}
+                        onClick={() => window.open('/listas-classificacao', '_blank')}
                         className="bg-background/50 border-border/60 hover:bg-accent/50 flex-shrink-0"
-                        title="Criar nova política"
+                        title="Criar nova lista de classificação"
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
                     <FormDescription className="text-xs text-muted-foreground">
-                      Política que regula esta classificação
+                      Lista de referência da classificação
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Termo de Negócio (opcional) */}
+              {/* Termo de Negócio (obrigatório) */}
               <FormField
                 control={form.control}
                 name="termoId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">Termo de Negócio</FormLabel>
+                    <FormLabel className="text-foreground">Termo de Negócio *</FormLabel>
                     <div className="flex gap-2">
                       <div className="flex-1">
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
-                            <SelectTrigger className="bg-background/50 border-border/60">
-                              <SelectValue placeholder="Selecione um termo (opcional)" />
+                            <SelectTrigger className="bg-background/50 border-border/60 w-full">
+                              <SelectValue placeholder="Selecione o termo" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -267,11 +203,12 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
                                 <SelectItem key={termo.id} value={termo.id}>
                                   <div className="flex flex-col">
                                     <span>{termo.termo}</span>
-                                    {termo.definicao && (
-                                      <span className="text-xs text-muted-foreground line-clamp-1">
-                                        {termo.definicao}
-                                      </span>
+                                    {termo.sigla && (
+                                      <Badge variant="outline" className="text-xs w-fit">
+                                        {termo.sigla}
+                                      </Badge>
                                     )}
+                                    
                                   </div>
                                 </SelectItem>
                               ))
@@ -291,7 +228,7 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
                       </Button>
                     </div>
                     <FormDescription className="text-xs text-muted-foreground">
-                      Termo de negócio associado (opcional)
+                      Termo relacionado a esta classificação
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -320,12 +257,6 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
           </Form>
         </DialogContent>
       </Dialog>
-
-      {/* Dialog para criar política inline */}
-      <PoliticaInternaForm 
-        open={politicaDialogOpen}
-        onOpenChange={setPoliticaDialogOpen}
-      />
 
       {/* Dialog para criar termo inline */}
       <TermoForm 
