@@ -119,10 +119,8 @@ export function ReferencialForm({ open, onOpenChange, referencial }: Referencial
                         <SelectTrigger className="flex-1">
                           <SelectValue placeholder="Selecione a política">
                             {field.value && politicas && (
-                              <div className="flex items-center gap-2">
-                                <Badge variant="outline">
-                                  {politicas.find(p => p.id === field.value)?.nome}
-                                </Badge>
+                              <div className="flex items-center gap-2 w-auto truncate">
+                                {politicas.find(p => p.id === field.value)?.nome}
                               </div>
                             )}
                           </SelectValue>

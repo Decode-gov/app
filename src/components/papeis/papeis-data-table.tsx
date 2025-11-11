@@ -2,30 +2,30 @@
 
 import { useState } from "react"
 import {
-    ColumnDef,
-    ColumnFiltersState,
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    useReactTable,
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
 } from "@tanstack/react-table"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
 
 interface DataTableProps<TData, TValue> {
@@ -94,9 +94,9 @@ export function PapeisDataTable<TData, TValue>({
         <Select
           value={politicaFilter || "ALL"}
           onValueChange={(value) => {
-            setPoliticaFilter(value === "ALL" ? "" : value)
+            setPoliticaFilter(value)
             // Limpar filtro de nome ao mudar política
-            activeTable.getColumn("nome")?.setFilterValue("")
+            activeTable.getColumn("politicaId")?.setFilterValue(value === "ALL" ? "" : value)
           }}
         >
           <SelectTrigger className="w-[250px]">

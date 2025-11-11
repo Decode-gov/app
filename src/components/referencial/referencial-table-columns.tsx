@@ -2,12 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Edit, MoreHorizontal, Trash2 } from "lucide-react"
 import { ListaClassificacaoResponse, PoliticaInternaResponse } from "@/types/api"
@@ -56,7 +55,6 @@ interface GetColumnsParams {
 export function getReferencialColumns({
   onEdit,
   onDelete,
-  politicas = [],
 }: GetColumnsParams): ColumnDef<ListaClassificacaoResponse>[] {
   return [
     {

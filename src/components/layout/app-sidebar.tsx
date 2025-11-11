@@ -64,8 +64,8 @@ const menuItems = [
     title: "Definições e Termos",
     items: [
       { title: "Termos de Negócio", icon: BookOpen, url: "/termos-negocio" },
-      { title: "Tipologia de Classificação", icon: Tag, url: "/referencial-classificacao" },
-      { title: "Classificação das Informações", icon: Tag, url: "/classificacoes-informacao" },
+      { title: "Nível de Confidencialidade", icon: Tag, url: "/referencial-classificacao" },
+      { title: "Classificação Dos Termos", icon: Tag, url: "/classificacoes-informacao" },
     ],
   },
   
@@ -209,7 +209,7 @@ export function AppSidebar() {
           <div className="text-xs text-muted-foreground/60 flex items-center gap-1">
             <span>v1.0</span>
             <span className="text-primary">•</span>
-            <span>2024</span>
+            <span>2025</span>
           </div>
         </div>
       </SidebarFooter>

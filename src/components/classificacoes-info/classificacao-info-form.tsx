@@ -52,7 +52,7 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
   const updateMutation = useUpdateClassificacao()
   const { data: listasData } = useListasClassificacao()
   const { data: termosData } = useDefinicoes()
-  
+
   const form = useForm<ClassificacaoFormValues>({
     resolver: zodResolver(CreateClassificacaoInformacaoSchema),
     defaultValues: {
@@ -115,12 +115,12 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-sm border-border/60">
           <DialogHeader>
             <DialogTitle className="text-foreground">
-              {classificacao ? "Editar Classificação de Informação" : "Nova Classificação de Informação"}
+              {classificacao ? "Editar Classificação" : "Nova Classificação"}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              {classificacao 
-                ? "Atualize as informações da classificação de informação."
-                : "Preencha os dados para criar uma nova classificação de informação."
+              {classificacao
+                ? "Atualize as informações da classificação dos termos de negócio."
+                : "Preencha os dados para criar uma nova classificação dos termos de negócio."
               }
             </DialogDescription>
           </DialogHeader>
@@ -133,42 +133,30 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
                 name="classificacaoId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">Lista de Classificação *</FormLabel>
-                    <div className="flex gap-2">
-                      <div className="flex-1">
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger className="bg-background/50 border-border/60 w-full">
-                              <SelectValue placeholder="Selecione a lista de classificação" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {listas.length === 0 ? (
-                              <div className="p-2 text-sm text-muted-foreground text-center">
-                                Nenhuma lista de classificação encontrada
-                              </div>
-                            ) : (
-                              listas.map((lista) => (
-                                <SelectItem key={lista.id} value={lista.id}>
-                                  <div className="flex flex-col">
-                                    <span>{lista.classificacao}</span>
-                                  </div>
-                                </SelectItem>
-                              ))
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => window.open('/listas-classificacao', '_blank')}
-                        className="bg-background/50 border-border/60 hover:bg-accent/50 flex-shrink-0"
-                        title="Criar nova lista de classificação"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                    <FormLabel className="text-foreground">Nível de confidencialidade *</FormLabel>
+                    <div className="flex-1">
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="bg-background/50 border-border/60 w-full">
+                            <SelectValue placeholder="Selecione um nível de confidencialidade" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {listas.length === 0 ? (
+                            <div className="p-2 text-sm text-muted-foreground text-center">
+                              Nenhum nível de confidencialidade encontrado
+                            </div>
+                          ) : (
+                            listas.map((lista) => (
+                              <SelectItem key={lista.id} value={lista.id}>
+                                <div className="flex flex-col">
+                                  <span>{lista.classificacao}</span>
+                                </div>
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <FormDescription className="text-xs text-muted-foreground">
                       Lista de referência da classificação
@@ -208,7 +196,7 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
                                         {termo.sigla}
                                       </Badge>
                                     )}
-                                    
+
                                   </div>
                                 </SelectItem>
                               ))
@@ -259,7 +247,7 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
       </Dialog>
 
       {/* Dialog para criar termo inline */}
-      <TermoForm 
+      <TermoForm
         open={termoDialogOpen}
         onOpenChange={setTermoDialogOpen}
       />

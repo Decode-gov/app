@@ -33,7 +33,6 @@ export function usePapel(id: string, enabled = true) {
     queryKey: papelQueryKeys.detail(id),
     queryFn: () => papelService.getById(id),
     enabled: !!id && enabled,
-    staleTime: 5 * 60 * 1000,
   });
 }
 

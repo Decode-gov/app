@@ -57,10 +57,10 @@ export default function ClassificacoesInformacaoPage() {
       <div className="space-y-6">
         <div className="animate-fade-in">
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Classificações de Informação
+            Classificação dos termos de negócio
           </h1>
           <p className="text-muted-foreground mt-2">
-            Gerencie as classificações de informação
+            Gerencie as classificações dos termos de negócio
           </p>
         </div>
         <div className="grid gap-4 md:grid-cols-1">
@@ -88,10 +88,10 @@ export default function ClassificacoesInformacaoPage() {
       <div className="space-y-6">
         <div className="animate-fade-in">
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Classificações de Informação
+            Classificação dos termos de negócio
           </h1>
           <p className="text-muted-foreground mt-2">
-            Gerencie as classificações de informação
+            Gerencie as classificações dos termos de negócio
           </p>
         </div>
         <Card>
@@ -115,10 +115,10 @@ export default function ClassificacoesInformacaoPage() {
       <div className="space-y-6">
         <div className="animate-fade-in">
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Classificações de Informação
+            Classificação dos termos de negócio
           </h1>
           <p className="text-muted-foreground mt-2">
-            Gerencie as classificações de informação do sistema DECODE-GOV
+            Gerencie as classificações dos termos de negócio
           </p>
         </div>
 
@@ -141,7 +141,7 @@ export default function ClassificacoesInformacaoPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Classificações de Informação</CardTitle>
+                <CardTitle>Classificação dos termos de negócio</CardTitle>
                 <CardDescription>
                   Lista de todas as classificações cadastradas
                 </CardDescription>
@@ -198,11 +198,6 @@ export default function ClassificacoesInformacaoPage() {
                         {classificacao.classificacao ? (
                           <div className="flex flex-col gap-1">
                             <span>{classificacao.classificacao.classificacao}</span>
-                            {classificacao.classificacao.descricao && (
-                              <span className="text-xs text-muted-foreground line-clamp-1">
-                                {classificacao.classificacao.descricao}
-                              </span>
-                            )}
                           </div>
                         ) : (
                           <span className="text-muted-foreground">-</span>
@@ -211,17 +206,7 @@ export default function ClassificacoesInformacaoPage() {
                       <TableCell>
                         {classificacao.termo ? (
                           <div className="flex flex-col gap-1">
-                            <Badge variant="secondary">{classificacao.termo.termo}</Badge>
-                            {classificacao.termo.sigla && (
-                              <Badge variant="outline" className="text-xs w-fit">
-                                {classificacao.termo.sigla}
-                              </Badge>
-                            )}
-                            {classificacao.termo.definicao && (
-                              <span className="text-xs text-muted-foreground line-clamp-1">
-                                {classificacao.termo.definicao}
-                              </span>
-                            )}
+                            {classificacao.termo.termo}
                           </div>
                         ) : (
                           <span className="text-muted-foreground">-</span>
@@ -229,7 +214,7 @@ export default function ClassificacoesInformacaoPage() {
                       </TableCell>
                       <TableCell>
                         {classificacao.classificacao?.politica ? (
-                          <Badge variant="outline">{classificacao.classificacao.politica.nome}</Badge>
+                          <span>{classificacao.classificacao.politica.nome}</span>
                         ) : (
                           <span className="text-muted-foreground">-</span>
                         )}

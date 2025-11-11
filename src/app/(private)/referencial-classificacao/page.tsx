@@ -56,10 +56,10 @@ export default function ReferencialClassificacaoPage() {
       <div className="space-y-6">
         <div className="animate-fade-in">
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Tipologia de Classificação das Informações adotada pela organização
+            Nível de confidencialidade adotado pela organização
           </h1>
           <p className="text-muted-foreground mt-2">
-            Gerencie os referenciais de classificação de informação do sistema DECODE-GOV
+            Gerencie os níveis de confidencialidade de informação do sistema DECODE-GOV
           </p>
         </div>
         <div className="grid gap-4 md:grid-cols-1">
@@ -87,10 +87,10 @@ export default function ReferencialClassificacaoPage() {
       <div className="space-y-6">
         <div className="animate-fade-in">
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Tipologia de Classificação das Informações adotada pela organização
+            Nível de confidencialidade adotado pela organização
           </h1>
           <p className="text-muted-foreground mt-2">
-            Gerencie os referenciais de classificação de informação do sistema DECODE-GOV
+            Gerencie os níveis de confidencialidade de informação do sistema DECODE-GOV
           </p>
         </div>
         <Card>
@@ -109,10 +109,10 @@ export default function ReferencialClassificacaoPage() {
       <div className="space-y-6">
         <div className="animate-fade-in">
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Tipologia de Classificação das Informações adotada pela organização
+            Nível de confidencialidade adotado pela organização
           </h1>
           <p className="text-muted-foreground mt-2">
-            Gerencie os referenciais de classificação de informação do sistema DECODE-GOV
+            Gerencie os níveis de confidencialidade de informação do sistema DECODE-GOV
           </p>
         </div>
 
@@ -135,9 +135,9 @@ export default function ReferencialClassificacaoPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Tipologia de Classificação das Informações adotada pela organização</CardTitle>
+                <CardTitle>Nível de confidencialidade adotado pela organização</CardTitle>
                 <CardDescription>
-                  Lista de todas as tipologias de classificação cadastradas no sistema
+                  Lista de todos os níveis de confidencialidade cadastrados no sistema
                 </CardDescription>
               </div>
               <Button className="gap-2" onClick={handleNew}>
@@ -150,7 +150,7 @@ export default function ReferencialClassificacaoPage() {
             <ReferencialTable
               columns={columns}
               data={referenciais}
-              searchPlaceholder="Buscar referenciais..."
+              searchPlaceholder="Buscar níveis de confidencialidade..."
             />
           </CardContent>
         </Card>
