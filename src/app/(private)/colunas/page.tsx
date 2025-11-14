@@ -67,11 +67,7 @@ export default function ColunasPage() {
       tabelaFilter === "all" || 
       coluna.tabelaId === tabelaFilter
 
-    const matchesTipoDados = 
-      tipoDadosFilter === "all" || 
-      coluna.tipoDadosId === tipoDadosFilter
-
-    return matchesSearch && matchesTabela && matchesTipoDados
+    return matchesSearch && matchesTabela
   })
 
   const handleEdit = (coluna: ColunaResponse) => {
@@ -209,9 +205,7 @@ export default function ColunasPage() {
                   <TableRow>
                     <TableHead>Nome</TableHead>
                     <TableHead>Tabela</TableHead>
-                    <TableHead>Tipo de Dados</TableHead>
                     <TableHead>Descrição</TableHead>
-                    <TableHead>Criado em</TableHead>
                     <TableHead className="w-[70px]">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -225,24 +219,9 @@ export default function ColunasPage() {
                         <span className="text-sm">{getTabelaNome(coluna.tabelaId)}</span>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm">{getTipoDadosNome(coluna.tipoDadosId)}</span>
-                          {getTipoDadosCategoria(coluna.tipoDadosId) && (
-                            <Badge variant="outline" className="text-xs">
-                              {getTipoDadosCategoria(coluna.tipoDadosId)}
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
                         <div className="max-w-[300px] truncate text-sm text-muted-foreground">
                           {coluna.descricao || ""}
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-sm text-muted-foreground">
-                          {format(new Date(coluna.createdAt), "dd/MM/yyyy", { locale: ptBR })}
-                        </span>
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>
