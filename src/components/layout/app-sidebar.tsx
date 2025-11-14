@@ -68,21 +68,20 @@ const menuItems = [
       { title: "Classificação Dos Termos", icon: Tag, url: "/classificacoes-informacao" },
     ],
   },
-  
-  {
-    title: "Regras e Qualidade",
-    items: [
-      { title: "Regras de Negócio", icon: FileCheck, url: "/regras-negocio" },
-      { title: "Dimensões de Qualidade", icon: BarChart3, url: "/dimensoes-qualidade" },
-      { title: "Regras de Qualidade", icon: CheckCircle, url: "/regras-qualidade" },
-      { title: "Métricas de Qualidade", icon: Activity, url: "/metricas-qualidade" },
-    ],
-  },
   {
     title: "Ativos Tecnológicos",
     items: [
       { title: "Ativos Tecnológicos", icon: Server, url: "/ativos-tecnologicos" },
       { title: "Tabelas e Colunas", icon: Table, url: "/tabelas-colunas" },
+    ],
+  },
+  {
+    title: "Qualidade de dados",
+    items: [
+      { title: "Regras de Negócio", icon: FileCheck, url: "/regras-negocio" },
+      { title: "Dimensões de Qualidade", icon: BarChart3, url: "/dimensoes-qualidade" },
+      { title: "Regras de Qualidade", icon: CheckCircle, url: "/regras-qualidade" },
+      { title: "Métricas de Qualidade", icon: Activity, url: "/metricas-qualidade" },
     ],
   },
   {
