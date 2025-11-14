@@ -10,6 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useColunas, useDeleteColuna } from "@/hooks/api/use-colunas"
+import { useTabelas } from "@/hooks/api/use-tabelas"
 import { useSistemas } from "@/hooks/api/use-sistemas"
 import { ColunaResponse } from "@/types/api"
 import { ColunaForm } from "@/components/colunas/coluna-form"
@@ -28,7 +29,8 @@ export default function TabelasColunasPage() {
     search: searchTerm || undefined,
   })
   
-  const { data: sistemasData } = useSistemas({ page: 1, limit: 1000 })
+  const { data: tabelasData } = useTabelas({ })
+  const { data: sistemasData } = useSistemas({ })
 
   const deleteColuna = useDeleteColuna()
 
@@ -49,6 +51,7 @@ export default function TabelasColunasPage() {
   }
 
   const colunas = colunasData?.data || []
+  const tabelas = tabelasData?.data || []
   const sistemas = sistemasData?.data || []
 
   return (
@@ -66,18 +69,29 @@ export default function TabelasColunasPage() {
         <div className="grid gap-4 md:grid-cols-4">
           <Card className="group hover:shadow-lg transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Tabelas</CardTitle>
+              <div className="p-2 rounded-lg bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
+                <Database className="h-4 w-4 text-purple-600 transition-colors duration-300" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-purple-600">{tabelas.length || 0}</div>
+              <p className="text-xs text-muted-foreground">tabelas mapeadas</p>
+            </CardContent>
+          </Card>
+
+          <Card className="group hover:shadow-lg transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Colunas</CardTitle>
               <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
                 <Database className="h-4 w-4 text-blue-600 transition-colors duration-300" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{colunasData?.total || 0}</div>
+              <div className="text-2xl font-bold text-blue-600">{colunasData?.data.length || 0}</div>
               <p className="text-xs text-muted-foreground">colunas mapeadas</p>
             </CardContent>
           </Card>
-
-
         </div>
 
         <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
@@ -115,7 +129,7 @@ export default function TabelasColunasPage() {
                     <SelectItem value="todos">Todos os sistemas</SelectItem>
                     {sistemas.map((sistema) => (
                       <SelectItem key={sistema.id} value={sistema.id}>
-                        {sistema.sistema}
+                        {sistema.nome}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -128,11 +142,9 @@ export default function TabelasColunasPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Termo</TableHead>
-                    <TableHead>Sistema</TableHead>
-                    <TableHead>Banco</TableHead>
-                    <TableHead> Tabela</TableHead>
+                    <TableHead>Questão Gerencial</TableHead>
                     <TableHead>Coluna</TableHead>
-                    <TableHead>Necessidade</TableHead>
+                    <TableHead>Tabela</TableHead>
                     <TableHead className="w-[70px]">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -140,12 +152,10 @@ export default function TabelasColunasPage() {
                   {isLoadingColunas ? (
                     Array.from({ length: 5 }).map((_, i) => (
                       <TableRow key={i}>
-                        <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-[300px]" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-[200px]" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-[40px]" /></TableCell>
                       </TableRow>
                     ))
@@ -164,15 +174,10 @@ export default function TabelasColunasPage() {
                   ) : (
                     colunas.map((coluna: ColunaResponse) => (
                       <TableRow key={coluna.id}>
-                        <TableCell className="font-medium">{coluna.nome}</TableCell>
-                        <TableCell>{coluna.tabelaId}</TableCell>
-                        <TableCell>-</TableCell>
-                        <TableCell>-</TableCell>
-                        <TableCell>
-                          <div className="max-w-[200px] truncate" title={coluna.descricao}>
-                            {coluna.descricao || '-'}
-                          </div>
-                        </TableCell>
+                        <TableCell>{coluna.termo?.termo}</TableCell>
+                        <TableCell className="w-[400px] truncate">{coluna.necessidadeInformacao?.questaoGerencial}</TableCell>
+                        <TableCell>{coluna.nome}</TableCell>
+                        <TableCell>{coluna.tabela?.nome}</TableCell>
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>

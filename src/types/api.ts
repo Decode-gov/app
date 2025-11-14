@@ -120,11 +120,15 @@ export type UpdateColunaBody = UpdateColunaFormData
 export interface ColunaResponse {
   id: string;
   nome: string;
-  descricao?: string;
+  descricao?: string | null;
   tabelaId: string;
-  tipoDadosId: string;
-  createdAt: string;
-  updatedAt: string;
+  termoId?: string | null;
+  necessidadeInformacaoId?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  tabela?: TabelaResponse;
+  necessidadeInformacao?: NecessidadeInformacaoResponse;
+  termo?: DefinicaoResponse;
 }
 
 // ============================================================================
@@ -236,18 +240,30 @@ export type UpdateRegraNegocioBody = UpdateRegraNegocioFormData
 
 export interface RegraNegocioResponse {
   id: string;
-  processoId: string;
   descricao: string;
-  entidadeTipo?: 'Politica' | 'Papel' | 'Atribuicao' | 'Processo' | 'Termo' | 'KPI' | 'RegraNegocio' | 'RegraQualidade' | 'Dominio' | 'Sistema' | 'Tabela' | 'Coluna';
-  entidadeId?: string;
-  politicaId?: string;
-  regulacaoId?: string;
-  status?: 'ATIVA' | 'INATIVA' | 'EM_DESENVOLVIMENTO' | 'DESCONTINUADA';
-  tipoRegra?: 'VALIDACAO' | 'TRANSFORMACAO' | 'CALCULO' | 'CONTROLE' | 'NEGOCIO';
-  processo?: {
+  politicaId: string;
+  sistemaId?: string | null;
+  responsavelId: string;
+  termoId: string;
+  politica?: {
+    id: string;
+    nome?: string;
+    versao: string;
+  };
+  sistema?: {
     id: string;
     nome: string;
-    descricao?: string;
+    descricao?: string | null;
+  } | null;
+  responsavel?: {
+    id: string;
+    nome: string;
+    descricao?: string | null;
+  };
+  termo?: {
+    id: string;
+    termo: string;
+    definicao: string;
   };
   createdAt: string;
   updatedAt: string;
@@ -276,11 +292,37 @@ export type UpdateTabelaBody = UpdateTabelaFormData
 export interface TabelaResponse {
   id: string;
   nome: string;
-  descricao?: string;
-  sistemaId: string;
-  bancoId: string;
-  createdAt: string;
-  updatedAt: string;
+  bancoId?: string | null;
+  termoId?: string | null;
+  necessidadeInformacaoId?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  banco?: {
+    id: string;
+    nome: string;
+    sistemaId?: string | null;
+  } | null;
+  termo?: {
+    id: string;
+    termo: string;
+    definicao: string;
+  } | null;
+  colunas?: Array<{
+    id: string;
+    nome: string;
+    descricao?: string | null;
+    obrigatorio: boolean;
+    unicidade: boolean;
+  }>;
+  regrasQualidade?: Array<{
+    id: string;
+    nome: string;
+    descricao?: string | null;
+  }>;
+  _count?: {
+    colunas: number;
+    codificacoes: number;
+  };
 }
 
 // ============================================================================
@@ -291,13 +333,19 @@ export type UpdateSistemaBody = UpdateSistemaFormData
 
 export interface SistemaResponse {
   id: string;
-  sistema: string;
-  bancoDados?: string;
-  repositorio?: string;
-  tecnologia?: string;
-  responsavelTecnico?: string;
-  createdAt: string;
-  updatedAt: string;
+  nome: string;
+  descricao: string | null;
+  repositorio: string;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  bancos?: Array<{
+    id: string;
+    nome: string;
+    tabelas?: Array<{
+      id: string;
+      nome: string;
+    }>;
+  }>;
 }
 
 // ============================================================================
@@ -309,10 +357,22 @@ export type UpdateBancoBody = UpdateBancoFormData
 export interface BancoResponse {
   id: string;
   nome: string;
-  descricao?: string;
-  sistemaId?: string;
-  createdAt: string;
-  updatedAt: string;
+  sistemaId?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+  sistema?: {
+    id: string;
+    nome: string;
+    descricao?: string | null;
+    repositorio: string;
+  } | null;
+  tabelas?: Array<{
+    id: string;
+    nome: string;
+  }>;
+  _count?: {
+    tabelas: number;
+  };
 }
 
 // ============================================================================
@@ -563,13 +623,38 @@ export type UpdateRegraQualidadeBody = UpdateRegraQualidadeFormData
 
 export interface RegraQualidadeResponse {
   id: string;
-  dimensaoId: string;
   descricao: string;
-  tabelaId?: string;
-  colunaId?: string;
-  responsavelId?: string;
-  createdAt: string;
-  updatedAt: string;
+  regraNegocioId?: string | null;
+  dimensaoId: string;
+  tabelaId: string;
+  colunaId: string;
+  responsavelId: string;
+  createdAt?: string;
+  updatedAt?: string;
+  regraNegocio?: {
+    id: string;
+    descricao: string;
+    processoId: string;
+  } | null;
+  dimensao?: {
+    id: string;
+    nome: string;
+    descricao: string;
+  };
+  tabela?: {
+    id: string;
+    nome: string;
+  };
+  coluna?: {
+    id: string;
+    nome: string;
+    descricao?: string | null;
+  };
+  responsavel?: {
+    id: string;
+    nome: string;
+    descricao?: string | null;
+  };
 }
 
 // ============================================================================

@@ -18,11 +18,6 @@ const stringOptional = () => z.string().optional()
 const uuidRequired = (campo: string) =>
   z.uuid().min(1, `${campo} é obrigatória`)
 
-const uuidOptional = () =>
-  z.uuid().optional()
-
-const dateStringRequired = (campo: string) =>
-  z.iso.datetime({ message: `${campo} deve ser uma data válida` })
 
 // ============================================================================
 // 1) NECESSIDADE DE INFORMAÇÃO
@@ -156,7 +151,8 @@ export const UpdateClassificacaoInformacaoSchema = ClassificacaoInformacaoSchema
 
 export const SistemaSchema = z.object({
   nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
+  descricao: z.string().nullable().optional(),
+  repositorio: stringOptional(),
 })
 
 export const CreateSistemaSchema = SistemaSchema
@@ -168,7 +164,7 @@ export const UpdateSistemaSchema = SistemaSchema.partial()
 
 export const BancoSchema = z.object({
   nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
+  sistemaId: z.uuid().nullable().optional(),
 })
 
 export const CreateBancoSchema = BancoSchema
@@ -180,9 +176,7 @@ export const UpdateBancoSchema = BancoSchema.partial()
 
 export const TabelaSchema = z.object({
   nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
-  bancoId: uuidRequired("Banco de dados"),
-  sistemaId: uuidRequired("Sistema"),
+  bancoId: z.uuid().nullable().optional(),
 })
 
 export const CreateTabelaSchema = TabelaSchema
@@ -194,9 +188,11 @@ export const UpdateTabelaSchema = TabelaSchema.partial()
 
 export const ColunaSchema = z.object({
   nome: stringRequired(1, "Nome"),
-  descricao: stringOptional(),
-  tabelaId: uuidRequired("Tabela"),
-  tipoDadosId: uuidRequired("Tipo de dados"),
+  descricao: z.string().nullable().optional(),
+  tabelaId: stringRequired(1, "Tabela"),
+  politicaInternaId: z.uuid().nullable().optional(),
+  termoId: z.uuid().nullable(),
+  necessidadeInformacaoId: z.uuid().nullable(),
 })
 
 export const CreateColunaSchema = ColunaSchema
@@ -284,8 +280,11 @@ export const UpdateDimensaoQualidadeSchema = DimensaoQualidadeSchema.partial()
 // ============================================================================
 
 export const RegraNegocioSchema = z.object({
-  processoId: uuidRequired("Processo"),
   descricao: stringRequired(1, "Descrição"),
+  politicaId: z.uuid(),
+  sistemaId: z.uuid().nullable().optional(),
+  responsavelId: z.uuid(),
+  termoId: z.uuid(),
 })
 
 export const CreateRegraNegocioSchema = RegraNegocioSchema
@@ -296,11 +295,12 @@ export const UpdateRegraNegocioSchema = RegraNegocioSchema.partial()
 // ============================================================================
 
 export const RegraQualidadeSchema = z.object({
-  dimensaoId: uuidRequired("Dimensão de qualidade"),
   descricao: stringRequired(1, "Descrição"),
-  tabelaId: stringOptional(),
-  colunaId: stringOptional(),
-  responsavelId: stringOptional(),
+  regraNegocioId: z.uuid().nullable().optional(),
+  dimensaoId: z.uuid(),
+  tabelaId: z.uuid(),
+  colunaId: z.uuid(),
+  responsavelId: z.uuid(),
 })
 
 export const CreateRegraQualidadeSchema = RegraQualidadeSchema
@@ -366,7 +366,6 @@ export const UpdateKPISchema = KPISchema.partial()
 export const ProcessoSchema = z.object({
   nome: stringRequired(1, "Nome"),
   descricao: stringOptional(),
-  comunidadeId: uuidRequired("Comunidade"),
 })
 
 export const CreateProcessoSchema = ProcessoSchema

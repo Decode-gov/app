@@ -3,7 +3,6 @@
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -14,17 +13,9 @@ import { useDimensoesQualidade } from "@/hooks/api/use-dimensoes-qualidade-new"
 import { useTabelas } from "@/hooks/api/use-tabelas"
 import { useColunas } from "@/hooks/api/use-colunas"
 import { usePapeis } from "@/hooks/api/use-papeis"
+import { useRegrasNegocio } from "@/hooks/api"
 import { RegraQualidadeResponse } from "@/types/api"
-
-const formSchema = z.object({
-  dimensaoId: z.string({ message: "Dimensão é obrigatória" }),
-  descricao: z.string({ message: "Descrição é obrigatória" }).min(1, "Descrição é obrigatória"),
-  tabelaId: z.string().optional(),
-  colunaId: z.string().optional(),
-  responsavelId: z.string().optional(),
-})
-
-type FormValues = z.infer<typeof formSchema>
+import { CreateRegraQualidadeSchema, type CreateRegraQualidadeFormData } from "@/schemas"
 
 interface RegraQualidadeFormProps {
   open: boolean
@@ -41,39 +32,42 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
   const { data: tabelasData } = useTabelas({ page: 1, limit: 1000 })
   const { data: colunasData } = useColunas({ page: 1, limit: 1000 })
   const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
+  const { data: regrasNegocioData } = useRegrasNegocio({ page: 1, limit: 1000 })
 
   const dimensoes = dimensoesData?.data || []
   const tabelas = tabelasData?.data || []
   const colunas = colunasData?.data || []
   const papeis = papeisData?.data || []
+  const regrasNegocio = regrasNegocioData?.data || []
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<CreateRegraQualidadeFormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(CreateRegraQualidadeSchema) as any,
     defaultValues: {
-      dimensaoId: "",
       descricao: "",
+      regraNegocioId: null,
+      dimensaoId: "",
       tabelaId: "",
       colunaId: "",
       responsavelId: "",
     },
   })
 
-  // ColunaResponse não tem tabelaId direto, então não filtramos
-  const colunasFiltered = colunas
-
   useEffect(() => {
     if (regra) {
       form.reset({
-        dimensaoId: regra.dimensaoId || "",
         descricao: regra.descricao || "",
+        regraNegocioId: regra.regraNegocioId || null,
+        dimensaoId: regra.dimensaoId || "",
         tabelaId: regra.tabelaId || "",
         colunaId: regra.colunaId || "",
         responsavelId: regra.responsavelId || "",
       })
     } else {
       form.reset({
-        dimensaoId: "",
         descricao: "",
+        regraNegocioId: null,
+        dimensaoId: "",
         tabelaId: "",
         colunaId: "",
         responsavelId: "",
@@ -81,20 +75,12 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
     }
   }, [regra, form])
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: CreateRegraQualidadeFormData) => {
     try {
-      const payload = {
-        dimensaoId: data.dimensaoId,
-        descricao: data.descricao,
-        tabelaId: data.tabelaId || undefined,
-        colunaId: data.colunaId || undefined,
-        responsavelId: data.responsavelId || undefined,
-      }
-
       if (isEditing) {
-        await updateRegra.mutateAsync({ id: regra.id, data: payload })
+        await updateRegra.mutateAsync({ id: regra.id, data })
       } else {
-        await createRegra.mutateAsync(payload)
+        await createRegra.mutateAsync(data)
       }
       onOpenChange(false)
       form.reset()
@@ -119,31 +105,6 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="dimensaoId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Dimensão de Qualidade *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione a dimensão" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {dimensoes.map((dimensao) => (
-                        <SelectItem key={dimensao.id} value={dimensao.id}>
-                          {dimensao.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="descricao"
               render={({ field }) => (
                 <FormItem>
@@ -163,21 +124,73 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
 
             <FormField
               control={form.control}
-              name="tabelaId"
+              name="regraNegocioId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tabela (Opcional)</FormLabel>
-                  <Select 
-                    onValueChange={(value) => field.onChange(value === "none" ? "" : value)} 
+                  <FormLabel>Regra de Negócio</FormLabel>
+                  <Select
+                    onValueChange={(value) => field.onChange(value === "none" ? null : value)}
                     value={field.value || "none"}
                   >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione a tabela" />
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione a regra de negócio" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="none">Nenhuma</SelectItem>
+                      {regrasNegocio.map((regra) => (
+                        <SelectItem key={regra.id} value={regra.id}>
+                          <div className="flex flex-col">
+                            <span className="line-clamp-1">{regra.descricao}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="dimensaoId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Dimensão de Qualidade *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione a dimensão" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {dimensoes.map((dimensao) => (
+                        <SelectItem key={dimensao.id} value={dimensao.id}>
+                          {dimensao.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="tabelaId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tabela *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione a tabela" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
                       {tabelas.map((tabela) => (
                         <SelectItem key={tabela.id} value={tabela.id}>
                           {tabela.nome}
@@ -195,19 +208,15 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
               name="colunaId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Coluna (Opcional)</FormLabel>
-                  <Select 
-                    onValueChange={(value) => field.onChange(value === "none" ? "" : value)} 
-                    value={field.value || "none"}
-                  >
+                  <FormLabel>Coluna *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione a coluna" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="none">Nenhuma</SelectItem>
-                      {colunasFiltered.map((coluna) => (
+                      {colunas.map((coluna) => (
                         <SelectItem key={coluna.id} value={coluna.id}>
                           {coluna.nome}
                         </SelectItem>
@@ -224,18 +233,14 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
               name="responsavelId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Responsável (Opcional)</FormLabel>
-                  <Select 
-                    onValueChange={(value) => field.onChange(value === "none" ? "" : value)} 
-                    value={field.value || "none"}
-                  >
+                  <FormLabel>Responsável *</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione o responsável" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="none">Nenhum</SelectItem>
                       {papeis.map((papel) => (
                         <SelectItem key={papel.id} value={papel.id}>
                           {papel.nome}

@@ -139,7 +139,7 @@ export function DimensaoQualidadeForm({ open, onOpenChange, dimensao }: Dimensao
                   <FormLabel>Política *</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione a política" />
                       </SelectTrigger>
                     </FormControl>

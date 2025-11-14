@@ -1,47 +1,42 @@
 ﻿"use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Loader2, Plus } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
 
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { RegraNegocioResponse } from "@/types/api"
 import { useCreateRegraNegocio, useUpdateRegraNegocio } from "@/hooks/api/use-regras-negocio"
-import { useProcessos } from "@/hooks/api/use-processos"
-import { ProcessoForm } from "@/components/processos/processo-form"
-
-const formSchema = z.object({
-  processoId: z.string().min(1, "Processo é obrigatório"),
-  descricao: z.string().min(1, "Descrição é obrigatória"),
-})
-
-type FormData = z.infer<typeof formSchema>
+import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
+import { useSistemas } from "@/hooks/api/use-sistemas"
+import { usePapeis } from "@/hooks/api/use-papeis"
+import { useDefinicoes } from "@/hooks/api/use-definicoes"
+import { CreateRegraNegocioSchema, CreateRegraNegocioFormData } from "@/schemas"
 
 interface RegraFormProps {
   open: boolean
@@ -50,39 +45,55 @@ interface RegraFormProps {
 }
 
 export function RegraForm({ open, onOpenChange, regra }: RegraFormProps) {
-  const [processoDialogOpen, setProcessoDialogOpen] = useState(false)
   const createMutation = useCreateRegraNegocio()
   const updateMutation = useUpdateRegraNegocio()
-  const { data: processosData } = useProcessos()
+  const { data: politicasData } = usePoliticasInternas({ page: 1, limit: 1000 })
+  const { data: sistemasData } = useSistemas({ page: 1, limit: 1000 })
+  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
+  const { data: definicoesData } = useDefinicoes({ page: 1, limit: 1000 })
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<CreateRegraNegocioFormData>({
+    resolver: zodResolver(CreateRegraNegocioSchema),
     defaultValues: {
-      processoId: "",
       descricao: "",
+      politicaId: "",
+      sistemaId: null,
+      responsavelId: "",
+      termoId: "",
     },
   })
 
   useEffect(() => {
     if (regra) {
       form.reset({
-        processoId: regra.processoId,
         descricao: regra.descricao,
+        politicaId: regra.politicaId,
+        sistemaId: regra.sistemaId || null,
+        responsavelId: regra.responsavelId,
+        termoId: regra.termoId,
       })
     } else {
       form.reset({
-        processoId: "",
         descricao: "",
+        politicaId: "",
+        sistemaId: null,
+        responsavelId: "",
+        termoId: "",
       })
     }
   }, [regra, form])
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: CreateRegraNegocioFormData) => {
     try {
+      const submitData = {
+        ...data,
+        sistemaId: data.sistemaId || undefined,
+      }
+      
       if (regra) {
-        await updateMutation.mutateAsync({ id: regra.id, data })
+        await updateMutation.mutateAsync({ id: regra.id, data: submitData })
       } else {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync(submitData)
       }
       onOpenChange(false)
       form.reset()
@@ -91,13 +102,16 @@ export function RegraForm({ open, onOpenChange, regra }: RegraFormProps) {
     }
   }
 
-  const processos = processosData?.data || []
+  const politicas = politicasData?.data || []
+  const sistemas = sistemasData?.data || []
+  const papeis = papeisData?.data || []
+  const definicoes = definicoesData?.data || []
   const isSubmitting = createMutation.isPending || updateMutation.isPending
 
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>
               {regra ? "Editar Regra de Negócio" : "Nova Regra de Negócio"}
@@ -113,41 +127,6 @@ export function RegraForm({ open, onOpenChange, regra }: RegraFormProps) {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="processoId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Processo *</FormLabel>
-                    <div className="flex gap-2">
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger className="flex-1">
-                            <SelectValue placeholder="Selecione o processo" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {processos.map((processo) => (
-                            <SelectItem key={processo.id} value={processo.id}>
-                              {processo.nome}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setProcessoDialogOpen(true)}
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="descricao"
                 render={({ field }) => (
                   <FormItem>
@@ -155,10 +134,114 @@ export function RegraForm({ open, onOpenChange, regra }: RegraFormProps) {
                     <FormControl>
                       <Textarea
                         placeholder="Descreva a regra de negócio..."
-                        className="min-h-[120px]"
+                        className="min-h-[100px]"
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="politicaId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Política Interna *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione a política" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {politicas.map((politica) => (
+                          <SelectItem key={politica.id} value={politica.id}>
+                            {politica.nome} (v{politica.versao})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="sistemaId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sistema</FormLabel>
+                    <Select 
+                      onValueChange={(value) => field.onChange(value === "none" ? null : value)} 
+                      value={field.value || "none"}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione o sistema (opcional)" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">Nenhum</SelectItem>
+                        {sistemas.map((sistema) => (
+                          <SelectItem key={sistema.id} value={sistema.id}>
+                            {sistema.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="responsavelId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Responsável *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione o responsável" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {papeis.map((papel) => (
+                          <SelectItem key={papel.id} value={papel.id}>
+                            {papel.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="termoId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Termo (Definição) *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione o termo" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {definicoes.map((definicao) => (
+                          <SelectItem key={definicao.id} value={definicao.id}>
+                            {definicao.termo}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -182,11 +265,6 @@ export function RegraForm({ open, onOpenChange, regra }: RegraFormProps) {
           </Form>
         </DialogContent>
       </Dialog>
-
-      <ProcessoForm
-        open={processoDialogOpen}
-        onOpenChange={setProcessoDialogOpen}
-      />
     </>
   )
 }

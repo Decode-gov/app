@@ -3,51 +3,38 @@
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
 import { Plus } from "lucide-react"
 import { useCreateTabela, useUpdateTabela } from "@/hooks/api/use-tabelas"
 import { useBancos } from "@/hooks/api/use-bancos"
-import { useSistemas } from "@/hooks/api/use-sistemas"
 import { TabelaResponse } from "@/types/api"
-import { Badge } from "@/components/ui/badge"
+import { CreateTabelaSchema, type CreateTabelaFormData } from "@/schemas"
 import { BancoForm } from "@/components/bancos/banco-form"
-import { SistemaForm } from "@/components/sistemas/sistema-form"
-
-const tabelaSchema = z.object({
-  nome: z.string().min(1, "Nome é obrigatório").max(255),
-  descricao: z.string().max(1000).optional(),
-  bancoId: z.string().min(1, "Banco é obrigatório"),
-  sistemaId: z.string().min(1, "Sistema é obrigatório"),
-})
-
-type TabelaFormValues = z.infer<typeof tabelaSchema>
 
 interface TabelaFormProps {
   open: boolean
@@ -57,20 +44,17 @@ interface TabelaFormProps {
 
 export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
   const [bancoDialogOpen, setBancoDialogOpen] = useState(false)
-  const [sistemaDialogOpen, setSistemaDialogOpen] = useState(false)
   
   const createMutation = useCreateTabela()
   const updateMutation = useUpdateTabela()
   const { data: bancosData } = useBancos()
-  const { data: sistemasData } = useSistemas()
   
-  const form = useForm<TabelaFormValues>({
-    resolver: zodResolver(tabelaSchema),
+  const form = useForm<CreateTabelaFormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(CreateTabelaSchema) as any,
     defaultValues: {
       nome: "",
-      descricao: "",
-      bancoId: "",
-      sistemaId: "",
+      bancoId: null,
     },
   })
 
@@ -79,22 +63,18 @@ export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
       if (tabela) {
         form.reset({
           nome: tabela.nome,
-          descricao: tabela.descricao || "",
-          bancoId: tabela.bancoId,
-          sistemaId: tabela.sistemaId,
+          bancoId: tabela.bancoId || null,
         })
       } else {
         form.reset({
           nome: "",
-          descricao: "",
-          bancoId: "",
-          sistemaId: "",
+          bancoId: null,
         })
       }
     }
   }, [open, tabela, form])
 
-  const onSubmit = async (data: TabelaFormValues) => {
+  const onSubmit = async (data: CreateTabelaFormData) => {
     try {
       if (tabela) {
         await updateMutation.mutateAsync({
@@ -120,7 +100,6 @@ export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending
   const bancos = bancosData?.data || []
-  const sistemas = sistemasData?.data || []
 
   return (
     <>
@@ -159,40 +138,20 @@ export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
 
               <FormField
                 control={form.control}
-                name="descricao"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Descrição</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        placeholder="Descrição da tabela..."
-                        className="min-h-[80px]"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormDescription className="text-xs">
-                      Máximo 1000 caracteres
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="bancoId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Banco de Dados *</FormLabel>
+                    <FormLabel>Banco de Dados</FormLabel>
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value ?? ''}>
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Selecione o banco" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
+                            <SelectItem value="none">Nenhum</SelectItem>
                             {bancos.length === 0 ? (
                               <div className="p-2 text-sm text-muted-foreground text-center">
                                 Nenhum banco encontrado
@@ -200,14 +159,7 @@ export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
                             ) : (
                               bancos.map((banco) => (
                                 <SelectItem key={banco.id} value={banco.id}>
-                                  <div className="flex flex-col">
-                                    <span>{banco.nome}</span>
-                                    {banco.descricao && (
-                                      <span className="text-xs text-muted-foreground line-clamp-1">
-                                        {banco.descricao}
-                                      </span>
-                                    )}
-                                  </div>
+                                  {banco.nome}
                                 </SelectItem>
                               ))
                             )}
@@ -226,60 +178,6 @@ export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
                     </div>
                     <FormDescription className="text-xs">
                       Banco de dados onde a tabela está armazenada
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="sistemaId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sistema *</FormLabel>
-                    <div className="flex gap-2">
-                      <div className="flex-1">
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o sistema" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {sistemas.length === 0 ? (
-                              <div className="p-2 text-sm text-muted-foreground text-center">
-                                Nenhum sistema encontrado
-                              </div>
-                            ) : (
-                              sistemas.map((sistema) => (
-                                <SelectItem key={sistema.id} value={sistema.id}>
-                                  <div className="flex items-center gap-2">
-                                    <span>{sistema.sistema}</span>
-                                    {sistema.tecnologia && (
-                                      <Badge variant="outline" className="text-xs">
-                                        {sistema.tecnologia}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </SelectItem>
-                              ))
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setSistemaDialogOpen(true)}
-                        title="Criar novo sistema"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <FormDescription className="text-xs">
-                      Sistema que utiliza esta tabela
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -307,11 +205,6 @@ export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
       <BancoForm 
         open={bancoDialogOpen}
         onOpenChange={setBancoDialogOpen}
-      />
-
-      <SistemaForm 
-        open={sistemaDialogOpen}
-        onOpenChange={setSistemaDialogOpen}
       />
     </>
   )

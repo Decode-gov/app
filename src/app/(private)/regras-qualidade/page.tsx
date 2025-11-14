@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Target, CheckCircle2, Database } from "lucide-react"
+import { Plus, Search, MoreHorizontal, Edit, Trash2, Target } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useRegrasQualidade, useDeleteRegraQualidade } from "@/hooks/api/use-regras-qualidade"
 import { useDimensoesQualidade } from "@/hooks/api/use-dimensoes-qualidade-new"
 import { useTabelas } from "@/hooks/api/use-tabelas"
+import { useColunas } from "@/hooks/api/use-colunas"
 import { usePapeis } from "@/hooks/api/use-papeis"
 import { RegraQualidadeResponse } from "@/types/api"
 import { RegraQualidadeForm } from "@/components/regras-qualidade/regra-qualidade-form"
@@ -36,9 +37,16 @@ export default function RegrasQualidadePage() {
   const { data: regrasData, isLoading, error } = useRegrasQualidade(queryParams)
   const { data: dimensoesData } = useDimensoesQualidade({ page: 1, limit: 1000 })
   const { data: tabelasData } = useTabelas({ page: 1, limit: 1000 })
+  const { data: colunasData } = useColunas({ page: 1, limit: 1000 })
   const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
   
   const deleteRegra = useDeleteRegraQualidade()
+
+  const regras = regrasData?.data || []
+  const dimensoes = dimensoesData?.data || []
+  const tabelas = tabelasData?.data || []
+  const colunas = colunasData?.data || []
+  const papeis = papeisData?.data || []
 
   const handleEdit = (regra: RegraQualidadeResponse) => {
     setSelectedRegra(regra)
@@ -56,15 +64,7 @@ export default function RegrasQualidadePage() {
     }
   }
 
-  const regras = regrasData?.data || []
-  const dimensoes = dimensoesData?.data || []
-  const tabelas = tabelasData?.data || []
-  const papeis = papeisData?.data || []
-
-  const regrasComTabela = regras.filter(r => r.tabelaId).length
-  const regrasComResponsavel = regras.filter(r => r.responsavelId).length
-  const dimensoesUnicas = [...new Set(regras.map(r => r.dimensaoId))].length
-
+  
   return (
     <>
       <div className="space-y-6">
@@ -77,7 +77,7 @@ export default function RegrasQualidadePage() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4">
           <Card className="group hover:shadow-lg transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total</CardTitle>
@@ -86,49 +86,11 @@ export default function RegrasQualidadePage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{regrasData?.total || 0}</div>
+              <div className="text-2xl font-bold text-blue-600">{regras.length || 0}</div>
               <p className="text-xs text-muted-foreground">regras cadastradas</p>
             </CardContent>
           </Card>
 
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Dimensões</CardTitle>
-              <div className="p-2 rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <CheckCircle2 className="h-4 w-4 text-green-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{dimensoesUnicas}</div>
-              <p className="text-xs text-muted-foreground">dimensões cobertas</p>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Com Tabela</CardTitle>
-              <div className="p-2 rounded-lg bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
-                <Database className="h-4 w-4 text-purple-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{regrasComTabela}</div>
-              <p className="text-xs text-muted-foreground">vinculadas a tabelas</p>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Com Responsável</CardTitle>
-              <div className="p-2 rounded-lg bg-orange-100 group-hover:bg-orange-200 transition-colors duration-300">
-                <CheckCircle2 className="h-4 w-4 text-orange-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{regrasComResponsavel}</div>
-              <p className="text-xs text-muted-foreground">com responsável atribuído</p>
-            </CardContent>
-          </Card>
         </div>
 
         <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
@@ -179,8 +141,8 @@ export default function RegrasQualidadePage() {
                     <TableHead>Descrição</TableHead>
                     <TableHead>Dimensão</TableHead>
                     <TableHead>Tabela</TableHead>
+                    <TableHead>Coluna</TableHead>
                     <TableHead>Responsável</TableHead>
-                    <TableHead>Data de Criação</TableHead>
                     <TableHead className="w-[70px]">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -222,9 +184,10 @@ export default function RegrasQualidadePage() {
                     </TableRow>
                   ) : (
                     regras.map((regra: RegraQualidadeResponse) => {
-                      const dimensao = dimensoes.find(d => d.id === regra.dimensaoId)
-                      const tabela = regra.tabelaId ? tabelas.find(t => t.id === regra.tabelaId) : null
-                      const responsavel = regra.responsavelId ? papeis.find(p => p.id === regra.responsavelId) : null
+                      const dimensao = regra.dimensao || dimensoes.find(d => d.id === regra.dimensaoId)
+                      const tabela = regra.tabela || tabelas.find(t => t.id === regra.tabelaId)
+                      const coluna = regra.coluna || colunas.find(c => c.id === regra.colunaId)
+                      const responsavel = regra.responsavel || papeis.find(p => p.id === regra.responsavelId)
 
                       return (
                         <TableRow key={regra.id}>
@@ -248,14 +211,18 @@ export default function RegrasQualidadePage() {
                             )}
                           </TableCell>
                           <TableCell>
+                            {coluna ? (
+                              <Badge variant="outline">{coluna.nome}</Badge>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                          </TableCell>
+                          <TableCell>
                             {responsavel ? (
                               <Badge variant="outline">{responsavel.nome}</Badge>
                             ) : (
                               <span className="text-muted-foreground">-</span>
                             )}
-                          </TableCell>
-                          <TableCell className="text-muted-foreground">
-                            {new Date(regra.createdAt).toLocaleDateString('pt-BR')}
                           </TableCell>
                           <TableCell>
                             <DropdownMenu>

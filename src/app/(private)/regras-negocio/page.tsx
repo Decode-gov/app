@@ -7,67 +7,55 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Search, Edit, Trash2, FileText } from "lucide-react"
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useRegrasNegocio, useDeleteRegraNegocio } from "@/hooks/api/use-regras-negocio"
-import { useProcessos } from "@/hooks/api/use-processos"
+import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
+import { useSistemas } from "@/hooks/api/use-sistemas"
+import { usePapeis } from "@/hooks/api/use-papeis"
+import { useDefinicoes } from "@/hooks/api/use-definicoes"
 import { RegraForm } from "@/components/regras/regra-form"
 import { RegraNegocioResponse } from "@/types/api"
 
-const statusBadgeMap: Record<string, { variant: "default" | "secondary" | "destructive" | "outline", label: string }> = {
-  ATIVA: { variant: "default", label: "Ativa" },
-  INATIVA: { variant: "secondary", label: "Inativa" },
-  EM_DESENVOLVIMENTO: { variant: "outline", label: "Em Desenvolvimento" },
-  DESCONTINUADA: { variant: "destructive", label: "Descontinuada" },
-}
-
-const tipoRegraLabels: Record<string, string> = {
-  VALIDACAO: "Validação",
-  TRANSFORMACAO: "Transformação",
-  CALCULO: "Cálculo",
-  CONTROLE: "Controle",
-  NEGOCIO: "Negócio",
-}
-
 export default function RegrasNegocioPage() {
   const [search, setSearch] = useState("")
-  const [statusFilter, setStatusFilter] = useState<string>("")
-  const [tipoFilter, setTipoFilter] = useState<string>("")
+  const [politicaFilter, setPoliticaFilter] = useState<string>("")
   const [formOpen, setFormOpen] = useState(false)
   const [selectedRegra, setSelectedRegra] = useState<RegraNegocioResponse | undefined>()
 
-  const { data: regrasData, isLoading, error } = useRegrasNegocio({
-    page: 1,
-    limit: 1000,
-    status: statusFilter || undefined,
-    tipoRegra: tipoFilter || undefined,
-  })
-  const { data: processosData } = useProcessos({ page: 1, limit: 1000 })
+  const { data: regrasData, isLoading, error } = useRegrasNegocio()
+  const { data: politicasData } = usePoliticasInternas({ page: 1, limit: 1000 })
+  const { data: sistemasData } = useSistemas({ page: 1, limit: 1000 })
+  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
+  const { data: definicoesData } = useDefinicoes({ page: 1, limit: 1000 })
   const deleteRegra = useDeleteRegraNegocio()
 
   // Extração do array de dados
   const regras = regrasData?.data ?? []
-  const processos = processosData?.data ?? []
+  const politicas = politicasData?.data ?? []
+  const sistemas = sistemasData?.data ?? []
+  const papeis = papeisData?.data ?? []
+  const definicoes = definicoesData?.data ?? []
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta regra de negócio?")) {
@@ -75,9 +63,9 @@ export default function RegrasNegocioPage() {
     }
   }
 
-  const getProcessoNome = (processoId: string) => {
-    const processo = processos.find(p => p.id === processoId)
-    return processo?.nome || "N/A"
+  const getPoliticaNome = (politicaId: string) => {
+    const politica = politicas.find(p => p.id === politicaId)
+    return politica ? `${politica.nome} (v${politica.versao})` : "N/A"
   }
 
   // Filtro local apenas para busca por texto
@@ -86,7 +74,9 @@ export default function RegrasNegocioPage() {
     const searchLower = search.toLowerCase()
     return (
       regra.descricao?.toLowerCase().includes(searchLower) ||
-      getProcessoNome(regra.processoId).toLowerCase().includes(searchLower)
+      getPoliticaNome(regra.politicaId).toLowerCase().includes(searchLower) ||
+      regra.responsavel?.nome?.toLowerCase().includes(searchLower) ||
+      regra.termo?.termo?.toLowerCase().includes(searchLower)
     )
   })
 
@@ -160,50 +150,50 @@ export default function RegrasNegocioPage() {
         </p>
       </div>
 
-      {/* Cards de estatísticas por Status */}
+      {/* Cards de estatísticas */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ativas</CardTitle>
+            <CardTitle className="text-sm font-medium">Total</CardTitle>
+            <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+              <FileText className="h-4 w-4 text-primary transition-colors duration-300" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {regras.length}
+            </div>
+            <p className="text-xs text-muted-foreground">regras cadastradas</p>
+          </CardContent>
+        </Card>
+
+        <Card className="group hover:shadow-lg transition-all duration-300">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Políticas Únicas</CardTitle>
+            <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
+              <FileText className="h-4 w-4 text-blue-600 transition-colors duration-300" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {[...new Set(regras.map(r => r.politicaId))].length}
+            </div>
+            <p className="text-xs text-muted-foreground">políticas referenciadas</p>
+          </CardContent>
+        </Card>
+
+        <Card className="group hover:shadow-lg transition-all duration-300">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Com Sistema</CardTitle>
             <div className="p-2 rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
               <FileText className="h-4 w-4 text-green-600 transition-colors duration-300" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {regras.filter(r => r.status === "ATIVA").length}
+              {regras.filter(r => r.sistemaId).length}
             </div>
-            <p className="text-xs text-muted-foreground">regras ativas</p>
-          </CardContent>
-        </Card>
-
-        <Card className="group hover:shadow-lg transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Em Desenvolvimento</CardTitle>
-            <div className="p-2 rounded-lg bg-slate-100 group-hover:bg-slate-200 transition-colors duration-300">
-              <FileText className="h-4 w-4 text-slate-600 transition-colors duration-300" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-slate-700">
-              {regras.filter(r => r.status === "EM_DESENVOLVIMENTO").length}
-            </div>
-            <p className="text-xs text-muted-foreground">em desenvolvimento</p>
-          </CardContent>
-        </Card>
-
-        <Card className="group hover:shadow-lg transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Descontinuadas</CardTitle>
-            <div className="p-2 rounded-lg bg-red-100 group-hover:bg-red-200 transition-colors duration-300">
-              <FileText className="h-4 w-4 text-red-600 transition-colors duration-300" />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {regras.filter(r => r.status === "DESCONTINUADA").length}
-            </div>
-            <p className="text-xs text-muted-foreground">descontinuadas</p>
+            <p className="text-xs text-muted-foreground">vinculadas a sistemas</p>
           </CardContent>
         </Card>
       </div>
@@ -238,29 +228,17 @@ export default function RegrasNegocioPage() {
                 className="pl-8"
               />
             </div>
-            <Select value={statusFilter || "ALL"} onValueChange={(value) => setStatusFilter(value === "ALL" ? "" : value)}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Filtrar por status" />
+            <Select value={politicaFilter || "ALL"} onValueChange={(value) => setPoliticaFilter(value === "ALL" ? "" : value)}>
+              <SelectTrigger className="w-[250px]">
+                <SelectValue placeholder="Filtrar por política" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">Todos os status</SelectItem>
-                <SelectItem value="ATIVA">Ativa</SelectItem>
-                <SelectItem value="INATIVA">Inativa</SelectItem>
-                <SelectItem value="EM_DESENVOLVIMENTO">Em Desenvolvimento</SelectItem>
-                <SelectItem value="DESCONTINUADA">Descontinuada</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={tipoFilter || "ALL"} onValueChange={(value) => setTipoFilter(value === "ALL" ? "" : value)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filtrar por tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Todos os tipos</SelectItem>
-                <SelectItem value="VALIDACAO">Validação</SelectItem>
-                <SelectItem value="TRANSFORMACAO">Transformação</SelectItem>
-                <SelectItem value="CALCULO">Cálculo</SelectItem>
-                <SelectItem value="CONTROLE">Controle</SelectItem>
-                <SelectItem value="NEGOCIO">Negócio</SelectItem>
+                <SelectItem value="ALL">Todas as políticas</SelectItem>
+                {politicas.map((politica) => (
+                  <SelectItem key={politica.id} value={politica.id}>
+                    {politica.nome} (v{politica.versao})
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -270,10 +248,10 @@ export default function RegrasNegocioPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Descrição</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Processo</TableHead>
-                  <TableHead>Criado em</TableHead>
+                  <TableHead>Política</TableHead>
+                  <TableHead>Sistema</TableHead>
+                  <TableHead>Responsável</TableHead>
+                  <TableHead>Termo</TableHead>
                   <TableHead className="w-[70px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -292,20 +270,32 @@ export default function RegrasNegocioPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{tipoRegraLabels[regra.tipoRegra as keyof typeof tipoRegraLabels]}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={statusBadgeMap[regra.status as keyof typeof statusBadgeMap]?.variant || 'outline'}>
-                        {statusBadgeMap[regra.status as keyof typeof statusBadgeMap]?.label || regra.status}
+                      <Badge variant="secondary">
+                        {regra.politica ? `${regra.politica.nome} (v${regra.politica.versao})` : getPoliticaNome(regra.politicaId)}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      <div className="max-w-[150px] truncate" title={getProcessoNome(regra.processoId)}>
-                        {getProcessoNome(regra.processoId)}
-                      </div>
+                    <TableCell>
+                      {regra.sistema ? (
+                        <Badge variant="outline">{regra.sistema.nome}</Badge>
+                      ) : regra.sistemaId ? (
+                        <span className="text-sm text-muted-foreground">Sistema ID: {regra.sistemaId.slice(0, 8)}...</span>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {new Date(regra.createdAt).toLocaleDateString('pt-BR')}
+                    <TableCell>
+                      {regra.responsavel ? (
+                        <Badge variant="outline">{regra.responsavel.nome}</Badge>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {regra.termo ? (
+                        <span className="text-sm">{regra.termo.termo}</span>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>

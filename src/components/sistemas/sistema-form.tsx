@@ -3,38 +3,29 @@
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { useCreateSistema, useUpdateSistema } from "@/hooks/api/use-sistemas"
 import { SistemaResponse } from "@/types/api"
-
-const sistemaSchema = z.object({
-  sistema: z.string().min(1, "Nome do sistema é obrigatório").max(255),
-  bancoDados: z.string().max(255).optional(),
-  repositorio: z.string().max(255).optional(),
-  tecnologia: z.string().max(255).optional(),
-  responsavelTecnico: z.string().max(255).optional(),
-})
-
-type SistemaFormValues = z.infer<typeof sistemaSchema>
+import { CreateSistemaSchema, type CreateSistemaFormData } from "@/schemas"
 
 interface SistemaFormProps {
   open: boolean
@@ -46,14 +37,12 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
   const createMutation = useCreateSistema()
   const updateMutation = useUpdateSistema()
   
-  const form = useForm<SistemaFormValues>({
-    resolver: zodResolver(sistemaSchema),
+  const form = useForm<CreateSistemaFormData>({
+    resolver: zodResolver(CreateSistemaSchema),
     defaultValues: {
-      sistema: "",
-      bancoDados: "",
+      nome: "",
+      descricao: null,
       repositorio: "",
-      tecnologia: "",
-      responsavelTecnico: "",
     },
   })
 
@@ -61,37 +50,29 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
     if (open) {
       if (sistema) {
         form.reset({
-          sistema: sistema.sistema,
-          bancoDados: sistema.bancoDados || "",
-          repositorio: sistema.repositorio || "",
-          tecnologia: sistema.tecnologia || "",
-          responsavelTecnico: sistema.responsavelTecnico || "",
+          nome: sistema.nome,
+          descricao: sistema.descricao || null,
+          repositorio: sistema.repositorio,
         })
       } else {
         form.reset({
-          sistema: "",
-          bancoDados: "",
+          nome: "",
+          descricao: null,
           repositorio: "",
-          tecnologia: "",
-          responsavelTecnico: "",
         })
       }
     }
   }, [open, sistema, form])
 
-  const onSubmit = async (data: SistemaFormValues) => {
+  const onSubmit = async (data: CreateSistemaFormData) => {
     try {
-      const payload = {
-        nome: data.sistema,
-        descricao: data.bancoDados,
-      }
       if (sistema) {
         await updateMutation.mutateAsync({
           id: sistema.id,
-          data: payload,
+          data,
         })
       } else {
-        await createMutation.mutateAsync(payload)
+        await createMutation.mutateAsync(data)
       }
       form.reset()
       onOpenChange(false)
@@ -128,10 +109,10 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="sistema"
+              name="nome"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome do Sistema *</FormLabel>
+                  <FormLabel>Nome *</FormLabel>
                   <FormControl>
                     <Input placeholder="Ex: ERP Financeiro" {...field} />
                   </FormControl>
@@ -145,12 +126,17 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
 
             <FormField
               control={form.control}
-              name="bancoDados"
+              name="descricao"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Banco de Dados</FormLabel>
+                  <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: PostgreSQL" {...field} />
+                    <Textarea 
+                      placeholder="Descrição do sistema..."
+                      className="min-h-[80px]"
+                      {...field}
+                      value={field.value || ""}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -164,35 +150,7 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
                 <FormItem>
                   <FormLabel>Repositório</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: github.com/org/repo" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="tecnologia"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tecnologia</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: Node.js, React" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="responsavelTecnico"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Responsável Técnico</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: João Silva" {...field} />
+                    <Input placeholder="Ex: https://github.com/org/repo" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

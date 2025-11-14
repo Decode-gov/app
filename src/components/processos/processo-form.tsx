@@ -40,7 +40,6 @@ import { ComunidadeForm } from "../dominios/comunidade-form"
 const processoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório").max(255),
   descricao: z.string().max(1000).optional(),
-  comunidadeId: z.string().min(1, "Comunidade é obrigatória"),
 })
 
 type ProcessoFormValues = z.infer<typeof processoSchema>
@@ -63,7 +62,6 @@ export function ProcessoForm({ open, onOpenChange, processo }: ProcessoFormProps
     defaultValues: {
       nome: "",
       descricao: "",
-      comunidadeId: "",
     },
   })
 
@@ -73,13 +71,11 @@ export function ProcessoForm({ open, onOpenChange, processo }: ProcessoFormProps
         form.reset({
           nome: processo.nome,
           descricao: processo.descricao || "",
-          comunidadeId: processo.comunidadeId,
         })
       } else {
         form.reset({
           nome: "",
           descricao: "",
-          comunidadeId: "",
         })
       }
     }
@@ -162,55 +158,6 @@ export function ProcessoForm({ open, onOpenChange, processo }: ProcessoFormProps
                     </FormControl>
                     <FormDescription className="text-xs">
                       Máximo 1000 caracteres
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="comunidadeId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Comunidade *</FormLabel>
-                    <div className="flex gap-2">
-                      <div className="flex-1">
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione a comunidade" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {comunidades.length === 0 ? (
-                              <div className="p-2 text-sm text-muted-foreground text-center">
-                                Nenhuma comunidade encontrada
-                              </div>
-                            ) : (
-                              comunidades.map((comunidade) => (
-                                <SelectItem key={comunidade.id} value={comunidade.id}>
-                                  <div className="flex flex-col">
-                                    <span>{comunidade.nome}</span>
-                                  </div>
-                                </SelectItem>
-                              ))
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setComunidadeDialogOpen(true)}
-                        title="Criar nova comunidade"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <FormDescription className="text-xs">
-                      Comunidade responsável por este processo
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

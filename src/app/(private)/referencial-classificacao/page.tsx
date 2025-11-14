@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
-import { FileText, Plus, Shield } from "lucide-react"
+import { FileText, Plus } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useListasClassificacao, useDeleteListaClassificacao } from "@/hooks/api/use-listas-classificacao"
@@ -142,7 +142,7 @@ export default function ReferencialClassificacaoPage() {
               </div>
               <Button className="gap-2" onClick={handleNew}>
                 <Plus className="h-4 w-4" />
-                Novo Referencial
+                Novo Nível
               </Button>
             </div>
           </CardHeader>

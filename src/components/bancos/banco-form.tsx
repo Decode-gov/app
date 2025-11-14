@@ -3,36 +3,36 @@
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useCreateBanco, useUpdateBanco } from "@/hooks/api/use-bancos"
+import { useSistemas } from "@/hooks/api/use-sistemas"
 import { BancoResponse } from "@/types/api"
-
-const bancoSchema = z.object({
-  nome: z.string().min(1, "Nome é obrigatório").max(255),
-  descricao: z.string().max(1000).optional(),
-})
-
-type BancoFormValues = z.infer<typeof bancoSchema>
+import { CreateBancoSchema, type CreateBancoFormData } from "@/schemas"
 
 interface BancoFormProps {
   open: boolean
@@ -43,12 +43,13 @@ interface BancoFormProps {
 export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
   const createMutation = useCreateBanco()
   const updateMutation = useUpdateBanco()
+  const { data: sistemasData } = useSistemas({ page: 1, limit: 1000 })
   
-  const form = useForm<BancoFormValues>({
-    resolver: zodResolver(bancoSchema),
+  const form = useForm<CreateBancoFormData>({
+    resolver: zodResolver(CreateBancoSchema),
     defaultValues: {
       nome: "",
-      descricao: "",
+      sistemaId: null,
     },
   })
 
@@ -57,18 +58,18 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
       if (banco) {
         form.reset({
           nome: banco.nome,
-          descricao: banco.descricao || "",
+          sistemaId: banco.sistemaId || null,
         })
       } else {
         form.reset({
           nome: "",
-          descricao: "",
+          sistemaId: null,
         })
       }
     }
   }, [open, banco, form])
 
-  const onSubmit = async (data: BancoFormValues) => {
+  const onSubmit = async (data: CreateBancoFormData) => {
     try {
       if (banco) {
         await updateMutation.mutateAsync({
@@ -93,6 +94,7 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
   }
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const sistemas = sistemasData?.data || []
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -130,20 +132,28 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
 
             <FormField
               control={form.control}
-              name="descricao"
+              name="sistemaId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descrição</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      placeholder="Descrição do banco de dados..."
-                      className="min-h-[80px]"
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormDescription className="text-xs">
-                    Máximo 1000 caracteres
-                  </FormDescription>
+                  <FormLabel>Sistema</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    value={field.value || undefined}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione um sistema" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="null">Nenhum</SelectItem>
+                      {sistemas.map((sistema) => (
+                        <SelectItem key={sistema.id} value={sistema.id}>
+                          {sistema.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
