@@ -5,12 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Search, BarChart3, Activity } from "lucide-react"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
@@ -262,7 +262,7 @@ export default function MetricasQualidadePage() {
                         <Badge variant="secondary">{regra.dimensaoId}</Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
-                        {new Date(regra.createdAt).toLocaleDateString('pt-BR')}
+                        {regra.createdAt ? new Date(regra.createdAt).toLocaleDateString('pt-BR') : '-'}
                       </TableCell>
                     </TableRow>
                   ))

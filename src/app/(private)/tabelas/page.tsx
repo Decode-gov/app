@@ -32,7 +32,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
 import { useTabelas, useDeleteTabela } from "@/hooks/api/use-tabelas"
 import { useBancos } from "@/hooks/api/use-bancos"
 import { useSistemas } from "@/hooks/api/use-sistemas"
@@ -61,11 +60,11 @@ export default function TabelasPage() {
     const matchesSearch = 
       search === "" ||
       tabela.nome.toLowerCase().includes(search.toLowerCase()) ||
-      tabela.descricao?.toLowerCase().includes(search.toLowerCase())
+      tabela.termo?.definicao?.toLowerCase().includes(search.toLowerCase())
     
     const matchesSistema = 
       sistemaFilter === "all" || 
-      tabela.sistemaId === sistemaFilter
+      tabela.banco?.sistemaId === sistemaFilter
 
     const matchesBanco = 
       bancoFilter === "all" || 
@@ -94,19 +93,22 @@ export default function TabelasPage() {
     setFormOpen(true)
   }
 
-  const getBancoNome = (bancoId: string) => {
+  const getBancoNome = (bancoId?: string | null) => {
+    if (!bancoId) return "N/A"
     const banco = bancos.find(b => b.id === bancoId)
     return banco?.nome || "N/A"
   }
 
-  const getSistemaNome = (sistemaId: string) => {
+  const getSistemaNome = (sistemaId?: string | null) => {
+    if (!sistemaId) return "N/A"
     const sistema = sistemas.find(s => s.id === sistemaId)
-    return sistema?.sistema || "N/A"
+    return sistema?.nome || "N/A"
   }
 
-  const getSistemaTecnologia = (sistemaId: string) => {
+  const getSistemaDescricao = (sistemaId?: string | null) => {
+    if (!sistemaId) return null
     const sistema = sistemas.find(s => s.id === sistemaId)
-    return sistema?.tecnologia
+    return sistema?.descricao
   }
 
   return (
@@ -175,7 +177,7 @@ export default function TabelasPage() {
                 <SelectItem value="all">Todos os sistemas</SelectItem>
                 {sistemas.map((sistema) => (
                   <SelectItem key={sistema.id} value={sistema.id}>
-                    {sistema.sistema}
+                    {sistema.nome}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -228,22 +230,17 @@ export default function TabelasPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm">{getSistemaNome(tabela.sistemaId)}</span>
-                          {getSistemaTecnologia(tabela.sistemaId) && (
-                            <Badge variant="outline" className="text-xs">
-                              {getSistemaTecnologia(tabela.sistemaId)}
-                            </Badge>
-                          )}
+                          <span className="text-sm">{getSistemaNome(tabela.banco?.sistemaId)}</span>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="max-w-[300px] truncate text-sm text-muted-foreground">
-                          {tabela.descricao || "—"}
+                          {tabela.termo?.definicao || "—"}
                         </div>
                       </TableCell>
                       <TableCell>
                         <span className="text-sm text-muted-foreground">
-                          {format(new Date(tabela.createdAt), "dd/MM/yyyy", { locale: ptBR })}
+                          {tabela.createdAt ? format(new Date(tabela.createdAt), "dd/MM/yyyy", { locale: ptBR }) : '-'}
                         </span>
                       </TableCell>
                       <TableCell>

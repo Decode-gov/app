@@ -12,11 +12,9 @@ import { useCreateSistema, useUpdateSistema } from "@/hooks/api/use-sistemas"
 import { SistemaResponse } from "@/types/api"
 
 const sistemaSchema = z.object({
-  sistema: z.string().min(1, "Nome do sistema é obrigatório").max(255),
-  bancoDados: z.string().max(255).optional(),
+  nome: z.string().min(1, "Nome do sistema é obrigatório").max(255),
+  descricao: z.string().max(500).optional().nullable(),
   repositorio: z.string().url("URL inválida").max(500).optional().or(z.literal("")),
-  tecnologia: z.string().max(255).optional(),
-  responsavelTecnico: z.string().max(255).optional(),
 })
 
 type SistemaFormValues = z.infer<typeof sistemaSchema>
@@ -35,22 +33,18 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
   const form = useForm<SistemaFormValues>({
     resolver: zodResolver(sistemaSchema),
     defaultValues: {
-      sistema: "",
-      bancoDados: "",
+      nome: "",
+      descricao: "",
       repositorio: "",
-      tecnologia: "",
-      responsavelTecnico: "",
     },
   })
 
   useEffect(() => {
     if (sistema && open) {
       form.reset({
-        sistema: sistema.sistema,
-        bancoDados: sistema.bancoDados || "",
+        nome: sistema.nome,
+        descricao: sistema.descricao || "",
         repositorio: sistema.repositorio || "",
-        tecnologia: sistema.tecnologia || "",
-        responsavelTecnico: sistema.responsavelTecnico || "",
       })
     } else if (!open) {
       form.reset()
@@ -60,8 +54,9 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
   const onSubmit = async (data: SistemaFormValues) => {
     try {
       const payload = {
-        nome: data.sistema,
-        descricao: data.bancoDados,
+        nome: data.nome,
+        descricao: data.descricao || null,
+        repositorio: data.repositorio || "",
       }
 
       if (isEditing) {
@@ -92,7 +87,7 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="sistema"
+              name="nome"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nome do Sistema *</FormLabel>
@@ -107,14 +102,14 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
 
             <FormField
               control={form.control}
-              name="bancoDados"
+              name="descricao"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Banco de Dados</FormLabel>
+                  <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: PostgreSQL, MongoDB" {...field} />
+                    <Input placeholder="Descrição do sistema" {...field} value={field.value || ""} />
                   </FormControl>
-                  <FormDescription>Tecnologia de banco de dados utilizada (opcional)</FormDescription>
+                  <FormDescription>Descrição do sistema (opcional, máx. 500 caracteres)</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -130,36 +125,6 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
                     <Input placeholder="https://github.com/org/repo" {...field} />
                   </FormControl>
                   <FormDescription>URL do repositório de código (opcional)</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="tecnologia"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tecnologia</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: React, Node.js, Python" {...field} />
-                  </FormControl>
-                  <FormDescription>Principais tecnologias utilizadas (opcional)</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="responsavelTecnico"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Responsável Técnico</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Nome do responsável" {...field} />
-                  </FormControl>
-                  <FormDescription>Nome do responsável técnico pelo sistema (opcional)</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

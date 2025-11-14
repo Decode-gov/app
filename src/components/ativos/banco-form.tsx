@@ -48,7 +48,6 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
     if (banco && open) {
       form.reset({
         nome: banco.nome,
-        descricao: banco.descricao || "",
         sistemaId: banco.sistemaId || "",
       })
     } else if (!open) {
@@ -147,7 +146,7 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
                         <SelectValue placeholder="Selecione o sistema (opcional)">
                           {field.value && sistema && (
                             <div className="flex items-center gap-2">
-                              <Badge variant="outline">{sistema.sistema}</Badge>
+                              <Badge variant="outline">{sistema.nome}</Badge>
                             </div>
                           )}
                         </SelectValue>
@@ -163,10 +162,10 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
                         sistemas.map(sistema => (
                           <SelectItem key={sistema.id} value={sistema.id}>
                             <div className="flex flex-col gap-1">
-                              <span className="font-medium">{sistema.sistema}</span>
-                              {sistema.tecnologia && (
+                              <span className="font-medium">{sistema.nome}</span>
+                              {sistema.descricao && (
                                 <span className="text-xs text-muted-foreground">
-                                  {sistema.tecnologia}
+                                  {sistema.descricao}
                                 </span>
                               )}
                             </div>
