@@ -115,6 +115,7 @@ export const DefinicaoSchema = z.object({
   termo: stringRequired(1, "Termo"),
   definicao: stringRequired(1, "Definição"),
   sigla: stringOptional(),
+  comunidadeId: uuidRequired("Selecionar um domínio de dados"),
 })
 
 export const CreateDefinicaoSchema = DefinicaoSchema
