@@ -161,13 +161,13 @@ export default function TabelasColunasPage() {
                     ))
                   ) : errorColunas ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                         Erro ao carregar colunas. Tente novamente.
                       </TableCell>
                     </TableRow>
                   ) : (colunas.length === 0) ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                         Nenhuma coluna encontrada
                       </TableCell>
                     </TableRow>
@@ -175,7 +175,7 @@ export default function TabelasColunasPage() {
                     colunas.map((coluna: ColunaResponse) => (
                       <TableRow key={coluna.id}>
                         <TableCell>{coluna.termo?.termo}</TableCell>
-                        <TableCell className="w-[250px] truncate">{coluna.necessidadeInformacao?.questaoGerencial}</TableCell>
+                        <TableCell className="w-[300px] truncate">{coluna.necessidadeInformacao?.questaoGerencial}</TableCell>
                         <TableCell>{coluna.nome}</TableCell>
                         <TableCell>{coluna.tabela?.nome}</TableCell>
                         <TableCell>
@@ -200,7 +200,6 @@ export default function TabelasColunasPage() {
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
-                        <TableCell className="w-[70px]" />
                       </TableRow>
                     ))
                   )}
