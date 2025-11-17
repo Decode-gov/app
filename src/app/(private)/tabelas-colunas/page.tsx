@@ -28,9 +28,9 @@ export default function TabelasColunasPage() {
     limit,
     search: searchTerm || undefined,
   })
-  
-  const { data: tabelasData } = useTabelas({ })
-  const { data: sistemasData } = useSistemas({ })
+
+  const { data: tabelasData } = useTabelas({})
+  const { data: sistemasData } = useSistemas({})
 
   const deleteColuna = useDeleteColuna()
 
@@ -175,7 +175,7 @@ export default function TabelasColunasPage() {
                     colunas.map((coluna: ColunaResponse) => (
                       <TableRow key={coluna.id}>
                         <TableCell>{coluna.termo?.termo}</TableCell>
-                        <TableCell className="w-[300px] truncate">{coluna.necessidadeInformacao?.questaoGerencial}</TableCell>
+                        <TableCell className="w-[300px] line-clamp-1" title={coluna.necessidadeInformacao?.questaoGerencial}>{coluna.necessidadeInformacao?.questaoGerencial}</TableCell>
                         <TableCell>{coluna.nome}</TableCell>
                         <TableCell>{coluna.tabela?.nome}</TableCell>
                         <TableCell>
@@ -190,7 +190,7 @@ export default function TabelasColunasPage() {
                                 <Edit className="mr-2 h-4 w-4" />
                                 Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 className="text-destructive"
                                 onClick={() => handleDelete(coluna.id)}
                               >

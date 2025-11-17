@@ -248,11 +248,6 @@ export function ColunaForm({ open, onOpenChange, coluna }: ColunaFormProps) {
                             <SelectItem key={termo.id} value={termo.id}>
                               <div className="flex flex-col">
                                 <span>{termo.termo}</span>
-                                {termo.definicao && (
-                                  <span className="text-xs text-muted-foreground line-clamp-1">
-                                    {termo.definicao}
-                                  </span>
-                                )}
                               </div>
                             </SelectItem>
                           ))
@@ -292,12 +287,7 @@ export function ColunaForm({ open, onOpenChange, coluna }: ColunaFormProps) {
                           necessidades.map((necessidade) => (
                             <SelectItem key={necessidade.id} value={necessidade.id}>
                               <div className="flex flex-col">
-                                <span className="line-clamp-1">{necessidade.questaoGerencial}</span>
-                                {necessidade.elementoEstrategico && (
-                                  <span className="text-xs text-muted-foreground line-clamp-1">
-                                    {necessidade.elementoEstrategico}
-                                  </span>
-                                )}
+                                <span className="max-w-md line-clamp-1">{necessidade.questaoGerencial}</span>
                               </div>
                             </SelectItem>
                           ))
