@@ -165,7 +165,7 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
                 name="termo"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Definição do termo *</FormLabel>
+                    <FormLabel>Termo *</FormLabel>
                     <FormControl>
                       <Input placeholder="Digite a definição do termo..." {...field} />
                     </FormControl>
@@ -179,10 +179,10 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
                 name="definicao"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Categorização do termo *</FormLabel>
+                    <FormLabel>Definição do termo *</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Digite a categorização do termo..."
+                        placeholder="Digite a definição do termo..."
                         className="min-h-[100px]"
                         {...field}
                       />
