@@ -175,7 +175,7 @@ export default function TabelasColunasPage() {
                     colunas.map((coluna: ColunaResponse) => (
                       <TableRow key={coluna.id}>
                         <TableCell>{coluna.termo?.termo}</TableCell>
-                        <TableCell className="w-[400px] truncate">{coluna.necessidadeInformacao?.questaoGerencial}</TableCell>
+                        <TableCell className="w-[250px] truncate">{coluna.necessidadeInformacao?.questaoGerencial}</TableCell>
                         <TableCell>{coluna.nome}</TableCell>
                         <TableCell>{coluna.tabela?.nome}</TableCell>
                         <TableCell>
