@@ -299,8 +299,8 @@ export const RegraQualidadeSchema = z.object({
   descricao: stringRequired(1, "Descrição"),
   regraNegocioId: z.uuid().nullable().optional(),
   dimensaoId: z.uuid(),
-  tabelaId: z.uuid(),
-  colunaId: z.uuid(),
+  tabelaId: z.uuid().optional().nullable(),
+  colunaId: z.uuid().optional().nullable(),
   responsavelId: z.uuid(),
 })
 

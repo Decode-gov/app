@@ -56,7 +56,7 @@ export const createColumns = ({
     accessorKey: "comunidade.nome",
     header: "Domínio de Dados",
     cell: ({ row }) => {
-      const nome = row.getValue("comunidade.nome") as string | undefined
+      const nome = row.original.comunidade.nome
       return nome ? (
         <Badge variant="outline">{nome}</Badge>
       ) : (

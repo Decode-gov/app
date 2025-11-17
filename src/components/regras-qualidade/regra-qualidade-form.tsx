@@ -183,8 +183,8 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
               name="tabelaId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tabela *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <FormLabel>Tabela</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione a tabela" />
@@ -208,8 +208,8 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
               name="colunaId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Coluna *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <FormLabel>Coluna</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione a coluna" />
