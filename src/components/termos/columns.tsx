@@ -56,9 +56,9 @@ export const createColumns = ({
     accessorKey: "comunidade.nome",
     header: "Domínio de Dados",
     cell: ({ row }) => {
-      const nome = row.original.comunidade.nome
-      return nome ? (
-        <Badge variant="outline">{nome}</Badge>
+      const comunidade = row.original.comunidade
+      return comunidade ? (
+        <Badge variant="outline">{comunidade?.nome ?? '-'}</Badge>
       ) : (
         <span className="text-muted-foreground">-</span>
       )
