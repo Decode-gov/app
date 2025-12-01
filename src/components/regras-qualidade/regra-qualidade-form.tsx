@@ -47,8 +47,8 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
       descricao: "",
       regraNegocioId: null,
       dimensaoId: "",
-      tabelaId: "",
-      colunaId: "",
+      tabelaId: null,
+      colunaId: null,
       responsavelId: "",
     },
   })
@@ -59,8 +59,8 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
         descricao: regra.descricao || "",
         regraNegocioId: regra.regraNegocioId || null,
         dimensaoId: regra.dimensaoId || "",
-        tabelaId: regra.tabelaId || "",
-        colunaId: regra.colunaId || "",
+        tabelaId: regra.tabelaId || null,
+        colunaId: regra.colunaId || null,
         responsavelId: regra.responsavelId || "",
       })
     } else {
@@ -68,8 +68,8 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
         descricao: "",
         regraNegocioId: null,
         dimensaoId: "",
-        tabelaId: "",
-        colunaId: "",
+        tabelaId: null,
+        colunaId: null,
         responsavelId: "",
       })
     }
