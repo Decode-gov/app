@@ -43,9 +43,10 @@ interface ColunaFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   coluna?: ColunaResponse
+  preSelectedTabelaId?: string
 }
 
-export function ColunaForm({ open, onOpenChange, coluna }: ColunaFormProps) {
+export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: ColunaFormProps) {
   const [tabelaDialogOpen, setTabelaDialogOpen] = useState(false)
   
   const createMutation = useCreateColuna()
@@ -81,13 +82,13 @@ export function ColunaForm({ open, onOpenChange, coluna }: ColunaFormProps) {
         form.reset({
           nome: "",
           descricao: null,
-          tabelaId: "",
+          tabelaId: preSelectedTabelaId || "",
           termoId: null,
           necessidadeInformacaoId: null,
         })
       }
     }
-  }, [open, coluna, form])
+  }, [open, coluna, preSelectedTabelaId, form])
 
   const onSubmit = async (data: CreateColunaFormData) => {
     try {
@@ -215,7 +216,7 @@ export function ColunaForm({ open, onOpenChange, coluna }: ColunaFormProps) {
                       </Button>
                     </div>
                     <FormDescription className="text-xs">
-                      Tabela à qual esta coluna pertence
+                      Tabela do banco de dados à qual esta coluna pertence
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -254,9 +255,6 @@ export function ColunaForm({ open, onOpenChange, coluna }: ColunaFormProps) {
                         )}
                       </SelectContent>
                     </Select>
-                    <FormDescription className="text-xs">
-                      Termo de negócio associado à coluna
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -267,7 +265,7 @@ export function ColunaForm({ open, onOpenChange, coluna }: ColunaFormProps) {
                 name="necessidadeInformacaoId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Necessidade de Informação</FormLabel>
+                    <FormLabel>Questão Gerencial</FormLabel>
                     <Select 
                       onValueChange={(value) => field.onChange(value === "none" ? null : value)} 
                       value={field.value || "none"}
@@ -294,9 +292,6 @@ export function ColunaForm({ open, onOpenChange, coluna }: ColunaFormProps) {
                         )}
                       </SelectContent>
                     </Select>
-                    <FormDescription className="text-xs">
-                      Necessidade de informação que justifica a coluna
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

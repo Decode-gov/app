@@ -42,7 +42,6 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
     defaultValues: {
       nome: "",
       descricao: null,
-      repositorio: "",
     },
   })
 
@@ -52,13 +51,13 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
         form.reset({
           nome: sistema.nome,
           descricao: sistema.descricao || null,
-          repositorio: sistema.repositorio,
+          repositorio: undefined,
         })
       } else {
         form.reset({
           nome: "",
           descricao: null,
-          repositorio: "",
+          repositorio: undefined,
         })
       }
     }
@@ -137,20 +136,6 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
                       {...field}
                       value={field.value || ""}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="repositorio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Repositório</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: https://github.com/org/repo" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -2,57 +2,57 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Database } from "lucide-react"
+import { Plus, Database } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useColunas, useDeleteColuna } from "@/hooks/api/use-colunas"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useColunas } from "@/hooks/api/use-colunas"
 import { useTabelas } from "@/hooks/api/use-tabelas"
-import { useSistemas } from "@/hooks/api/use-sistemas"
-import { ColunaResponse } from "@/types/api"
+import { ColunaResponse, TabelaResponse } from "@/types/api"
 import { ColunaForm } from "@/components/colunas/coluna-form"
+import { TabelaForm } from "@/components/tabelas/tabela-form"
+import { DataTableTabelas } from "@/components/tabelas/data-table-tabelas"
+import { DataTableColunas } from "@/components/colunas/data-table-colunas"
 
 export default function TabelasColunasPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [sistemaFilter, setSistemaFilter] = useState<string>("")
-  const [page] = useState(1)
-  const [limit] = useState(10)
-  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [isColunaFormOpen, setIsColunaFormOpen] = useState(false)
+  const [isTabelaFormOpen, setIsTabelaFormOpen] = useState(false)
   const [selectedColuna, setSelectedColuna] = useState<ColunaResponse | undefined>()
+  const [selectedTabela, setSelectedTabela] = useState<TabelaResponse | undefined>()
+  const [preSelectedTabelaId, setPreSelectedTabelaId] = useState<string | undefined>()
 
-  const { data: colunasData, isLoading: isLoadingColunas, error: errorColunas } = useColunas({
-    page,
-    limit,
-    search: searchTerm || undefined,
-  })
+  const { data: colunasData } = useColunas({ page: 1, limit: 1000 })
+  const { data: tabelasData } = useTabelas({ page: 1, limit: 1000 })
 
-  const { data: tabelasData } = useTabelas({})
-  const { data: sistemasData } = useSistemas({})
-
-  const deleteColuna = useDeleteColuna()
-
-  const handleEdit = (coluna: ColunaResponse) => {
+  const handleEditColuna = (coluna: ColunaResponse) => {
     setSelectedColuna(coluna)
-    setIsFormOpen(true)
+    setPreSelectedTabelaId(undefined)
+    setIsColunaFormOpen(true)
   }
 
-  const handleNew = () => {
+  const handleNewColuna = () => {
     setSelectedColuna(undefined)
-    setIsFormOpen(true)
+    setPreSelectedTabelaId(undefined)
+    setIsColunaFormOpen(true)
   }
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir esta coluna?")) {
-      await deleteColuna.mutateAsync(id)
-    }
+  const handleAddColunaToTabela = (tabela: TabelaResponse) => {
+    setSelectedColuna(undefined)
+    setPreSelectedTabelaId(tabela.id)
+    setIsColunaFormOpen(true)
+  }
+
+  const handleEditTabela = (tabela: TabelaResponse) => {
+    setSelectedTabela(tabela)
+    setIsTabelaFormOpen(true)
+  }
+
+  const handleNewTabela = () => {
+    setSelectedTabela(undefined)
+    setIsTabelaFormOpen(true)
   }
 
   const colunas = colunasData?.data || []
   const tabelas = tabelasData?.data || []
-  const sistemas = sistemasData?.data || []
 
   return (
     <>
@@ -66,7 +66,7 @@ export default function TabelasColunasPage() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2">
           <Card className="group hover:shadow-lg transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Tabelas</CardTitle>
@@ -88,129 +88,77 @@ export default function TabelasColunasPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{colunasData?.data.length || 0}</div>
+              <div className="text-2xl font-bold text-blue-600">{colunas.length || 0}</div>
               <p className="text-xs text-muted-foreground">colunas mapeadas</p>
             </CardContent>
           </Card>
         </div>
 
         <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Colunas Mapeadas</CardTitle>
-                <CardDescription>
-                  Lista de todas as colunas cadastradas
-                </CardDescription>
+          <Tabs defaultValue="tabelas" className="w-full">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <TabsList className="grid w-full md:w-[400px] grid-cols-2 bg-foreground/10">
+                  <TabsTrigger value="tabelas">Tabelas</TabsTrigger>
+                  <TabsTrigger value="colunas">Colunas</TabsTrigger>
+                </TabsList>
               </div>
-              <Button className="gap-2" onClick={handleNew}>
-                <Plus className="h-4 w-4" />
-                Nova Coluna
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar colunas..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8"
+            </CardHeader>
+            <CardContent>
+              <TabsContent value="tabelas" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Tabelas Mapeadas</CardTitle>
+                    <CardDescription>
+                      Lista de todas as tabelas cadastradas
+                    </CardDescription>
+                  </div>
+                  <Button className="gap-2" onClick={handleNewTabela}>
+                    <Plus className="h-4 w-4" />
+                    Nova Tabela
+                  </Button>
+                </div>
+                <DataTableTabelas 
+                  data={tabelas} 
+                  onEdit={handleEditTabela}
+                  onAddColuna={handleAddColunaToTabela}
                 />
-              </div>
-              <div>
-                <Select value={sistemaFilter || "todos"} onValueChange={(value) => setSistemaFilter(value === "todos" ? "" : value)}>
-                  <SelectTrigger className="w-[250px]">
-                    <SelectValue placeholder="Filtrar por sistema" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="todos">Todos os sistemas</SelectItem>
-                    {sistemas.map((sistema) => (
-                      <SelectItem key={sistema.id} value={sistema.id}>
-                        {sistema.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+              </TabsContent>
 
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Termo</TableHead>
-                    <TableHead>Questão Gerencial</TableHead>
-                    <TableHead>Coluna</TableHead>
-                    <TableHead>Tabela</TableHead>
-                    <TableHead className="w-[70px]">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoadingColunas ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}>
-                        <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-[300px]" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-[40px]" /></TableCell>
-                      </TableRow>
-                    ))
-                  ) : errorColunas ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                        Erro ao carregar colunas. Tente novamente.
-                      </TableCell>
-                    </TableRow>
-                  ) : (colunas.length === 0) ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                        Nenhuma coluna encontrada
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    colunas.map((coluna: ColunaResponse) => (
-                      <TableRow key={coluna.id}>
-                        <TableCell>{coluna.termo?.termo}</TableCell>
-                        <TableCell className="w-[300px] line-clamp-1" title={coluna.necessidadeInformacao?.questaoGerencial}>{coluna.necessidadeInformacao?.questaoGerencial}</TableCell>
-                        <TableCell>{coluna.nome}</TableCell>
-                        <TableCell>{coluna.tabela?.nome}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleEdit(coluna)}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Editar
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="text-destructive"
-                                onClick={() => handleDelete(coluna.id)}
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Excluir
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
+              <TabsContent value="colunas" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Colunas Mapeadas</CardTitle>
+                    <CardDescription>
+                      Lista de todas as colunas cadastradas
+                    </CardDescription>
+                  </div>
+                  <Button className="gap-2" onClick={handleNewColuna}>
+                    <Plus className="h-4 w-4" />
+                    Nova Coluna
+                  </Button>
+                </div>
+                <DataTableColunas 
+                  data={colunas} 
+                  onEdit={handleEditColuna}
+                />
+              </TabsContent>
+            </CardContent>
+          </Tabs>
         </Card>
       </div>
 
-      <ColunaForm open={isFormOpen} onOpenChange={setIsFormOpen} coluna={selectedColuna} />
+      <ColunaForm 
+        open={isColunaFormOpen} 
+        onOpenChange={setIsColunaFormOpen} 
+        coluna={selectedColuna}
+        preSelectedTabelaId={preSelectedTabelaId}
+      />
+      <TabelaForm 
+        open={isTabelaFormOpen} 
+        onOpenChange={setIsTabelaFormOpen} 
+        tabela={selectedTabela} 
+      />
     </>
   )
 }

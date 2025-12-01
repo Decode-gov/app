@@ -1,71 +1,57 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, Pencil, Trash2, ArrowUpDown } from "lucide-react"
+import { MoreHorizontal, Pencil, Trash2, ArrowUpDown, FolderGit2, Network } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTable } from "@/components/ui/data-table"
-import { SistemaResponse } from "@/types/api"
+import { RepositorioDocumentoResponse } from "@/types/api"
 import { Badge } from "@/components/ui/badge"
 
-interface SistemaTableProps {
-  data: SistemaResponse[]
-  onEdit: (sistema: SistemaResponse) => void
+interface RepositorioTableProps {
+  data: RepositorioDocumentoResponse[]
+  onEdit: (repositorio: RepositorioDocumentoResponse) => void
   onDelete: (id: string) => void
 }
 
-export function SistemaTable({ data, onEdit, onDelete }: SistemaTableProps) {
-  const columns: ColumnDef<SistemaResponse>[] = [
+export function RepositorioTable({ data, onEdit, onDelete }: RepositorioTableProps) {
+  const columns: ColumnDef<RepositorioDocumentoResponse>[] = [
     {
       accessorKey: "nome",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Nome
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
+      header: 'Nome do Repositório',
       cell: ({ row }) => <div className="font-medium">{row.getValue("nome")}</div>,
     },
     {
-      accessorKey: "descricao",
-      header: "Descrição",
+      accessorKey: "ged",
+      header: "GED",
       cell: ({ row }) => {
-        const descricao = row.original.descricao
+        const ged = row.getValue("ged") as boolean
         return (
-          <div className="max-w-[300px] truncate text-sm text-muted-foreground">
-            {descricao || "-"}
-          </div>
+          <span className="text-sm text-muted-foreground">{ged ? "Sim" : "Não"}</span>
         )
       },
     },
     {
-      id: "bancos",
-      header: "Bancos",
+      accessorKey: "rede",
+      header: "Rede",
       cell: ({ row }) => {
-        const bancos = row.original.bancos
-        if (!bancos || bancos.length === 0) {
-          return <span className="text-sm text-muted-foreground">0</span>
-        }
-        return <Badge variant="secondary">{bancos.length}</Badge>
+        const rede = row.getValue("rede") as boolean
+        return (<span className="text-sm text-muted-foreground">{rede ? "Sim" : "Não"}</span>
+        )
       },
     },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const sistema = row.original
+        const repositorio = row.original
 
         return (
           <DropdownMenu>
@@ -78,12 +64,12 @@ export function SistemaTable({ data, onEdit, onDelete }: SistemaTableProps) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onEdit(sistema)}>
+              <DropdownMenuItem onClick={() => onEdit(repositorio)}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Editar
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => onDelete(sistema.id)}
+                onClick={() => onDelete(repositorio.id)}
                 className="text-red-600"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
@@ -101,7 +87,7 @@ export function SistemaTable({ data, onEdit, onDelete }: SistemaTableProps) {
       columns={columns}
       data={data}
       searchKey="nome"
-      searchPlaceholder="Buscar sistemas..."
+      searchPlaceholder="Buscar repositórios..."
     />
   )
 }

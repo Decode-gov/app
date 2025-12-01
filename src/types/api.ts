@@ -855,13 +855,10 @@ export type UpdateRepositorioDocumentoBody = UpdateRepositorioDocumentoFormData
 export interface RepositorioDocumentoResponse {
   id: string;
   nome: string;
-  tipo: string;
-  localizacao: string;
-  responsavel: string;
-  descricao?: string;
-  ativo: boolean;
-  createdAt: string;
-  updatedAt: string;
+  ged: boolean;
+  rede: boolean;
+  createdAt: Date | null;
+  updatedAt: Date | null;
 }
 
 export interface DocumentoRepositorioResponse {

@@ -1,9 +1,7 @@
-import { useQuery, useMutation, useQueryClient, UseMutationResult } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { repositorioDocumentoService } from '@/services/repositorios-documento';
 import {
-  UploadDocumentoBody,
-  UploadDocumentoResponse,
   QueryParams,
   ApiError
 } from '@/types/api';
@@ -105,22 +103,3 @@ export function useDeleteRepositorioDocumento() {
   });
 }
 
-/**
- * Hook para upload de documentos
- */
-export function useUploadDocumento(): UseMutationResult<UploadDocumentoResponse, ApiError, { repositorioId: string; data: UploadDocumentoBody }> {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ repositorioId, data }: { repositorioId: string; data: UploadDocumentoBody }) =>
-      repositorioDocumentoService.upload(repositorioId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: repositorioDocumentoQueryKeys.all });
-      toast.success('Documento enviado com sucesso!');
-    },
-    onError: (error: ApiError) => {
-      console.error('Erro ao enviar documento:', error);
-      toast.error(error.message || 'Erro ao enviar documento');
-    },
-  });
-}

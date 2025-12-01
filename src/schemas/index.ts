@@ -414,7 +414,7 @@ export const UpdateOperacaoSchema = OperacaoSchema.partial()
 
 export const UsuarioSchema = z.object({
   nome: stringRequired(2, "Nome"),
-  email: z.string().email("Email inválido"),
+  email: z.email("Email inválido"),
   senha: stringOptional(),
   ativo: z.boolean().optional(),
 })
@@ -427,7 +427,7 @@ export const UpdateUsuarioSchema = UsuarioSchema.partial()
 
 // Schemas especiais para autenticação
 export const LoginSchema = z.object({
-  email: z.string().email("Email inválido"),
+  email: z.email("Email inválido"),
   senha: stringRequired(1, "Senha"),
 })
 
@@ -443,11 +443,9 @@ export const ChangePasswordSchema = z.object({
 // ============================================================================
 
 export const RepositorioDocumentoSchema = z.object({
-  nome: stringRequired(1, "Nome"),
-  tipo: stringRequired(1, "Tipo"),
-  localizacao: stringRequired(1, "Localização"),
-  responsavel: stringRequired(1, "Responsável"),
-  descricao: stringOptional(),
+  nome: z.string().min(1, "Nome é obrigatório").max(255, "Nome muito longo"),
+  ged: z.boolean().optional().default(false),
+  rede: z.boolean().optional().default(false),
 })
 
 export const CreateRepositorioDocumentoSchema = RepositorioDocumentoSchema
