@@ -1,71 +1,47 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Plus, Search, Eye, Edit, Trash2, Shield } from "lucide-react"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import { Plus, Shield } from "lucide-react"
 import { usePoliticasInternas, useDeletePoliticaInterna } from "@/hooks/api/use-politicas-internas"
 import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form"
 import { Skeleton } from "@/components/ui/skeleton"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { MoreHorizontal } from "lucide-react"
 import { PoliticaInternaResponse } from "@/types/api"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-const statusBadgeMap: Record<string, { variant: "default" | "secondary" | "destructive" | "outline", label: string }> = {
-  ATIVA: { variant: "default", label: "Ativa" },
-  REVOGADA: { variant: "destructive", label: "Revogada" },
-  EM_REVISAO: { variant: "outline", label: "Em Revisão" },
-}
-
-const escopoLabels: Record<string, string> = {
-  SEGURANCA: "Segurança",
-  QUALIDADE: "Qualidade",
-  GOVERNANCA: "Governança",
-  OUTRO: "Outro",
-}
+import { PoliticasInternasDataTable } from "@/components/politicas/politicas-internas-data-table"
+import { createColumns } from "@/components/politicas/politicas-internas-columns"
 
 export default function PoliticasPage() {
-  const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("")
   const [formOpen, setFormOpen] = useState(false)
   const [selectedPolitica, setSelectedPolitica] = useState<PoliticaInternaResponse | undefined>()
 
-  const { data: politicasData, isLoading, error } = usePoliticasInternas({
-    page: 1,
-    limit: 1000,
-    status: statusFilter || undefined,
-    nome: searchTerm || undefined
-  })
+  const { data: politicasData, isLoading, error } = usePoliticasInternas()
+
   const deletePolitica = useDeletePoliticaInterna()
 
   // Extração do array de dados
   const politicas = politicasData?.data ?? []
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta política interna?")) {
       await deletePolitica.mutateAsync(id)
     }
-  }
+  }, [deletePolitica])
 
-  // Dados já filtrados pela API
-  const filteredData = politicas
+  const handleEdit = useCallback((politica: PoliticaInternaResponse) => {
+    setSelectedPolitica(politica)
+    setFormOpen(true)
+  }, [])
 
+  // Criação das colunas com memoization
+  const columns = useMemo(
+    () => createColumns({
+      onEdit: handleEdit,
+      onDelete: handleDelete,
+    }),
+    [handleEdit, handleDelete]
+  )
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -203,118 +179,20 @@ export default function PoliticasPage() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar políticas..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8"
-              />
-            </div>
-            <Select value={statusFilter || "ALL"} onValueChange={(value) => setStatusFilter(value === "ALL" ? "" : value)}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Filtrar por status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Todos os status</SelectItem>
-                <SelectItem value="ATIVA">Ativa</SelectItem>
-                <SelectItem value="REVOGADA">Revogada</SelectItem>
-                <SelectItem value="EM_REVISAO">Em Revisão</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead>Escopo</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Início da Vigência</TableHead>
-                  <TableHead>Término</TableHead>
-                  <TableHead className="w-[70px]">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredData.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center text-muted-foreground">
-                      Nenhuma política interna encontrada
-                    </TableCell>
-                  </TableRow>
-                ) : filteredData?.map((politica) => (
-                  <TableRow key={politica.id}>
-                    <TableCell className="font-medium">
-                      <div className="max-w-[200px] truncate" title={politica.nome}>
-                        {politica.nome}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="max-w-[250px] truncate" title={politica.descricao || ''}>
-                        {politica.descricao || '-'}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{escopoLabels[politica.escopo]}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={statusBadgeMap[politica.status]?.variant || 'outline'}>
-                        {statusBadgeMap[politica.status]?.label || politica.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {new Date(politica.dataInicioVigencia).toLocaleDateString('pt-BR')}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {politica.dataTermino 
-                        ? new Date(politica.dataTermino).toLocaleDateString('pt-BR') 
-                        : '—'
-                      }
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            Ver detalhes
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => {
-                            setSelectedPolitica(politica)
-                            setFormOpen(true)
-                          }}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            className="text-destructive"
-                            onClick={() => handleDelete(politica.id)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Excluir
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+        <CardContent>
+          <PoliticasInternasDataTable
+            columns={columns}
+            data={politicas}
+            searchKey="nome"
+            searchPlaceholder="Buscar políticas..."
+            statusFilter={statusFilter}
+            onStatusFilterChange={setStatusFilter}
+          />
         </CardContent>
       </Card>
 
       {/* Formulário de Criação/Edição */}
-      <PoliticaInternaForm 
+      <PoliticaInternaForm
         open={formOpen}
         onOpenChange={(open) => {
           setFormOpen(open)

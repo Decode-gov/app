@@ -16,10 +16,7 @@ export default function PapeisPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [selectedPapel, setSelectedPapel] = useState<PapelResponse | undefined>()
 
-  const { data: papeisData, isLoading, error } = usePapeis({
-    page: 1,
-    limit: 1000,
-  })
+  const { data: papeisData, isLoading, error } = usePapeis()
   const { data: politicasData } = usePoliticasInternas({ page: 1, limit: 1000 })
   const deletePapel = useDeletePapel()
 

@@ -10,7 +10,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { Search } from "lucide-react"
+import { ChevronLeft, ChevronRight, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -27,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Button } from "../ui/button"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -162,6 +163,30 @@ export function PapeisDataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-between space-x-2 py-4">
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className="bg-background/50 backdrop-blur-sm border-border/60 hover:bg-accent/50"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Anterior
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className="bg-background/50 backdrop-blur-sm border-border/60 hover:bg-accent/50"
+          >
+            Próximo
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   )
