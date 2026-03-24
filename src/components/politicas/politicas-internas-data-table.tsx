@@ -164,36 +164,28 @@ export function PoliticasInternasDataTable<TData, TValue>({
         </Table>
       </div>
 
-      {/* Paginação */}
-      <div className="flex items-center justify-between">
-        <div className="flex-1 text-sm text-muted-foreground">
-          Página {table.getState().pagination.pageIndex + 1} de{" "}
-          {table.getPageCount()} ({table.getFilteredRowModel().rows.length} resultado(s))
-        </div>
-
-        <div className="flex items-center space-x-6 lg:space-x-8">
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="bg-background/50 backdrop-blur-sm border-border/60 hover:bg-accent/50"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Anterior
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="bg-background/50 backdrop-blur-sm border-border/60 hover:bg-accent/50"
-            >
-              Próximo
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+      <div className="flex items-center space-x-6 lg:space-x-8">
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className="bg-background/50 backdrop-blur-sm border-border/60 hover:bg-accent/50"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Anterior
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className="bg-background/50 backdrop-blur-sm border-border/60 hover:bg-accent/50"
+          >
+            Próximo
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>

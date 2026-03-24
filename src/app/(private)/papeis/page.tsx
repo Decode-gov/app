@@ -17,7 +17,7 @@ export default function PapeisPage() {
   const [selectedPapel, setSelectedPapel] = useState<PapelResponse | undefined>()
 
   const { data: papeisData, isLoading, error } = usePapeis()
-  const { data: politicasData } = usePoliticasInternas({ page: 1, limit: 1000 })
+  const { data: politicasData } = usePoliticasInternas()
   const deletePapel = useDeletePapel()
 
   // Extração dos arrays de dados
