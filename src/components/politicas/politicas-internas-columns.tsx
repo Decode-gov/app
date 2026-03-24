@@ -71,11 +71,11 @@ export const createColumns = ({
         return (
           <Tooltip>
             <TooltipTrigger>
-              <Badge variant="outline" className="line-clamp-1">
+              <Badge variant="outline" className="max-w-[250px] truncate">
                 {escopoLabels[escopo] || escopo}
               </Badge>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent className="max-w-screen truncate">
               {escopoLabels[escopo] || escopo}
             </TooltipContent>
           </Tooltip>
