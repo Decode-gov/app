@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { PoliticaInternaResponse } from "@/types/api"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 
 interface ColumnsProps {
   onEdit: (politica: PoliticaInternaResponse) => void
@@ -68,9 +69,16 @@ export const createColumns = ({
       cell: ({ row }) => {
         const escopo = row.getValue("escopo") as string
         return (
-          <Badge variant="outline">
-            {escopoLabels[escopo] || escopo}
-          </Badge>
+          <Tooltip>
+            <TooltipTrigger>
+              <Badge variant="outline" className="line-clamp-1">
+                {escopoLabels[escopo] || escopo}
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              {escopoLabels[escopo] || escopo}
+            </TooltipContent>
+          </Tooltip>
         )
       },
       filterFn: (row, id, value) => {
