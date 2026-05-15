@@ -12,7 +12,20 @@ export const usuarioQueryKeys = {
   list: (params?: QueryParams) => [...usuarioQueryKeys.lists(), { params }] as const,
   details: () => [...usuarioQueryKeys.all, 'detail'] as const,
   detail: (id: string) => [...usuarioQueryKeys.details(), id] as const,
+  perfil: () => [...usuarioQueryKeys.all, 'perfil'] as const,
 };
+
+/**
+ * Hook para buscar perfil do usuário autenticado
+ */
+export function usePerfilUsuario() {
+  return useQuery({
+    queryKey: usuarioQueryKeys.perfil(),
+    queryFn: () => usuarioService.getPerfil(),
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+  });
+}
 
 /**
  * Hook para listar usuários com paginação

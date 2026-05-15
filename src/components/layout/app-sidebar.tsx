@@ -33,6 +33,9 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useLogout } from "@/hooks/api/use-usuarios"
 import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useEmpresaAdmin } from "@/context/empresa-admin-context"
+import { Building2 } from "lucide-react"
 
 const menuItems = [
   {
@@ -111,6 +114,7 @@ export function AppSidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const { mutate: logout, isPending: isLoggingOut } = useLogout()
+  const { isAdmin, empresas, selectedEmpresaId, setSelectedEmpresaId } = useEmpresaAdmin()
 
   const handleLogout = () => {
     logout(undefined, {
@@ -132,6 +136,29 @@ export function AppSidebar() {
             <span className="text-xs text-muted-foreground">Governança de Dados</span>
           </div>
         </div>
+        {isAdmin && (
+          <div className="px-4 pb-3">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <Building2 className="h-3 w-3 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground font-medium">Empresa</span>
+            </div>
+            <Select
+              value={selectedEmpresaId ?? ""}
+              onValueChange={(val) => setSelectedEmpresaId(val || null)}
+            >
+              <SelectTrigger size="sm" className="w-full bg-background/50 border-sidebar-border/60">
+                <SelectValue placeholder="Selecionar empresa..." />
+              </SelectTrigger>
+              <SelectContent>
+                {empresas.map((empresa) => (
+                  <SelectItem key={empresa.id} value={empresa.id}>
+                    {empresa.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </SidebarHeader>
       <SidebarContent className="bg-sidebar/30 backdrop-blur-sm">
         {menuItems.map((item, index) => (

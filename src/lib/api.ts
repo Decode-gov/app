@@ -1,4 +1,5 @@
 import axios from "axios"
+import { getGlobalEmpresaId } from "@/lib/empresa-store"
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333",
@@ -6,6 +7,15 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+})
+
+// Injeta empresaId quando ADMIN selecionou uma empresa
+api.interceptors.request.use((config) => {
+  const empresaId = getGlobalEmpresaId()
+  if (empresaId) {
+    config.params = { ...config.params, empresaId }
+  }
+  return config
 })
 
 // Interceptor de resposta para tratamento de erros

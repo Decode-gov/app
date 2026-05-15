@@ -9,6 +9,7 @@ import type {
   ChangePasswordBody,
   ChangePasswordResponse,
 } from '@/types/api';
+export type { UsuarioResponse };
 import type { CreateUsuarioFormData as RegisterBody } from '@/schemas';
 
 // Re-exportar tipos para uso nos hooks
@@ -57,6 +58,18 @@ export class UsuarioService extends BaseService<
     try {
       await api.post(`${this.endpoint}/logout`);
       // await clearCookieSession()
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  /**
+   * Busca o perfil do usuário autenticado
+   */
+  async getPerfil(): Promise<UsuarioResponse> {
+    try {
+      const response = await api.get(`${this.endpoint}/perfil`);
+      return response.data.data ?? response.data;
     } catch (error) {
       throw this.handleError(error);
     }

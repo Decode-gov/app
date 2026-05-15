@@ -107,6 +107,8 @@ export interface UsuarioResponse {
   nome: string;
   email: string;
   ativo: boolean;
+  tipo: 'ADMIN' | 'USUARIO';
+  empresaId?: string | null;
   createdAt: string;
   updatedAt: string;
 }

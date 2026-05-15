@@ -3,6 +3,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import { Toaster } from "@/components/ui/sonner"
+import { EmpresaAdminProvider } from "@/context/empresa-admin-context"
 
 export default function DecodeGovLayout({
   children,
@@ -10,6 +11,7 @@ export default function DecodeGovLayout({
   children: React.ReactNode
 }) {
   return (
+    <EmpresaAdminProvider>
     <SidebarProvider>
       <AppSidebar />
       <main className="flex-1 min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -38,5 +40,6 @@ export default function DecodeGovLayout({
       </main>
       <Toaster />
     </SidebarProvider>
+    </EmpresaAdminProvider>
   )
 }
