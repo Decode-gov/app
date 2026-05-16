@@ -71,7 +71,7 @@ export function ParteEnvolvidaForm({ open, onOpenChange, parte }: ParteEnvolvida
       const payload = {
         nome: data.nome,
         tipo: data.tipo,
-        contato: data.contato || undefined,
+        contato: data.contato || '',
         papelId: data.papelId || undefined,
       }
 

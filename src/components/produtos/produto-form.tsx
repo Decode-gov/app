@@ -229,7 +229,7 @@ export function ProdutoForm({ open, onOpenChange, produto }: ProdutoFormProps) {
                             </div>
                           ) : (
                             politicas.map((politica) => (
-                              <SelectItem key={politica.id} value={politica.id}>
+                              <SelectItem key={politica.id ?? ''} value={politica.id ?? ''}>
                                 {politica.nome}
                               </SelectItem>
                             ))

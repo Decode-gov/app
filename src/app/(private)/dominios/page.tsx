@@ -27,7 +27,8 @@ export default function DominiosPage() {
   })
   const deleteMutation = useDeleteComunidade()
 
-  const comunidades = comunidadesData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const comunidades = (comunidadesData?.data || []) as any[]
 
   const handleEdit = (comunidade: ComunidadeResponse) => {
     setEditingComunidade(comunidade)

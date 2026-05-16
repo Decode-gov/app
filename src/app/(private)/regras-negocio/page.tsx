@@ -51,7 +51,8 @@ export default function RegrasNegocioPage() {
   const deleteRegra = useDeleteRegraNegocio()
 
   // Extração do array de dados
-  const regras = regrasData?.data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const regras = (regrasData?.data ?? []) as any[]
   const politicas = politicasData?.data ?? []
   const sistemas = sistemasData?.data ?? []
   const papeis = papeisData?.data ?? []
@@ -235,7 +236,7 @@ export default function RegrasNegocioPage() {
               <SelectContent>
                 <SelectItem value="ALL">Todas as políticas</SelectItem>
                 {politicas.map((politica) => (
-                  <SelectItem key={politica.id} value={politica.id}>
+                  <SelectItem key={politica.id ?? ''} value={politica.id ?? ''}>
                     {politica.nome} (v{politica.versao})
                   </SelectItem>
                 ))}

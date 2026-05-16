@@ -35,7 +35,8 @@ export default function DocumentosPage() {
   const { data: response, isLoading } = useDocumentos()
   const deleteMutation = useDeleteDocumento()
 
-  const documentos = response?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const documentos = (response?.data || []) as any[]
 
   const handleEdit = (documento: DocumentoResponse) => {
     setSelectedDocumento(documento)
@@ -259,7 +260,7 @@ export default function DocumentosPage() {
                           </div>
                           <div>
                             <span className="text-muted-foreground">Tamanho:</span>
-                            <p className="font-medium">{(documento.tamanhoBytes / 1024).toFixed(2)} KB</p>
+                            <p className="font-medium">{(Number(documento.tamanhoBytes) / 1024).toFixed(2)} KB</p>
                           </div>
                           <div>
                             <span className="text-muted-foreground">Caminho:</span>

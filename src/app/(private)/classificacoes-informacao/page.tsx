@@ -104,7 +104,8 @@ export default function ClassificacoesInformacaoPage() {
     )
   }
 
-  const classificacoes = classificacoesData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const classificacoes = (classificacoesData?.data || []) as any[]
   const listas = listasData?.data || []
   
   const totalClassificacoes = classificacoes.length

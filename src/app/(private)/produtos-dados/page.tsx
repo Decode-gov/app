@@ -52,7 +52,8 @@ export default function ProdutosDadosPage() {
     }
   }
 
-  const produtos = produtosData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const produtos = (produtosData?.data || []) as any[]
   const comunidades = comunidadesData?.data || []
 
   const produtosComDominio = produtos.filter(p => p.dominioId).length
@@ -82,7 +83,7 @@ export default function ProdutosDadosPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{produtosData?.total || 0}</div>
+              <div className="text-2xl font-bold text-blue-600">{produtos.length || 0}</div>
               <p className="text-xs text-muted-foreground">produtos cadastrados</p>
             </CardContent>
           </Card>

@@ -42,7 +42,8 @@ export function ListaForm({ open, onOpenChange, lista }: ListaFormProps) {
 
     if (isEditing) {
       updateLista(
-        { id: lista.id, data: payload },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        { id: lista.id, data: payload as any },
         {
           onSuccess: () => {
             onOpenChange(false)
@@ -51,7 +52,8 @@ export function ListaForm({ open, onOpenChange, lista }: ListaFormProps) {
         }
       )
     } else {
-      createLista(payload, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      createLista(payload as any, {
         onSuccess: () => {
           onOpenChange(false)
           form.reset()

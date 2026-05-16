@@ -157,7 +157,7 @@ export function RegraForm({ open, onOpenChange, regra }: RegraFormProps) {
                       </FormControl>
                       <SelectContent>
                         {politicas.map((politica) => (
-                          <SelectItem key={politica.id} value={politica.id}>
+                          <SelectItem key={politica.id ?? ''} value={politica.id ?? ''}>
                             {politica.nome} (v{politica.versao})
                           </SelectItem>
                         ))}

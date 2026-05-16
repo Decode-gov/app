@@ -22,7 +22,8 @@ export default function ListasReferenciaPage() {
   const { data, isLoading } = useListasReferencia({ page: 1, limit: 1000 })
   const { mutate: deleteLista } = useDeleteListaReferencia()
 
-  const listas = useMemo(() => data?.data ?? [], [data?.data])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const listas = useMemo(() => (data?.data ?? []) as any[], [data?.data])
 
   // Stats
   const stats = useMemo(() => {

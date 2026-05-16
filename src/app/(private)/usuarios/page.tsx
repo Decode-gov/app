@@ -27,7 +27,8 @@ export default function UsuariosPage() {
   const updateMutation = useUpdateUsuario()
   const deleteMutation = useDeleteUsuario()
 
-  const usuarios = useMemo(() => usuariosData?.data || [], [usuariosData])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const usuarios = useMemo(() => (usuariosData?.data || []) as any[], [usuariosData])
 
   // Estatísticas dos usuários
   const stats = useMemo(() => {
@@ -80,12 +81,13 @@ export default function UsuariosPage() {
         toast.success("Usuário atualizado com sucesso!")
       } else {
         // Criar novo usuário
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await createMutation.mutateAsync({
           nome: data.nome,
           email: data.email,
           senha: data.senha ?? "mudar123",
           ativo: data.status === "ativo"
-        })
+        } as any)
         toast.success("Usuário criado com sucesso!")
       }
       queryClient.invalidateQueries({ queryKey: ['usuarios'] });

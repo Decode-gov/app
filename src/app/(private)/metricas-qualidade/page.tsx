@@ -34,8 +34,10 @@ export default function MetricasQualidadePage() {
     search: searchTerm,
   })
 
-  const dimensoes = dimensoesData?.data ?? []
-  const regras = regrasData?.data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dimensoes = (dimensoesData?.data ?? []) as any[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const regras = (regrasData?.data ?? []) as any[]
   const isLoading = isLoadingDimensoes || isLoadingRegras
   const error = errorDimensoes || errorRegras
 

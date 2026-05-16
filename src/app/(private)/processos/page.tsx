@@ -24,7 +24,8 @@ export default function ProcessosPage() {
   const { data: comunidadesData } = useComunidades()
   const deleteMutation = useDeleteProcesso()
 
-  const processos = processosData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const processos = (processosData?.data || []) as any[]
   const comunidades = comunidadesData?.data || []
 
   const filteredProcessos = processos.filter((processo) => {

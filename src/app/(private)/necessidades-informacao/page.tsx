@@ -22,7 +22,8 @@ export default function NecessidadesInformacaoPage() {
   const deleteNecessidade = useDeleteNecessidadeInformacao()
 
   // Extração do array de dados
-  const necessidades = necessidadesData?.data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const necessidades = (necessidadesData?.data ?? []) as any[]
 
   const handleEdit = (necessidade: NecessidadeInformacaoResponse) => {
     setSelectedNecessidade(necessidade)

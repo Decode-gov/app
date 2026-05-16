@@ -146,10 +146,12 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
       if (politica) {
         await updateMutation.mutateAsync({
           id: politica.id,
-          data,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          data: data as any,
         })
       } else {
-        await createMutation.mutateAsync(data)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await createMutation.mutateAsync(data as any)
       }
 
       form.reset()

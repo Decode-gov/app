@@ -128,7 +128,7 @@ export function ReferencialForm({ open, onOpenChange, referencial }: Referencial
                       </FormControl>
                       <SelectContent>
                         {politicas?.map(politica => (
-                          <SelectItem key={politica.id} value={politica.id}>
+                          <SelectItem key={politica.id ?? ''} value={politica.id ?? ''}>
                             {politica.nome}
                           </SelectItem>
                         ))}

@@ -72,7 +72,8 @@ export default function PartesEnvolvidasPage() {
     }
   }
 
-  const partes = partesData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const partes = (partesData?.data || []) as any[]
   const papeis = papeisData?.data || []
 
   const pessoasFisicas = partes.filter(p => p.tipo === 'PESSOA_FISICA').length
@@ -100,7 +101,7 @@ export default function PartesEnvolvidasPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{partesData?.total || 0}</div>
+              <div className="text-2xl font-bold text-blue-600">{partes.length || 0}</div>
               <p className="text-xs text-muted-foreground">partes cadastradas</p>
             </CardContent>
           </Card>

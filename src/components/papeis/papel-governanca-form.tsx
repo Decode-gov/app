@@ -95,10 +95,12 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
       if (papel) {
         await updateMutation.mutateAsync({
           id: papel.id,
-          data,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          data: data as any,
         })
       } else {
-        await createMutation.mutateAsync(data)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await createMutation.mutateAsync(data as any)
       }
 
       form.reset()
@@ -206,7 +208,7 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
                               </div>
                             ) : (
                               politicasAtivas.map((politica) => (
-                                <SelectItem key={politica.id} value={politica.id}>
+                                <SelectItem key={politica.id ?? ''} value={politica.id ?? ''}>
                                   {politica.nome}
                                 </SelectItem>
                               ))

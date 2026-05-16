@@ -53,7 +53,8 @@ export default function ColunasPage() {
   const { data: tiposDadosData } = useTiposDados()
   const deleteMutation = useDeleteColuna()
 
-  const colunas = colunasData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const colunas = (colunasData?.data || []) as any[]
   const tabelas = tabelasData?.data || []
   const tiposDados = tiposDadosData?.data || []
 

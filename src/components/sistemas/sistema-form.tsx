@@ -68,10 +68,12 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
       if (sistema) {
         await updateMutation.mutateAsync({
           id: sistema.id,
-          data,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          data: data as any,
         })
       } else {
-        await createMutation.mutateAsync(data)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await createMutation.mutateAsync(data as any)
       }
       form.reset()
       onOpenChange(false)

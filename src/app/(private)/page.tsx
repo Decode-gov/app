@@ -62,7 +62,9 @@ function MetricCard({
 }
 
 export default function DashboardPage() {
-  const { data: dashboardData, isLoading, error } = useDashboardMetricas()
+  const { data: metricsResponse, isLoading, error } = useDashboardMetricas()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dashboardData = metricsResponse?.data as any
 
   if (isLoading) {
     return (

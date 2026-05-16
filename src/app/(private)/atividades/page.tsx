@@ -124,7 +124,7 @@ export default function AtividadesPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{atividadesData?.total || 0}</div>
+              <div className="text-2xl font-bold text-blue-600">{atividadesData?.data?.length || 0}</div>
               <p className="text-xs text-muted-foreground">atividades cadastradas</p>
             </CardContent>
           </Card>

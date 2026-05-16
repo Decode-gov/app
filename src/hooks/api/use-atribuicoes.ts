@@ -1,105 +1,66 @@
-/**
- * Hooks para gerenciamento de Atribuições
- */
-
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { atribuicaoService } from '@/services';
-import type { QueryParams, ApiError } from '@/types/api';
-import type { CreateAtribuicaoFormData, UpdateAtribuicaoFormData } from '@/schemas';
+import {
+  useGetAtribuicoes,
+  useGetAtribuicoesId,
+  postAtribuicoes,
+  putAtribuicoesId,
+  deleteAtribuicoesId,
+  getGetAtribuicoesQueryKey,
+  getGetAtribuicoesIdQueryKey,
+} from '@/api/generated/endpoints/atribuicoes/atribuicoes';
+import type { GetAtribuicoesParams, PostAtribuicoesBody, PutAtribuicoesIdBody } from '@/api/generated/model';
 
-/**
- * Chaves de query para atribuições
- */
 export const atribuicaoQueryKeys = {
   all: ['atribuicoes'] as const,
   lists: () => [...atribuicaoQueryKeys.all, 'list'] as const,
-  list: (params?: QueryParams) => [...atribuicaoQueryKeys.lists(), { params }] as const,
+  list: (params?: GetAtribuicoesParams) => [...atribuicaoQueryKeys.lists(), { params }] as const,
   details: () => [...atribuicaoQueryKeys.all, 'detail'] as const,
   detail: (id: string) => [...atribuicaoQueryKeys.details(), id] as const,
 };
 
-/**
- * Hook para listar atribuições com paginação
- */
-export function useAtribuicoes(params?: QueryParams) {
-  return useQuery({
-    queryKey: atribuicaoQueryKeys.list(params),
-    queryFn: () => atribuicaoService.list(params),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
+export function useAtribuicoes(params?: Record<string, unknown>) {
+  return useGetAtribuicoes(params as GetAtribuicoesParams | undefined);
 }
 
-/**
- * Hook para buscar uma atribuição por ID
- */
 export function useAtribuicaoDetail(id: string, enabled = true) {
-  return useQuery({
-    queryKey: atribuicaoQueryKeys.detail(id),
-    queryFn: () => atribuicaoService.getById(id),
-    enabled: !!id && enabled,
-    staleTime: 5 * 60 * 1000,
-  });
+  return useGetAtribuicoesId(id, { query: { enabled: !!id && enabled } });
 }
 
-/**
- * Hook para criar atribuição
- */
 export function useCreateAtribuicao() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (data: CreateAtribuicaoFormData) => atribuicaoService.create(data),
-    onSuccess: (newItem) => {
-      queryClient.invalidateQueries({ queryKey: atribuicaoQueryKeys.all });
-      queryClient.setQueryData(atribuicaoQueryKeys.detail(newItem.id), newItem);
+    mutationFn: (data: PostAtribuicoesBody) => postAtribuicoes(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: getGetAtribuicoesQueryKey() });
       toast.success('Atribuição criada com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao criar atribuição:', error);
-      toast.error(error.message || 'Erro ao criar atribuição');
-    },
+    onError: () => toast.error('Erro ao criar atribuição'),
   });
 }
 
-/**
- * Hook para atualizar atribuição
- */
 export function useUpdateAtribuicao() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateAtribuicaoFormData }) =>
-      atribuicaoService.update(id, data),
-    onSuccess: (updatedItem, { id }) => {
-      queryClient.invalidateQueries({ queryKey: atribuicaoQueryKeys.all });
-      queryClient.setQueryData(atribuicaoQueryKeys.detail(id), updatedItem);
+    mutationFn: ({ id, data }: { id: string; data: PutAtribuicoesIdBody }) => putAtribuicoesId(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: getGetAtribuicoesQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetAtribuicoesIdQueryKey(id) });
       toast.success('Atribuição atualizada com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao atualizar atribuição:', error);
-      toast.error(error.message || 'Erro ao atualizar atribuição');
-    },
+    onError: () => toast.error('Erro ao atualizar atribuição'),
   });
 }
 
-/**
- * Hook para deletar atribuição
- */
 export function useDeleteAtribuicao() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (id: string) => atribuicaoService.remove(id),
+    mutationFn: (id: string) => deleteAtribuicoesId(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: atribuicaoQueryKeys.all });
-      queryClient.removeQueries({ queryKey: atribuicaoQueryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: getGetAtribuicoesQueryKey() });
+      queryClient.removeQueries({ queryKey: getGetAtribuicoesIdQueryKey(id) });
       toast.success('Atribuição excluída com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao excluir atribuição:', error);
-      toast.error(error.message || 'Erro ao excluir atribuição');
-    },
+    onError: () => toast.error('Erro ao excluir atribuição'),
   });
 }

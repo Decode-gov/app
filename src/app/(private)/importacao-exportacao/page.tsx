@@ -58,7 +58,8 @@ export default function ImportacaoExportacaoPage() {
   // Query
   const { data, isLoading } = useImportacaoExportacao()
 
-  const operacoes = data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const operacoes = (data?.data ?? []) as any[]
 
   // Stats
   const stats = useMemo(() => {
@@ -75,7 +76,7 @@ export default function ImportacaoExportacaoPage() {
     return operacoes.filter((operacao) => {
       const matchesSearch =
         search === "" ||
-        operacao.entidades.some((e) => e.toLowerCase().includes(search.toLowerCase()))
+        operacao.entidades.some((e: string) => e.toLowerCase().includes(search.toLowerCase()))
 
       const matchesFormato = formatoFilter === "all" || operacao.formato === formatoFilter
 
@@ -253,7 +254,7 @@ export default function ImportacaoExportacaoPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {operacao.entidades.slice(0, 3).map((entidade, idx) => (
+                        {operacao.entidades.slice(0, 3).map((entidade: string, idx: number) => (
                           <Badge key={idx} variant="outline" className="text-xs">
                             {entidade}
                           </Badge>

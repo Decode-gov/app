@@ -21,7 +21,8 @@ export default function PapeisPage() {
   const deletePapel = useDeletePapel()
 
   // Extração dos arrays de dados
-  const papeis = papeisData?.data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const papeis = (papeisData?.data ?? []) as any[]
   const politicas = politicasData?.data ?? []
 
   const handleEdit = (papel: PapelResponse) => {
@@ -47,7 +48,7 @@ export default function PapeisPage() {
     getPoliticaNome,
   })
 
-  const politicaOptions = politicas.map(p => ({ id: p.id, nome: p.nome }))
+  const politicaOptions = politicas.map(p => ({ id: p.id ?? '', nome: p.nome ?? '' }))
 
   if (isLoading) {
     return (

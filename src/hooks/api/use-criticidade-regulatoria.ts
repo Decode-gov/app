@@ -1,101 +1,71 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { criticidadeRegulatoriaService } from '@/services/criticidade-regulatoria';
-import { QueryParams, ApiError } from '@/types/api';
-import type { CreateCriticidadeRegulatoriaFormData, UpdateCriticidadeRegulatoriaFormData } from '@/schemas';
+import {
+  useGetCriticidadesRegulatorias,
+  useGetCriticidadesRegulatoriasId,
+  postCriticidadesRegulatorias,
+  putCriticidadesRegulatoriasId,
+  deleteCriticidadesRegulatoriasId,
+  getGetCriticidadesRegulatoriasQueryKey,
+  getGetCriticidadesRegulatoriasIdQueryKey,
+} from '@/api/generated/endpoints/criticidade-regulatoria/criticidade-regulatoria';
+import type {
+  GetCriticidadesRegulatoriasParams,
+  PostCriticidadesRegulatoriasBody,
+  PutCriticidadesRegulatoriasIdBody,
+} from '@/api/generated/model';
 
-/**
- * Chaves de query para criticidade regulatória
- */
 export const criticidadeRegulatoriaQueryKeys = {
   all: ['criticidade-regulatoria'] as const,
   lists: () => [...criticidadeRegulatoriaQueryKeys.all, 'list'] as const,
-  list: (params?: QueryParams) => [...criticidadeRegulatoriaQueryKeys.lists(), { params }] as const,
+  list: (params?: GetCriticidadesRegulatoriasParams) => [...criticidadeRegulatoriaQueryKeys.lists(), { params }] as const,
   details: () => [...criticidadeRegulatoriaQueryKeys.all, 'detail'] as const,
   detail: (id: string) => [...criticidadeRegulatoriaQueryKeys.details(), id] as const,
 };
 
-/**
- * Hook para listar criticidades regulatórias com paginação
- */
-export function useCriticidadesRegulatoria(params?: QueryParams) {
-  return useQuery({
-    queryKey: criticidadeRegulatoriaQueryKeys.list(params),
-    queryFn: () => criticidadeRegulatoriaService.list(params),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
+export function useCriticidadesRegulatoria(params?: GetCriticidadesRegulatoriasParams) {
+  return useGetCriticidadesRegulatorias(params);
 }
 
-/**
- * Hook para buscar uma criticidade regulatória por ID
- */
 export function useCriticidadeRegulatoria(id: string, enabled = true) {
-  return useQuery({
-    queryKey: criticidadeRegulatoriaQueryKeys.detail(id),
-    queryFn: () => criticidadeRegulatoriaService.getById(id),
-    enabled: !!id && enabled,
-    staleTime: 5 * 60 * 1000,
-  });
+  return useGetCriticidadesRegulatoriasId(id, { query: { enabled: !!id && enabled } });
 }
 
-/**
- * Hook para criar criticidade regulatória
- */
 export function useCreateCriticidadeRegulatoria() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (data: CreateCriticidadeRegulatoriaFormData) => criticidadeRegulatoriaService.create(data),
-    onSuccess: (newItem) => {
-      queryClient.invalidateQueries({ queryKey: criticidadeRegulatoriaQueryKeys.all });
-      queryClient.setQueryData(criticidadeRegulatoriaQueryKeys.detail(newItem.id), newItem);
+    mutationFn: (data: PostCriticidadesRegulatoriasBody) => postCriticidadesRegulatorias(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: getGetCriticidadesRegulatoriasQueryKey() });
       toast.success('Criticidade regulatória criada com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao criar criticidade regulatória:', error);
-      toast.error(error.message || 'Erro ao criar criticidade regulatória');
-    },
+    onError: () => toast.error('Erro ao criar criticidade regulatória'),
   });
 }
 
-/**
- * Hook para atualizar criticidade regulatória
- */
 export function useUpdateCriticidadeRegulatoria() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateCriticidadeRegulatoriaFormData }) =>
-      criticidadeRegulatoriaService.update(id, data),
-    onSuccess: (updatedItem, { id }) => {
-      queryClient.invalidateQueries({ queryKey: criticidadeRegulatoriaQueryKeys.all });
-      queryClient.setQueryData(criticidadeRegulatoriaQueryKeys.detail(id), updatedItem);
+    mutationFn: ({ id, data }: { id: string; data: PutCriticidadesRegulatoriasIdBody }) =>
+      putCriticidadesRegulatoriasId(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: getGetCriticidadesRegulatoriasQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetCriticidadesRegulatoriasIdQueryKey(id) });
       toast.success('Criticidade regulatória atualizada com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao atualizar criticidade regulatória:', error);
-      toast.error(error.message || 'Erro ao atualizar criticidade regulatória');
-    },
+    onError: () => toast.error('Erro ao atualizar criticidade regulatória'),
   });
 }
 
-/**
- * Hook para deletar criticidade regulatória
- */
 export function useDeleteCriticidadeRegulatoria() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (id: string) => criticidadeRegulatoriaService.remove(id),
+    mutationFn: (id: string) => deleteCriticidadesRegulatoriasId(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: criticidadeRegulatoriaQueryKeys.all });
-      queryClient.removeQueries({ queryKey: criticidadeRegulatoriaQueryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: getGetCriticidadesRegulatoriasQueryKey() });
+      queryClient.removeQueries({ queryKey: getGetCriticidadesRegulatoriasIdQueryKey(id) });
       toast.success('Criticidade regulatória excluída com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao excluir criticidade regulatória:', error);
-      toast.error(error.message || 'Erro ao excluir criticidade regulatória');
-    },
+    onError: () => toast.error('Erro ao excluir criticidade regulatória'),
   });
 }

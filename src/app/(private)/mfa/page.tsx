@@ -50,7 +50,8 @@ export default function MfaPage() {
   // Query
   const { data, isLoading } = useMfas({ page: 1, limit: 1000 })
 
-  const configuracoes = data?.data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const configuracoes = (data?.data ?? []) as any[]
 
   // Stats
   const stats = useMemo(() => {

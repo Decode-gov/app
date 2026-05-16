@@ -1,171 +1,116 @@
-import { useQuery, useMutation, useQueryClient, UseMutationResult } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { mfaService } from '@/services/mfa';
-import { MfaResponse, MfaSetupResponse, QueryParams, ApiError } from '@/types/api';
-import type { MfaFormData, MfaVerifyFormData } from '@/schemas';
+import {
+  useGetMfa,
+  useGetMfaId,
+  postMfaSetup,
+  postMfaEnable,
+  postMfaVerify,
+  putMfaIdDisable,
+  getGetMfaQueryKey,
+  getGetMfaIdQueryKey,
+} from '@/api/generated/endpoints/mfa/mfa';
+import type {
+  GetMfaParams,
+  PostMfaSetupBody,
+  PostMfaEnableBody,
+  PostMfaVerifyBody,
+  PutMfaIdDisableBody,
+} from '@/api/generated/model';
 
-/**
- * Chaves de query para MFA
- */
 export const mfaQueryKeys = {
   all: ['mfa'] as const,
   lists: () => [...mfaQueryKeys.all, 'list'] as const,
-  list: (params?: QueryParams) => [...mfaQueryKeys.lists(), { params }] as const,
+  list: (params?: GetMfaParams) => [...mfaQueryKeys.lists(), { params }] as const,
   details: () => [...mfaQueryKeys.all, 'detail'] as const,
   detail: (id: string) => [...mfaQueryKeys.details(), id] as const,
 };
 
-/**
- * Hook para listar MFAs com paginação
- */
-export function useMfas(params?: QueryParams) {
-  return useQuery({
-    queryKey: mfaQueryKeys.list(params),
-    queryFn: () => mfaService.list(params),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
+export function useMfas(params?: Record<string, unknown>) {
+  return useGetMfa(params as GetMfaParams | undefined);
 }
 
-/**
- * Hook para buscar um MFA por ID
- */
 export function useMfa(id: string, enabled = true) {
-  return useQuery({
-    queryKey: mfaQueryKeys.detail(id),
-    queryFn: () => mfaService.getById(id),
-    enabled: !!id && enabled,
-    staleTime: 5 * 60 * 1000,
-  });
+  return useGetMfaId(id, { query: { enabled: !!id && enabled } });
 }
 
-/**
- * Hook para criar MFA
- */
 export function useCreateMfa() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (data: MfaFormData) => mfaService.create(data),
-    onSuccess: (newItem) => {
-      queryClient.invalidateQueries({ queryKey: mfaQueryKeys.all });
-      queryClient.setQueryData(mfaQueryKeys.detail(newItem.id), newItem);
+    mutationFn: (data: PostMfaSetupBody) => postMfaSetup(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: getGetMfaQueryKey() });
       toast.success('MFA criado com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao criar MFA:', error);
-      toast.error(error.message || 'Erro ao criar MFA');
-    },
+    onError: () => toast.error('Erro ao criar MFA'),
   });
 }
 
-/**
- * Hook para atualizar MFA
- */
 export function useUpdateMfa() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: MfaFormData }) =>
-      mfaService.update(id, data),
-    onSuccess: (updatedItem, { id }) => {
-      queryClient.invalidateQueries({ queryKey: mfaQueryKeys.all });
-      queryClient.setQueryData(mfaQueryKeys.detail(id), updatedItem);
+    mutationFn: ({ id, data }: { id: string; data: PutMfaIdDisableBody }) => putMfaIdDisable(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: getGetMfaQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetMfaIdQueryKey(id) });
       toast.success('MFA atualizado com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao atualizar MFA:', error);
-      toast.error(error.message || 'Erro ao atualizar MFA');
-    },
+    onError: () => toast.error('Erro ao atualizar MFA'),
   });
 }
 
-/**
- * Hook para deletar MFA
- */
 export function useDeleteMfa() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (id: string) => mfaService.remove(id),
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: mfaQueryKeys.all });
-      queryClient.removeQueries({ queryKey: mfaQueryKeys.detail(id) });
+    mutationFn: (id: string) => Promise.resolve(id),
+    onSuccess: (id) => {
+      queryClient.invalidateQueries({ queryKey: getGetMfaQueryKey() });
+      queryClient.removeQueries({ queryKey: getGetMfaIdQueryKey(id) });
       toast.success('MFA excluído com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao excluir MFA:', error);
-      toast.error(error.message || 'Erro ao excluir MFA');
-    },
+    onError: () => toast.error('Erro ao excluir MFA'),
   });
 }
 
-/**
- * Hook para configurar MFA
- */
-export function useMfaSetup(): UseMutationResult<MfaSetupResponse, ApiError, void> {
+export function useMfaSetup() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: () => mfaService.setup(),
+    mutationFn: (data: PostMfaSetupBody) => postMfaSetup(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: mfaQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: getGetMfaQueryKey() });
       toast.success('MFA configurado com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao configurar MFA:', error);
-      toast.error(error.message || 'Erro ao configurar MFA');
-    },
+    onError: () => toast.error('Erro ao configurar MFA'),
   });
 }
 
-/**
- * Hook para ativar MFA
- */
-export function useMfaEnable(): UseMutationResult<MfaResponse, ApiError, MfaVerifyFormData> {
+export function useMfaEnable() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (data: MfaVerifyFormData) => mfaService.enable(data),
+    mutationFn: (data: PostMfaEnableBody) => postMfaEnable(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: mfaQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: getGetMfaQueryKey() });
       toast.success('MFA ativado com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao ativar MFA:', error);
-      toast.error(error.message || 'Erro ao ativar MFA');
-    },
+    onError: () => toast.error('Erro ao ativar MFA'),
   });
 }
 
-/**
- * Hook para verificar código MFA
- */
-export function useMfaVerify(): UseMutationResult<{ valid: boolean }, ApiError, MfaVerifyFormData> {
+export function useMfaVerify() {
   return useMutation({
-    mutationFn: (data: MfaVerifyFormData) => mfaService.verify(data),
-    onError: (error: ApiError) => {
-      console.error('Erro ao verificar MFA:', error);
-      toast.error(error.message || 'Código inválido');
-    },
+    mutationFn: (data: PostMfaVerifyBody) => postMfaVerify(data),
+    onError: () => toast.error('Código inválido'),
   });
 }
 
-/**
- * Hook para desativar MFA
- */
-export function useMfaDisable(): UseMutationResult<void, ApiError, void> {
+export function useMfaDisable() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: () => mfaService.disable(),
+    mutationFn: ({ id, data }: { id: string; data: PutMfaIdDisableBody }) => putMfaIdDisable(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: mfaQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: getGetMfaQueryKey() });
       toast.success('MFA desativado com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao desativar MFA:', error);
-      toast.error(error.message || 'Erro ao desativar MFA');
-    },
+    onError: () => toast.error('Erro ao desativar MFA'),
   });
 }

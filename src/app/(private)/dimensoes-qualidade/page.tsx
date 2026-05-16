@@ -52,7 +52,8 @@ export default function DimensoesQualidadePage() {
     }
   }
 
-  const dimensoes = dimensoesData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const dimensoes = (dimensoesData?.data || []) as any[]
   const politicas = politicasData?.data || []
 
   return (
@@ -77,7 +78,7 @@ export default function DimensoesQualidadePage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              {dimensoesData?.total || 0}
+              {dimensoes.length || 0}
             </div>
             <p className="text-xs text-muted-foreground">dimensões cadastradas</p>
           </CardContent>
@@ -117,7 +118,7 @@ export default function DimensoesQualidadePage() {
                 <SelectContent>
                   <SelectItem value="todas">Todas as políticas</SelectItem>
                   {politicas.map((politica) => (
-                    <SelectItem key={politica.id} value={politica.id}>
+                    <SelectItem key={politica.id ?? ''} value={politica.id ?? ''}>
                       {politica.nome}
                     </SelectItem>
                   ))}

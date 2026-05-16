@@ -42,7 +42,8 @@ export default function RegrasQualidadePage() {
   
   const deleteRegra = useDeleteRegraQualidade()
 
-  const regras = regrasData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const regras = (regrasData?.data || []) as any[]
   const dimensoes = dimensoesData?.data || []
   const tabelas = tabelasData?.data || []
   const colunas = colunasData?.data || []

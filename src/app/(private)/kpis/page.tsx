@@ -53,7 +53,8 @@ export default function KpisPage() {
   const { data: comunidadesData } = useComunidades()
   const deleteMutation = useDeleteKpi()
 
-  const kpis = kpisData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const kpis = (kpisData?.data || []) as any[]
   const processos = processosData?.data || []
   const comunidades = comunidadesData?.data || []
 

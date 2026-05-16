@@ -21,7 +21,8 @@ export default function PoliticasPage() {
   const deletePolitica = useDeletePoliticaInterna()
 
   // Extração do array de dados
-  const politicas = politicasData?.data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const politicas = (politicasData?.data ?? []) as any[]
 
   const handleDelete = useCallback(async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta política interna?")) {

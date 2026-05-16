@@ -20,8 +20,10 @@ export default function ReferencialClassificacaoPage() {
   const { data: politicasData } = usePoliticasInternas()
   const deleteReferencial = useDeleteListaClassificacao()
   
-  const politicas = useMemo(() => politicasData?.data || [], [politicasData?.data])
-  const referenciais = useMemo(() => referenciaisData?.data || [], [referenciaisData?.data])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const politicas = useMemo(() => (politicasData?.data || []) as any[], [politicasData?.data])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const referenciais = useMemo(() => (referenciaisData?.data || []) as any[], [referenciaisData?.data])
 
   // Handlers
   const handleEdit = (referencial: ListaClassificacaoResponse) => {

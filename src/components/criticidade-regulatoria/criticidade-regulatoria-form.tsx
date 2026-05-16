@@ -143,7 +143,7 @@ export function CriticidadeRegulatoriaForm({
                       </SelectItem>
                       {regulacoes?.data?.map((regulacao) => (
                         <SelectItem key={regulacao.id} value={regulacao.id}>
-                          {regulacao.epigrafe} - {regulacao.nome}
+                          {regulacao.epigrafe} - {regulacao.orgao}
                         </SelectItem>
                       ))}
                     </SelectContent>

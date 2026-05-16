@@ -63,9 +63,11 @@ export function RegulacaoForm({ open, onOpenChange, regulacao }: RegulacaoFormPr
       }
 
       if (isEditing) {
-        await updateRegulacao.mutateAsync({ id: regulacao.id, data: payload })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await updateRegulacao.mutateAsync({ id: regulacao.id, data: payload as any })
       } else {
-        await createRegulacao.mutateAsync(payload)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await createRegulacao.mutateAsync(payload as any)
       }
       onOpenChange(false)
       form.reset()

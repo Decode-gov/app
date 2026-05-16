@@ -37,7 +37,8 @@ export default function AuditoriaPage() {
   // Query
   const { data, isLoading } = useAuditoria({ page: 1, limit: 1000 })
 
-  const logs = data?.data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const logs = (data?.data ?? []) as any[]
 
   // Stats
   const stats = useMemo(() => {

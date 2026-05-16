@@ -148,14 +148,16 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
       if (isEditing) {
         await updateMutation.mutateAsync({
           id: documento.id,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           data: {
             descricao: data.descricao,
             metadados: data.metadados,
             ativo: data.ativo,
-          },
+          } as any,
         })
       } else {
-        await createMutation.mutateAsync(data)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await createMutation.mutateAsync({ ...data, tamanhoBytes: String(data.tamanhoBytes) } as any)
       }
 
       form.reset()

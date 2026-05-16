@@ -28,7 +28,8 @@ export default function AtribuicoesPage() {
   // Memoização dos dados
   const papeis = useMemo(() => papeisData?.data ?? [], [papeisData?.data])
   const dominios = useMemo(() => comunidadesData?.data ?? [], [comunidadesData?.data])
-  const atribuicoes = useMemo(() => atribuicoesData?.data ?? [], [atribuicoesData?.data])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const atribuicoes = useMemo(() => (atribuicoesData?.data ?? []) as any[], [atribuicoesData?.data])
 
   // Handlers para as ações da tabela
   const handleEdit = (atribuicao: AtribuicaoResponse) => {

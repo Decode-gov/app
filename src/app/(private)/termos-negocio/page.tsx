@@ -18,7 +18,8 @@ export default function TermosNegocioPage() {
   const { data: termosData, isLoading, error } = useDefinicoes()
   const { mutate: deleteTermo } = useDeleteDefinicao()
 
-  const termos = termosData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const termos = (termosData?.data || []) as any[]
 
   const handleEdit = (termo: DefinicaoResponse) => {
     setSelectedTermo(termo)

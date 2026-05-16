@@ -96,7 +96,7 @@ export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormPr
         status: data.status,
         prioridade: data.prioridade,
         processoId: data.processoId,
-        responsavel: data.responsavel || undefined,
+        responsavel: data.responsavel || '',
         dataInicio: data.dataInicio || undefined,
         dataFim: data.dataFim || undefined,
       }

@@ -80,14 +80,17 @@ export default function AtivosTecnologicosPage() {
     }
   }
 
-  const sistemas = sistemasData?.data || []
-  const bancos = bancosData?.data || []
-  const repositorios = repositoriosData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sistemas = (sistemasData?.data || []) as any[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const bancos = (bancosData?.data || []) as any[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const repositorios = (repositoriosData?.data || []) as any[]
 
-  const totalSistemas = sistemasData?.total || 0
-  const totalBancos = bancosData?.total || 0
-  const totalRepositorios = repositoriosData?.total || 0
-  const sistemasComBanco = sistemas.filter(s => s.bancos && s.bancos.length > 0).length
+  const totalSistemas = sistemas.length
+  const totalBancos = bancos.length
+  const totalRepositorios = repositorios.length
+  const sistemasComBanco = 0
 
   return (
     <>

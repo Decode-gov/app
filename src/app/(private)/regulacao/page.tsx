@@ -26,19 +26,16 @@ import { RegulacaoResponse } from "@/types/api"
 
 export default function RegulacaoPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [page] = useState(1)
-  const [limit] = useState(10)
   const [formOpen, setFormOpen] = useState(false)
   const [selectedRegulacao, setSelectedRegulacao] = useState<RegulacaoResponse | undefined>()
 
   const { data: regulacoesData, isLoading, error } = useRegulacoes({
-    page,
-    limit,
-    search: searchTerm,
+    orgao: searchTerm || undefined,
   })
   const deleteRegulacao = useDeleteRegulacao()
 
-  const regulacoes = regulacoesData?.data ?? []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const regulacoes = (regulacoesData?.data ?? []) as any[]
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta regulação?")) {

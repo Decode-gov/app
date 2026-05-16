@@ -95,10 +95,12 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
       if (coluna) {
         await updateMutation.mutateAsync({
           id: coluna.id,
-          data,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          data: data as any,
         })
       } else {
-        await createMutation.mutateAsync(data)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await createMutation.mutateAsync(data as any)
       }
       form.reset()
       onOpenChange(false)

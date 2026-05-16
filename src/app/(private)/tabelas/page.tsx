@@ -52,7 +52,8 @@ export default function TabelasPage() {
   const { data: bancosData } = useBancos()
   const deleteMutation = useDeleteTabela()
 
-  const tabelas = tabelasData?.data || []
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tabelas = (tabelasData?.data || []) as any[]
   const sistemas = sistemasData?.data || []
   const bancos = bancosData?.data || []
 

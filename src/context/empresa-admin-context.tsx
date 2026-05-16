@@ -4,11 +4,11 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import { usePerfilUsuario } from "@/hooks/api/use-usuarios"
 import { useEmpresas } from "@/hooks/api/use-empresas"
 import { setGlobalEmpresaId } from "@/lib/empresa-store"
-import type { EmpresaResponse } from "@/services/empresas"
+import type { GetEmpresas200DataItem } from "@/api/generated/model"
 
 interface EmpresaAdminContextValue {
   isAdmin: boolean
-  empresas: EmpresaResponse[]
+  empresas: GetEmpresas200DataItem[]
   selectedEmpresaId: string | null
   setSelectedEmpresaId: (id: string | null) => void
   isLoading: boolean
@@ -20,7 +20,7 @@ export function EmpresaAdminProvider({ children }: { children: ReactNode }) {
   const [selectedEmpresaId, setSelectedEmpresaIdState] = useState<string | null>(null)
 
   const { data: perfil, isLoading: isLoadingPerfil } = usePerfilUsuario()
-  const isAdmin = perfil?.tipo === "ADMIN"
+  const isAdmin = (perfil?.data as { tipo?: string } | undefined)?.tipo === "ADMIN"
 
   const { data: empresasData, isLoading: isLoadingEmpresas } = useEmpresas(undefined, isAdmin)
 

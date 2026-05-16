@@ -111,7 +111,8 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
 
     if (isEditing) {
       updateOperacao(
-        { id: operacao.id, data: payload },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        { id: operacao.id, data: payload as any },
         {
           onSuccess: () => {
             onOpenChange(false)
@@ -120,7 +121,8 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
         }
       )
     } else {
-      createOperacao(payload, {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      createOperacao(payload as any, {
         onSuccess: () => {
           onOpenChange(false)
           form.reset()

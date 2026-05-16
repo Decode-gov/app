@@ -1,105 +1,71 @@
-/**
- * Hooks para gerenciamento de Regras de Negócio
- */
-
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { regraNegocioService } from '@/services';
-import type { QueryParams, ApiError } from '@/types/api';
-import type { CreateRegraNegocioFormData, UpdateRegraNegocioFormData } from '@/schemas';
+import {
+  useGetRegrasNegocio,
+  useGetRegrasNegocioId,
+  postRegrasNegocio,
+  putRegrasNegocioId,
+  deleteRegrasNegocioId,
+  getGetRegrasNegocioQueryKey,
+  getGetRegrasNegocioIdQueryKey,
+} from '@/api/generated/endpoints/regras-negocio/regras-negocio';
+import type {
+  GetRegrasNegocioParams,
+  PostRegrasNegocioBody,
+  PutRegrasNegocioIdBody,
+} from '@/api/generated/model';
 
-/**
- * Chaves de query para regras de negócio
- */
 export const regraNegocioQueryKeys = {
   all: ['regras-negocio'] as const,
   lists: () => [...regraNegocioQueryKeys.all, 'list'] as const,
-  list: (params?: QueryParams) => [...regraNegocioQueryKeys.lists(), { params }] as const,
+  list: (params?: GetRegrasNegocioParams) => [...regraNegocioQueryKeys.lists(), { params }] as const,
   details: () => [...regraNegocioQueryKeys.all, 'detail'] as const,
   detail: (id: string) => [...regraNegocioQueryKeys.details(), id] as const,
 };
 
-/**
- * Hook para listar regras de negócio com paginação
- */
-export function useRegrasNegocio(params?: QueryParams) {
-  return useQuery({
-    queryKey: regraNegocioQueryKeys.list(params),
-    queryFn: () => regraNegocioService.list(params),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  });
+export function useRegrasNegocio(params?: Record<string, unknown>) {
+  return useGetRegrasNegocio(params as GetRegrasNegocioParams | undefined);
 }
 
-/**
- * Hook para buscar uma regra de negócio por ID
- */
 export function useRegraNegocioDetail(id: string, enabled = true) {
-  return useQuery({
-    queryKey: regraNegocioQueryKeys.detail(id),
-    queryFn: () => regraNegocioService.getById(id),
-    enabled: !!id && enabled,
-    staleTime: 5 * 60 * 1000,
-  });
+  return useGetRegrasNegocioId(id, { query: { enabled: !!id && enabled } });
 }
 
-/**
- * Hook para criar regra de negócio
- */
 export function useCreateRegraNegocio() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (data: CreateRegraNegocioFormData) => regraNegocioService.create(data),
-    onSuccess: (newItem) => {
-      queryClient.invalidateQueries({ queryKey: regraNegocioQueryKeys.all });
-      queryClient.setQueryData(regraNegocioQueryKeys.detail(newItem.id), newItem);
+    mutationFn: (data: PostRegrasNegocioBody) => postRegrasNegocio(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: getGetRegrasNegocioQueryKey() });
       toast.success('Regra de negócio criada com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao criar regra de negócio:', error);
-      toast.error(error.message || 'Erro ao criar regra de negócio');
-    },
+    onError: () => toast.error('Erro ao criar regra de negócio'),
   });
 }
 
-/**
- * Hook para atualizar regra de negócio
- */
 export function useUpdateRegraNegocio() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateRegraNegocioFormData }) =>
-      regraNegocioService.update(id, data),
-    onSuccess: (updatedItem, { id }) => {
-      queryClient.invalidateQueries({ queryKey: regraNegocioQueryKeys.all });
-      queryClient.setQueryData(regraNegocioQueryKeys.detail(id), updatedItem);
+    mutationFn: ({ id, data }: { id: string; data: PutRegrasNegocioIdBody }) =>
+      putRegrasNegocioId(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: getGetRegrasNegocioQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetRegrasNegocioIdQueryKey(id) });
       toast.success('Regra de negócio atualizada com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao atualizar regra de negócio:', error);
-      toast.error(error.message || 'Erro ao atualizar regra de negócio');
-    },
+    onError: () => toast.error('Erro ao atualizar regra de negócio'),
   });
 }
 
-/**
- * Hook para deletar regra de negócio
- */
 export function useDeleteRegraNegocio() {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (id: string) => regraNegocioService.remove(id),
+    mutationFn: (id: string) => deleteRegrasNegocioId(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: regraNegocioQueryKeys.all });
-      queryClient.removeQueries({ queryKey: regraNegocioQueryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: getGetRegrasNegocioQueryKey() });
+      queryClient.removeQueries({ queryKey: getGetRegrasNegocioIdQueryKey(id) });
       toast.success('Regra de negócio excluída com sucesso!');
     },
-    onError: (error: ApiError) => {
-      console.error('Erro ao excluir regra de negócio:', error);
-      toast.error(error.message || 'Erro ao excluir regra de negócio');
-    },
+    onError: () => toast.error('Erro ao excluir regra de negócio'),
   });
 }

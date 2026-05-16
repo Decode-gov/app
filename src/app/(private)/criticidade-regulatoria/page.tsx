@@ -67,7 +67,8 @@ export default function CriticidadeRegulatoriPage() {
   const { data, isLoading, isError } = useCriticidadesRegulatoria({});
   const deleteMutation = useDeleteCriticidadeRegulatoria();
 
-  const criticidades = data?.data || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const criticidades = (data?.data || []) as any[];
 
   const filteredCriticidades = criticidades.filter((criticidade) => {
     const searchLower = search.toLowerCase();
