@@ -14,7 +14,9 @@
       "Bash(powershell *)",
       "Bash(powershell.exe -Command 'Select-String -Path '\\\\''D:\\\\Trabalho\\\\Dean Melo\\\\decode-gov-app\\\\.claude\\\\worktrees\\\\sidebar-user-admin\\\\src\\\\api\\\\generated\\\\endpoints${file}${file}.ts'\\\\'' -Pattern '\\\\''^export const \\(get|post|put|delete\\)[A-Za-z]+\\\\s*='\\\\'' | ForEach-Object { $_.Matches[0].Value + $_.Line.Substring\\($_.Matches[0].Length\\) } | Select-String -NotMatch '\\\\''QueryKey|QueryOptions'\\\\'' | ForEach-Object { $_.Line }')",
       "Bash(Remove-Item -Recurse -Force src/services)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git commit *)"
     ]
   }
 }
