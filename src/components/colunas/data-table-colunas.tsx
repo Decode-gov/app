@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Edit, Trash2, Search } from "lucide-react"
 import { ColunaResponse } from "@/types/api"
-import { useDeleteColuna } from "@/hooks/api/use-colunas"
+import { useDeleteColunasId } from "@/api/generated/endpoints/colunas/colunas"
 
 interface DataTableColunasProps {
   data: ColunaResponse[]
@@ -41,11 +41,11 @@ export function DataTableColunas({ data, onEdit }: DataTableColunasProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   
-  const deleteColuna = useDeleteColuna()
+  const deleteColuna = useDeleteColunasId()
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta coluna?")) {
-      await deleteColuna.mutateAsync(id)
+      await deleteColuna.mutateAsync({ id })
     }
   }
 

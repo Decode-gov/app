@@ -5,9 +5,18 @@ import { Plus, Server, Database, GitBranch, HardDrive, FolderGit2 } from "lucide
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useSistemas, useDeleteSistema } from "@/hooks/api/use-sistemas"
-import { useBancos, useDeleteBanco } from "@/hooks/api/use-bancos"
-import { useRepositoriosDocumento, useDeleteRepositorioDocumento } from "@/hooks/api/use-repositorios-documento"
+import {
+  useGetSistemas,
+  useDeleteSistemasId,
+} from "@/api/generated/endpoints/sistemas/sistemas"
+import {
+  useGetBancos,
+  useDeleteBancosId,
+} from "@/api/generated/endpoints/bancos/bancos"
+import {
+  useGetRepositoriosDocumento,
+  useDeleteRepositoriosDocumentoId,
+} from "@/api/generated/endpoints/repositorios-documento/repositorios-documento"
 import { SistemaResponse, BancoResponse, RepositorioDocumentoResponse } from "@/types/api"
 import { SistemaForm } from "@/components/sistemas/sistema-form"
 import { BancoForm } from "@/components/bancos/banco-form"
@@ -24,13 +33,13 @@ export default function AtivosTecnologicosPage() {
   const [selectedBanco, setSelectedBanco] = useState<BancoResponse | undefined>()
   const [selectedRepositorio, setSelectedRepositorio] = useState<RepositorioDocumentoResponse | undefined>()
 
-  const { data: sistemasData, isLoading: isLoadingSistemas, error: errorSistemas } = useSistemas({ })
-  const { data: bancosData, isLoading: isLoadingBancos, error: errorBancos } = useBancos({ })
-  const { data: repositoriosData, isLoading: isLoadingRepositorios, error: errorRepositorios } = useRepositoriosDocumento({ })
+  const { data: sistemasData, isLoading: isLoadingSistemas, error: errorSistemas } = useGetSistemas()
+  const { data: bancosData, isLoading: isLoadingBancos, error: errorBancos } = useGetBancos()
+  const { data: repositoriosData, isLoading: isLoadingRepositorios, error: errorRepositorios } = useGetRepositoriosDocumento()
 
-  const deleteSistema = useDeleteSistema()
-  const deleteBanco = useDeleteBanco()
-  const deleteRepositorio = useDeleteRepositorioDocumento()
+  const deleteSistema = useDeleteSistemasId()
+  const deleteBanco = useDeleteBancosId()
+  const deleteRepositorio = useDeleteRepositoriosDocumentoId()
 
   const handleEditSistema = (sistema: SistemaResponse) => {
     setSelectedSistema(sistema)
@@ -44,7 +53,7 @@ export default function AtivosTecnologicosPage() {
 
   const handleDeleteSistema = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este sistema?")) {
-      await deleteSistema.mutateAsync(id)
+      await deleteSistema.mutateAsync({ id })
     }
   }
 
@@ -60,7 +69,7 @@ export default function AtivosTecnologicosPage() {
 
   const handleDeleteBanco = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este banco de dados?")) {
-      await deleteBanco.mutateAsync(id)
+      await deleteBanco.mutateAsync({ id })
     }
   }
 
@@ -76,21 +85,18 @@ export default function AtivosTecnologicosPage() {
 
   const handleDeleteRepositorio = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este repositório de documentos?")) {
-      await deleteRepositorio.mutateAsync(id)
+      await deleteRepositorio.mutateAsync({ id })
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sistemas = (sistemasData?.data || []) as any[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const bancos = (bancosData?.data || []) as any[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const repositorios = (repositoriosData?.data || []) as any[]
+  const sistemas = sistemasData?.data ?? []
+  const bancos = bancosData?.data ?? []
+  const repositorios = repositoriosData?.data ?? []
 
   const totalSistemas = sistemas.length
   const totalBancos = bancos.length
   const totalRepositorios = repositorios.length
-  const sistemasComBanco = 0
+  const sistemasComBanco = sistemas.filter(s => s.bancos && s.bancos.length > 0).length
 
   return (
     <>

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useCreateSistema, useUpdateSistema } from "@/hooks/api/use-sistemas"
+import { usePostSistemas, usePutSistemasId } from "@/api/generated/endpoints/sistemas/sistemas"
 import { SistemaResponse } from "@/types/api"
 
 const sistemaSchema = z.object({
@@ -27,8 +27,8 @@ interface SistemaFormProps {
 
 export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
   const isEditing = !!sistema
-  const createSistema = useCreateSistema()
-  const updateSistema = useUpdateSistema()
+  const createSistema = usePostSistemas()
+  const updateSistema = usePutSistemasId()
 
   const form = useForm<SistemaFormValues>({
     resolver: zodResolver(sistemaSchema),
@@ -62,7 +62,7 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
       if (isEditing) {
         await updateSistema.mutateAsync({ id: sistema.id, data: payload })
       } else {
-        await createSistema.mutateAsync(payload)
+        await createSistema.mutateAsync({ data: payload })
       }
       onOpenChange(false)
       form.reset()

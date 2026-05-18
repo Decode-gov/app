@@ -11,8 +11,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { useCreateBanco, useUpdateBanco } from "@/hooks/api/use-bancos"
-import { useSistemas } from "@/hooks/api/use-sistemas"
+import { usePostBancos, usePutBancosId } from "@/api/generated/endpoints/bancos/bancos"
+import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas"
 import { BancoResponse } from "@/types/api"
 
 const bancoSchema = z.object({
@@ -31,9 +31,9 @@ interface BancoFormProps {
 
 export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
   const isEditing = !!banco
-  const createBanco = useCreateBanco()
-  const updateBanco = useUpdateBanco()
-  const { data: sistemasData } = useSistemas({ page: 1, limit: 1000 })
+  const createBanco = usePostBancos()
+  const updateBanco = usePutBancosId()
+  const { data: sistemasData } = useGetSistemas()
 
   const form = useForm<BancoFormValues>({
     resolver: zodResolver(bancoSchema),
@@ -67,7 +67,7 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
       if (isEditing) {
         await updateBanco.mutateAsync({ id: banco.id, data: payload })
       } else {
-        await createBanco.mutateAsync(payload)
+        await createBanco.mutateAsync({ data: payload })
       }
       onOpenChange(false)
       form.reset()
@@ -76,7 +76,7 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
     }
   }
 
-  const sistemas = sistemasData?.data || []
+  const sistemas = sistemasData?.data ?? []
   const sistemaSelecionado = form.watch("sistemaId")
   const sistema = sistemas.find(s => s.id === sistemaSelecionado)
 

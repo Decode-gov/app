@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { useCreateSistema, useUpdateSistema } from "@/hooks/api/use-sistemas"
+import { usePostSistemas, usePutSistemasId } from "@/api/generated/endpoints/sistemas/sistemas"
 import { SistemaResponse } from "@/types/api"
 import { CreateSistemaSchema, type CreateSistemaFormData } from "@/schemas"
 
@@ -34,8 +34,8 @@ interface SistemaFormProps {
 }
 
 export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
-  const createMutation = useCreateSistema()
-  const updateMutation = useUpdateSistema()
+  const createMutation = usePostSistemas()
+  const updateMutation = usePutSistemasId()
   
   const form = useForm<CreateSistemaFormData>({
     resolver: zodResolver(CreateSistemaSchema),
@@ -68,12 +68,10 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
       if (sistema) {
         await updateMutation.mutateAsync({
           id: sistema.id,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          data: data as any,
+          data,
         })
       } else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await createMutation.mutateAsync(data as any)
+        await createMutation.mutateAsync({ data })
       }
       form.reset()
       onOpenChange(false)

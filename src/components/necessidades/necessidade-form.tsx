@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -21,12 +21,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { useCreateNecessidadeInformacao, useUpdateNecessidadeInformacao } from "@/hooks/api/use-necessidades-informacao"
-import { NecessidadeInformacaoResponse } from "@/types/api"
-import { Loader2 } from "lucide-react"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { NecessidadeInformacaoResponse } from "@/types/api";
+import { Loader2 } from "lucide-react";
+import { getGetNecessidadesInformacaoQueryKey, usePostNecessidadesInformacao, usePutNecessidadesInformacaoId } from "@/api/generated/endpoints/necessidades-informacao/necessidades-informacao";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const necessidadeSchema = z.object({
   questaoGerencial: z.string().min(1, "Questão gerencial é obrigatória").max(2000, "Questão gerencial deve ter no máximo 2000 caracteres"),
@@ -44,9 +46,40 @@ interface NecessidadeFormProps {
 }
 
 export function NecessidadeForm({ open, onOpenChange, necessidade }: NecessidadeFormProps) {
-  const createMutation = useCreateNecessidadeInformacao()
-  const updateMutation = useUpdateNecessidadeInformacao()
-  
+  const queryClient = useQueryClient()
+  const createMutation = usePostNecessidadesInformacao({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: getGetNecessidadesInformacaoQueryKey()
+        })
+        toast.success('Necessidade de informação criada com sucesso!')
+      },
+      onError: () => {
+        queryClient.invalidateQueries({
+          queryKey: getGetNecessidadesInformacaoQueryKey()
+        })
+        toast.error('Falha ao criar Necessidade de informação!')
+      }
+    }
+  })
+  const updateMutation = usePutNecessidadesInformacaoId({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: getGetNecessidadesInformacaoQueryKey()
+        })
+        toast.success('Necessidade de informação atualizada com sucesso!')
+      },
+      onError: () => {
+        queryClient.invalidateQueries({
+          queryKey: getGetNecessidadesInformacaoQueryKey()
+        })
+        toast.error('Falha ao atualizar Necessidade de informação!')
+      }
+    }
+  })
+
   const form = useForm<NecessidadeFormValues>({
     resolver: zodResolver(necessidadeSchema),
     defaultValues: {
@@ -83,7 +116,9 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
           data: values,
         })
       } else {
-        await createMutation.mutateAsync(values)
+        await createMutation.mutateAsync({
+          data: values
+        })
       }
       onOpenChange(false)
       form.reset()

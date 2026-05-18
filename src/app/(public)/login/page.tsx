@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useLogin } from "@/hooks/api/use-usuarios"
+import { usePostUsuariosLogin } from "@/api/generated/endpoints/usuarios/usuarios"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -29,7 +29,7 @@ type LoginFormData = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const router = useRouter()
-  const { mutate: login, isPending } = useLogin()
+  const { mutate: login, isPending } = usePostUsuariosLogin()
   const [showPassword, setShowPassword] = useState(false)
 
   const form = useForm<LoginFormData>({
@@ -41,11 +41,14 @@ export default function LoginPage() {
   })
 
   const onSubmit = (data: LoginFormData) => {
-    login(data, {
-      onSuccess: () => {
-        router.push("/")
+    login(
+      { data },
+      {
+        onSuccess: () => {
+          router.push("/")
+        },
       },
-    })
+    )
   }
 
   return (

@@ -9,7 +9,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react"
-import { useListasReferencia, useDeleteListaReferencia } from "@/hooks/api/use-listas-referencia"
+import {
+  useGetListasReferencia,
+  useDeleteListasReferenciaId,
+} from "@/api/generated/endpoints/listas-referencia/listas-referencia"
 import { ListaForm } from "@/components/listas-referencia/lista-form"
 import type { ListaReferenciaResponse } from "@/types/api"
 
@@ -19,8 +22,8 @@ export default function ListasReferenciaPage() {
   const [search, setSearch] = useState("")
 
   // Queries
-  const { data, isLoading } = useListasReferencia({ page: 1, limit: 1000 })
-  const { mutate: deleteLista } = useDeleteListaReferencia()
+  const { data, isLoading } = useGetListasReferencia()
+  const { mutate: deleteLista } = useDeleteListasReferenciaId()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const listas = useMemo(() => (data?.data ?? []) as any[], [data?.data])
@@ -52,7 +55,7 @@ export default function ListasReferenciaPage() {
 
   const handleDelete = (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta lista de referência?")) {
-      deleteLista(id)
+      deleteLista({ id })
     }
   }
 

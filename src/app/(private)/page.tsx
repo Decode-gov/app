@@ -1,22 +1,18 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Users,
   BookOpen,
-  BarChart3,
   Shield,
   Building,
   Database,
-  FileText,
-  Activity,
-  Columns,
   FolderOpen
-} from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Badge } from "@/components/ui/badge"
-import { StatsCards } from "@/components/ui/stats-cards"
-import { useDashboardMetricas } from "@/hooks/api/use-dashboard"
+} from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { StatsCards } from "@/components/ui/stats-cards";
+import { useGetDashboardMetricas } from "@/api/generated/endpoints/dashboard/dashboard";
 
 function MetricCard({
   title,
@@ -62,9 +58,8 @@ function MetricCard({
 }
 
 export default function DashboardPage() {
-  const { data: metricsResponse, isLoading, error } = useDashboardMetricas()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const dashboardData = metricsResponse?.data as any
+  const { data: dashboardResponse, isLoading, error } = useGetDashboardMetricas()
+  const dashboardData = dashboardResponse?.data
 
   if (isLoading) {
     return (
@@ -111,7 +106,7 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="animate-pulse">
             <CardHeader>
               <Skeleton className="h-6 w-[160px]" />
@@ -157,10 +152,10 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Primeira linha de cards principais */}
+      {/* Segunda linha de cards secundários */}
       <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-foreground">Métricas Principais</h2>
-        <StatsCards 
+        <h2 className="text-xl font-semibold text-foreground">Estruturas e Políticas</h2>
+        <StatsCards
           cards={[
             {
               title: "Usuários",
@@ -177,23 +172,6 @@ export default function DashboardPage() {
               gradient: "from-green-500 to-emerald-500",
             },
             {
-              title: "KPIs",
-              value: dashboardData?.totalKpis || 0,
-              description: "Indicadores definidos",
-              icon: BarChart3,
-              gradient: "from-purple-500 to-pink-500",
-            },
-          ]}
-          animationDirection="right"
-        />
-      </div>
-
-      {/* Segunda linha de cards secundários */}
-      <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-foreground">Estruturas e Políticas</h2>
-        <StatsCards 
-          cards={[
-            {
               title: "Políticas",
               value: dashboardData?.totalPoliticas || 0,
               description: "Políticas internas do sistema",
@@ -201,8 +179,8 @@ export default function DashboardPage() {
               gradient: "from-orange-500 to-red-500",
             },
             {
-              title: "Entidades",
-              value: dashboardData?.totalEntidades || 0,
+              title: "Processos",
+              value: dashboardData?.totalProcessos || 0,
               description: "Total de entidades cadastradas",
               icon: Building,
               gradient: "from-indigo-500 to-blue-500",
@@ -214,39 +192,9 @@ export default function DashboardPage() {
               icon: Database,
               gradient: "from-teal-500 to-cyan-500",
             },
+
           ]}
           animationDirection="left"
-        />
-      </div>
-
-      {/* Terceira linha de cards técnicos */}
-      <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-foreground">Recursos Técnicos</h2>
-        <StatsCards 
-          cards={[
-            {
-              title: "Tabelas",
-              value: dashboardData?.totalTabelas || 0,
-              description: "Mapeamentos técnicos",
-              icon: FileText,
-              gradient: "from-yellow-500 to-orange-500",
-            },
-            {
-              title: "Colunas",
-              value: dashboardData?.totalColunas || 0,
-              description: "Colunas mapeadas",
-              icon: Columns,
-              gradient: "from-pink-500 to-rose-500",
-            },
-            {
-              title: "Processos",
-              value: dashboardData?.totalProcessos || 0,
-              description: "Processos de negócio",
-              icon: Activity,
-              gradient: "from-cyan-500 to-blue-500",
-            },
-          ]}
-          animationDirection="right"
         />
       </div>
 
@@ -255,7 +203,7 @@ export default function DashboardPage() {
         <MetricCard
           title="Documentos por Categoria"
           data={{
-            "Documentos Totais": dashboardData?.totalDocumentos || 0,
+            "Comunidades": dashboardData?.totalComunidades || 0,
             "Políticas": dashboardData?.totalPoliticas || 0,
             "Processos": dashboardData?.totalProcessos || 0,
           }}

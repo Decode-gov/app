@@ -10,7 +10,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useComunidades, useDeleteComunidade } from "@/hooks/api/use-comunidades"
+import {
+  useGetComunidades,
+  useDeleteComunidadesId,
+} from "@/api/generated/endpoints/comunidades/comunidades"
 import { ComunidadeForm } from "@/components/dominios/comunidade-form"
 import { DominiosDataTable } from "@/components/dominios/dominios-data-table"
 import { createColumns } from "@/components/dominios/columns"
@@ -20,15 +23,10 @@ export default function DominiosPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [editingComunidade, setEditingComunidade] = useState<ComunidadeResponse | undefined>()
 
-  // Filtros server-side via query params
-  const { data: comunidadesData, isLoading, error } = useComunidades({
-    page: 1,
-    limit: 1000,
-  })
-  const deleteMutation = useDeleteComunidade()
+  const { data: comunidadesData, isLoading, error } = useGetComunidades()
+  const deleteMutation = useDeleteComunidadesId()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const comunidades = (comunidadesData?.data || []) as any[]
+  const comunidades = comunidadesData?.data ?? []
 
   const handleEdit = (comunidade: ComunidadeResponse) => {
     setEditingComunidade(comunidade)
@@ -38,7 +36,7 @@ export default function DominiosPage() {
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta comunidade?")) {
       try {
-        await deleteMutation.mutateAsync(id)
+        await deleteMutation.mutateAsync({ id })
       } catch (error) {
         console.error('Erro ao excluir comunidade:', error)
       }

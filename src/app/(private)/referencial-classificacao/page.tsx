@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button"
 import { FileText, Plus } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useListasClassificacao, useDeleteListaClassificacao } from "@/hooks/api/use-listas-classificacao"
-import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
+import {
+  useGetListasClassificacao,
+  useDeleteListasClassificacaoId,
+} from "@/api/generated/endpoints/listas-classificacao/listas-classificacao"
+import { useGetPoliticasInternas } from "@/api/generated/endpoints/politicas-internas/politicas-internas"
 import { ListaClassificacaoResponse } from "@/types/api"
 import { ReferencialForm } from "@/components/referencial/referencial-form"
 import { ReferencialTable } from "@/components/referencial/referencial-table"
@@ -16,14 +19,12 @@ export default function ReferencialClassificacaoPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedReferencial, setSelectedReferencial] = useState<ListaClassificacaoResponse | undefined>()
 
-  const { data: referenciaisData, isLoading, error } = useListasClassificacao({})
-  const { data: politicasData } = usePoliticasInternas()
-  const deleteReferencial = useDeleteListaClassificacao()
-  
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const politicas = useMemo(() => (politicasData?.data || []) as any[], [politicasData?.data])
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const referenciais = useMemo(() => (referenciaisData?.data || []) as any[], [referenciaisData?.data])
+  const { data: referenciaisData, isLoading, error } = useGetListasClassificacao()
+  const { data: politicasData } = useGetPoliticasInternas()
+  const deleteReferencial = useDeleteListasClassificacaoId()
+
+  const politicas = useMemo(() => politicasData?.data ?? [], [politicasData?.data])
+  const referenciais = useMemo(() => referenciaisData?.data ?? [], [referenciaisData?.data])
 
   // Handlers
   const handleEdit = (referencial: ListaClassificacaoResponse) => {
@@ -38,7 +39,7 @@ export default function ReferencialClassificacaoPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este referencial de classificação?")) {
-      await deleteReferencial.mutateAsync(id)
+      await deleteReferencial.mutateAsync({ id })
     }
   }
 

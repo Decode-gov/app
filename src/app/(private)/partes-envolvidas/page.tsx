@@ -10,8 +10,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { usePartesEnvolvidas, useDeleteParteEnvolvida } from "@/hooks/api/use-partes-envolvidas"
-import { usePapeis } from "@/hooks/api/use-papeis"
+import {
+  useGetPartesEnvolvidas,
+  useDeletePartesEnvolvidasId,
+} from "@/api/generated/endpoints/partes-envolvidas/partes-envolvidas"
+import { useGetPapeis } from "@/api/generated/endpoints/papeis/papeis"
 import { ParteEnvolvidaResponse } from "@/types/api"
 import { ParteEnvolvidaForm } from "@/components/partes-envolvidas/parte-envolvida-form"
 
@@ -43,18 +46,15 @@ export default function PartesEnvolvidasPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedParte, setSelectedParte] = useState<ParteEnvolvidaResponse | undefined>()
 
-  const queryParams: Record<string, string | number | undefined> = {
-    page,
-    limit,
-    search: searchTerm || undefined,
-  }
-  
-  if (tipoFilter) queryParams.tipo = tipoFilter
+  void page
+  void limit
+  void searchTerm
+  void tipoFilter
 
-  const { data: partesData, isLoading, error } = usePartesEnvolvidas(queryParams)
-  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
-  
-  const deleteParte = useDeleteParteEnvolvida()
+  const { data: partesData, isLoading, error } = useGetPartesEnvolvidas()
+  const { data: papeisData } = useGetPapeis()
+
+  const deleteParte = useDeletePartesEnvolvidasId()
 
   const handleEdit = (parte: ParteEnvolvidaResponse) => {
     setSelectedParte(parte)
@@ -68,13 +68,12 @@ export default function PartesEnvolvidasPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta parte envolvida?")) {
-      await deleteParte.mutateAsync(id)
+      await deleteParte.mutateAsync({ id })
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const partes = (partesData?.data || []) as any[]
-  const papeis = papeisData?.data || []
+  const partes = partesData?.data ?? []
+  const papeis = papeisData?.data ?? []
 
   const pessoasFisicas = partes.filter(p => p.tipo === 'PESSOA_FISICA').length
   const pessoasJuridicas = partes.filter(p => p.tipo === 'PESSOA_JURIDICA').length
@@ -101,7 +100,7 @@ export default function PartesEnvolvidasPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{partes.length || 0}</div>
+              <div className="text-2xl font-bold text-blue-600">{partes.length}</div>
               <p className="text-xs text-muted-foreground">partes cadastradas</p>
             </CardContent>
           </Card>

@@ -11,8 +11,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react"
-import { useOperacoes, useDeleteOperacao } from "@/hooks/api/use-operacoes"
-import { useAtividades } from "@/hooks/api/use-atividades"
+import {
+  useGetOperacoes,
+  useDeleteOperacoesId,
+} from "@/api/generated/endpoints/operacoes/operacoes"
+import { useGetAtividades } from "@/api/generated/endpoints/atividades/atividades"
 import { OperacaoForm } from "@/components/operacoes/operacao-form"
 import type { OperacaoResponse } from "@/types/api"
 
@@ -82,9 +85,9 @@ export default function OperacoesPage() {
   const [frequenciaFilter, setFrequenciaFilter] = useState<string>("all")
 
   // Queries
-  const { data, isLoading } = useOperacoes({ page: 1, limit: 1000 })
-  const { data: atividadesData } = useAtividades({ page: 1, limit: 1000 })
-  const { mutate: deleteOperacao } = useDeleteOperacao()
+  const { data, isLoading } = useGetOperacoes()
+  const { data: atividadesData } = useGetAtividades()
+  const { mutate: deleteOperacao } = useDeleteOperacoesId()
 
   const operacoes = data?.data ?? []
   const atividades = atividadesData?.data ?? []
@@ -127,7 +130,7 @@ export default function OperacoesPage() {
 
   const handleDelete = (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta operação?")) {
-      deleteOperacao(id)
+      deleteOperacao({ id })
     }
   }
 

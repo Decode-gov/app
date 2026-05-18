@@ -1,24 +1,29 @@
 "use client"
 
-import { useState, useMemo, useCallback } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Plus, Shield } from "lucide-react"
-import { usePoliticasInternas, useDeletePoliticaInterna } from "@/hooks/api/use-politicas-internas"
-import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form"
-import { Skeleton } from "@/components/ui/skeleton"
-import { PoliticaInternaResponse } from "@/types/api"
-import { PoliticasInternasDataTable } from "@/components/politicas/politicas-internas-data-table"
-import { createColumns } from "@/components/politicas/politicas-internas-columns"
+import { useState, useMemo, useCallback } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Plus, Shield } from "lucide-react";
+import {
+  useGetPoliticasInternas,
+  useDeletePoliticasInternasId,
+  getGetPoliticasInternasQueryKey,
+} from "@/api/generated/endpoints/politicas-internas/politicas-internas";
+import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PoliticasInternasDataTable } from "@/components/politicas/politicas-internas-data-table";
+import { createColumns } from "@/components/politicas/politicas-internas-columns";
+import { GetPoliticasInternas200DataItem } from "@/api/generated/model";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function PoliticasPage() {
   const [statusFilter, setStatusFilter] = useState<string>("")
   const [formOpen, setFormOpen] = useState(false)
-  const [selectedPolitica, setSelectedPolitica] = useState<PoliticaInternaResponse | undefined>()
+  const [selectedPolitica, setSelectedPolitica] = useState<GetPoliticasInternas200DataItem | undefined>()
+  const queryClient = useQueryClient()
 
-  const { data: politicasData, isLoading, error } = usePoliticasInternas()
-
-  const deletePolitica = useDeletePoliticaInterna()
+  const { data: politicasData, isLoading, error } = useGetPoliticasInternas()
 
   // Extração do array de dados
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,11 +31,11 @@ export default function PoliticasPage() {
 
   const handleDelete = useCallback(async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta política interna?")) {
-      await deletePolitica.mutateAsync(id)
+      await useDeletePoliticasInternasId(id)
     }
-  }, [deletePolitica])
+  }, [])
 
-  const handleEdit = useCallback((politica: PoliticaInternaResponse) => {
+  const handleEdit = useCallback((politica: GetPoliticasInternas200DataItem) => {
     setSelectedPolitica(politica)
     setFormOpen(true)
   }, [])

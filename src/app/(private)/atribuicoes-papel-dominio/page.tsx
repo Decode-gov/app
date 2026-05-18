@@ -4,9 +4,12 @@ import { useState, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, Workflow } from "lucide-react"
-import { useAtribuicoes, useDeleteAtribuicao } from "@/hooks/api/use-atribuicoes"
-import { usePapeis } from "@/hooks/api/use-papeis"
-import { useComunidades } from "@/hooks/api/use-comunidades"
+import {
+  useGetAtribuicoes,
+  useDeleteAtribuicoesId,
+} from "@/api/generated/endpoints/atribuicoes/atribuicoes"
+import { useGetPapeis } from "@/api/generated/endpoints/papeis/papeis"
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades"
 import { AtribuicaoForm } from "@/components/atribuicoes/atribuicao-form"
 import { AtribuicoesTable } from "@/components/atribuicoes/atribuicoes-table"
 import { getAtribuicoesColumns } from "@/components/atribuicoes/atribuicoes-table-columns"
@@ -17,13 +20,10 @@ export default function AtribuicoesPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [selectedAtribuicao, setSelectedAtribuicao] = useState<AtribuicaoResponse | undefined>()
 
-  const { data: atribuicoesData, isLoading, error } = useAtribuicoes({
-    page: 1,
-    limit: 1000,
-  })
-  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
-  const { data: comunidadesData } = useComunidades({ page: 1, limit: 1000 })
-  const deleteAtribuicao = useDeleteAtribuicao()
+  const { data: atribuicoesData, isLoading, error } = useGetAtribuicoes()
+  const { data: papeisData } = useGetPapeis()
+  const { data: comunidadesData } = useGetComunidades()
+  const deleteAtribuicao = useDeleteAtribuicoesId()
 
   // Memoização dos dados
   const papeis = useMemo(() => papeisData?.data ?? [], [papeisData?.data])
@@ -39,7 +39,7 @@ export default function AtribuicoesPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta atribuição?")) {
-      await deleteAtribuicao.mutateAsync(id)
+      await deleteAtribuicao.mutateAsync({ id })
     }
   }
 

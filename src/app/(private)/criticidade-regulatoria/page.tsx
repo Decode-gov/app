@@ -23,9 +23,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { CriticidadeRegulatoriaForm } from "@/components/criticidade-regulatoria/criticidade-regulatoria-form";
 import {
-  useCriticidadesRegulatoria,
-  useDeleteCriticidadeRegulatoria,
-} from "@/hooks/api/use-criticidade-regulatoria";
+  useGetCriticidadesRegulatorias,
+  useDeleteCriticidadesRegulatoriasId,
+} from "@/api/generated/endpoints/criticidade-regulatoria/criticidade-regulatoria";
 import { CriticidadeRegulatoriaResponse } from "@/types/api";
 
 const getGrauColor = (grau: string) => {
@@ -64,11 +64,10 @@ export default function CriticidadeRegulatoriPage() {
   const [selectedCriticidade, setSelectedCriticidade] =
     useState<CriticidadeRegulatoriaResponse>();
 
-  const { data, isLoading, isError } = useCriticidadesRegulatoria({});
-  const deleteMutation = useDeleteCriticidadeRegulatoria();
+  const { data, isLoading, isError } = useGetCriticidadesRegulatorias();
+  const deleteMutation = useDeleteCriticidadesRegulatoriasId();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const criticidades = (data?.data || []) as any[];
+  const criticidades = data?.data ?? [];
 
   const filteredCriticidades = criticidades.filter((criticidade) => {
     const searchLower = search.toLowerCase();
@@ -96,7 +95,7 @@ export default function CriticidadeRegulatoriPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Deseja realmente excluir esta criticidade regulatória?")) {
-      await deleteMutation.mutateAsync(id);
+      await deleteMutation.mutateAsync({ id });
     }
   };
 

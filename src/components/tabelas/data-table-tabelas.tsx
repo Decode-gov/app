@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, Edit, Trash2, Plus, Search } from "lucide-react"
 import { TabelaResponse } from "@/types/api"
-import { useDeleteTabela } from "@/hooks/api/use-tabelas"
+import { useDeleteTabelasId } from "@/api/generated/endpoints/tabelas/tabelas"
 
 interface DataTableTabelasProps {
   data: TabelaResponse[]
@@ -42,11 +42,11 @@ export function DataTableTabelas({ data, onEdit, onAddColuna }: DataTableTabelas
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   
-  const deleteTabela = useDeleteTabela()
+  const deleteTabela = useDeleteTabelasId()
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta tabela? Todas as colunas associadas também serão excluídas.")) {
-      await deleteTabela.mutateAsync(id)
+      await deleteTabela.mutateAsync({ id })
     }
   }
 

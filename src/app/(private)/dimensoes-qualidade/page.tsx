@@ -10,8 +10,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useDimensoesQualidade, useDeleteDimensaoQualidade } from "@/hooks/api/use-dimensoes-qualidade-new"
-import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
+import {
+  useGetDimensoesQualidade,
+  useDeleteDimensoesQualidadeId,
+} from "@/api/generated/endpoints/dimensoes-qualidade/dimensoes-qualidade"
+import { useGetPoliticasInternas } from "@/api/generated/endpoints/politicas-internas/politicas-internas"
 import { DimensaoQualidadeResponse } from "@/types/api"
 import { DimensaoQualidadeForm } from "@/components/dimensoes/dimensao-form"
 
@@ -23,18 +26,15 @@ export default function DimensoesQualidadePage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedDimensao, setSelectedDimensao] = useState<DimensaoQualidadeResponse | undefined>()
 
-  const queryParams: Record<string, string | number | undefined> = {
-    page,
-    limit,
-    search: searchTerm || undefined,
-  }
-  
-  if (politicaFilter) queryParams.politicaId = politicaFilter
+  void page
+  void limit
+  void searchTerm
+  void politicaFilter
 
-  const { data: dimensoesData, isLoading, error } = useDimensoesQualidade(queryParams)
-  const { data: politicasData } = usePoliticasInternas({ page: 1, limit: 1000 })
-  
-  const deleteDimensao = useDeleteDimensaoQualidade()
+  const { data: dimensoesData, isLoading, error } = useGetDimensoesQualidade()
+  const { data: politicasData } = useGetPoliticasInternas()
+
+  const deleteDimensao = useDeleteDimensoesQualidadeId()
 
   const handleEdit = (dimensao: DimensaoQualidadeResponse) => {
     setSelectedDimensao(dimensao)
@@ -48,13 +48,12 @@ export default function DimensoesQualidadePage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta dimensão de qualidade?")) {
-      await deleteDimensao.mutateAsync(id)
+      await deleteDimensao.mutateAsync({ id })
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const dimensoes = (dimensoesData?.data || []) as any[]
-  const politicas = politicasData?.data || []
+  const dimensoes = dimensoesData?.data ?? []
+  const politicas = politicasData?.data ?? []
 
   return (
     <>
@@ -78,7 +77,7 @@ export default function DimensoesQualidadePage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">
-              {dimensoes.length || 0}
+              {dimensoes.length}
             </div>
             <p className="text-xs text-muted-foreground">dimensões cadastradas</p>
           </CardContent>
@@ -118,7 +117,7 @@ export default function DimensoesQualidadePage() {
                 <SelectContent>
                   <SelectItem value="todas">Todas as políticas</SelectItem>
                   {politicas.map((politica) => (
-                    <SelectItem key={politica.id ?? ''} value={politica.id ?? ''}>
+                    <SelectItem key={politica.id} value={politica.id}>
                       {politica.nome}
                     </SelectItem>
                   ))}

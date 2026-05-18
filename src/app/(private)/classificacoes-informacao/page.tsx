@@ -9,8 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useClassificacoes, useDeleteClassificacao } from "@/hooks/api/use-classificacoes-informacao"
-import { useListasClassificacao } from "@/hooks/api/use-listas-classificacao"
+import {
+  useGetClassificacoesInformacao,
+  useDeleteClassificacoesInformacaoId,
+} from "@/api/generated/endpoints/classificacoes-informacao/classificacoes-informacao"
+import { useGetListasClassificacao } from "@/api/generated/endpoints/listas-classificacao/listas-classificacao"
 import { ClassificacaoInformacaoResponse } from "@/types/api"
 import { ClassificacaoInfoForm } from "@/components/classificacoes-info/classificacao-info-form"
 
@@ -22,18 +25,15 @@ export default function ClassificacoesInformacaoPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedClassificacao, setSelectedClassificacao] = useState<ClassificacaoInformacaoResponse | undefined>()
 
-  const queryParams: Record<string, string | number | boolean | undefined> = {
-    page,
-    limit,
-    search: searchTerm || undefined,
-  }
-  
-  if (listaFilter && listaFilter !== "all") queryParams.classificacaoId = listaFilter
+  void page
+  void limit
+  void searchTerm
+  void listaFilter
 
-  const { data: classificacoesData, isLoading, error } = useClassificacoes(queryParams)
-  const { data: listasData } = useListasClassificacao()
+  const { data: classificacoesData, isLoading, error } = useGetClassificacoesInformacao()
+  const { data: listasData } = useGetListasClassificacao()
 
-  const deleteClassificacao = useDeleteClassificacao()
+  const deleteClassificacao = useDeleteClassificacoesInformacaoId()
 
   const handleEdit = (classificacao: ClassificacaoInformacaoResponse) => {
     setSelectedClassificacao(classificacao)
@@ -47,7 +47,7 @@ export default function ClassificacoesInformacaoPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta classificação?")) {
-      await deleteClassificacao.mutateAsync(id)
+      await deleteClassificacao.mutateAsync({ id })
     }
   }
 
@@ -104,9 +104,8 @@ export default function ClassificacoesInformacaoPage() {
     )
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const classificacoes = (classificacoesData?.data || []) as any[]
-  const listas = listasData?.data || []
+  const classificacoes = classificacoesData?.data ?? []
+  const listas = listasData?.data ?? []
   
   const totalClassificacoes = classificacoes.length
 

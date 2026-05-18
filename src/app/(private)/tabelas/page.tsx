@@ -32,9 +32,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { useTabelas, useDeleteTabela } from "@/hooks/api/use-tabelas"
-import { useBancos } from "@/hooks/api/use-bancos"
-import { useSistemas } from "@/hooks/api/use-sistemas"
+import { useGetTabelas, useDeleteTabelasId } from "@/api/generated/endpoints/tabelas/tabelas"
+import { useGetBancos } from "@/api/generated/endpoints/bancos/bancos"
+import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas"
 import { TabelaForm } from "@/components/tabelas/tabela-form"
 import { TabelaResponse } from "@/types/api"
 import { format } from "date-fns"
@@ -47,15 +47,14 @@ export default function TabelasPage() {
   const [sistemaFilter, setSistemaFilter] = useState<string>("all")
   const [bancoFilter, setBancoFilter] = useState<string>("all")
 
-  const { data: tabelasData, isLoading } = useTabelas()
-  const { data: sistemasData } = useSistemas()
-  const { data: bancosData } = useBancos()
-  const deleteMutation = useDeleteTabela()
+  const { data: tabelasData, isLoading } = useGetTabelas()
+  const { data: sistemasData } = useGetSistemas()
+  const { data: bancosData } = useGetBancos()
+  const deleteMutation = useDeleteTabelasId()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tabelas = (tabelasData?.data || []) as any[]
-  const sistemas = sistemasData?.data || []
-  const bancos = bancosData?.data || []
+  const tabelas = tabelasData?.data ?? []
+  const sistemas = sistemasData?.data ?? []
+  const bancos = bancosData?.data ?? []
 
   const filteredTabelas = tabelas.filter((tabela) => {
     const matchesSearch = 
@@ -82,7 +81,7 @@ export default function TabelasPage() {
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta tabela?")) {
       try {
-        await deleteMutation.mutateAsync(id)
+        await deleteMutation.mutateAsync({ id })
       } catch (error) {
         console.error('Erro ao excluir tabela:', error)
       }

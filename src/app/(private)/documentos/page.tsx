@@ -9,7 +9,10 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DocumentoForm } from "@/components/documentos/documento-form"
-import { useDocumentos, useDeleteDocumento } from "@/hooks/api/use-documentos"
+import {
+  useGetDocumentos,
+  useDeleteDocumentosId,
+} from "@/api/generated/endpoints/documentos/documentos"
 import type { DocumentoResponse } from "@/types/api"
 import {
   AlertDialog,
@@ -32,11 +35,10 @@ export default function DocumentosPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [documentoToDelete, setDocumentoToDelete] = useState<string | null>(null)
   
-  const { data: response, isLoading } = useDocumentos()
-  const deleteMutation = useDeleteDocumento()
+  const { data: response, isLoading } = useGetDocumentos()
+  const deleteMutation = useDeleteDocumentosId()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const documentos = (response?.data || []) as any[]
+  const documentos = response?.data ?? []
 
   const handleEdit = (documento: DocumentoResponse) => {
     setSelectedDocumento(documento)
@@ -50,12 +52,15 @@ export default function DocumentosPage() {
 
   const confirmDelete = () => {
     if (documentoToDelete) {
-      deleteMutation.mutate(documentoToDelete, {
-        onSuccess: () => {
-          setDeleteDialogOpen(false)
-          setDocumentoToDelete(null)
-        }
-      })
+      deleteMutation.mutate(
+        { id: documentoToDelete },
+        {
+          onSuccess: () => {
+            setDeleteDialogOpen(false)
+            setDocumentoToDelete(null)
+          },
+        },
+      )
     }
   }
 
@@ -260,7 +265,7 @@ export default function DocumentosPage() {
                           </div>
                           <div>
                             <span className="text-muted-foreground">Tamanho:</span>
-                            <p className="font-medium">{(Number(documento.tamanhoBytes) / 1024).toFixed(2)} KB</p>
+                            <p className="font-medium">{(documento.tamanhoBytes / 1024).toFixed(2)} KB</p>
                           </div>
                           <div>
                             <span className="text-muted-foreground">Caminho:</span>

@@ -1,22 +1,23 @@
 "use client"
 
-import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, Edit, Trash2, Eye } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ColumnDef } from "@tanstack/react-table";
+import { MoreHorizontal, Edit, Trash2, Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { PoliticaInternaResponse } from "@/types/api"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import { PoliticaInternaResponse } from "@/types/api";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { GetPoliticasInternas200DataItem } from "@/api/generated/model";
 
 interface ColumnsProps {
-  onEdit: (politica: PoliticaInternaResponse) => void
+  onEdit: (politica: GetPoliticasInternas200DataItem) => void
   onDelete: (id: string) => void
-  onView?: (politica: PoliticaInternaResponse) => void
+  onView?: (politica: GetPoliticasInternas200DataItem) => void
 }
 
 const statusBadgeMap: Record<PoliticaInternaResponse['status'], { variant: "default" | "secondary" | "destructive" | "outline", label: string }> = {
@@ -36,7 +37,7 @@ export const createColumns = ({
   onEdit,
   onDelete,
   onView,
-}: ColumnsProps): ColumnDef<PoliticaInternaResponse>[] => [
+}: ColumnsProps): ColumnDef<GetPoliticasInternas200DataItem>[] => [
     {
       accessorKey: "nome",
       header: "Nome",
@@ -153,7 +154,7 @@ export const createColumns = ({
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
-                onClick={() => onDelete(politica.id)}
+                onClick={() => onDelete(politica.id ?? '')}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Excluir

@@ -31,10 +31,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useCreateColuna, useUpdateColuna } from "@/hooks/api/use-colunas"
-import { useTabelas } from "@/hooks/api/use-tabelas"
-import { useDefinicoes } from "@/hooks/api/use-definicoes"
-import { useNecessidadesInformacao } from "@/hooks/api/use-necessidades-informacao"
+import { usePostColunas, usePutColunasId } from "@/api/generated/endpoints/colunas/colunas"
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas"
+import { useGetDefinicoes } from "@/api/generated/endpoints/definicoes/definicoes"
+import { useGetNecessidadesInformacao } from "@/api/generated/endpoints/necessidades-informacao/necessidades-informacao"
 import { ColunaResponse } from "@/types/api"
 import { CreateColunaSchema, type CreateColunaFormData } from "@/schemas"
 import { TabelaForm } from "@/components/tabelas/tabela-form"
@@ -49,11 +49,11 @@ interface ColunaFormProps {
 export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: ColunaFormProps) {
   const [tabelaDialogOpen, setTabelaDialogOpen] = useState(false)
   
-  const createMutation = useCreateColuna()
-  const updateMutation = useUpdateColuna()
-  const { data: tabelasData } = useTabelas({ page: 1, limit: 1000 })
-  const { data: termosData } = useDefinicoes({ page: 1, limit: 1000 })
-  const { data: necessidadesData } = useNecessidadesInformacao({ page: 1, limit: 1000 })
+  const createMutation = usePostColunas()
+  const updateMutation = usePutColunasId()
+  const { data: tabelasData } = useGetTabelas()
+  const { data: termosData } = useGetDefinicoes()
+  const { data: necessidadesData } = useGetNecessidadesInformacao()
   
   const form = useForm<CreateColunaFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -95,12 +95,10 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
       if (coluna) {
         await updateMutation.mutateAsync({
           id: coluna.id,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          data: data as any,
+          data,
         })
       } else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await createMutation.mutateAsync(data as any)
+        await createMutation.mutateAsync({ data })
       }
       form.reset()
       onOpenChange(false)
@@ -117,9 +115,9 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
   }
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending
-  const tabelas = tabelasData?.data || []
-  const termos = termosData?.data || []
-  const necessidades = necessidadesData?.data || []
+  const tabelas = tabelasData?.data ?? []
+  const termos = termosData?.data ?? []
+  const necessidades = necessidadesData?.data ?? []
 
   return (
     <>

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useImportacaoExportacao } from "@/hooks/api/use-importacao-exportacao"
+import { useGetImportacaoExportacao } from "@/api/generated/endpoints/importacao-exportacao/importacao-exportacao"
 
 // Helpers para labels e cores
 const getFormatoIcon = (formato: string) => {
@@ -56,10 +56,9 @@ export default function ImportacaoExportacaoPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all")
 
   // Query
-  const { data, isLoading } = useImportacaoExportacao()
+  const { data, isLoading } = useGetImportacaoExportacao()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const operacoes = (data?.data ?? []) as any[]
+  const operacoes = data?.data ?? []
 
   // Stats
   const stats = useMemo(() => {
@@ -76,7 +75,7 @@ export default function ImportacaoExportacaoPage() {
     return operacoes.filter((operacao) => {
       const matchesSearch =
         search === "" ||
-        operacao.entidades.some((e: string) => e.toLowerCase().includes(search.toLowerCase()))
+        operacao.entidades.some((e) => e.toLowerCase().includes(search.toLowerCase()))
 
       const matchesFormato = formatoFilter === "all" || operacao.formato === formatoFilter
 
@@ -254,7 +253,7 @@ export default function ImportacaoExportacaoPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {operacao.entidades.slice(0, 3).map((entidade: string, idx: number) => (
+                        {operacao.entidades.slice(0, 3).map((entidade, idx) => (
                           <Badge key={idx} variant="outline" className="text-xs">
                             {entidade}
                           </Badge>

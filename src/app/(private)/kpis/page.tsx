@@ -33,9 +33,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useKpis, useDeleteKpi } from "@/hooks/api/use-kpis"
-import { useProcessos } from "@/hooks/api/use-processos"
-import { useComunidades } from "@/hooks/api/use-comunidades"
+import { useGetKpis, useDeleteKpisId } from "@/api/generated/endpoints/kpis/kpis"
+import { useGetProcessos } from "@/api/generated/endpoints/processos/processos"
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades"
 import { KpiForm } from "@/components/kpis/kpi-form"
 import { KpiResponse } from "@/types/api"
 import { format } from "date-fns"
@@ -48,15 +48,14 @@ export default function KpisPage() {
   const [processoFilter, setProcessoFilter] = useState<string>("all")
   const [comunidadeFilter, setComunidadeFilter] = useState<string>("all")
 
-  const { data: kpisData, isLoading, error } = useKpis()
-  const { data: processosData } = useProcessos()
-  const { data: comunidadesData } = useComunidades()
-  const deleteMutation = useDeleteKpi()
+  const { data: kpisData, isLoading, error } = useGetKpis()
+  const { data: processosData } = useGetProcessos()
+  const { data: comunidadesData } = useGetComunidades()
+  const deleteMutation = useDeleteKpisId()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const kpis = (kpisData?.data || []) as any[]
-  const processos = processosData?.data || []
-  const comunidades = comunidadesData?.data || []
+  const kpis = kpisData?.data ?? []
+  const processos = processosData?.data ?? []
+  const comunidades = comunidadesData?.data ?? []
 
   const filteredKpis = kpis.filter((kpi) => {
     const matchesSearch = 
@@ -82,7 +81,7 @@ export default function KpisPage() {
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este KPI?")) {
       try {
-        await deleteMutation.mutateAsync(id)
+        await deleteMutation.mutateAsync({ id })
       } catch (error) {
         console.error('Erro ao excluir KPI:', error)
       }

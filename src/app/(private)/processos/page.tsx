@@ -8,8 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
-import { useProcessos, useDeleteProcesso } from "@/hooks/api/use-processos"
-import { useComunidades } from "@/hooks/api/use-comunidades"
+import {
+  useGetProcessos,
+  useDeleteProcessosId,
+} from "@/api/generated/endpoints/processos/processos"
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades"
 import { ProcessoForm } from "@/components/processos/processo-form"
 import { ProcessoResponse } from "@/types/api"
 import { format } from "date-fns"
@@ -20,13 +23,12 @@ export default function ProcessosPage() {
   const [editingProcesso, setEditingProcesso] = useState<ProcessoResponse | undefined>()
   const [search, setSearch] = useState("")
 
-  const { data: processosData, isLoading } = useProcessos()
-  const { data: comunidadesData } = useComunidades()
-  const deleteMutation = useDeleteProcesso()
+  const { data: processosData, isLoading } = useGetProcessos()
+  const { data: comunidadesData } = useGetComunidades()
+  const deleteMutation = useDeleteProcessosId()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const processos = (processosData?.data || []) as any[]
-  const comunidades = comunidadesData?.data || []
+  const processos = processosData?.data ?? []
+  const comunidades = comunidadesData?.data ?? []
 
   const filteredProcessos = processos.filter((processo) => {
     return search === "" ||
@@ -42,7 +44,7 @@ export default function ProcessosPage() {
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este processo?")) {
       try {
-        await deleteMutation.mutateAsync(id)
+        await deleteMutation.mutateAsync({ id })
       } catch (error) {
         console.error('Erro ao excluir processo:', error)
       }

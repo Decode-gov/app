@@ -23,7 +23,10 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useCreateRepositorioDocumento, useUpdateRepositorioDocumento } from "@/hooks/api/use-repositorios-documento"
+import {
+  usePostRepositoriosDocumento,
+  usePutRepositoriosDocumentoId,
+} from "@/api/generated/endpoints/repositorios-documento/repositorios-documento"
 import { RepositorioDocumentoResponse } from "@/types/api"
 import { CreateRepositorioDocumentoSchema, type CreateRepositorioDocumentoFormData } from "@/schemas"
 
@@ -34,8 +37,8 @@ interface RepositorioFormProps {
 }
 
 export function RepositorioForm({ open, onOpenChange, repositorio }: RepositorioFormProps) {
-  const createMutation = useCreateRepositorioDocumento()
-  const updateMutation = useUpdateRepositorioDocumento()
+  const createMutation = usePostRepositoriosDocumento()
+  const updateMutation = usePutRepositoriosDocumentoId()
   
   const form = useForm<CreateRepositorioDocumentoFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,7 +76,7 @@ export function RepositorioForm({ open, onOpenChange, repositorio }: Repositorio
           data,
         })
       } else {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync({ data })
       }
       form.reset()
       onOpenChange(false)

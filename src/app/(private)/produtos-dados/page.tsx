@@ -10,8 +10,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useProdutosDados, useDeleteProdutoDados } from "@/hooks/api/use-produtos-dados"
-import { useComunidades } from "@/hooks/api/use-comunidades"
+import {
+  useGetProdutosDados,
+  useDeleteProdutosDadosId,
+} from "@/api/generated/endpoints/produtos-dados/produtos-dados"
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades"
 import { ProdutoDadosResponse } from "@/types/api"
 import { ProdutoForm } from "@/components/produtos/produto-form"
 
@@ -23,18 +26,15 @@ export default function ProdutosDadosPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedProduto, setSelectedProduto] = useState<ProdutoDadosResponse | undefined>()
 
-  const queryParams: Record<string, string | number | undefined> = {
-    page,
-    limit,
-    search: searchTerm || undefined,
-  }
-  
-  if (dominioFilter) queryParams.dominioId = dominioFilter
+  void page
+  void limit
+  void searchTerm
+  void dominioFilter
 
-  const { data: produtosData, isLoading, error } = useProdutosDados(queryParams)
-  const { data: comunidadesData } = useComunidades({ page: 1, limit: 1000 })
-  
-  const deleteProduto = useDeleteProdutoDados()
+  const { data: produtosData, isLoading, error } = useGetProdutosDados()
+  const { data: comunidadesData } = useGetComunidades()
+
+  const deleteProduto = useDeleteProdutosDadosId()
 
   const handleEdit = (produto: ProdutoDadosResponse) => {
     setSelectedProduto(produto)
@@ -48,13 +48,12 @@ export default function ProdutosDadosPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este produto de dados?")) {
-      await deleteProduto.mutateAsync(id)
+      await deleteProduto.mutateAsync({ id })
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const produtos = (produtosData?.data || []) as any[]
-  const comunidades = comunidadesData?.data || []
+  const produtos = produtosData?.data ?? []
+  const comunidades = comunidadesData?.data ?? []
 
   const produtosComDominio = produtos.filter(p => p.dominioId).length
   const produtosComPolitica = produtos.filter(p => p.politicaId).length
@@ -83,7 +82,7 @@ export default function ProdutosDadosPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{produtos.length || 0}</div>
+              <div className="text-2xl font-bold text-blue-600">{produtos.length}</div>
               <p className="text-xs text-muted-foreground">produtos cadastrados</p>
             </CardContent>
           </Card>

@@ -8,7 +8,12 @@ import { UserForm } from "@/components/users/user-form"
 import { ConfirmDeleteDialog } from "@/components/users/confirm-delete-dialog"
 import { type Usuario, type UsuarioFormData } from "@/types/user"
 import { UserTable } from "@/components/users/user-table"
-import { useUsuarios, useCreateUsuario, useUpdateUsuario, useDeleteUsuario } from "@/hooks/api/use-usuarios"
+import {
+  useGetUsuarios,
+  usePostUsuariosRegister,
+  usePutUsuariosId,
+  useDeleteUsuariosId,
+} from "@/api/generated/endpoints/usuarios/usuarios"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
@@ -22,13 +27,12 @@ export default function UsuariosPage() {
   const [userToDelete, setUserToDelete] = useState<Usuario | null>(null)
 
   // Hooks da API
-  const { data: usuariosData, isFetching, error } = useUsuarios()
-  const createMutation = useCreateUsuario()
-  const updateMutation = useUpdateUsuario()
-  const deleteMutation = useDeleteUsuario()
+  const { data: usuariosData, isFetching, error } = useGetUsuarios()
+  const createMutation = usePostUsuariosRegister()
+  const updateMutation = usePutUsuariosId()
+  const deleteMutation = useDeleteUsuariosId()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const usuarios = useMemo(() => (usuariosData?.data || []) as any[], [usuariosData])
+  const usuarios = useMemo(() => usuariosData?.data ?? [], [usuariosData])
 
   // Estatísticas dos usuários
   const stats = useMemo(() => {
@@ -55,7 +59,7 @@ export default function UsuariosPage() {
   const handleConfirmDelete = async () => {
     if (userToDelete) {
       try {
-        await deleteMutation.mutateAsync(userToDelete.id)
+        await deleteMutation.mutateAsync({ id: userToDelete.id })
         setUserToDelete(null)
         queryClient.invalidateQueries({ queryKey: ['usuarios'] });
         toast.success("Usuário excluído com sucesso!")
@@ -75,19 +79,20 @@ export default function UsuariosPage() {
           data: {
             nome: data.nome,
             email: data.email,
-            ativo: data.status === "ativo"
-          }
+            ativo: data.status === "ativo",
+          },
         })
         toast.success("Usuário atualizado com sucesso!")
       } else {
         // Criar novo usuário
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await createMutation.mutateAsync({
-          nome: data.nome,
-          email: data.email,
-          senha: data.senha ?? "mudar123",
-          ativo: data.status === "ativo"
-        } as any)
+          data: {
+            nome: data.nome,
+            email: data.email,
+            senha: data.senha ?? "mudar123",
+            ativo: data.status === "ativo",
+          },
+        })
         toast.success("Usuário criado com sucesso!")
       }
       queryClient.invalidateQueries({ queryKey: ['usuarios'] });

@@ -14,25 +14,20 @@ import {
 } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
-import { useDimensoesQualidade } from "@/hooks/api/use-dimensoes-qualidade-new"
-import { useRegrasQualidade } from "@/hooks/api/use-regras-qualidade"
+import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensoes-qualidade/dimensoes-qualidade"
+import { useGetRegrasQualidade } from "@/api/generated/endpoints/regras-qualidade/regras-qualidade"
 
 export default function MetricasQualidadePage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [page] = useState(1)
   const [limit] = useState(10)
   
-  const { data: dimensoesData, isLoading: isLoadingDimensoes, error: errorDimensoes } = useDimensoesQualidade({
-    page,
-    limit,
-    search: searchTerm,
-  })
+  void page
+  void limit
+  void searchTerm
 
-  const { data: regrasData, isLoading: isLoadingRegras, error: errorRegras } = useRegrasQualidade({
-    page,
-    limit,
-    search: searchTerm,
-  })
+  const { data: dimensoesData, isLoading: isLoadingDimensoes, error: errorDimensoes } = useGetDimensoesQualidade()
+  const { data: regrasData, isLoading: isLoadingRegras, error: errorRegras } = useGetRegrasQualidade()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dimensoes = (dimensoesData?.data ?? []) as any[]

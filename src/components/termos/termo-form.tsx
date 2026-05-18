@@ -27,9 +27,12 @@ import { Textarea } from "@/components/ui/textarea"
 
 import { Button } from "@/components/ui/button"
 import { DefinicaoResponse } from "@/types/api"
-import { useCreateDefinicao, useUpdateDefinicao } from "@/hooks/api/use-definicoes"
+import {
+  usePostDefinicoes,
+  usePutDefinicoesId,
+} from "@/api/generated/endpoints/definicoes/definicoes"
 import { CreateDefinicaoSchema, type CreateDefinicaoFormData } from "@/schemas"
-import { useComunidades } from "@/hooks/api"
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { ComunidadeForm } from "../dominios/comunidade-form"
 
@@ -44,9 +47,9 @@ interface TermoFormProps {
 export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
   const [dominioDialogOpen, setDominioDialogOpen] = useState(false)
 
-  const createMutation = useCreateDefinicao()
-  const updateMutation = useUpdateDefinicao()
-  const { data: comunidadesData } = useComunidades({})
+  const createMutation = usePostDefinicoes()
+  const updateMutation = usePutDefinicoesId()
+  const { data: comunidadesData } = useGetComunidades()
 
   const form = useForm<FormData>({
     resolver: zodResolver(CreateDefinicaoSchema),
@@ -81,7 +84,7 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
       if (termo) {
         await updateMutation.mutateAsync({ id: termo.id, data })
       } else {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync({ data })
       }
       onOpenChange(false)
       form.reset()

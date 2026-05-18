@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Plus, UserCheck } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { usePapeis, useDeletePapel } from "@/hooks/api/use-papeis"
-import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
+import { useGetPapeis, useDeletePapeisId } from "@/api/generated/endpoints/papeis/papeis"
+import { useGetPoliticasInternas } from "@/api/generated/endpoints/politicas-internas/politicas-internas"
 import { PapelGovernancaForm } from "@/components/papeis/papel-governanca-form"
 import { PapeisDataTable } from "@/components/papeis/papeis-data-table"
 import { createColumns } from "@/components/papeis/columns"
@@ -16,9 +16,9 @@ export default function PapeisPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [selectedPapel, setSelectedPapel] = useState<PapelResponse | undefined>()
 
-  const { data: papeisData, isLoading, error } = usePapeis()
-  const { data: politicasData } = usePoliticasInternas()
-  const deletePapel = useDeletePapel()
+  const { data: papeisData, isLoading, error } = useGetPapeis()
+  const { data: politicasData } = useGetPoliticasInternas()
+  const deletePapel = useDeletePapeisId()
 
   // Extração dos arrays de dados
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,7 +32,7 @@ export default function PapeisPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este papel?")) {
-      await deletePapel.mutateAsync(id)
+      await deletePapel.mutateAsync({ id })
     }
   }
 

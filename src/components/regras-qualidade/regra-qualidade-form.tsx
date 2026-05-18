@@ -8,12 +8,15 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useCreateRegraQualidade, useUpdateRegraQualidade } from "@/hooks/api/use-regras-qualidade"
-import { useDimensoesQualidade } from "@/hooks/api/use-dimensoes-qualidade-new"
-import { useTabelas } from "@/hooks/api/use-tabelas"
-import { useColunas } from "@/hooks/api/use-colunas"
-import { usePapeis } from "@/hooks/api/use-papeis"
-import { useRegrasNegocio } from "@/hooks/api"
+import {
+  usePostRegrasQualidade,
+  usePutRegrasQualidadeId,
+} from "@/api/generated/endpoints/regras-qualidade/regras-qualidade"
+import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensoes-qualidade/dimensoes-qualidade"
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas"
+import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas"
+import { useGetPapeis } from "@/api/generated/endpoints/papeis/papeis"
+import { useGetRegrasNegocio } from "@/api/generated/endpoints/regras-negocio/regras-negocio"
 import { RegraQualidadeResponse } from "@/types/api"
 import { CreateRegraQualidadeSchema, type CreateRegraQualidadeFormData } from "@/schemas"
 
@@ -25,20 +28,20 @@ interface RegraQualidadeFormProps {
 
 export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidadeFormProps) {
   const isEditing = !!regra
-  const createRegra = useCreateRegraQualidade()
-  const updateRegra = useUpdateRegraQualidade()
+  const createRegra = usePostRegrasQualidade()
+  const updateRegra = usePutRegrasQualidadeId()
 
-  const { data: dimensoesData } = useDimensoesQualidade({ page: 1, limit: 1000 })
-  const { data: tabelasData } = useTabelas({ page: 1, limit: 1000 })
-  const { data: colunasData } = useColunas({ page: 1, limit: 1000 })
-  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
-  const { data: regrasNegocioData } = useRegrasNegocio({ page: 1, limit: 1000 })
+  const { data: dimensoesData } = useGetDimensoesQualidade()
+  const { data: tabelasData } = useGetTabelas()
+  const { data: colunasData } = useGetColunas()
+  const { data: papeisData } = useGetPapeis()
+  const { data: regrasNegocioData } = useGetRegrasNegocio()
 
-  const dimensoes = dimensoesData?.data || []
-  const tabelas = tabelasData?.data || []
-  const colunas = colunasData?.data || []
-  const papeis = papeisData?.data || []
-  const regrasNegocio = regrasNegocioData?.data || []
+  const dimensoes = dimensoesData?.data ?? []
+  const tabelas = tabelasData?.data ?? []
+  const colunas = colunasData?.data ?? []
+  const papeis = papeisData?.data ?? []
+  const regrasNegocio = regrasNegocioData?.data ?? []
 
   const form = useForm<CreateRegraQualidadeFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -80,7 +83,7 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
       if (isEditing) {
         await updateRegra.mutateAsync({ id: regra.id, data })
       } else {
-        await createRegra.mutateAsync(data)
+        await createRegra.mutateAsync({ data })
       }
       onOpenChange(false)
       form.reset()

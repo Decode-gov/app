@@ -20,26 +20,32 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useRegulacoes, useDeleteRegulacao } from "@/hooks/api/use-regulacao"
+import {
+  useGetRegulacoesCompletas,
+  useDeleteRegulacoesCompletasId,
+} from "@/api/generated/endpoints/regulacao/regulacao"
 import { RegulacaoForm } from "@/components/regulacao/regulacao-form"
 import { RegulacaoResponse } from "@/types/api"
 
 export default function RegulacaoPage() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [page] = useState(1)
+  const [limit] = useState(10)
   const [formOpen, setFormOpen] = useState(false)
   const [selectedRegulacao, setSelectedRegulacao] = useState<RegulacaoResponse | undefined>()
 
-  const { data: regulacoesData, isLoading, error } = useRegulacoes({
-    orgao: searchTerm || undefined,
-  })
-  const deleteRegulacao = useDeleteRegulacao()
+  void page
+  void limit
+  void searchTerm
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const regulacoes = (regulacoesData?.data ?? []) as any[]
+  const { data: regulacoesData, isLoading, error } = useGetRegulacoesCompletas()
+  const deleteRegulacao = useDeleteRegulacoesCompletasId()
+
+  const regulacoes = regulacoesData?.data ?? []
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta regulação?")) {
-      await deleteRegulacao.mutateAsync(id)
+      await deleteRegulacao.mutateAsync({ id })
     }
   }
 

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useMfas } from "@/hooks/api/use-mfa"
+import { useGetMfa } from "@/api/generated/endpoints/mfa/mfa"
 
 // Helpers para labels e ícones
 const getTipoIcon = (tipo: string) => {
@@ -48,7 +48,7 @@ export default function MfaPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all")
 
   // Query
-  const { data, isLoading } = useMfas({ page: 1, limit: 1000 })
+  const { data, isLoading } = useGetMfa()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const configuracoes = (data?.data ?? []) as any[]

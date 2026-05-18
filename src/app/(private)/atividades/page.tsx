@@ -10,8 +10,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useAtividades, useDeleteAtividade } from "@/hooks/api/use-atividades"
-import { useProcessos } from "@/hooks/api/use-processos"
+import {
+  useGetAtividades,
+  useDeleteAtividadesId,
+} from "@/api/generated/endpoints/atividades/atividades"
+import { useGetProcessos } from "@/api/generated/endpoints/processos/processos"
 import { AtividadeResponse } from "@/types/api"
 import { AtividadeForm } from "@/components/atividades/atividade-form"
 
@@ -66,19 +69,16 @@ export default function AtividadesPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedAtividade, setSelectedAtividade] = useState<AtividadeResponse | undefined>()
 
-  const queryParams: Record<string, string | number | undefined> = {
-    page,
-    limit,
-    search: searchTerm || undefined,
-  }
-  
-  if (statusFilter) queryParams.status = statusFilter
-  if (prioridadeFilter) queryParams.prioridade = prioridadeFilter
+  void page
+  void limit
+  void searchTerm
+  void statusFilter
+  void prioridadeFilter
 
-  const { data: atividadesData, isLoading, error } = useAtividades(queryParams)
-  const { data: processosData } = useProcessos({ page: 1, limit: 1000 })
-  
-  const deleteAtividade = useDeleteAtividade()
+  const { data: atividadesData, isLoading, error } = useGetAtividades()
+  const { data: processosData } = useGetProcessos()
+
+  const deleteAtividade = useDeleteAtividadesId()
 
   const handleEdit = (atividade: AtividadeResponse) => {
     setSelectedAtividade(atividade)
@@ -92,12 +92,12 @@ export default function AtividadesPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta atividade?")) {
-      await deleteAtividade.mutateAsync(id)
+      await deleteAtividade.mutateAsync({ id })
     }
   }
 
-  const atividades = atividadesData?.data || []
-  const processos = processosData?.data || []
+  const atividades = atividadesData?.data ?? []
+  const processos = processosData?.data ?? []
 
   const atividadesEmAndamento = atividades.filter(a => a.status === 'EM_ANDAMENTO').length
   const atividadesConcluidas = atividades.filter(a => a.status === 'CONCLUIDA').length
@@ -124,7 +124,7 @@ export default function AtividadesPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{atividadesData?.data?.length || 0}</div>
+              <div className="text-2xl font-bold text-blue-600">{atividades.length}</div>
               <p className="text-xs text-muted-foreground">atividades cadastradas</p>
             </CardContent>
           </Card>

@@ -5,7 +5,10 @@ import { Plus, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useDefinicoes, useDeleteDefinicao } from "@/hooks/api/use-definicoes"
+import {
+  useGetDefinicoes,
+  useDeleteDefinicoesId,
+} from "@/api/generated/endpoints/definicoes/definicoes"
 import { TermoForm } from "@/components/termos/termo-form"
 import { TermosDataTable } from "@/components/termos/termos-data-table"
 import { createColumns } from "@/components/termos/columns"
@@ -15,11 +18,10 @@ export default function TermosNegocioPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [selectedTermo, setSelectedTermo] = useState<DefinicaoResponse | undefined>()
 
-  const { data: termosData, isLoading, error } = useDefinicoes()
-  const { mutate: deleteTermo } = useDeleteDefinicao()
+  const { data: termosData, isLoading, error } = useGetDefinicoes()
+  const { mutate: deleteTermo } = useDeleteDefinicoesId()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const termos = (termosData?.data || []) as any[]
+  const termos = termosData?.data ?? []
 
   const handleEdit = (termo: DefinicaoResponse) => {
     setSelectedTermo(termo)
@@ -28,7 +30,7 @@ export default function TermosNegocioPage() {
 
   const handleDelete = (id: string) => {
     if (confirm("Tem certeza que deseja excluir este termo?")) {
-      deleteTermo(id)
+      deleteTermo({ id })
     }
   }
 

@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Plus, Database } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useColunas } from "@/hooks/api/use-colunas"
-import { useTabelas } from "@/hooks/api/use-tabelas"
+import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas"
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas"
 import { ColunaResponse, TabelaResponse } from "@/types/api"
 import { ColunaForm } from "@/components/colunas/coluna-form"
 import { TabelaForm } from "@/components/tabelas/tabela-form"
@@ -20,8 +20,8 @@ export default function TabelasColunasPage() {
   const [selectedTabela, setSelectedTabela] = useState<TabelaResponse | undefined>()
   const [preSelectedTabelaId, setPreSelectedTabelaId] = useState<string | undefined>()
 
-  const { data: colunasData } = useColunas({ page: 1, limit: 1000 })
-  const { data: tabelasData } = useTabelas({ page: 1, limit: 1000 })
+  const { data: colunasData } = useGetColunas()
+  const { data: tabelasData } = useGetTabelas()
 
   const handleEditColuna = (coluna: ColunaResponse) => {
     setSelectedColuna(coluna)
@@ -51,9 +51,8 @@ export default function TabelasColunasPage() {
     setIsTabelaFormOpen(true)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const colunas = (colunasData?.data || []) as any[]
-  const tabelas = tabelasData?.data || []
+  const colunas = colunasData?.data ?? []
+  const tabelas = tabelasData?.data ?? []
 
   return (
     <>

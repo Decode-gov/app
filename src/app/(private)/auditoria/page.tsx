@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useAuditoria } from "@/hooks/api/use-auditoria"
+import { useGetAuditoria } from "@/api/generated/endpoints/auditoria/auditoria"
 
 // Helper para status HTTP
 const getStatusBadgeColor = (status: number): "default" | "secondary" | "destructive" => {
@@ -35,7 +35,7 @@ export default function AuditoriaPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all")
 
   // Query
-  const { data, isLoading } = useAuditoria({ page: 1, limit: 1000 })
+  const { data, isLoading } = useGetAuditoria()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const logs = (data?.data ?? []) as any[]

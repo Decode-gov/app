@@ -10,11 +10,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useRegrasQualidade, useDeleteRegraQualidade } from "@/hooks/api/use-regras-qualidade"
-import { useDimensoesQualidade } from "@/hooks/api/use-dimensoes-qualidade-new"
-import { useTabelas } from "@/hooks/api/use-tabelas"
-import { useColunas } from "@/hooks/api/use-colunas"
-import { usePapeis } from "@/hooks/api/use-papeis"
+import {
+  useGetRegrasQualidade,
+  useDeleteRegrasQualidadeId,
+} from "@/api/generated/endpoints/regras-qualidade/regras-qualidade"
+import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensoes-qualidade/dimensoes-qualidade"
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas"
+import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas"
+import { useGetPapeis } from "@/api/generated/endpoints/papeis/papeis"
 import { RegraQualidadeResponse } from "@/types/api"
 import { RegraQualidadeForm } from "@/components/regras-qualidade/regra-qualidade-form"
 
@@ -26,28 +29,24 @@ export default function RegrasQualidadePage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedRegra, setSelectedRegra] = useState<RegraQualidadeResponse | undefined>()
 
-  const queryParams: Record<string, string | number | undefined> = {
-    page,
-    limit,
-    search: searchTerm || undefined,
-  }
-  
-  if (dimensaoFilter) queryParams.dimensaoId = dimensaoFilter
+  void page
+  void limit
+  void searchTerm
+  void dimensaoFilter
 
-  const { data: regrasData, isLoading, error } = useRegrasQualidade(queryParams)
-  const { data: dimensoesData } = useDimensoesQualidade({ page: 1, limit: 1000 })
-  const { data: tabelasData } = useTabelas({ page: 1, limit: 1000 })
-  const { data: colunasData } = useColunas({ page: 1, limit: 1000 })
-  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
-  
-  const deleteRegra = useDeleteRegraQualidade()
+  const { data: regrasData, isLoading, error } = useGetRegrasQualidade()
+  const { data: dimensoesData } = useGetDimensoesQualidade()
+  const { data: tabelasData } = useGetTabelas()
+  const { data: colunasData } = useGetColunas()
+  const { data: papeisData } = useGetPapeis()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const regras = (regrasData?.data || []) as any[]
-  const dimensoes = dimensoesData?.data || []
-  const tabelas = tabelasData?.data || []
-  const colunas = colunasData?.data || []
-  const papeis = papeisData?.data || []
+  const deleteRegra = useDeleteRegrasQualidadeId()
+
+  const regras = regrasData?.data ?? []
+  const dimensoes = dimensoesData?.data ?? []
+  const tabelas = tabelasData?.data ?? []
+  const colunas = colunasData?.data ?? []
+  const papeis = papeisData?.data ?? []
 
   const handleEdit = (regra: RegraQualidadeResponse) => {
     setSelectedRegra(regra)
@@ -61,7 +60,7 @@ export default function RegrasQualidadePage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta regra de qualidade?")) {
-      await deleteRegra.mutateAsync(id)
+      await deleteRegra.mutateAsync({ id })
     }
   }
 

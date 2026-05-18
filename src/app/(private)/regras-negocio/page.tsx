@@ -29,11 +29,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useRegrasNegocio, useDeleteRegraNegocio } from "@/hooks/api/use-regras-negocio"
-import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
-import { useSistemas } from "@/hooks/api/use-sistemas"
-import { usePapeis } from "@/hooks/api/use-papeis"
-import { useDefinicoes } from "@/hooks/api/use-definicoes"
+import {
+  useGetRegrasNegocio,
+  useDeleteRegrasNegocioId,
+} from "@/api/generated/endpoints/regras-negocio/regras-negocio"
+import { useGetPoliticasInternas } from "@/api/generated/endpoints/politicas-internas/politicas-internas"
+import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas"
+import { useGetPapeis } from "@/api/generated/endpoints/papeis/papeis"
+import { useGetDefinicoes } from "@/api/generated/endpoints/definicoes/definicoes"
 import { RegraForm } from "@/components/regras/regra-form"
 import { RegraNegocioResponse } from "@/types/api"
 
@@ -43,12 +46,12 @@ export default function RegrasNegocioPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [selectedRegra, setSelectedRegra] = useState<RegraNegocioResponse | undefined>()
 
-  const { data: regrasData, isLoading, error } = useRegrasNegocio()
-  const { data: politicasData } = usePoliticasInternas({ page: 1, limit: 1000 })
-  const { data: sistemasData } = useSistemas({ page: 1, limit: 1000 })
-  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
-  const { data: definicoesData } = useDefinicoes({ page: 1, limit: 1000 })
-  const deleteRegra = useDeleteRegraNegocio()
+  const { data: regrasData, isLoading, error } = useGetRegrasNegocio()
+  const { data: politicasData } = useGetPoliticasInternas()
+  const { data: sistemasData } = useGetSistemas()
+  const { data: papeisData } = useGetPapeis()
+  const { data: definicoesData } = useGetDefinicoes()
+  const deleteRegra = useDeleteRegrasNegocioId()
 
   // Extração do array de dados
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,7 +63,7 @@ export default function RegrasNegocioPage() {
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta regra de negócio?")) {
-      await deleteRegra.mutateAsync(id)
+      await deleteRegra.mutateAsync({ id })
     }
   }
 

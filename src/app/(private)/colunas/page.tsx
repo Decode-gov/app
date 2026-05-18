@@ -33,9 +33,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { useColunas, useDeleteColuna } from "@/hooks/api/use-colunas"
-import { useTabelas } from "@/hooks/api/use-tabelas"
-import { useTiposDados } from "@/hooks/api/use-tipos-dados"
+import { useGetColunas, useDeleteColunasId } from "@/api/generated/endpoints/colunas/colunas"
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas"
+import { useGetTiposDados } from "@/api/generated/endpoints/tipos-dados/tipos-dados"
 import { ColunaForm } from "@/components/colunas/coluna-form"
 import { ColunaResponse } from "@/types/api"
 import { format } from "date-fns"
@@ -48,15 +48,14 @@ export default function ColunasPage() {
   const [tabelaFilter, setTabelaFilter] = useState<string>("all")
   const [tipoDadosFilter, setTipoDadosFilter] = useState<string>("all")
 
-  const { data: colunasData, isLoading } = useColunas()
-  const { data: tabelasData } = useTabelas()
-  const { data: tiposDadosData } = useTiposDados()
-  const deleteMutation = useDeleteColuna()
+  const { data: colunasData, isLoading } = useGetColunas()
+  const { data: tabelasData } = useGetTabelas()
+  const { data: tiposDadosData } = useGetTiposDados()
+  const deleteMutation = useDeleteColunasId()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const colunas = (colunasData?.data || []) as any[]
-  const tabelas = tabelasData?.data || []
-  const tiposDados = tiposDadosData?.data || []
+  const colunas = colunasData?.data ?? []
+  const tabelas = tabelasData?.data ?? []
+  const tiposDados = tiposDadosData?.data ?? []
 
   const filteredColunas = colunas.filter((coluna) => {
     const matchesSearch = 
@@ -79,7 +78,7 @@ export default function ColunasPage() {
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta coluna?")) {
       try {
-        await deleteMutation.mutateAsync(id)
+        await deleteMutation.mutateAsync({ id })
       } catch (error) {
         console.error('Erro ao excluir coluna:', error)
       }
