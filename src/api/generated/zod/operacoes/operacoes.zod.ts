@@ -210,14 +210,14 @@ export const postOperacoesBodyCriticaDefault = false;
 export const postOperacoesBodyDocumentadaDefault = false;
 export const postOperacoesBodyAtivoDefault = true;
 
-export const PostOperacoesBody = zod.object({
-  nome: zod
+export const PostOperacoesBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(postOperacoesBodyNomeMax)
     .describe("Nome da operação"),
-  descricao: zod.string().min(1).describe("Descrição da operação"),
-  codigo: zod
+  descricao: zod.coerce.string().min(1).describe("Descrição da operação"),
+  codigo: zod.coerce
     .string()
     .min(1)
     .max(postOperacoesBodyCodigoMax)
@@ -253,7 +253,7 @@ export const PostOperacoesBody = zod.object({
       "EVENTUAL",
     ])
     .describe("Frequência de execução"),
-  duracao: zod
+  duracao: zod.coerce
     .number()
     .min(postOperacoesBodyDuracaoMin)
     .optional()
@@ -262,21 +262,24 @@ export const PostOperacoesBody = zod.object({
     .enum(["BAIXA", "MEDIA", "ALTA"])
     .default(postOperacoesBodyComplexidadeDefault)
     .describe("Complexidade da operação"),
-  automatizada: zod
+  automatizada: zod.coerce
     .boolean()
     .default(postOperacoesBodyAutomatizadaDefault)
     .describe("Operação automatizada"),
-  critica: zod
+  critica: zod.coerce
     .boolean()
     .default(postOperacoesBodyCriticaDefault)
     .describe("Operação crítica"),
-  documentada: zod
+  documentada: zod.coerce
     .boolean()
     .default(postOperacoesBodyDocumentadaDefault)
     .describe("Operação documentada"),
-  responsavel: zod.string().min(1).describe("Responsável pela operação"),
-  observacoes: zod.string().optional().describe("Observações adicionais"),
-  ativo: zod
+  responsavel: zod.coerce.string().min(1).describe("Responsável pela operação"),
+  observacoes: zod.coerce
+    .string()
+    .optional()
+    .describe("Observações adicionais"),
+  ativo: zod.coerce
     .boolean()
     .default(postOperacoesBodyAtivoDefault)
     .describe("Status de ativação"),
@@ -474,15 +477,19 @@ export const putOperacoesIdBodySistemaIdRegExp = new RegExp(
 );
 export const putOperacoesIdBodyDuracaoMin = 0;
 
-export const PutOperacoesIdBody = zod.object({
-  nome: zod
+export const PutOperacoesIdBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putOperacoesIdBodyNomeMax)
     .optional()
     .describe("Nome da operação"),
-  descricao: zod.string().min(1).optional().describe("Descrição da operação"),
-  codigo: zod
+  descricao: zod.coerce
+    .string()
+    .min(1)
+    .optional()
+    .describe("Descrição da operação"),
+  codigo: zod.coerce
     .string()
     .min(1)
     .max(putOperacoesIdBodyCodigoMax)
@@ -522,7 +529,7 @@ export const PutOperacoesIdBody = zod.object({
     ])
     .optional()
     .describe("Frequência de execução"),
-  duracao: zod
+  duracao: zod.coerce
     .number()
     .min(putOperacoesIdBodyDuracaoMin)
     .optional()
@@ -531,16 +538,22 @@ export const PutOperacoesIdBody = zod.object({
     .enum(["BAIXA", "MEDIA", "ALTA"])
     .optional()
     .describe("Complexidade da operação"),
-  automatizada: zod.boolean().optional().describe("Operação automatizada"),
-  critica: zod.boolean().optional().describe("Operação crítica"),
-  documentada: zod.boolean().optional().describe("Operação documentada"),
-  responsavel: zod
+  automatizada: zod.coerce
+    .boolean()
+    .optional()
+    .describe("Operação automatizada"),
+  critica: zod.coerce.boolean().optional().describe("Operação crítica"),
+  documentada: zod.coerce.boolean().optional().describe("Operação documentada"),
+  responsavel: zod.coerce
     .string()
     .min(1)
     .optional()
     .describe("Responsável pela operação"),
-  observacoes: zod.string().optional().describe("Observações adicionais"),
-  ativo: zod.boolean().optional().describe("Status de ativação"),
+  observacoes: zod.coerce
+    .string()
+    .optional()
+    .describe("Observações adicionais"),
+  ativo: zod.coerce.boolean().optional().describe("Status de ativação"),
 });
 
 export const putOperacoesIdResponseDataIdRegExp = new RegExp(

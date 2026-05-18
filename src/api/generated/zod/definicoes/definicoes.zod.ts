@@ -108,10 +108,10 @@ export const postDefinicoesBodyComunidadeIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PostDefinicoesBody = zod.object({
-  termo: zod.string().min(1).describe("Nome da definição (termo)"),
-  definicao: zod.string().min(1).describe("Descrição da definição"),
-  sigla: zod.string().optional().describe("Sigla do termo"),
+export const PostDefinicoesBody = zod.strictObject({
+  termo: zod.coerce.string().min(1).describe("Nome da definição (termo)"),
+  definicao: zod.coerce.string().min(1).describe("Descrição da definição"),
+  sigla: zod.coerce.string().optional().describe("Sigla do termo"),
   comunidadeId: zod
     .uuid()
     .regex(postDefinicoesBodyComunidadeIdRegExp)
@@ -219,10 +219,14 @@ export const putDefinicoesIdBodyComunidadeIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PutDefinicoesIdBody = zod.object({
-  termo: zod.string().min(1).optional().describe("Nome da definição (termo)"),
-  definicao: zod.string().optional().describe("Descrição da definição"),
-  sigla: zod.string().optional().describe("Sigla do termo"),
+export const PutDefinicoesIdBody = zod.strictObject({
+  termo: zod.coerce
+    .string()
+    .min(1)
+    .optional()
+    .describe("Nome da definição (termo)"),
+  definicao: zod.coerce.string().optional().describe("Descrição da definição"),
+  sigla: zod.coerce.string().optional().describe("Sigla do termo"),
   comunidadeId: zod
     .uuid()
     .regex(putDefinicoesIdBodyComunidadeIdRegExp)

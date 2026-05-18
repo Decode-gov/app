@@ -1,10 +1,10 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react"
-import { usePerfilUsuario } from "@/hooks/api/use-usuarios"
 import { useEmpresas } from "@/hooks/api/use-empresas"
 import { setGlobalEmpresaId } from "@/lib/empresa-store"
 import type { GetEmpresas200DataItem } from "@/api/generated/model"
+import { useGetUsuariosPerfil } from "@/api/generated/endpoints/usuarios/usuarios";
 
 interface EmpresaAdminContextValue {
   isAdmin: boolean
@@ -19,7 +19,7 @@ const EmpresaAdminContext = createContext<EmpresaAdminContextValue | null>(null)
 export function EmpresaAdminProvider({ children }: { children: ReactNode }) {
   const [selectedEmpresaId, setSelectedEmpresaIdState] = useState<string | null>(null)
 
-  const { data: perfil, isLoading: isLoadingPerfil } = usePerfilUsuario()
+  const { data: perfil, isLoading: isLoadingPerfil } = useGetUsuariosPerfil()
   const isAdmin = (perfil?.data as { tipo?: string } | undefined)?.tipo === "ADMIN"
 
   const { data: empresasData, isLoading: isLoadingEmpresas } = useEmpresas(undefined, isAdmin)

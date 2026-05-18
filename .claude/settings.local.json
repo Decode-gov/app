@@ -16,7 +16,12 @@
       "Bash(Remove-Item -Recurse -Force src/services)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git stash *)",
+      "Bash(awk '{print $2}')",
+      "Bash(xargs git rm -f)",
+      "Bash(xargs git checkout --theirs)",
+      "Bash(git checkout *)"
     ]
   }
 }

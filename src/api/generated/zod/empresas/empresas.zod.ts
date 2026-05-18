@@ -46,8 +46,8 @@ export const GetEmpresasResponse = zod.object({
  */
 export const postEmpresasBodyNomeMax = 255;
 
-export const PostEmpresasBody = zod.object({
-  nome: zod
+export const PostEmpresasBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(postEmpresasBodyNomeMax)
@@ -105,8 +105,8 @@ export const PutEmpresasIdParams = zod.strictObject({
 
 export const putEmpresasIdBodyNomeMax = 255;
 
-export const PutEmpresasIdBody = zod.object({
-  nome: zod
+export const PutEmpresasIdBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putEmpresasIdBodyNomeMax)

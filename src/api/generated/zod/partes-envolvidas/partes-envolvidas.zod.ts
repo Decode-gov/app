@@ -47,10 +47,13 @@ export const GetPartesEnvolvidasResponse = zod.object({
  * @summary Criar parte envolvida
  */
 
-export const PostPartesEnvolvidasBody = zod.object({
-  nome: zod.string().min(1).describe("Nome da parte envolvida"),
-  descricao: zod.string().optional().describe("Descrição da parte envolvida"),
-  contato: zod
+export const PostPartesEnvolvidasBody = zod.strictObject({
+  nome: zod.coerce.string().min(1).describe("Nome da parte envolvida"),
+  descricao: zod.coerce
+    .string()
+    .optional()
+    .describe("Descrição da parte envolvida"),
+  contato: zod.coerce
     .string()
     .min(1)
     .describe("Informação de contato (email, telefone, etc)"),
@@ -95,10 +98,10 @@ export const PutPartesEnvolvidasIdParams = zod.strictObject({
   id: zod.uuid().regex(putPartesEnvolvidasIdPathIdRegExp),
 });
 
-export const PutPartesEnvolvidasIdBody = zod.object({
-  nome: zod.string().min(1).optional(),
-  descricao: zod.string().optional(),
-  contato: zod.string().min(1).optional(),
+export const PutPartesEnvolvidasIdBody = zod.strictObject({
+  nome: zod.coerce.string().min(1).optional(),
+  descricao: zod.coerce.string().optional(),
+  contato: zod.coerce.string().min(1).optional(),
 });
 
 export const putPartesEnvolvidasIdResponseDataIdRegExp = new RegExp(

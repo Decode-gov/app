@@ -83,19 +83,19 @@ export const postRepositoriosDocumentoBodyNomeMax = 255;
 export const postRepositoriosDocumentoBodyGedDefault = false;
 export const postRepositoriosDocumentoBodyRedeDefault = false;
 
-export const PostRepositoriosDocumentoBody = zod.object({
-  nome: zod
+export const PostRepositoriosDocumentoBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(postRepositoriosDocumentoBodyNomeMax)
     .describe("Nome do repositório de documentos"),
-  ged: zod
+  ged: zod.coerce
     .boolean()
     .default(postRepositoriosDocumentoBodyGedDefault)
     .describe(
       "Indica se é um repositório GED (Gerenciamento Eletrônico de Documentos)",
     ),
-  rede: zod
+  rede: zod.coerce
     .boolean()
     .default(postRepositoriosDocumentoBodyRedeDefault)
     .describe("Indica se é um repositório em rede"),
@@ -177,20 +177,20 @@ export const putRepositoriosDocumentoIdBodyNomeMax = 255;
 export const putRepositoriosDocumentoIdBodyGedDefault = false;
 export const putRepositoriosDocumentoIdBodyRedeDefault = false;
 
-export const PutRepositoriosDocumentoIdBody = zod.object({
-  nome: zod
+export const PutRepositoriosDocumentoIdBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putRepositoriosDocumentoIdBodyNomeMax)
     .optional()
     .describe("Nome do repositório de documentos"),
-  ged: zod
+  ged: zod.coerce
     .boolean()
     .default(putRepositoriosDocumentoIdBodyGedDefault)
     .describe(
       "Indica se é um repositório GED (Gerenciamento Eletrônico de Documentos)",
     ),
-  rede: zod
+  rede: zod.coerce
     .boolean()
     .default(putRepositoriosDocumentoIdBodyRedeDefault)
     .describe("Indica se é um repositório em rede"),

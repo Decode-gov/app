@@ -44,8 +44,8 @@ export const GetComitesAprovadoresResponse = zod.object({
  * @summary Cadastrar comitê aprovador
  */
 
-export const PostComitesAprovadoresBody = zod.object({
-  nome: zod.string().min(1),
+export const PostComitesAprovadoresBody = zod.strictObject({
+  nome: zod.coerce.string().min(1),
 });
 
 /**
@@ -84,8 +84,8 @@ export const PutComitesAprovadoresIdParams = zod.strictObject({
   id: zod.uuid().regex(putComitesAprovadoresIdPathIdRegExp),
 });
 
-export const PutComitesAprovadoresIdBody = zod.object({
-  nome: zod.string().min(1).optional(),
+export const PutComitesAprovadoresIdBody = zod.strictObject({
+  nome: zod.coerce.string().min(1).optional(),
 });
 
 export const putComitesAprovadoresIdResponseDataIdRegExp = new RegExp(

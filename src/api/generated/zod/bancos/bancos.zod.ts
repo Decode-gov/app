@@ -119,8 +119,8 @@ export const postBancosBodySistemaOneIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PostBancosBody = zod.object({
-  nome: zod
+export const PostBancosBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(postBancosBodyNomeMax)
@@ -131,17 +131,19 @@ export const PostBancosBody = zod.object({
     .describe("ID do sistema associado"),
   sistema: zod
     .union([
-      zod.object({
-        nome: zod
+      zod.strictObject({
+        nome: zod.coerce
           .string()
           .min(1)
           .max(postBancosBodySistemaOneNomeMax)
           .describe("Nome do sistema"),
         descricao: zod
-          .union([zod.string(), zod.null()])
+          .union([zod.coerce.string(), zod.null()])
           .optional()
           .describe("Descrição do sistema"),
-        repositorio: zod.string().describe("URL do repositório do sistema"),
+        repositorio: zod.coerce
+          .string()
+          .describe("URL do repositório do sistema"),
         id: zod
           .uuid()
           .regex(postBancosBodySistemaOneIdRegExp)
@@ -265,8 +267,8 @@ export const putBancosIdBodySistemaOneIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PutBancosIdBody = zod.object({
-  nome: zod
+export const PutBancosIdBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putBancosIdBodyNomeMax)
@@ -278,17 +280,19 @@ export const PutBancosIdBody = zod.object({
     .describe("ID do sistema associado"),
   sistema: zod
     .union([
-      zod.object({
-        nome: zod
+      zod.strictObject({
+        nome: zod.coerce
           .string()
           .min(1)
           .max(putBancosIdBodySistemaOneNomeMax)
           .describe("Nome do sistema"),
         descricao: zod
-          .union([zod.string(), zod.null()])
+          .union([zod.coerce.string(), zod.null()])
           .optional()
           .describe("Descrição do sistema"),
-        repositorio: zod.string().describe("URL do repositório do sistema"),
+        repositorio: zod.coerce
+          .string()
+          .describe("URL do repositório do sistema"),
         id: zod
           .uuid()
           .regex(putBancosIdBodySistemaOneIdRegExp)

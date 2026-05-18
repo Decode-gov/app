@@ -99,15 +99,17 @@ export const postAtribuicoesBodyComiteAprovadorIdRegExp = new RegExp(
 );
 export const postAtribuicoesBodyOnboardingDefault = false;
 
-export const PostAtribuicoesBody = zod.object({
+export const PostAtribuicoesBody = zod.strictObject({
   papelId: zod.uuid().regex(postAtribuicoesBodyPapelIdRegExp),
   dominioId: zod.uuid().regex(postAtribuicoesBodyDominioIdRegExp),
-  documentoAtribuicao: zod.string(),
+  documentoAtribuicao: zod.coerce.string(),
   comiteAprovadorId: zod
     .uuid()
     .regex(postAtribuicoesBodyComiteAprovadorIdRegExp),
-  onboarding: zod.boolean().default(postAtribuicoesBodyOnboardingDefault),
-  responsavel: zod.string(),
+  onboarding: zod.coerce
+    .boolean()
+    .default(postAtribuicoesBodyOnboardingDefault),
+  responsavel: zod.coerce.string(),
 });
 
 /**
@@ -199,16 +201,16 @@ export const putAtribuicoesIdBodyComiteAprovadorIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PutAtribuicoesIdBody = zod.object({
+export const PutAtribuicoesIdBody = zod.strictObject({
   papelId: zod.uuid().regex(putAtribuicoesIdBodyPapelIdRegExp).optional(),
   dominioId: zod.uuid().regex(putAtribuicoesIdBodyDominioIdRegExp).optional(),
-  documentoAtribuicao: zod.string().optional(),
+  documentoAtribuicao: zod.coerce.string().optional(),
   comiteAprovadorId: zod
     .uuid()
     .regex(putAtribuicoesIdBodyComiteAprovadorIdRegExp)
     .optional(),
-  onboarding: zod.boolean().optional(),
-  responsavel: zod.string().optional(),
+  onboarding: zod.coerce.boolean().optional(),
+  responsavel: zod.coerce.string().optional(),
 });
 
 export const putAtribuicoesIdResponseDataIdRegExp = new RegExp(

@@ -71,7 +71,7 @@ export const postDocumentosBodyEntidadeIdRegExp = new RegExp(
 export const postDocumentosBodyVersaoDefault = 1;
 export const postDocumentosBodyVersaoMax = 9007199254740991;
 
-export const PostDocumentosBody = zod.object({
+export const PostDocumentosBody = zod.strictObject({
   entidadeId: zod.uuid().regex(postDocumentosBodyEntidadeIdRegExp),
   tipoEntidade: zod.enum([
     "Politica",
@@ -87,14 +87,14 @@ export const PostDocumentosBody = zod.object({
     "Tabela",
     "Coluna",
   ]),
-  nomeArquivo: zod.string().min(1),
-  tamanhoBytes: zod.string(),
-  tipoArquivo: zod.string().min(1),
-  caminhoArquivo: zod.string().min(1),
-  descricao: zod.string().optional(),
-  metadados: zod.string().optional(),
-  checksum: zod.string().optional(),
-  versao: zod
+  nomeArquivo: zod.coerce.string().min(1),
+  tamanhoBytes: zod.coerce.string(),
+  tipoArquivo: zod.coerce.string().min(1),
+  caminhoArquivo: zod.coerce.string().min(1),
+  descricao: zod.coerce.string().optional(),
+  metadados: zod.coerce.string().optional(),
+  checksum: zod.coerce.string().optional(),
+  versao: zod.coerce
     .number()
     .min(1)
     .max(postDocumentosBodyVersaoMax)
@@ -236,16 +236,20 @@ export const PutDocumentosIdParams = zod.strictObject({
 
 export const putDocumentosIdBodyVersaoMax = 9007199254740991;
 
-export const PutDocumentosIdBody = zod.object({
-  nomeArquivo: zod.string().min(1).optional(),
-  tamanhoBytes: zod.string().optional(),
-  tipoArquivo: zod.string().min(1).optional(),
-  caminhoArquivo: zod.string().min(1).optional(),
-  descricao: zod.string().optional(),
-  metadados: zod.string().optional(),
-  checksum: zod.string().optional(),
-  versao: zod.number().min(1).max(putDocumentosIdBodyVersaoMax).optional(),
-  ativo: zod.boolean().optional(),
+export const PutDocumentosIdBody = zod.strictObject({
+  nomeArquivo: zod.coerce.string().min(1).optional(),
+  tamanhoBytes: zod.coerce.string().optional(),
+  tipoArquivo: zod.coerce.string().min(1).optional(),
+  caminhoArquivo: zod.coerce.string().min(1).optional(),
+  descricao: zod.coerce.string().optional(),
+  metadados: zod.coerce.string().optional(),
+  checksum: zod.coerce.string().optional(),
+  versao: zod.coerce
+    .number()
+    .min(1)
+    .max(putDocumentosIdBodyVersaoMax)
+    .optional(),
+  ativo: zod.coerce.boolean().optional(),
 });
 
 export const putDocumentosIdResponseDataIdRegExp = new RegExp(

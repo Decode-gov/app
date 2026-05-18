@@ -24,8 +24,8 @@ export const postUsuariosRegisterBodyEmpresaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PostUsuariosRegisterBody = zod.object({
-  nome: zod
+export const PostUsuariosRegisterBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(postUsuariosRegisterBodyNomeMax)
@@ -34,7 +34,7 @@ export const PostUsuariosRegisterBody = zod.object({
     .email()
     .regex(postUsuariosRegisterBodyEmailRegExp)
     .describe("Endereço de email válido"),
-  senha: zod
+  senha: zod.coerce
     .string()
     .min(postUsuariosRegisterBodySenhaMin)
     .max(postUsuariosRegisterBodySenhaMax)
@@ -58,12 +58,12 @@ export const postUsuariosLoginBodyEmailRegExp = new RegExp(
   "^(?!\\.)(?!.\*\\.\\.)([A-Za-z0-9_'+\\-\\.]\*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]\*\\.)+[A-Za-z]{2,}$",
 );
 
-export const PostUsuariosLoginBody = zod.object({
+export const PostUsuariosLoginBody = zod.strictObject({
   email: zod
     .email()
     .regex(postUsuariosLoginBodyEmailRegExp)
     .describe("Endereço de email válido"),
-  senha: zod.string().min(1).describe("Senha do usuário"),
+  senha: zod.coerce.string().min(1).describe("Senha do usuário"),
 });
 
 export const PostUsuariosLoginResponse = zod.object({
@@ -137,8 +137,8 @@ export const putUsuariosPerfilAtualizarBodyEmailRegExp = new RegExp(
   "^(?!\\.)(?!.\*\\.\\.)([A-Za-z0-9_'+\\-\\.]\*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]\*\\.)+[A-Za-z]{2,}$",
 );
 
-export const PutUsuariosPerfilAtualizarBody = zod.object({
-  nome: zod
+export const PutUsuariosPerfilAtualizarBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putUsuariosPerfilAtualizarBodyNomeMax)
@@ -149,7 +149,7 @@ export const PutUsuariosPerfilAtualizarBody = zod.object({
     .regex(putUsuariosPerfilAtualizarBodyEmailRegExp)
     .optional()
     .describe("Endereço de email válido"),
-  ativo: zod.boolean().optional().describe("Status ativo do usuário"),
+  ativo: zod.coerce.boolean().optional().describe("Status ativo do usuário"),
 });
 
 export const putUsuariosPerfilAtualizarResponseDataIdRegExp = new RegExp(
@@ -205,9 +205,9 @@ export const PutUsuariosPerfilAtualizarResponse = zod.object({
 export const postUsuariosAlterarSenhaBodyNovaSenhaMin = 6;
 export const postUsuariosAlterarSenhaBodyNovaSenhaMax = 100;
 
-export const PostUsuariosAlterarSenhaBody = zod.object({
-  senhaAtual: zod.string().min(1).describe("Senha atual do usuário"),
-  novaSenha: zod
+export const PostUsuariosAlterarSenhaBody = zod.strictObject({
+  senhaAtual: zod.coerce.string().min(1).describe("Senha atual do usuário"),
+  novaSenha: zod.coerce
     .string()
     .min(postUsuariosAlterarSenhaBodyNovaSenhaMin)
     .max(postUsuariosAlterarSenhaBodyNovaSenhaMax)
@@ -358,8 +358,8 @@ export const putUsuariosIdBodyEmailRegExp = new RegExp(
   "^(?!\\.)(?!.\*\\.\\.)([A-Za-z0-9_'+\\-\\.]\*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]\*\\.)+[A-Za-z]{2,}$",
 );
 
-export const PutUsuariosIdBody = zod.object({
-  nome: zod
+export const PutUsuariosIdBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putUsuariosIdBodyNomeMax)
@@ -370,7 +370,7 @@ export const PutUsuariosIdBody = zod.object({
     .regex(putUsuariosIdBodyEmailRegExp)
     .optional()
     .describe("Endereço de email válido"),
-  ativo: zod.boolean().optional().describe("Status ativo do usuário"),
+  ativo: zod.coerce.boolean().optional().describe("Status ativo do usuário"),
 });
 
 export const putUsuariosIdResponseDataIdRegExp = new RegExp(

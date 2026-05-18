@@ -82,28 +82,28 @@ export const postPoliticasInternasBodyDominioDadosIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PostPoliticasInternasBody = zod.object({
+export const PostPoliticasInternasBody = zod.strictObject({
   id: zod.uuid().regex(postPoliticasInternasBodyIdRegExp).optional(),
-  nome: zod.string().min(1).optional(),
-  descricao: zod.string().min(1).optional(),
-  categoria: zod.string().min(1).optional(),
-  objetivo: zod.string().min(1).optional(),
-  escopo: zod.string().min(1).optional(),
+  nome: zod.coerce.string().min(1).optional(),
+  descricao: zod.coerce.string().min(1).optional(),
+  categoria: zod.coerce.string().min(1).optional(),
+  objetivo: zod.coerce.string().min(1).optional(),
+  escopo: zod.coerce.string().min(1).optional(),
   dominioDadosId: zod
     .union([
       zod.uuid().regex(postPoliticasInternasBodyDominioDadosIdOneRegExp),
       zod.null(),
     ])
     .optional(),
-  responsavel: zod.string().min(1).optional(),
+  responsavel: zod.coerce.string().min(1).optional(),
   dataCriacao: zod.unknown(),
   dataInicioVigencia: zod.unknown(),
   dataTermino: zod.null().optional(),
   status: zod.enum(["Em_elaboracao", "Vigente", "Revogada"]),
-  versao: zod.string().min(1),
-  anexosUrl: zod.union([zod.string(), zod.null()]).optional(),
-  relacionamento: zod.union([zod.string(), zod.null()]).optional(),
-  observacoes: zod.union([zod.string(), zod.null()]).optional(),
+  versao: zod.coerce.string().min(1),
+  anexosUrl: zod.union([zod.coerce.string(), zod.null()]).optional(),
+  relacionamento: zod.union([zod.coerce.string(), zod.null()]).optional(),
+  observacoes: zod.union([zod.coerce.string(), zod.null()]).optional(),
 });
 
 /**
@@ -178,28 +178,28 @@ export const putPoliticasInternasIdBodyDominioDadosIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PutPoliticasInternasIdBody = zod.object({
+export const PutPoliticasInternasIdBody = zod.strictObject({
   id: zod.uuid().regex(putPoliticasInternasIdBodyIdRegExp).optional(),
-  nome: zod.string().min(1).optional(),
-  descricao: zod.string().min(1).optional(),
-  categoria: zod.string().min(1).optional(),
-  objetivo: zod.string().min(1).optional(),
-  escopo: zod.string().min(1).optional(),
+  nome: zod.coerce.string().min(1).optional(),
+  descricao: zod.coerce.string().min(1).optional(),
+  categoria: zod.coerce.string().min(1).optional(),
+  objetivo: zod.coerce.string().min(1).optional(),
+  escopo: zod.coerce.string().min(1).optional(),
   dominioDadosId: zod
     .union([
       zod.uuid().regex(putPoliticasInternasIdBodyDominioDadosIdOneRegExp),
       zod.null(),
     ])
     .optional(),
-  responsavel: zod.string().min(1).optional(),
+  responsavel: zod.coerce.string().min(1).optional(),
   dataCriacao: zod.unknown(),
   dataInicioVigencia: zod.unknown(),
   dataTermino: zod.null().optional(),
   status: zod.enum(["Em_elaboracao", "Vigente", "Revogada"]),
-  versao: zod.string().min(1),
-  anexosUrl: zod.union([zod.string(), zod.null()]).optional(),
-  relacionamento: zod.union([zod.string(), zod.null()]).optional(),
-  observacoes: zod.union([zod.string(), zod.null()]).optional(),
+  versao: zod.coerce.string().min(1),
+  anexosUrl: zod.union([zod.coerce.string(), zod.null()]).optional(),
+  relacionamento: zod.union([zod.coerce.string(), zod.null()]).optional(),
+  observacoes: zod.union([zod.coerce.string(), zod.null()]).optional(),
 });
 
 export const putPoliticasInternasIdResponseDataIdRegExp = new RegExp(

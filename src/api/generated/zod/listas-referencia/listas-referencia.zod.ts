@@ -60,12 +60,12 @@ export const GetListasReferenciaResponse = zod.object({
  * @summary Criar nova lista de referência
  */
 
-export const PostListasReferenciaBody = zod.object({
-  nome: zod.string().min(1),
-  descricao: zod.union([zod.string(), zod.null()]).optional(),
-  valores: zod.string().min(1),
-  tabelaId: zod.union([zod.string(), zod.null()]).optional(),
-  colunaId: zod.union([zod.string(), zod.null()]).optional(),
+export const PostListasReferenciaBody = zod.strictObject({
+  nome: zod.coerce.string().min(1),
+  descricao: zod.union([zod.coerce.string(), zod.null()]).optional(),
+  valores: zod.coerce.string().min(1),
+  tabelaId: zod.union([zod.coerce.string(), zod.null()]).optional(),
+  colunaId: zod.union([zod.coerce.string(), zod.null()]).optional(),
 });
 
 /**
@@ -112,12 +112,12 @@ export const PutListasReferenciaIdParams = zod.strictObject({
   id: zod.coerce.string(),
 });
 
-export const PutListasReferenciaIdBody = zod.object({
-  nome: zod.string().min(1).optional(),
-  descricao: zod.union([zod.string(), zod.null()]).optional(),
-  valores: zod.string().min(1).optional(),
-  tabelaId: zod.union([zod.string(), zod.null()]).optional(),
-  colunaId: zod.union([zod.string(), zod.null()]).optional(),
+export const PutListasReferenciaIdBody = zod.strictObject({
+  nome: zod.coerce.string().min(1).optional(),
+  descricao: zod.union([zod.coerce.string(), zod.null()]).optional(),
+  valores: zod.coerce.string().min(1).optional(),
+  tabelaId: zod.union([zod.coerce.string(), zod.null()]).optional(),
+  colunaId: zod.union([zod.coerce.string(), zod.null()]).optional(),
 });
 
 export const PutListasReferenciaIdResponse = zod.object({

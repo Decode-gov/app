@@ -106,10 +106,10 @@ export const GetRegulacoesCompletasResponse = zod.object({
  * @summary Criar regulação
  */
 
-export const PostRegulacoesCompletasBody = zod.object({
-  epigrafe: zod.string().min(1).describe("Epígrafe da regulação"),
-  orgao: zod.string().min(1).describe("Órgão regulador"),
-  descricao: zod.string().min(1).describe("Descrição da regulação"),
+export const PostRegulacoesCompletasBody = zod.strictObject({
+  epigrafe: zod.coerce.string().min(1).describe("Epígrafe da regulação"),
+  orgao: zod.coerce.string().min(1).describe("Órgão regulador"),
+  descricao: zod.coerce.string().min(1).describe("Descrição da regulação"),
   dataInicio: zod.unknown().describe("Data de início da vigência"),
   dataFim: zod
     .unknown()
@@ -216,10 +216,10 @@ export const PutRegulacoesCompletasIdParams = zod.strictObject({
   id: zod.uuid().regex(putRegulacoesCompletasIdPathIdRegExp),
 });
 
-export const PutRegulacoesCompletasIdBody = zod.object({
-  epigrafe: zod.string().min(1).optional(),
-  orgao: zod.string().min(1).optional(),
-  descricao: zod.string().min(1).optional(),
+export const PutRegulacoesCompletasIdBody = zod.strictObject({
+  epigrafe: zod.coerce.string().min(1).optional(),
+  orgao: zod.coerce.string().min(1).optional(),
+  descricao: zod.coerce.string().min(1).optional(),
   dataInicio: zod.unknown().optional(),
   dataFim: zod.null().optional(),
 });

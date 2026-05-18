@@ -161,8 +161,8 @@ export const postAuditoriaBodyUsuarioIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PostAuditoriaBody = zod.object({
-  entidade: zod.string().min(1).describe("Nome da entidade"),
+export const PostAuditoriaBody = zod.strictObject({
+  entidade: zod.coerce.string().min(1).describe("Nome da entidade"),
   entidadeId: zod
     .uuid()
     .regex(postAuditoriaBodyEntidadeIdRegExp)
@@ -171,11 +171,11 @@ export const PostAuditoriaBody = zod.object({
     .enum(["CREATE", "UPDATE", "DELETE"])
     .describe("Tipo de operação"),
   dadosAntes: zod
-    .union([zod.string(), zod.null()])
+    .union([zod.coerce.string(), zod.null()])
     .optional()
     .describe("Dados antes da alteração"),
   dadosDepois: zod
-    .union([zod.string(), zod.null()])
+    .union([zod.coerce.string(), zod.null()])
     .optional()
     .describe("Dados após a alteração"),
   usuarioId: zod

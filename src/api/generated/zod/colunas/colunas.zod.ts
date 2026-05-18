@@ -267,14 +267,14 @@ export const postColunasBodyTermoComunidadeOneParentIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PostColunasBody = zod.object({
-  nome: zod
+export const PostColunasBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(postColunasBodyNomeMax)
     .describe("Nome da coluna"),
   descricao: zod
-    .union([zod.string(), zod.null()])
+    .union([zod.coerce.string(), zod.null()])
     .optional()
     .describe("Descrição da coluna"),
   tabelaId: zod
@@ -282,8 +282,8 @@ export const PostColunasBody = zod.object({
     .regex(postColunasBodyTabelaIdRegExp)
     .describe("ID da tabela pai"),
   tabela: zod
-    .object({
-      nome: zod
+    .strictObject({
+      nome: zod.coerce
         .string()
         .min(1)
         .max(postColunasBodyTabelaNomeMax)
@@ -311,19 +311,22 @@ export const PostColunasBody = zod.object({
     .regex(postColunasBodyNecessidadeInformacaoIdRegExp)
     .describe("ID da necessidade de informação"),
   necessidadeInformacao: zod
-    .object({
+    .strictObject({
       id: zod
         .uuid()
         .regex(postColunasBodyNecessidadeInformacaoIdRegExpOne)
         .describe("Identificador único da necessidade de informação"),
-      questaoGerencial: zod.string().min(1).describe("Questão gerencial"),
+      questaoGerencial: zod.coerce
+        .string()
+        .min(1)
+        .describe("Questão gerencial"),
       elementoEstrategico: zod
-        .union([zod.string(), zod.null()])
+        .union([zod.coerce.string(), zod.null()])
         .describe("Elemento estratégico"),
       elementoTatico: zod
-        .union([zod.string(), zod.null()])
+        .union([zod.coerce.string(), zod.null()])
         .describe("Elemento tático"),
-      origemQuestao: zod.string().min(1).describe("Origem da questão"),
+      origemQuestao: zod.coerce.string().min(1).describe("Origem da questão"),
       createdAt: zod.null().describe("Data de criação"),
       updatedAt: zod.null().describe("Data de última atualização"),
     })
@@ -333,14 +336,16 @@ export const PostColunasBody = zod.object({
     .regex(postColunasBodyTermoIdRegExp)
     .describe("ID do termo\/definição"),
   termo: zod
-    .object({
+    .strictObject({
       id: zod
         .uuid()
         .regex(postColunasBodyTermoIdRegExpOne)
         .describe("Identificador único da definição"),
-      termo: zod.string().min(1).describe("Nome da definição (termo)"),
-      definicao: zod.string().describe("Descrição da definição"),
-      sigla: zod.union([zod.string(), zod.null()]).describe("Sigla do termo"),
+      termo: zod.coerce.string().min(1).describe("Nome da definição (termo)"),
+      definicao: zod.coerce.string().describe("Descrição da definição"),
+      sigla: zod
+        .union([zod.coerce.string(), zod.null()])
+        .describe("Sigla do termo"),
       comunidadeId: zod
         .union([
           zod.uuid().regex(postColunasBodyTermoComunidadeIdOneRegExp),
@@ -349,12 +354,12 @@ export const PostColunasBody = zod.object({
         .describe("ID da comunidade relacionada"),
       comunidade: zod
         .union([
-          zod.object({
+          zod.strictObject({
             id: zod
               .uuid()
               .regex(postColunasBodyTermoComunidadeOneIdRegExp)
               .describe("Identificador único da comunidade"),
-            nome: zod
+            nome: zod.coerce
               .string()
               .min(1)
               .max(postColunasBodyTermoComunidadeOneNomeMax)
@@ -632,15 +637,15 @@ export const putColunasIdBodyTermoComunidadeOneParentIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PutColunasIdBody = zod.object({
-  nome: zod
+export const PutColunasIdBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putColunasIdBodyNomeMax)
     .optional()
     .describe("Nome da coluna"),
   descricao: zod
-    .union([zod.string(), zod.null()])
+    .union([zod.coerce.string(), zod.null()])
     .optional()
     .describe("Descrição da coluna"),
   tabelaId: zod
@@ -649,8 +654,8 @@ export const PutColunasIdBody = zod.object({
     .optional()
     .describe("ID da tabela pai"),
   tabela: zod
-    .object({
-      nome: zod
+    .strictObject({
+      nome: zod.coerce
         .string()
         .min(1)
         .max(putColunasIdBodyTabelaNomeMax)
@@ -679,19 +684,22 @@ export const PutColunasIdBody = zod.object({
     .optional()
     .describe("ID da necessidade de informação"),
   necessidadeInformacao: zod
-    .object({
+    .strictObject({
       id: zod
         .uuid()
         .regex(putColunasIdBodyNecessidadeInformacaoIdRegExpOne)
         .describe("Identificador único da necessidade de informação"),
-      questaoGerencial: zod.string().min(1).describe("Questão gerencial"),
+      questaoGerencial: zod.coerce
+        .string()
+        .min(1)
+        .describe("Questão gerencial"),
       elementoEstrategico: zod
-        .union([zod.string(), zod.null()])
+        .union([zod.coerce.string(), zod.null()])
         .describe("Elemento estratégico"),
       elementoTatico: zod
-        .union([zod.string(), zod.null()])
+        .union([zod.coerce.string(), zod.null()])
         .describe("Elemento tático"),
-      origemQuestao: zod.string().min(1).describe("Origem da questão"),
+      origemQuestao: zod.coerce.string().min(1).describe("Origem da questão"),
       createdAt: zod.null().describe("Data de criação"),
       updatedAt: zod.null().describe("Data de última atualização"),
     })
@@ -702,14 +710,16 @@ export const PutColunasIdBody = zod.object({
     .optional()
     .describe("ID do termo\/definição"),
   termo: zod
-    .object({
+    .strictObject({
       id: zod
         .uuid()
         .regex(putColunasIdBodyTermoIdRegExpOne)
         .describe("Identificador único da definição"),
-      termo: zod.string().min(1).describe("Nome da definição (termo)"),
-      definicao: zod.string().describe("Descrição da definição"),
-      sigla: zod.union([zod.string(), zod.null()]).describe("Sigla do termo"),
+      termo: zod.coerce.string().min(1).describe("Nome da definição (termo)"),
+      definicao: zod.coerce.string().describe("Descrição da definição"),
+      sigla: zod
+        .union([zod.coerce.string(), zod.null()])
+        .describe("Sigla do termo"),
       comunidadeId: zod
         .union([
           zod.uuid().regex(putColunasIdBodyTermoComunidadeIdOneRegExp),
@@ -718,12 +728,12 @@ export const PutColunasIdBody = zod.object({
         .describe("ID da comunidade relacionada"),
       comunidade: zod
         .union([
-          zod.object({
+          zod.strictObject({
             id: zod
               .uuid()
               .regex(putColunasIdBodyTermoComunidadeOneIdRegExp)
               .describe("Identificador único da comunidade"),
-            nome: zod
+            nome: zod.coerce
               .string()
               .min(1)
               .max(putColunasIdBodyTermoComunidadeOneNomeMax)

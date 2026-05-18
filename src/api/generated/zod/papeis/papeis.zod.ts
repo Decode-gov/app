@@ -103,13 +103,13 @@ export const postPapeisBodyPoliticaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PostPapeisBody = zod.object({
-  nome: zod
+export const PostPapeisBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(postPapeisBodyNomeMax)
     .describe("Nome do papel"),
-  descricao: zod.string().min(1).describe("Descrição do papel"),
+  descricao: zod.coerce.string().min(1).describe("Descrição do papel"),
   politicaId: zod
     .uuid()
     .regex(postPapeisBodyPoliticaIdRegExp)
@@ -210,14 +210,18 @@ export const putPapeisIdBodyPoliticaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PutPapeisIdBody = zod.object({
-  nome: zod
+export const PutPapeisIdBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putPapeisIdBodyNomeMax)
     .optional()
     .describe("Nome do papel"),
-  descricao: zod.string().min(1).optional().describe("Descrição do papel"),
+  descricao: zod.coerce
+    .string()
+    .min(1)
+    .optional()
+    .describe("Descrição do papel"),
   politicaId: zod
     .uuid()
     .regex(putPapeisIdBodyPoliticaIdRegExp)

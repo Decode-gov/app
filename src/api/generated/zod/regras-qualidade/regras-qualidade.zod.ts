@@ -248,8 +248,11 @@ export const postRegrasQualidadeBodyResponsavelIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PostRegrasQualidadeBody = zod.object({
-  descricao: zod.string().min(1).describe("Descrição detalhada da regra"),
+export const PostRegrasQualidadeBody = zod.strictObject({
+  descricao: zod.coerce
+    .string()
+    .min(1)
+    .describe("Descrição detalhada da regra"),
   regraNegocioId: zod
     .union([
       zod.uuid().regex(postRegrasQualidadeBodyRegraNegocioIdOneRegExp),
@@ -493,8 +496,8 @@ export const putRegrasQualidadeIdBodyResponsavelIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PutRegrasQualidadeIdBody = zod.object({
-  descricao: zod
+export const PutRegrasQualidadeIdBody = zod.strictObject({
+  descricao: zod.coerce
     .string()
     .min(1)
     .optional()

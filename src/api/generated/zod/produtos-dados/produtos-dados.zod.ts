@@ -56,9 +56,9 @@ export const GetProdutosDadosResponse = zod.object({
  * @summary Criar produto de dados
  */
 
-export const PostProdutosDadosBody = zod.object({
-  nome: zod.string().min(1),
-  descricao: zod.string().min(1),
+export const PostProdutosDadosBody = zod.strictObject({
+  nome: zod.coerce.string().min(1),
+  descricao: zod.coerce.string().min(1),
 });
 
 /**
@@ -109,9 +109,9 @@ export const PutProdutosDadosIdParams = zod.strictObject({
   id: zod.uuid().regex(putProdutosDadosIdPathIdRegExp),
 });
 
-export const PutProdutosDadosIdBody = zod.object({
-  nome: zod.string().min(1).optional(),
-  descricao: zod.string().min(1).optional(),
+export const PutProdutosDadosIdBody = zod.strictObject({
+  nome: zod.coerce.string().min(1).optional(),
+  descricao: zod.coerce.string().min(1).optional(),
 });
 
 export const putProdutosDadosIdResponseDataIdRegExp = new RegExp(

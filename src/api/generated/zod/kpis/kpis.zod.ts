@@ -90,10 +90,10 @@ export const GetKpisResponse = zod.object({
  * @summary Criar KPI
  */
 
-export const PostKpisBody = zod.object({
-  nome: zod.string().min(1),
-  comunidadeId: zod.string().optional(),
-  processoId: zod.string().optional(),
+export const PostKpisBody = zod.strictObject({
+  nome: zod.coerce.string().min(1),
+  comunidadeId: zod.coerce.string().optional(),
+  processoId: zod.coerce.string().optional(),
 });
 
 /**
@@ -178,10 +178,10 @@ export const PutKpisIdParams = zod.strictObject({
   id: zod.uuid().regex(putKpisIdPathIdRegExp),
 });
 
-export const PutKpisIdBody = zod.object({
-  nome: zod.string().min(1).optional(),
-  comunidadeId: zod.string().optional(),
-  processoId: zod.string().optional(),
+export const PutKpisIdBody = zod.strictObject({
+  nome: zod.coerce.string().min(1).optional(),
+  comunidadeId: zod.coerce.string().optional(),
+  processoId: zod.coerce.string().optional(),
 });
 
 export const putKpisIdResponseDataIdRegExp = new RegExp(

@@ -289,8 +289,11 @@ export const postImportacaoExportacaoImportarBodyUsuarioIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PostImportacaoExportacaoImportarBody = zod.object({
-  arquivo: zod.string().min(1).describe("Caminho ou conteúdo do arquivo"),
+export const PostImportacaoExportacaoImportarBody = zod.strictObject({
+  arquivo: zod.coerce
+    .string()
+    .min(1)
+    .describe("Caminho ou conteúdo do arquivo"),
   tipoEntidade: zod
     .enum([
       "usuario",
@@ -311,7 +314,7 @@ export const PostImportacaoExportacaoImportarBody = zod.object({
       "criticidadeRegulatoria",
     ])
     .describe("Tipo de entidade para importação"),
-  sobrescrever: zod
+  sobrescrever: zod.coerce
     .boolean()
     .default(postImportacaoExportacaoImportarBodySobrescreverDefault)
     .describe("Se deve sobrescrever registros existentes"),

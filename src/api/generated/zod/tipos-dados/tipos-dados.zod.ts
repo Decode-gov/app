@@ -176,13 +176,16 @@ export const postTiposDadosBodyEscalaMin = 0;
 export const postTiposDadosBodyPermiteNuloDefault = true;
 export const postTiposDadosBodyAtivoDefault = true;
 
-export const PostTiposDadosBody = zod.object({
-  nome: zod
+export const PostTiposDadosBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(postTiposDadosBodyNomeMax)
     .describe("Nome do tipo de dados"),
-  descricao: zod.string().optional().describe("Descrição do tipo de dados"),
+  descricao: zod.coerce
+    .string()
+    .optional()
+    .describe("Descrição do tipo de dados"),
   categoria: zod
     .enum([
       "PRIMITIVO",
@@ -193,31 +196,37 @@ export const PostTiposDadosBody = zod.object({
     ])
     .default(postTiposDadosBodyCategoriaDefault)
     .describe("Categoria do tipo"),
-  formato: zod.string().optional().describe("Formato específico do tipo"),
-  tamanhoMaximo: zod
+  formato: zod.coerce
+    .string()
+    .optional()
+    .describe("Formato específico do tipo"),
+  tamanhoMaximo: zod.coerce
     .number()
     .min(postTiposDadosBodyTamanhoMaximoMin)
     .optional()
     .describe("Tamanho máximo em bytes"),
-  precisao: zod
+  precisao: zod.coerce
     .number()
     .min(postTiposDadosBodyPrecisaoMin)
     .optional()
     .describe("Precisão numérica"),
-  escala: zod
+  escala: zod.coerce
     .number()
     .min(postTiposDadosBodyEscalaMin)
     .optional()
     .describe("Escala decimal"),
-  permiteNulo: zod
+  permiteNulo: zod.coerce
     .boolean()
     .default(postTiposDadosBodyPermiteNuloDefault)
     .describe("Permite valores nulos"),
-  valorPadrao: zod.string().optional().describe("Valor padrão"),
-  mascara: zod.string().optional().describe("Máscara de formatação"),
-  validacao: zod.string().optional().describe("Regras de validação"),
-  observacoes: zod.string().optional().describe("Observações adicionais"),
-  ativo: zod
+  valorPadrao: zod.coerce.string().optional().describe("Valor padrão"),
+  mascara: zod.coerce.string().optional().describe("Máscara de formatação"),
+  validacao: zod.coerce.string().optional().describe("Regras de validação"),
+  observacoes: zod.coerce
+    .string()
+    .optional()
+    .describe("Observações adicionais"),
+  ativo: zod.coerce
     .boolean()
     .default(postTiposDadosBodyAtivoDefault)
     .describe("Status de ativação"),
@@ -388,14 +397,17 @@ export const putTiposDadosIdBodyPrecisaoMin = 0;
 
 export const putTiposDadosIdBodyEscalaMin = 0;
 
-export const PutTiposDadosIdBody = zod.object({
-  nome: zod
+export const PutTiposDadosIdBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putTiposDadosIdBodyNomeMax)
     .optional()
     .describe("Nome do tipo de dados"),
-  descricao: zod.string().optional().describe("Descrição do tipo de dados"),
+  descricao: zod.coerce
+    .string()
+    .optional()
+    .describe("Descrição do tipo de dados"),
   categoria: zod
     .enum([
       "PRIMITIVO",
@@ -406,28 +418,37 @@ export const PutTiposDadosIdBody = zod.object({
     ])
     .optional()
     .describe("Categoria do tipo"),
-  formato: zod.string().optional().describe("Formato específico do tipo"),
-  tamanhoMaximo: zod
+  formato: zod.coerce
+    .string()
+    .optional()
+    .describe("Formato específico do tipo"),
+  tamanhoMaximo: zod.coerce
     .number()
     .min(putTiposDadosIdBodyTamanhoMaximoMin)
     .optional()
     .describe("Tamanho máximo em bytes"),
-  precisao: zod
+  precisao: zod.coerce
     .number()
     .min(putTiposDadosIdBodyPrecisaoMin)
     .optional()
     .describe("Precisão numérica"),
-  escala: zod
+  escala: zod.coerce
     .number()
     .min(putTiposDadosIdBodyEscalaMin)
     .optional()
     .describe("Escala decimal"),
-  permiteNulo: zod.boolean().optional().describe("Permite valores nulos"),
-  valorPadrao: zod.string().optional().describe("Valor padrão"),
-  mascara: zod.string().optional().describe("Máscara de formatação"),
-  validacao: zod.string().optional().describe("Regras de validação"),
-  observacoes: zod.string().optional().describe("Observações adicionais"),
-  ativo: zod.boolean().optional().describe("Status de ativação"),
+  permiteNulo: zod.coerce
+    .boolean()
+    .optional()
+    .describe("Permite valores nulos"),
+  valorPadrao: zod.coerce.string().optional().describe("Valor padrão"),
+  mascara: zod.coerce.string().optional().describe("Máscara de formatação"),
+  validacao: zod.coerce.string().optional().describe("Regras de validação"),
+  observacoes: zod.coerce
+    .string()
+    .optional()
+    .describe("Observações adicionais"),
+  ativo: zod.coerce.boolean().optional().describe("Status de ativação"),
 });
 
 export const putTiposDadosIdResponseDataIdRegExp = new RegExp(

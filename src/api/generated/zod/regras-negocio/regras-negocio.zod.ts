@@ -209,8 +209,8 @@ export const postRegrasNegocioBodyTermoIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PostRegrasNegocioBody = zod.object({
-  descricao: zod
+export const PostRegrasNegocioBody = zod.strictObject({
+  descricao: zod.coerce
     .string()
     .min(1)
     .describe("Descrição detalhada da regra de negócio"),
@@ -407,8 +407,8 @@ export const putRegrasNegocioIdBodyTermoIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PutRegrasNegocioIdBody = zod.object({
-  descricao: zod
+export const PutRegrasNegocioIdBody = zod.strictObject({
+  descricao: zod.coerce
     .string()
     .min(1)
     .optional()

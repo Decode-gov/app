@@ -73,12 +73,12 @@ export const GetMfaIdResponse = zod.object({
  * Configurar autenticação multi-fator para um usuário
  * @summary Configurar MFA
  */
-export const PostMfaSetupBody = zod.object({
-  usuarioId: zod.string(),
+export const PostMfaSetupBody = zod.strictObject({
+  usuarioId: zod.coerce.string(),
   tipo: zod.enum(["SMS", "EMAIL", "TOTP"]),
-  telefone: zod.string().optional(),
-  email: zod.string().optional(),
-  secretKey: zod.string().optional(),
+  telefone: zod.coerce.string().optional(),
+  email: zod.coerce.string().optional(),
+  secretKey: zod.coerce.string().optional(),
 });
 
 /**
@@ -86,9 +86,9 @@ export const PostMfaSetupBody = zod.object({
  * @summary Ativar MFA
  */
 
-export const PostMfaEnableBody = zod.object({
-  usuarioId: zod.string(),
-  codigo: zod.string().min(1),
+export const PostMfaEnableBody = zod.strictObject({
+  usuarioId: zod.coerce.string(),
+  codigo: zod.coerce.string().min(1),
 });
 
 export const PostMfaEnableResponse = zod.object({
@@ -109,9 +109,9 @@ export const PostMfaEnableResponse = zod.object({
  * @summary Verificar código MFA
  */
 
-export const PostMfaVerifyBody = zod.object({
-  usuarioId: zod.string(),
-  codigo: zod.string().min(1),
+export const PostMfaVerifyBody = zod.strictObject({
+  usuarioId: zod.coerce.string(),
+  codigo: zod.coerce.string().min(1),
   tipo: zod.enum(["SMS", "EMAIL", "TOTP"]),
 });
 
@@ -132,8 +132,8 @@ export const PutMfaIdDisableParams = zod.strictObject({
   id: zod.coerce.string(),
 });
 
-export const PutMfaIdDisableBody = zod.object({
-  codigo: zod.string().min(1),
+export const PutMfaIdDisableBody = zod.strictObject({
+  codigo: zod.coerce.string().min(1),
 });
 
 export const PutMfaIdDisableResponse = zod.object({

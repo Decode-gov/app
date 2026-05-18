@@ -221,13 +221,13 @@ export const postAtividadesBodyPercentualConclusaoMax = 100;
 
 export const postAtividadesBodyAtivoDefault = true;
 
-export const PostAtividadesBody = zod.object({
-  nome: zod
+export const PostAtividadesBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(postAtividadesBodyNomeMax)
     .describe("Nome da atividade"),
-  descricao: zod.string().min(1).describe("Descrição da atividade"),
+  descricao: zod.coerce.string().min(1).describe("Descrição da atividade"),
   processoId: zod
     .uuid()
     .regex(postAtividadesBodyProcessoIdRegExp)
@@ -237,7 +237,10 @@ export const PostAtividadesBody = zod.object({
     .regex(postAtividadesBodySistemaIdRegExp)
     .optional()
     .describe("ID do sistema"),
-  responsavel: zod.string().min(1).describe("Responsável pela atividade"),
+  responsavel: zod.coerce
+    .string()
+    .min(1)
+    .describe("Responsável pela atividade"),
   status: zod
     .enum(["PLANEJADA", "EM_ANDAMENTO", "CONCLUIDA", "CANCELADA", "PAUSADA"])
     .default(postAtividadesBodyStatusDefault)
@@ -256,14 +259,17 @@ export const PostAtividadesBody = zod.object({
     .regex(postAtividadesBodyDataFimEsperadaRegExp)
     .optional()
     .describe("Data prevista para conclusão"),
-  percentualConclusao: zod
+  percentualConclusao: zod.coerce
     .number()
     .min(postAtividadesBodyPercentualConclusaoMin)
     .max(postAtividadesBodyPercentualConclusaoMax)
     .default(postAtividadesBodyPercentualConclusaoDefault)
     .describe("Percentual de conclusão"),
-  observacoes: zod.string().optional().describe("Observações adicionais"),
-  ativo: zod
+  observacoes: zod.coerce
+    .string()
+    .optional()
+    .describe("Observações adicionais"),
+  ativo: zod.coerce
     .boolean()
     .default(postAtividadesBodyAtivoDefault)
     .describe("Status de ativação"),
@@ -470,14 +476,18 @@ export const putAtividadesIdBodyDataFimRealRegExp = new RegExp(
 export const putAtividadesIdBodyPercentualConclusaoMin = 0;
 export const putAtividadesIdBodyPercentualConclusaoMax = 100;
 
-export const PutAtividadesIdBody = zod.object({
-  nome: zod
+export const PutAtividadesIdBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putAtividadesIdBodyNomeMax)
     .optional()
     .describe("Nome da atividade"),
-  descricao: zod.string().min(1).optional().describe("Descrição da atividade"),
+  descricao: zod.coerce
+    .string()
+    .min(1)
+    .optional()
+    .describe("Descrição da atividade"),
   processoId: zod
     .uuid()
     .regex(putAtividadesIdBodyProcessoIdRegExp)
@@ -488,7 +498,7 @@ export const PutAtividadesIdBody = zod.object({
     .regex(putAtividadesIdBodySistemaIdRegExp)
     .optional()
     .describe("ID do sistema"),
-  responsavel: zod
+  responsavel: zod.coerce
     .string()
     .min(1)
     .optional()
@@ -521,14 +531,17 @@ export const PutAtividadesIdBody = zod.object({
     .regex(putAtividadesIdBodyDataFimRealRegExp)
     .optional()
     .describe("Data real de conclusão"),
-  percentualConclusao: zod
+  percentualConclusao: zod.coerce
     .number()
     .min(putAtividadesIdBodyPercentualConclusaoMin)
     .max(putAtividadesIdBodyPercentualConclusaoMax)
     .optional()
     .describe("Percentual de conclusão"),
-  observacoes: zod.string().optional().describe("Observações adicionais"),
-  ativo: zod.boolean().optional().describe("Status de ativação"),
+  observacoes: zod.coerce
+    .string()
+    .optional()
+    .describe("Observações adicionais"),
+  ativo: zod.coerce.boolean().optional().describe("Status de ativação"),
 });
 
 export const putAtividadesIdResponseDataIdRegExp = new RegExp(

@@ -57,14 +57,14 @@ export default defineConfig({
             query: true,
             param: true,
             header: true,
-            body: false,
+            body: true,
           },
           coerce: {
             query: ["string", "boolean", "date"],
             param: ["string", "boolean", "date"],
-            body: false,
+            body: true,
             response: false,
-            header: false
+            header: true
           },
         },
       },

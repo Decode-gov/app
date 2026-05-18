@@ -69,17 +69,17 @@ export const GetSistemasResponse = zod.object({
  */
 export const postSistemasBodyNomeMax = 255;
 
-export const PostSistemasBody = zod.object({
-  nome: zod
+export const PostSistemasBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(postSistemasBodyNomeMax)
     .describe("Nome do sistema"),
   descricao: zod
-    .union([zod.string(), zod.null()])
+    .union([zod.coerce.string(), zod.null()])
     .optional()
     .describe("Descrição do sistema"),
-  repositorio: zod.string().describe("URL do repositório do sistema"),
+  repositorio: zod.coerce.string().describe("URL do repositório do sistema"),
 });
 
 /**
@@ -142,18 +142,18 @@ export const PutSistemasIdParams = zod.strictObject({
 
 export const putSistemasIdBodyNomeMax = 255;
 
-export const PutSistemasIdBody = zod.object({
-  nome: zod
+export const PutSistemasIdBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putSistemasIdBodyNomeMax)
     .optional()
     .describe("Nome do sistema"),
   descricao: zod
-    .union([zod.string(), zod.null()])
+    .union([zod.coerce.string(), zod.null()])
     .optional()
     .describe("Descrição do sistema"),
-  repositorio: zod
+  repositorio: zod.coerce
     .string()
     .optional()
     .describe("URL do repositório do sistema"),

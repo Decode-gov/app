@@ -62,13 +62,16 @@ export const GetProcessosResponse = zod.object({
  */
 export const postProcessosBodyNomeMax = 255;
 
-export const PostProcessosBody = zod.object({
-  nome: zod
+export const PostProcessosBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(postProcessosBodyNomeMax)
     .describe("Nome do processo"),
-  descricao: zod.string().optional().describe("Descrição opcional do processo"),
+  descricao: zod.coerce
+    .string()
+    .optional()
+    .describe("Descrição opcional do processo"),
 });
 
 /**
@@ -124,14 +127,14 @@ export const PutProcessosIdParams = zod.strictObject({
 
 export const putProcessosIdBodyNomeMax = 255;
 
-export const PutProcessosIdBody = zod.object({
-  nome: zod
+export const PutProcessosIdBody = zod.strictObject({
+  nome: zod.coerce
     .string()
     .min(1)
     .max(putProcessosIdBodyNomeMax)
     .optional()
     .describe("Nome do processo"),
-  descricao: zod.string().optional().describe("Descrição do processo"),
+  descricao: zod.coerce.string().optional().describe("Descrição do processo"),
 });
 
 export const putProcessosIdResponseDataIdRegExp = new RegExp(

@@ -100,9 +100,9 @@ export const postListasClassificacaoBodyPoliticaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PostListasClassificacaoBody = zod.object({
-  classificacao: zod.string().min(1),
-  descricao: zod.string().min(1),
+export const PostListasClassificacaoBody = zod.strictObject({
+  classificacao: zod.coerce.string().min(1),
+  descricao: zod.coerce.string().min(1),
   politicaId: zod.uuid().regex(postListasClassificacaoBodyPoliticaIdRegExp),
 });
 
@@ -197,9 +197,9 @@ export const putListasClassificacaoIdBodyPoliticaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
-export const PutListasClassificacaoIdBody = zod.object({
-  classificacao: zod.string().min(1).optional(),
-  descricao: zod.string().min(1).optional(),
+export const PutListasClassificacaoIdBody = zod.strictObject({
+  classificacao: zod.coerce.string().min(1).optional(),
+  descricao: zod.coerce.string().min(1).optional(),
   politicaId: zod
     .uuid()
     .regex(putListasClassificacaoIdBodyPoliticaIdRegExp)

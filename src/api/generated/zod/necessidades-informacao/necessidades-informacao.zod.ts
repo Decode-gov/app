@@ -61,17 +61,17 @@ export const GetNecessidadesInformacaoResponse = zod.object({
  * @summary Criar necessidade de informação
  */
 
-export const PostNecessidadesInformacaoBody = zod.object({
-  questaoGerencial: zod.string().min(1).describe("Questão gerencial"),
+export const PostNecessidadesInformacaoBody = zod.strictObject({
+  questaoGerencial: zod.coerce.string().min(1).describe("Questão gerencial"),
   elementoEstrategico: zod
-    .union([zod.string(), zod.null()])
+    .union([zod.coerce.string(), zod.null()])
     .optional()
     .describe("Elemento estratégico"),
   elementoTatico: zod
-    .union([zod.string(), zod.null()])
+    .union([zod.coerce.string(), zod.null()])
     .optional()
     .describe("Elemento tático"),
-  origemQuestao: zod.string().min(1).describe("Origem da questão"),
+  origemQuestao: zod.coerce.string().min(1).describe("Origem da questão"),
 });
 
 /**
@@ -132,21 +132,25 @@ export const PutNecessidadesInformacaoIdParams = zod.strictObject({
     .describe("ID da necessidade de informação"),
 });
 
-export const PutNecessidadesInformacaoIdBody = zod.object({
-  questaoGerencial: zod
+export const PutNecessidadesInformacaoIdBody = zod.strictObject({
+  questaoGerencial: zod.coerce
     .string()
     .min(1)
     .optional()
     .describe("Questão gerencial"),
   elementoEstrategico: zod
-    .union([zod.string(), zod.null()])
+    .union([zod.coerce.string(), zod.null()])
     .optional()
     .describe("Elemento estratégico"),
   elementoTatico: zod
-    .union([zod.string(), zod.null()])
+    .union([zod.coerce.string(), zod.null()])
     .optional()
     .describe("Elemento tático"),
-  origemQuestao: zod.string().min(1).optional().describe("Origem da questão"),
+  origemQuestao: zod.coerce
+    .string()
+    .min(1)
+    .optional()
+    .describe("Origem da questão"),
 });
 
 export const putNecessidadesInformacaoIdResponseDataIdRegExp = new RegExp(

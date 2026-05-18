@@ -29,7 +29,7 @@ type LoginFormData = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const router = useRouter()
-  const { mutate: login, isPending } = usePostUsuariosLogin()
+  const login = usePostUsuariosLogin()
   const [showPassword, setShowPassword] = useState(false)
 
   const form = useForm<LoginFormData>({
@@ -41,7 +41,7 @@ export default function LoginPage() {
   })
 
   const onSubmit = (data: LoginFormData) => {
-    login(
+    usePostUsuariosLogin(
       { data },
       {
         onSuccess: () => {
