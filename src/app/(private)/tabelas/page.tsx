@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Edit, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useGetBancos } from "@/api/generated/endpoints/bancos/bancos";
+import { useGetBancos } from "@/api/generated/endpoints/bancos-de-dados/bancos-de-dados";
 import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
 import { useDeleteTabelasId, useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
 import { TabelaForm } from "@/components/tabelas/tabela-form";
@@ -46,7 +46,7 @@ export default function TabelasPage() {
   const { data: bancosData } = useGetBancos();
   const deleteMutation = useDeleteTabelasId();
 
-  const tabelas = tabelasData?.data ?? [];
+  const tabelas: TabelaResponse[] = (tabelasData?.data ?? []) as TabelaResponse[];
   const sistemas = sistemasData?.data ?? [];
   const bancos = bancosData?.data ?? [];
 

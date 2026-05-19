@@ -34,8 +34,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAtividades } from "@/hooks/api/use-atividades";
-import { useCreateOperacao, useUpdateOperacao } from "@/hooks/api/use-operacoes";
+import { useGetAtividades } from "@/api/generated/endpoints/atividades/atividades";
+import { usePostOperacoes, usePutOperacoesId } from "@/api/generated/endpoints/operações/operações";
 import type { OperacaoResponse } from "@/types/api";
 
 const formSchema = z.object({
@@ -115,15 +115,12 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
     },
   });
 
-  const { mutate: createOperacao, isPending: isCreating } = useCreateOperacao();
-  const { mutate: updateOperacao, isPending: isUpdating } = useUpdateOperacao();
+  const { mutate: createOperacao, isPending: isCreating } = usePostOperacoes();
+  const { mutate: updateOperacao, isPending: isUpdating } = usePutOperacoesId();
   const isPending = isCreating || isUpdating;
 
   // Queries para selects
-  const { data: atividadesData, isLoading: isLoadingAtividades } = useAtividades({
-    page: 1,
-    limit: 1000,
-  });
+  const { data: atividadesData, isLoading: isLoadingAtividades } = useGetAtividades();
   const atividades = atividadesData?.data ?? [];
 
   const onSubmit = (data: FormData) => {
@@ -148,7 +145,7 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       // biome-ignore lint/suspicious/noExplicitAny: form type workaround
-      createOperacao(payload as any, {
+      createOperacao({ data: payload as any }, {
         onSuccess: () => {
           onOpenChange(false);
           form.reset();

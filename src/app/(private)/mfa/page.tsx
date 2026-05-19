@@ -2,7 +2,7 @@
 
 import { CheckCircle, Key, Mail, Search, Shield, Smartphone, XCircle } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useGetMfa } from "@/api/generated/endpoints/mfa/mfa";
+import { useGetMfa } from "@/api/generated/endpoints/mfa-2fa/mfa-2fa";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,7 +69,7 @@ export default function MfaPage() {
   const stats = useMemo(() => {
     return {
       total: configuracoes.length,
-      ativos: configuracoes.filter((c) => c.status === "ATIVO").length,
+      ativos: configuracoes.filter((c) => c.ativo).length,
       totp: configuracoes.filter((c) => c.tipo === "TOTP").length,
       sms: configuracoes.filter((c) => c.tipo === "SMS").length,
     };
@@ -83,7 +83,8 @@ export default function MfaPage() {
 
       const matchesTipo = tipoFilter === "all" || config.tipo === tipoFilter;
 
-      const matchesStatus = statusFilter === "all" || config.status === statusFilter;
+      const status = config.ativo ? "ATIVO" : "INATIVO";
+      const matchesStatus = statusFilter === "all" || status === statusFilter;
 
       return matchesSearch && matchesTipo && matchesStatus;
     });
@@ -248,23 +249,17 @@ export default function MfaPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={getStatusBadgeColor(config.status)}>
-                        {config.status === "ATIVO" ? (
+                      <Badge variant={getStatusBadgeColor(config.ativo ? "ATIVO" : "INATIVO")}>
+                        {config.ativo ? (
                           <CheckCircle className="mr-1 h-3 w-3" />
                         ) : (
                           <XCircle className="mr-1 h-3 w-3" />
                         )}
-                        {getStatusLabel(config.status)}
+                        {getStatusLabel(config.ativo ? "ATIVO" : "INATIVO")}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {config.backup_codes && config.backup_codes.length > 0 ? (
-                        <Badge variant="outline" className="text-xs">
-                          {config.backup_codes.length} códigos
-                        </Badge>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
-                      )}
+                      <span className="text-xs text-muted-foreground">—</span>
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {formatDate(config.createdAt)}

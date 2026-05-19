@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useCreateDocumento, useUpdateDocumento } from "@/hooks/api/use-documentos";
+import { usePostDocumentos, usePutDocumentosId } from "@/api/generated/endpoints/documentos-polimórficos/documentos-polimórficos";
 import type { DocumentoResponse } from "@/types/api";
 
 // Schema baseado nos requisitos
@@ -91,8 +91,8 @@ const tiposEntidade = [
 
 export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormProps) {
   const isEditing = !!documento;
-  const createMutation = useCreateDocumento();
-  const updateMutation = useUpdateDocumento();
+  const createMutation = usePostDocumentos();
+  const updateMutation = usePutDocumentosId();
 
   const form = useForm<DocumentoFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -118,13 +118,18 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
       if (documento) {
         form.reset({
           entidadeId: documento.entidadeId,
-          tipoEntidade: documento.tipoEntidade,
+          tipoEntidade: documento.tipoEntidade as DocumentoFormValues["tipoEntidade"],
           nomeArquivo: documento.nomeArquivo,
-          tamanhoBytes: documento.tamanhoBytes,
+          tamanhoBytes: Number(documento.tamanhoBytes),
           tipoArquivo: documento.tipoArquivo,
           caminhoArquivo: documento.caminhoArquivo,
           descricao: documento.descricao || "",
-          metadados: documento.metadados || "",
+          metadados:
+            typeof documento.metadados === "string"
+              ? documento.metadados
+              : documento.metadados
+                ? JSON.stringify(documento.metadados)
+                : "",
           checksum: documento.checksum || "",
           versao: documento.versao,
           ativo: documento.ativo,
@@ -163,10 +168,12 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await createMutation.mutateAsync({
-          ...data,
-          tamanhoBytes: String(data.tamanhoBytes),
-          // biome-ignore lint/suspicious/noExplicitAny: form type workaround
-        } as any);
+          data: {
+            ...data,
+            tamanhoBytes: String(data.tamanhoBytes),
+            // biome-ignore lint/suspicious/noExplicitAny: form type workaround
+          } as any,
+        });
       }
 
       form.reset();

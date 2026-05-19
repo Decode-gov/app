@@ -44,7 +44,11 @@ export function BancoTable({ data, onEdit, onDelete }: BancoTableProps) {
       id: "tabelas",
       header: "Tabelas",
       cell: ({ row }) => {
-        const count = row.original._count?.tabelas || row.original.tabelas?.length || 0;
+        const original = row.original as typeof row.original & {
+          _count?: { tabelas?: number };
+          tabelas?: unknown[];
+        };
+        const count = original._count?.tabelas || original.tabelas?.length || 0;
         if (count === 0) {
           return <span className="text-sm text-muted-foreground">0</span>;
         }

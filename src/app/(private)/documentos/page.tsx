@@ -15,7 +15,7 @@ import { useState } from "react";
 import {
   useDeleteDocumentosId,
   useGetDocumentos,
-} from "@/api/generated/endpoints/documentos/documentos";
+} from "@/api/generated/endpoints/documentos-polimórficos/documentos-polimórficos";
 import { DocumentoForm } from "@/components/documentos/documento-form";
 import {
   AlertDialog,
@@ -300,7 +300,7 @@ export default function DocumentosPage() {
                           <div>
                             <span className="text-muted-foreground">Tamanho:</span>
                             <p className="font-medium">
-                              {(documento.tamanhoBytes / 1024).toFixed(2)} KB
+                              {(Number(documento.tamanhoBytes) / 1024).toFixed(2)} KB
                             </p>
                           </div>
                           <div>

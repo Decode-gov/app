@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import type { Politica } from "@/types/classificacao";
+import type { Politica } from "@/types/politica";
 
 const politicaFormSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),

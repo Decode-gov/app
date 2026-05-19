@@ -71,7 +71,9 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
           data,
         });
       } else {
-        await createMutation.mutateAsync({ data });
+        await createMutation.mutateAsync({
+          data: { ...data, repositorio: data.repositorio ?? "" },
+        });
       }
       form.reset();
       onOpenChange(false);

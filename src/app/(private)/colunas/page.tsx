@@ -4,7 +4,7 @@ import { Edit, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useDeleteColunasId, useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
 import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
-import { useGetTiposDados } from "@/api/generated/endpoints/tipos-dados/tipos-dados";
+import { useGetTiposDados } from "@/api/generated/endpoints/tipos-de-dados/tipos-de-dados";
 import { ColunaForm } from "@/components/colunas/coluna-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import {
   useDeleteListasReferenciaId,
   useGetListasReferencia,
-} from "@/api/generated/endpoints/listas-referencia/listas-referencia";
+} from "@/api/generated/endpoints/listas-de-referência/listas-de-referência";
 import { ListaForm } from "@/components/listas-referencia/lista-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

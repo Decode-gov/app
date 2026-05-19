@@ -54,7 +54,7 @@ export function SistemaTable({ data, onEdit, onDelete }: SistemaTableProps) {
       id: "bancos",
       header: "Bancos",
       cell: ({ row }) => {
-        const bancos = row.original.bancos;
+        const bancos = (row.original as typeof row.original & { bancos?: unknown[] }).bancos;
         if (!bancos || bancos.length === 0) {
           return <span className="text-sm text-muted-foreground">0</span>;
         }

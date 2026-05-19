@@ -32,8 +32,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useCreateAtividade, useUpdateAtividade } from "@/hooks/api/use-atividades";
-import { useProcessos } from "@/hooks/api/use-processos";
+import { usePostAtividades, usePutAtividadesId } from "@/api/generated/endpoints/atividades/atividades";
+import { useGetProcessos } from "@/api/generated/endpoints/processos/processos";
 import type { AtividadeResponse } from "@/types/api";
 
 const formSchema = z.object({
@@ -62,10 +62,10 @@ interface AtividadeFormProps {
 export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormProps) {
   const isEditing = !!atividade;
   const [processoDialogOpen, setProcessoDialogOpen] = useState(false);
-  const createAtividade = useCreateAtividade();
-  const updateAtividade = useUpdateAtividade();
+  const createAtividade = usePostAtividades();
+  const updateAtividade = usePutAtividadesId();
 
-  const { data: processosData } = useProcessos({ page: 1, limit: 1000 });
+  const { data: processosData } = useGetProcessos();
   const processos = processosData?.data || [];
 
   const form = useForm<FormValues>({
@@ -84,15 +84,19 @@ export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormPr
 
   useEffect(() => {
     if (atividade) {
+      const a = atividade as AtividadeResponse & {
+        dataInicio?: string;
+        dataFim?: string;
+      };
       form.reset({
-        nome: atividade.nome || "",
-        descricao: atividade.descricao || "",
-        status: atividade.status || "PLANEJADA",
-        prioridade: atividade.prioridade || "MEDIA",
-        processoId: atividade.processoId || "",
-        responsavel: atividade.responsavel || "",
-        dataInicio: atividade.dataInicio ? atividade.dataInicio.split("T")[0] : "",
-        dataFim: atividade.dataFim ? atividade.dataFim.split("T")[0] : "",
+        nome: a.nome || "",
+        descricao: a.descricao || "",
+        status: a.status || "PLANEJADA",
+        prioridade: a.prioridade || "MEDIA",
+        processoId: a.processoId || "",
+        responsavel: a.responsavel || "",
+        dataInicio: a.dataInicio ? a.dataInicio.split("T")[0] : "",
+        dataFim: a.dataFim ? a.dataFim.split("T")[0] : "",
       });
     } else {
       form.reset({
@@ -124,7 +128,7 @@ export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormPr
       if (isEditing) {
         await updateAtividade.mutateAsync({ id: atividade.id, data: payload });
       } else {
-        await createAtividade.mutateAsync(payload);
+        await createAtividade.mutateAsync({ data: payload });
       }
       onOpenChange(false);
       form.reset();

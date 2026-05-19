@@ -2,7 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
-import type { GetPoliticasInternas200DataItem } from "@/api/generated/model";
+import type { GetPoliticasInternas200DataItem } from "@/types/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

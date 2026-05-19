@@ -32,7 +32,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useCreateTipoDados, useUpdateTipoDados } from "@/hooks/api/use-tipos-dados";
+import {
+  usePostTiposDados,
+  usePutTiposDadosId,
+} from "@/api/generated/endpoints/tipos-de-dados/tipos-de-dados";
 import type { TipoDadosResponse } from "@/types/api";
 
 const tipoDadosSchema = z.object({
@@ -53,8 +56,8 @@ interface TipoDadosFormProps {
 }
 
 export function TipoDadosForm({ open, onOpenChange, tipoDados }: TipoDadosFormProps) {
-  const createMutation = useCreateTipoDados();
-  const updateMutation = useUpdateTipoDados();
+  const createMutation = usePostTiposDados();
+  const updateMutation = usePutTiposDadosId();
 
   const form = useForm<TipoDadosFormValues>({
     resolver: zodResolver(tipoDadosSchema),
@@ -94,7 +97,7 @@ export function TipoDadosForm({ open, onOpenChange, tipoDados }: TipoDadosFormPr
           data,
         });
       } else {
-        await createMutation.mutateAsync(data);
+        await createMutation.mutateAsync({ data });
       }
       form.reset();
       onOpenChange(false);

@@ -15,7 +15,7 @@ import { useGetAtividades } from "@/api/generated/endpoints/atividades/atividade
 import {
   useDeleteOperacoesId,
   useGetOperacoes,
-} from "@/api/generated/endpoints/operacoes/operacoes";
+} from "@/api/generated/endpoints/operações/operações";
 import { OperacaoForm } from "@/components/operacoes/operacao-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -323,10 +323,10 @@ export default function OperacoesPage() {
                       {getTipoLabel(operacao.tipo)}
                     </Badge>
                   </TableCell>
-                  <TableCell>{getFrequenciaLabel(operacao.frequencia)}</TableCell>
+                  <TableCell>{getFrequenciaLabel(operacao.frequencia ?? "")}</TableCell>
                   <TableCell>
-                    <span className={getComplexidadeColor(operacao.complexidade)}>
-                      {getComplexidadeLabel(operacao.complexidade)}
+                    <span className={getComplexidadeColor(operacao.complexidade ?? "")}>
+                      {getComplexidadeLabel(operacao.complexidade ?? "")}
                     </span>
                   </TableCell>
                   <TableCell>

@@ -29,11 +29,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { usePapeis } from "@/hooks/api/use-papeis";
+import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
 import {
-  useCreateParteEnvolvida,
-  useUpdateParteEnvolvida,
-} from "@/hooks/api/use-partes-envolvidas";
+  usePostPartesEnvolvidas,
+  usePutPartesEnvolvidasId,
+} from "@/api/generated/endpoints/partes-envolvidas/partes-envolvidas";
 import type { ParteEnvolvidaResponse } from "@/types/api";
 
 const formSchema = z.object({
@@ -55,10 +55,10 @@ interface ParteEnvolvidaFormProps {
 
 export function ParteEnvolvidaForm({ open, onOpenChange, parte }: ParteEnvolvidaFormProps) {
   const isEditing = !!parte;
-  const createParte = useCreateParteEnvolvida();
-  const updateParte = useUpdateParteEnvolvida();
+  const createParte = usePostPartesEnvolvidas();
+  const updateParte = usePutPartesEnvolvidasId();
 
-  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 });
+  const { data: papeisData } = useGetPapeis();
   const papeis = papeisData?.data || [];
 
   const form = useForm<FormValues>({
@@ -101,7 +101,7 @@ export function ParteEnvolvidaForm({ open, onOpenChange, parte }: ParteEnvolvida
       if (isEditing) {
         await updateParte.mutateAsync({ id: parte.id, data: payload });
       } else {
-        await createParte.mutateAsync(payload);
+        await createParte.mutateAsync({ data: payload });
       }
       onOpenChange(false);
       form.reset();

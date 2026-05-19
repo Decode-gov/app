@@ -22,9 +22,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  useCreateListaReferencia,
-  useUpdateListaReferencia,
-} from "@/hooks/api/use-listas-referencia";
+  usePostListasReferencia,
+  usePutListasReferenciaId,
+} from "@/api/generated/endpoints/listas-de-referência/listas-de-referência";
 import { type CreateListaReferenciaFormData, CreateListaReferenciaSchema } from "@/schemas";
 import type { ListaReferenciaResponse } from "@/types/api";
 
@@ -47,8 +47,8 @@ export function ListaForm({ open, onOpenChange, lista }: ListaFormProps) {
     },
   });
 
-  const { mutate: createLista, isPending: isCreating } = useCreateListaReferencia();
-  const { mutate: updateLista, isPending: isUpdating } = useUpdateListaReferencia();
+  const { mutate: createLista, isPending: isCreating } = usePostListasReferencia();
+  const { mutate: updateLista, isPending: isUpdating } = usePutListasReferenciaId();
   const isPending = isCreating || isUpdating;
 
   const onSubmit = (data: FormData) => {
@@ -72,7 +72,7 @@ export function ListaForm({ open, onOpenChange, lista }: ListaFormProps) {
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       // biome-ignore lint/suspicious/noExplicitAny: form type workaround
-      createLista(payload as any, {
+      createLista({ data: payload as any }, {
         onSuccess: () => {
           onOpenChange(false);
           form.reset();

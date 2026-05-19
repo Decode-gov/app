@@ -2,7 +2,7 @@
 
 import { Clock, Download, FileJson, FileSpreadsheet, FileText, Search, Upload } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useGetImportacaoExportacao } from "@/api/generated/endpoints/importacao-exportacao/importacao-exportacao";
+import { useGetImportacaoExportacao } from "@/api/generated/endpoints/importação-exportação/importação-exportação";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -90,7 +90,7 @@ export default function ImportacaoExportacaoPage() {
     return operacoes.filter((operacao) => {
       const matchesSearch =
         search === "" ||
-        operacao.entidades.some((e) => e.toLowerCase().includes(search.toLowerCase()));
+        operacao.tipoEntidade.toLowerCase().includes(search.toLowerCase());
 
       const matchesFormato = formatoFilter === "all" || operacao.formato === formatoFilter;
 
@@ -254,7 +254,8 @@ export default function ImportacaoExportacaoPage() {
               </TableRow>
             ) : (
               filteredOperacoes.map((operacao) => {
-                const FormatoIcon = getFormatoIcon(operacao.formato);
+                const formato = operacao.formato ?? "";
+                const FormatoIcon = getFormatoIcon(formato);
                 return (
                   <TableRow key={operacao.id}>
                     <TableCell className="font-mono text-xs">
@@ -263,22 +264,13 @@ export default function ImportacaoExportacaoPage() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <FormatoIcon className="h-4 w-4 text-muted-foreground" />
-                        <span>{getFormatoLabel(operacao.formato)}</span>
+                        <span>{getFormatoLabel(formato)}</span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {operacao.entidades.slice(0, 3).map((entidade) => (
-                          <Badge key={entidade} variant="outline" className="text-xs">
-                            {entidade}
-                          </Badge>
-                        ))}
-                        {operacao.entidades.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{operacao.entidades.length - 3}
-                          </Badge>
-                        )}
-                      </div>
+                      <Badge variant="outline" className="text-xs">
+                        {operacao.tipoEntidade}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant={getStatusBadgeColor(operacao.status)}>
@@ -286,13 +278,15 @@ export default function ImportacaoExportacaoPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {operacao.arquivo && operacao.status === "CONCLUIDO" ? (
+                      {operacao.status === "CONCLUIDO" ? (
                         <Button variant="outline" size="sm">
                           <Download className="mr-2 h-3 w-3" />
                           Download
                         </Button>
-                      ) : operacao.erro ? (
-                        <span className="text-xs text-destructive">{operacao.erro}</span>
+                      ) : operacao.registrosComErro > 0 ? (
+                        <span className="text-xs text-destructive">
+                          {operacao.registrosComErro} erros
+                        </span>
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
                       )}

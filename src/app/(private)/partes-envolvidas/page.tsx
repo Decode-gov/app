@@ -11,7 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
-import { useGetPapeis } from "@/api/generated/endpoints/papeis/papeis";
+import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
 import {
   useDeletePartesEnvolvidasId,
   useGetPartesEnvolvidas,
@@ -99,7 +99,7 @@ export default function PartesEnvolvidasPage() {
     }
   };
 
-  const partes = partesData?.data ?? [];
+  const partes: ParteEnvolvidaResponse[] = (partesData?.data ?? []) as ParteEnvolvidaResponse[];
   const papeis = papeisData?.data ?? [];
 
   const pessoasFisicas = partes.filter((p) => p.tipo === "PESSOA_FISICA").length;
@@ -242,8 +242,8 @@ export default function PartesEnvolvidasPage() {
                         <TableRow key={parte.id}>
                           <TableCell className="font-medium">{parte.nome}</TableCell>
                           <TableCell>
-                            <Badge className={getTipoBadgeColor(parte.tipo)}>
-                              {getTipoLabel(parte.tipo)}
+                            <Badge className={getTipoBadgeColor(parte.tipo ?? "")}>
+                              {getTipoLabel(parte.tipo ?? "")}
                             </Badge>
                           </TableCell>
                           <TableCell>
@@ -257,7 +257,9 @@ export default function PartesEnvolvidasPage() {
                             )}
                           </TableCell>
                           <TableCell className="text-muted-foreground">
-                            {new Date(parte.createdAt).toLocaleDateString("pt-BR")}
+                            {parte.createdAt
+                              ? new Date(parte.createdAt).toLocaleDateString("pt-BR")
+                              : "-"}
                           </TableCell>
                           <TableCell>
                             <DropdownMenu>

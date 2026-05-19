@@ -17,7 +17,9 @@ import {
 } from "@/api/generated/endpoints/empresas/empresas"
 import { createColumns } from "@/components/empresas/columns"
 import { EmpresaForm } from "@/components/empresas/empresa-form"
-import type { GetEmpresas200DataItem } from "@/api/generated/model"
+import type { GetEmpresas200 } from "@/api/generated/model"
+
+type GetEmpresas200DataItem = GetEmpresas200["data"][number]
 
 export default function EmpresasPage() {
   const router = useRouter()

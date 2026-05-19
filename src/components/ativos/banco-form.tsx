@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { usePostBancos, usePutBancosId } from "@/api/generated/endpoints/bancos/bancos";
+import { usePostBancos, usePutBancosId } from "@/api/generated/endpoints/bancos-de-dados/bancos-de-dados";
 import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
