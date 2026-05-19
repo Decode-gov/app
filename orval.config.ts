@@ -17,7 +17,7 @@ export default defineConfig({
       client: "react-query",
       httpClient: "axios",
       formatter: 'prettier',
-      clean: true,
+      clean: false,
       override: {
         mutator: {
           path: "./src/lib/api-mutator.ts",

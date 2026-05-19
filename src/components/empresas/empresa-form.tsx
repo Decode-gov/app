@@ -1,12 +1,20 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "sonner"
-import { Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import type { z } from "zod";
+import {
+  getGetEmpresasQueryKey,
+  postEmpresas,
+  putEmpresasId,
+} from "@/api/generated/endpoints/empresas/empresas";
+import type { GetEmpresas200 } from "@/api/generated/model";
+import { PostEmpresasBody } from "@/api/generated/zod/empresas/empresas.zod";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +22,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -22,71 +30,62 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import {
-  getGetEmpresasQueryKey,
-  postEmpresas,
-  putEmpresasId,
-} from "@/api/generated/endpoints/empresas/empresas"
-import { z } from "zod"
-import { PostEmpresasBody } from "@/api/generated/zod/empresas/empresas.zod"
-import type { GetEmpresas200DataItem } from "@/api/generated/model"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
-type FormData = z.output<typeof PostEmpresasBody>
+type FormData = z.output<typeof PostEmpresasBody>;
 
 interface EmpresaFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  empresa?: GetEmpresas200DataItem
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  empresa?: GetEmpresas200["data"][number];
 }
 
 export function EmpresaForm({ open, onOpenChange, empresa }: EmpresaFormProps) {
-  const queryClient = useQueryClient()
-  const isEdit = !!empresa
+  const queryClient = useQueryClient();
+  const isEdit = !!empresa;
 
   const form = useForm<FormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(PostEmpresasBody) as any,
+    resolver: zodResolver(PostEmpresasBody),
     defaultValues: { nome: "" },
-  })
+  });
 
   useEffect(() => {
     if (open) {
-      form.reset({ nome: empresa?.nome ?? "" })
+      form.reset({ nome: empresa?.nome ?? "" });
     }
-  }, [empresa, open, form])
+  }, [empresa, open, form]);
 
   const createMutation = useMutation({
     mutationFn: (data: FormData) => postEmpresas(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getGetEmpresasQueryKey() })
-      toast.success("Empresa criada com sucesso!")
-      onOpenChange(false)
+      queryClient.invalidateQueries({ queryKey: getGetEmpresasQueryKey() });
+      toast.success("Empresa criada com sucesso!");
+      onOpenChange(false);
     },
     onError: () => toast.error("Erro ao criar empresa"),
-  })
+  });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: FormData }) =>
-      putEmpresasId(id, data),
+    mutationFn: ({ id, data }: { id: string; data: FormData }) => putEmpresasId(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getGetEmpresasQueryKey() })
-      toast.success("Empresa atualizada com sucesso!")
-      onOpenChange(false)
+      queryClient.invalidateQueries({ queryKey: getGetEmpresasQueryKey() });
+      toast.success("Empresa atualizada com sucesso!");
+      onOpenChange(false);
     },
     onError: () => toast.error("Erro ao atualizar empresa"),
-  })
+  });
 
   const onSubmit = async (data: FormData) => {
     if (isEdit && empresa) {
-      await updateMutation.mutateAsync({ id: empresa.id, data })
+      await updateMutation.mutateAsync({ id: empresa.id, data });
     } else {
-      await createMutation.mutateAsync(data)
+      await createMutation.mutateAsync(data);
     }
-  }
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -134,5 +133,5 @@ export function EmpresaForm({ open, onOpenChange, empresa }: EmpresaFormProps) {
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

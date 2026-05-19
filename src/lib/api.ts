@@ -13,7 +13,12 @@ export const api = axios.create({
 api.interceptors.request.use((config) => {
   const empresaId = getGlobalEmpresaId();
   if (empresaId) {
-    config.params = { ...config.params, empresaId };
+    const method = config.method?.toLowerCase();
+    if (!method || method === "get" || method === "delete" || method === "head") {
+      config.params = { ...config.params, empresaId };
+    } else {
+      config.data = { ...config.data, empresaId };
+    }
   }
   return config;
 });

@@ -39,9 +39,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useEmpresaAdmin } from "@/context/empresa-admin-context";
 import { Separator } from "../ui/separator";
 import { EmpresaSelector } from "./empresa-selector";
-import { useEmpresaAdmin } from "@/context/empresa-admin-context";
 
 const menuItems = [
   {
@@ -66,7 +66,7 @@ const menuItems = [
       { title: "Políticas Internas", icon: Shield, url: "/politicas-internas" },
       { title: "Papéis de Governança", icon: UserCheck, url: "/papeis" },
       { title: "Domínios de dados", icon: Building, url: "/dominios" },
-      { title: "Atribuições Papel↔Domínio", icon: Workflow, url: "/atribuicoes-papel-dominio" },
+      { title: "Atribuições Papel/Domínio", icon: Workflow, url: "/atribuicoes-papel-dominio" },
     ],
   },
   {
@@ -118,8 +118,7 @@ export function AppSidebar() {
 
   const empresaId = isAdmin ? searchParams.get("empresaId") : null;
 
-  const buildHref = (url: string) =>
-    empresaId ? `${url}?empresaId=${empresaId}` : url;
+  const buildHref = (url: string) => (empresaId ? `${url}?empresaId=${empresaId}` : url);
 
   const handleLogout = () => {
     logout(undefined as never, {
@@ -146,32 +145,25 @@ export function AppSidebar() {
         <EmpresaSelector />
         <Separator />
         {isAdmin && (
-          <SidebarGroup className="px-2">
-            <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground/80 px-2 py-1 uppercase tracking-wide">
-              Administração
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    className={`group transition-all duration-200 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground ml-2 ${
-                      pathname === "/empresas"
-                        ? "bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary"
-                        : ""
-                    }`}
-                  >
-                    <Link href={buildHref("/empresas")}>
-                      <Building2 className="group-hover:scale-110 transition-transform duration-200" />
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">
-                        Empresas
-                      </span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                className={`w-auto group transition-all duration-200 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground mx-2 ${pathname === "/empresas"
+                  ? "bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary"
+                  : ""
+                  }`}
+              >
+                <Link href={buildHref("/empresas")}>
+                  <Building2 className="group-hover:scale-110 transition-transform duration-200" />
+                  <span className="group-hover:translate-x-1 transition-transform duration-200">
+                    Empresas
+                  </span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
         )}
         {menuItems.map((item) => (
           <SidebarGroup key={item.title} className="px-2">
@@ -180,11 +172,10 @@ export function AppSidebar() {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild
-                    className={`group transition-all duration-200 hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground ${
-                      pathname === item.url
-                        ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
-                        : ""
-                    }`}
+                    className={`group transition-all duration-200 hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground ${pathname === item.url
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
+                      : ""
+                      }`}
                   >
                     <Link href={buildHref(item.url ?? "#")}>
                       {item.icon && (
@@ -209,11 +200,10 @@ export function AppSidebar() {
                       <SidebarMenuItem key={subItem.title}>
                         <SidebarMenuButton
                           asChild
-                          className={`group transition-all duration-200 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground ml-2 ${
-                            pathname === subItem.url
-                              ? "bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary"
-                              : ""
-                          }`}
+                          className={`group transition-all duration-200 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground ml-2 ${pathname === subItem.url
+                            ? "bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary"
+                            : ""
+                            }`}
                         >
                           <Link href={buildHref(subItem.url)}>
                             <subItem.icon className="group-hover:scale-110 transition-transform duration-200" />

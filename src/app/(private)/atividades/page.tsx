@@ -3,12 +3,9 @@
 import {
   AlertTriangle,
   Clock,
-  Edit,
   ListTodo,
-  MoreHorizontal,
   Plus,
-  Search,
-  Trash2,
+  Search
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -16,16 +13,8 @@ import {
   useGetAtividades,
 } from "@/api/generated/endpoints/atividades/atividades";
 import { useGetProcessos } from "@/api/generated/endpoints/processos/processos";
-import { AtividadeForm } from "@/components/atividades/atividade-form";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -35,15 +24,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import type { AtividadeResponse } from "@/types/api";
 
 const getStatusLabel = (status: string) => {
   const labels: Record<string, string> = {
@@ -94,7 +74,7 @@ export default function AtividadesPage() {
   const [page] = useState(1);
   const [limit] = useState(10);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [selectedAtividade, setSelectedAtividade] = useState<AtividadeResponse | undefined>();
+  // const [selectedAtividade, setSelectedAtividade] = useState<AtividadeResponse | undefined>();
 
   void page;
   void limit;
@@ -107,15 +87,15 @@ export default function AtividadesPage() {
 
   const deleteAtividade = useDeleteAtividadesId();
 
-  const handleEdit = (atividade: AtividadeResponse) => {
-    setSelectedAtividade(atividade);
-    setIsFormOpen(true);
-  };
+  // const handleEdit = (atividade: AtividadeResponse) => {
+  //   setSelectedAtividade(atividade);
+  //   setIsFormOpen(true);
+  // };
 
-  const handleNew = () => {
-    setSelectedAtividade(undefined);
-    setIsFormOpen(true);
-  };
+  // const handleNew = () => {
+  //   setSelectedAtividade(undefined);
+  //   setIsFormOpen(true);
+  // };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta atividade?")) {
@@ -203,7 +183,9 @@ export default function AtividadesPage() {
                 <CardTitle>Atividades</CardTitle>
                 <CardDescription>Lista de todas as atividades cadastradas</CardDescription>
               </div>
-              <Button className="gap-2" onClick={handleNew}>
+              <Button className="gap-2" onClick={() => {
+                // handleNew
+              }}>
                 <Plus className="h-4 w-4" />
                 Nova Atividade
               </Button>
@@ -261,7 +243,7 @@ export default function AtividadesPage() {
               </p>
             ) : (
               <div className="rounded-md border">
-                <Table>
+                {/* <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Nome</TableHead>
@@ -334,14 +316,14 @@ export default function AtividadesPage() {
                       );
                     })}
                   </TableBody>
-                </Table>
+                </Table> */}
               </div>
             )}
           </CardContent>
         </Card>
       </div>
 
-      <AtividadeForm open={isFormOpen} onOpenChange={setIsFormOpen} atividade={selectedAtividade} />
+      {/* <AtividadeForm open={isFormOpen} onOpenChange={setIsFormOpen} atividade={selectedAtividade} /> */}
     </>
   );
 }

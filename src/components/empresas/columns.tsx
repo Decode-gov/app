@@ -1,62 +1,47 @@
-"use client"
+"use client";
 
-import type { ColumnDef } from "@tanstack/react-table"
-import { Edit, MoreHorizontal, Trash2 } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import type { ColumnDef } from "@tanstack/react-table";
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import type { GetEmpresas200 } from "@/api/generated/model";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import type { GetEmpresas200DataItem } from "@/api/generated/model"
+} from "@/components/ui/dropdown-menu";
+
+type EmpresaItem = GetEmpresas200["data"][number];
 
 interface ColumnsProps {
-  onEdit: (empresa: GetEmpresas200DataItem) => void
-  onDelete: (id: string) => void
+  onEdit: (empresa: EmpresaItem) => void;
+  onDelete: (id: string) => void;
 }
 
-export const createColumns = ({
-  onEdit,
-  onDelete,
-}: ColumnsProps): ColumnDef<GetEmpresas200DataItem>[] => [
+export const createColumns = ({ onEdit, onDelete }: ColumnsProps): ColumnDef<EmpresaItem>[] => [
   {
     accessorKey: "nome",
     header: "Nome",
-    cell: ({ row }) => (
-      <span className="font-medium">{row.getValue("nome")}</span>
-    ),
-  },
-  {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => {
-      const id = row.getValue("id") as string
-      return (
-        <span className="text-muted-foreground text-xs font-mono">
-          {id.slice(0, 8)}...
-        </span>
-      )
-    },
+    cell: ({ row }) => <span className="font-medium">{row.getValue("nome")}</span>,
   },
   {
     accessorKey: "deletedAt",
     header: "Status",
     cell: ({ row }) => {
-      const deletedAt = row.getValue("deletedAt") as string | null | undefined
+      const deletedAt = row.getValue("deletedAt") as string | null | undefined;
       return deletedAt ? (
         <Badge variant="destructive">Inativo</Badge>
       ) : (
         <Badge variant="outline">Ativo</Badge>
-      )
+      );
     },
   },
   {
     id: "actions",
     header: "",
     cell: ({ row }) => {
-      const empresa = row.original
+      const empresa = row.original;
 
       return (
         <DropdownMenu>
@@ -70,16 +55,13 @@ export const createColumns = ({
               <Edit className="mr-2 h-4 w-4" />
               Editar
             </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-destructive"
-              onClick={() => onDelete(empresa.id)}
-            >
+            <DropdownMenuItem className="text-destructive" onClick={() => onDelete(empresa.id)}>
               <Trash2 className="mr-2 h-4 w-4" />
               Excluir
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];

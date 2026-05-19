@@ -1,9 +1,8 @@
 "use client";
 
-import { Activity, Calendar, Search, Shield, User } from "lucide-react";
+import { Activity, Search, Shield, User } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useGetAuditoria } from "@/api/generated/endpoints/auditoria/auditoria";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,15 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 // Helper para status HTTP
 const getStatusBadgeColor = (status: number): "default" | "secondary" | "destructive" => {
@@ -56,31 +46,32 @@ export default function AuditoriaPage() {
   const stats = useMemo(() => {
     return {
       total: logs.length,
-      sucesso: logs.filter((l) => l.status >= 200 && l.status < 300).length,
-      erro: logs.filter((l) => l.status >= 400).length,
+      sucesso: 0,
+      erro: 0,
       usuariosUnicos: new Set(logs.map((l) => l.usuario)).size,
     };
   }, [logs]);
 
   // Filtros
   const filteredLogs = useMemo(() => {
-    return logs.filter((log) => {
-      const matchesSearch =
-        search === "" ||
-        log.usuario.toLowerCase().includes(search.toLowerCase()) ||
-        log.endpoint.toLowerCase().includes(search.toLowerCase());
+    return null
+    // return logs.filter((log) => {
+    //   const matchesSearch =
+    //     search === "" ||
+    //     log.usuario.toLowerCase().includes(search.toLowerCase()) ||
+    //     log.endpoint.toLowerCase().includes(search.toLowerCase());
 
-      const matchesMetodo = metodoFilter === "all" || log.metodo === metodoFilter;
+    //   const matchesMetodo = metodoFilter === "all" || log.metodo === metodoFilter;
 
-      const matchesStatus =
-        statusFilter === "all" ||
-        (statusFilter === "2xx" && log.status >= 200 && log.status < 300) ||
-        (statusFilter === "4xx" && log.status >= 400 && log.status < 500) ||
-        (statusFilter === "5xx" && log.status >= 500);
+    //   const matchesStatus =
+    //     statusFilter === "all" ||
+    //     (statusFilter === "2xx" && log.status >= 200 && log.status < 300) ||
+    //     (statusFilter === "4xx" && log.status >= 400 && log.status < 500) ||
+    //     (statusFilter === "5xx" && log.status >= 500);
 
-      return matchesSearch && matchesMetodo && matchesStatus;
-    });
-  }, [logs, search, metodoFilter, statusFilter]);
+    //   return matchesSearch && matchesMetodo && matchesStatus;
+    // });
+  }, []);
 
   // Formatar data
   const formatDate = (dateString: string) => {
@@ -189,7 +180,7 @@ export default function AuditoriaPage() {
 
       {/* Table */}
       <Card>
-        <Table>
+        {/* <Table>
           <TableHeader>
             <TableRow>
               <TableHead>
@@ -225,14 +216,14 @@ export default function AuditoriaPage() {
                   </TableCell>
                 </TableRow>
               ))
-            ) : filteredLogs.length === 0 ? (
+            ) : filteredLogs?.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground">
                   Nenhum log encontrado
                 </TableCell>
               </TableRow>
             ) : (
-              filteredLogs.map((log) => (
+              filteredLogs?.map((log) => (
                 <TableRow key={log.id}>
                   <TableCell className="font-mono text-xs">{formatDate(log.dataHora)}</TableCell>
                   <TableCell>
@@ -254,7 +245,7 @@ export default function AuditoriaPage() {
               ))
             )}
           </TableBody>
-        </Table>
+        </Table> */}
       </Card>
     </div>
   );
