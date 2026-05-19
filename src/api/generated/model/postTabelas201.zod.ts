@@ -12,6 +12,9 @@ export const postTabelas201DataNomeMax = 255;
 export const postTabelas201DataBancoIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const postTabelas201DataEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const postTabelas201DataIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -31,6 +34,11 @@ export const PostTabelas201 = zod.object({
       ])
       .optional()
       .describe("ID do banco de dados"),
+    empresaId: zod
+      .uuid()
+      .regex(postTabelas201DataEmpresaIdRegExp)
+      .optional()
+      .describe("ID da empresa (obrigatório para ADMIN)"),
     id: zod
       .uuid()
       .regex(postTabelas201DataIdRegExp)

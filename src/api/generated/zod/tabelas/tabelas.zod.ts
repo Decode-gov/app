@@ -16,6 +16,9 @@ export const getTabelasResponseDataItemNomeMax = 255;
 export const getTabelasResponseDataItemBancoIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const getTabelasResponseDataItemEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const getTabelasResponseDataItemIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -37,6 +40,11 @@ export const GetTabelasResponse = zod.object({
           ])
           .optional()
           .describe("ID do banco de dados"),
+        empresaId: zod
+          .uuid()
+          .regex(getTabelasResponseDataItemEmpresaIdRegExp)
+          .optional()
+          .describe("ID da empresa (obrigatório para ADMIN)"),
         id: zod
           .uuid()
           .regex(getTabelasResponseDataItemIdRegExp)
@@ -63,6 +71,9 @@ export const postTabelasBodyNomeMax = 255;
 export const postTabelasBodyBancoIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const postTabelasBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const PostTabelasBody = zod.strictObject({
   nome: zod.coerce
@@ -77,6 +88,11 @@ export const PostTabelasBody = zod.strictObject({
     ])
     .optional()
     .describe("ID do banco de dados"),
+  empresaId: zod
+    .uuid()
+    .regex(postTabelasBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 /**
@@ -94,6 +110,9 @@ export const GetTabelasIdParams = zod.strictObject({
 export const getTabelasIdResponseDataNomeMax = 255;
 
 export const getTabelasIdResponseDataBancoIdOneRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+export const getTabelasIdResponseDataEmpresaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 export const getTabelasIdResponseDataIdRegExp = new RegExp(
@@ -115,6 +134,11 @@ export const GetTabelasIdResponse = zod.object({
       ])
       .optional()
       .describe("ID do banco de dados"),
+    empresaId: zod
+      .uuid()
+      .regex(getTabelasIdResponseDataEmpresaIdRegExp)
+      .optional()
+      .describe("ID da empresa (obrigatório para ADMIN)"),
     id: zod
       .uuid()
       .regex(getTabelasIdResponseDataIdRegExp)
@@ -147,6 +171,9 @@ export const putTabelasIdBodyNomeMax = 255;
 export const putTabelasIdBodyBancoIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const putTabelasIdBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const PutTabelasIdBody = zod.strictObject({
   nome: zod.coerce
@@ -162,11 +189,19 @@ export const PutTabelasIdBody = zod.strictObject({
     ])
     .optional()
     .describe("ID do banco de dados"),
+  empresaId: zod
+    .uuid()
+    .regex(putTabelasIdBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 export const putTabelasIdResponseDataNomeMax = 255;
 
 export const putTabelasIdResponseDataBancoIdOneRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+export const putTabelasIdResponseDataEmpresaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 export const putTabelasIdResponseDataIdRegExp = new RegExp(
@@ -188,6 +223,11 @@ export const PutTabelasIdResponse = zod.object({
       ])
       .optional()
       .describe("ID do banco de dados"),
+    empresaId: zod
+      .uuid()
+      .regex(putTabelasIdResponseDataEmpresaIdRegExp)
+      .optional()
+      .describe("ID da empresa (obrigatório para ADMIN)"),
     id: zod
       .uuid()
       .regex(putTabelasIdResponseDataIdRegExp)
@@ -220,6 +260,9 @@ export const deleteTabelasIdResponseDataNomeMax = 255;
 export const deleteTabelasIdResponseDataBancoIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const deleteTabelasIdResponseDataEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const deleteTabelasIdResponseDataIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -239,6 +282,11 @@ export const DeleteTabelasIdResponse = zod.object({
       ])
       .optional()
       .describe("ID do banco de dados"),
+    empresaId: zod
+      .uuid()
+      .regex(deleteTabelasIdResponseDataEmpresaIdRegExp)
+      .optional()
+      .describe("ID da empresa (obrigatório para ADMIN)"),
     id: zod
       .uuid()
       .regex(deleteTabelasIdResponseDataIdRegExp)

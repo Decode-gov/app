@@ -18,6 +18,9 @@ export const putColunasIdBodyNecessidadeInformacaoIdRegExp = new RegExp(
 export const putColunasIdBodyTermoIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const putColunasIdBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const PutColunasIdBody = zod.object({
   nome: zod
@@ -45,6 +48,11 @@ export const PutColunasIdBody = zod.object({
     .regex(putColunasIdBodyTermoIdRegExp)
     .optional()
     .describe("ID do termo\/definição"),
+  empresaId: zod
+    .uuid()
+    .regex(putColunasIdBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 export type PutColunasIdBody = zod.input<typeof PutColunasIdBody>;

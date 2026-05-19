@@ -7,12 +7,20 @@
  */
 import { z as zod } from "zod";
 
+export const postListasReferenciaBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
 export const PostListasReferenciaBody = zod.object({
   nome: zod.string().min(1),
   descricao: zod.union([zod.string(), zod.literal(null).nullable()]).optional(),
   valores: zod.string().min(1),
   tabelaId: zod.union([zod.string(), zod.literal(null).nullable()]).optional(),
   colunaId: zod.union([zod.string(), zod.literal(null).nullable()]).optional(),
+  empresaId: zod
+    .uuid()
+    .regex(postListasReferenciaBodyEmpresaIdRegExp)
+    .optional(),
 });
 
 export type PostListasReferenciaBody = zod.input<

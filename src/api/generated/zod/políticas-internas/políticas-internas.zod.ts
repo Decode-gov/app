@@ -34,6 +34,10 @@ export const getPoliticasInternasResponseDataItemDominioDadosIdOneRegExp =
     "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
   );
 
+export const getPoliticasInternasResponseDataItemEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
 export const GetPoliticasInternasResponse = zod.object({
   message: zod.string(),
   data: zod.array(
@@ -75,6 +79,11 @@ export const GetPoliticasInternasResponse = zod.object({
       observacoes: zod
         .union([zod.string(), zod.literal(null).nullable()])
         .optional(),
+      empresaId: zod
+        .uuid()
+        .regex(getPoliticasInternasResponseDataItemEmpresaIdRegExp)
+        .optional()
+        .describe("ID da empresa (obrigatório para ADMIN)"),
     }),
   ),
 });
@@ -88,6 +97,10 @@ export const postPoliticasInternasBodyIdRegExp = new RegExp(
 );
 
 export const postPoliticasInternasBodyDominioDadosIdOneRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
+export const postPoliticasInternasBodyEmpresaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
@@ -121,6 +134,11 @@ export const PostPoliticasInternasBody = zod.strictObject({
   observacoes: zod
     .union([zod.coerce.string(), zod.literal(null).nullable()])
     .optional(),
+  empresaId: zod
+    .uuid()
+    .regex(postPoliticasInternasBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 /**
@@ -143,6 +161,10 @@ export const getPoliticasInternasIdResponseDataDominioDadosIdOneRegExp =
   new RegExp(
     "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
   );
+
+export const getPoliticasInternasIdResponseDataEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const GetPoliticasInternasIdResponse = zod.object({
   message: zod.string(),
@@ -178,6 +200,11 @@ export const GetPoliticasInternasIdResponse = zod.object({
     observacoes: zod
       .union([zod.string(), zod.literal(null).nullable()])
       .optional(),
+    empresaId: zod
+      .uuid()
+      .regex(getPoliticasInternasIdResponseDataEmpresaIdRegExp)
+      .optional()
+      .describe("ID da empresa (obrigatório para ADMIN)"),
   }),
 });
 
@@ -198,6 +225,10 @@ export const putPoliticasInternasIdBodyIdRegExp = new RegExp(
 );
 
 export const putPoliticasInternasIdBodyDominioDadosIdOneRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
+export const putPoliticasInternasIdBodyEmpresaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
@@ -231,6 +262,11 @@ export const PutPoliticasInternasIdBody = zod.strictObject({
   observacoes: zod
     .union([zod.coerce.string(), zod.literal(null).nullable()])
     .optional(),
+  empresaId: zod
+    .uuid()
+    .regex(putPoliticasInternasIdBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 export const putPoliticasInternasIdResponseDataIdRegExp = new RegExp(
@@ -241,6 +277,10 @@ export const putPoliticasInternasIdResponseDataDominioDadosIdOneRegExp =
   new RegExp(
     "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
   );
+
+export const putPoliticasInternasIdResponseDataEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const PutPoliticasInternasIdResponse = zod.object({
   message: zod.string(),
@@ -276,6 +316,11 @@ export const PutPoliticasInternasIdResponse = zod.object({
     observacoes: zod
       .union([zod.string(), zod.literal(null).nullable()])
       .optional(),
+    empresaId: zod
+      .uuid()
+      .regex(putPoliticasInternasIdResponseDataEmpresaIdRegExp)
+      .optional()
+      .describe("ID da empresa (obrigatório para ADMIN)"),
   }),
 });
 

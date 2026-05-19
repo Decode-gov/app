@@ -118,6 +118,9 @@ export const GetDefinicoesResponse = zod.object({
 export const postDefinicoesBodyComunidadeIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const postDefinicoesBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const PostDefinicoesBody = zod.strictObject({
   termo: zod.coerce.string().min(1).describe("Nome da definição (termo)"),
@@ -128,6 +131,11 @@ export const PostDefinicoesBody = zod.strictObject({
     .regex(postDefinicoesBodyComunidadeIdRegExp)
     .optional()
     .describe("ID da comunidade relacionada"),
+  empresaId: zod
+    .uuid()
+    .regex(postDefinicoesBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 /**

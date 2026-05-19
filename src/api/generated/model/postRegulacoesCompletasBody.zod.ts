@@ -11,9 +11,9 @@ export const PostRegulacoesCompletasBody = zod.object({
   epigrafe: zod.string().min(1).describe("Epígrafe da regulação"),
   orgao: zod.string().min(1).describe("Órgão regulador"),
   descricao: zod.string().min(1).describe("Descrição da regulação"),
-  dataInicio: zod.date().describe("Data de início da vigência"),
+  dataInicio: zod.unknown().describe("Data de início da vigência"),
   dataFim: zod
-    .date()
+    .unknown()
     .optional()
     .describe("Data de fim da vigência (opcional)"),
 });

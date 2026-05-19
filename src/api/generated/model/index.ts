@@ -6,6 +6,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
+export * from "./deleteArquivosId200.zod";
+export * from "./deleteArquivosId404.zod";
 export * from "./deleteAtividadesId200.zod";
 export * from "./deleteAtividadesId404.zod";
 export * from "./deleteAtribuicoesId200.zod";
@@ -71,6 +73,9 @@ export * from "./deleteTiposDadosId200.zod";
 export * from "./deleteTiposDadosId404.zod";
 export * from "./deleteUsuariosId200.zod";
 export * from "./deleteUsuariosId404.zod";
+export * from "./getArquivos200.zod";
+export * from "./getArquivosIdDownload404.zod";
+export * from "./getArquivosParams.zod";
 export * from "./getAtividades200.zod";
 export * from "./getAtividadesId200.zod";
 export * from "./getAtividadesId404.zod";
@@ -222,6 +227,10 @@ export * from "./getUsuariosParams.zod";
 export * from "./getUsuariosPerfil200.zod";
 export * from "./getUsuariosPerfil401.zod";
 export * from "./getUsuariosPerfil404.zod";
+export * from "./postArquivosUpload201.zod";
+export * from "./postArquivosUpload400.zod";
+export * from "./postArquivosUpload413.zod";
+export * from "./postArquivosUploadParams.zod";
 export * from "./postAtividades201.zod";
 export * from "./postAtividades400.zod";
 export * from "./postAtividadesBody.zod";

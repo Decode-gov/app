@@ -14,7 +14,13 @@ export const getBancosId200DataSistemaIdOneRegExp = new RegExp(
 );
 export const getBancosId200DataSistemaOneNomeMax = 255;
 
+export const getBancosId200DataSistemaOneEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const getBancosId200DataSistemaOneIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+export const getBancosId200DataEmpresaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 export const getBancosId200DataIdRegExp = new RegExp(
@@ -49,6 +55,11 @@ export const GetBancosId200 = zod.object({
             .optional()
             .describe("Descrição do sistema"),
           repositorio: zod.string().describe("URL do repositório do sistema"),
+          empresaId: zod
+            .uuid()
+            .regex(getBancosId200DataSistemaOneEmpresaIdRegExp)
+            .optional()
+            .describe("ID da empresa (obrigatório para ADMIN)"),
           id: zod
             .uuid()
             .regex(getBancosId200DataSistemaOneIdRegExp)
@@ -65,6 +76,11 @@ export const GetBancosId200 = zod.object({
         zod.literal(null).nullable(),
       ])
       .optional(),
+    empresaId: zod
+      .uuid()
+      .regex(getBancosId200DataEmpresaIdRegExp)
+      .optional()
+      .describe("ID da empresa (obrigatório para ADMIN)"),
     id: zod
       .uuid()
       .regex(getBancosId200DataIdRegExp)

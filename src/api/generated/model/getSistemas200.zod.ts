@@ -9,6 +9,9 @@ import { z as zod } from "zod";
 
 export const getSistemas200DataItemNomeMax = 255;
 
+export const getSistemas200DataItemEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const getSistemas200DataItemIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -28,6 +31,11 @@ export const GetSistemas200 = zod.object({
           .optional()
           .describe("Descrição do sistema"),
         repositorio: zod.string().describe("URL do repositório do sistema"),
+        empresaId: zod
+          .uuid()
+          .regex(getSistemas200DataItemEmpresaIdRegExp)
+          .optional()
+          .describe("ID da empresa (obrigatório para ADMIN)"),
         id: zod
           .uuid()
           .regex(getSistemas200DataItemIdRegExp)

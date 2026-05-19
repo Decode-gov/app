@@ -10,6 +10,8 @@ import {
   Database,
   FileCheck,
   FileText,
+  FlaskConical,
+  FolderOpen,
   HelpCircle,
   Home,
   Loader2,
@@ -103,6 +105,12 @@ const menuItems = [
     items: [
       { title: "KPIs", icon: BarChart3, url: "/kpis" },
       { title: "Produtos de Dados", icon: Database, url: "/produtos-dados" },
+    ],
+  },
+  {
+    title: "Laboratório Governamental",
+    items: [
+      { title: "Arquivos", icon: FolderOpen, url: "/laboratorio-governamental/arquivos" },
     ],
   },
 ];
