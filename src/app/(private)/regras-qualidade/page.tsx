@@ -1,70 +1,72 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Target } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Plus, Search, Target } from "lucide-react";
+import { useState } from "react";
+import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
+import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensões-de-qualidade/dimensões-de-qualidade";
+import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
 import {
-  useGetRegrasQualidade,
   useDeleteRegrasQualidadeId,
-} from "@/api/generated/endpoints/regras-qualidade/regras-qualidade"
-import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensoes-qualidade/dimensoes-qualidade"
-import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas"
-import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas"
-import { useGetPapeis } from "@/api/generated/endpoints/papeis/papeis"
-import { RegraQualidadeResponse } from "@/types/api"
-import { RegraQualidadeForm } from "@/components/regras-qualidade/regra-qualidade-form"
+  useGetRegrasQualidade,
+} from "@/api/generated/endpoints/regras-de-qualidade/regras-de-qualidade";
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
+import { RegraQualidadeForm } from "@/components/regras-qualidade/regra-qualidade-form";
+import { RegrasQualidadeTable } from "@/components/regras-qualidade/regras-qualidade-table";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { RegraQualidadeResponse } from "@/types/api";
 
 export default function RegrasQualidadePage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [dimensaoFilter, setDimensaoFilter] = useState<string>("")
-  const [page] = useState(1)
-  const [limit] = useState(10)
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [selectedRegra, setSelectedRegra] = useState<RegraQualidadeResponse | undefined>()
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dimensaoFilter, setDimensaoFilter] = useState<string>("");
+  const [page] = useState(1);
+  const [limit] = useState(10);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedRegra, setSelectedRegra] = useState<RegraQualidadeResponse | undefined>();
 
-  void page
-  void limit
-  void searchTerm
-  void dimensaoFilter
+  void page;
+  void limit;
+  void searchTerm;
+  void dimensaoFilter;
 
-  const { data: regrasData, isLoading, error } = useGetRegrasQualidade()
-  const { data: dimensoesData } = useGetDimensoesQualidade()
-  const { data: tabelasData } = useGetTabelas()
-  const { data: colunasData } = useGetColunas()
-  const { data: papeisData } = useGetPapeis()
+  const { data: regrasData, isLoading, error } = useGetRegrasQualidade();
+  const { data: dimensoesData } = useGetDimensoesQualidade();
+  const { data: tabelasData } = useGetTabelas();
+  const { data: colunasData } = useGetColunas();
+  const { data: papeisData } = useGetPapeis();
 
-  const deleteRegra = useDeleteRegrasQualidadeId()
+  const deleteRegra = useDeleteRegrasQualidadeId();
 
-  const regras = regrasData?.data ?? []
-  const dimensoes = dimensoesData?.data ?? []
-  const tabelas = tabelasData?.data ?? []
-  const colunas = colunasData?.data ?? []
-  const papeis = papeisData?.data ?? []
+  const regras = regrasData?.data ?? [];
+  const dimensoes = dimensoesData?.data ?? [];
+  const tabelas = tabelasData?.data ?? [];
+  const colunas = colunasData?.data ?? [];
+  const papeis = papeisData?.data ?? [];
 
   const handleEdit = (regra: RegraQualidadeResponse) => {
-    setSelectedRegra(regra)
-    setIsFormOpen(true)
-  }
+    setSelectedRegra(regra);
+    setIsFormOpen(true);
+  };
 
   const handleNew = () => {
-    setSelectedRegra(undefined)
-    setIsFormOpen(true)
-  }
+    setSelectedRegra(undefined);
+    setIsFormOpen(true);
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta regra de qualidade?")) {
-      await deleteRegra.mutateAsync({ id })
+      await deleteRegra.mutateAsync({ id });
     }
-  }
+  };
 
-  
   return (
     <>
       <div className="space-y-6">
@@ -90,7 +92,6 @@ export default function RegrasQualidadePage() {
               <p className="text-xs text-muted-foreground">regras cadastradas</p>
             </CardContent>
           </Card>
-
         </div>
 
         <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
@@ -98,9 +99,7 @@ export default function RegrasQualidadePage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Regras de Qualidade</CardTitle>
-                <CardDescription>
-                  Lista de todas as regras cadastradas
-                </CardDescription>
+                <CardDescription>Lista de todas as regras cadastradas</CardDescription>
               </div>
               <Button className="gap-2" onClick={handleNew}>
                 <Plus className="h-4 w-4" />
@@ -119,7 +118,10 @@ export default function RegrasQualidadePage() {
                   className="pl-8"
                 />
               </div>
-              <Select value={dimensaoFilter || "todas"} onValueChange={(value) => setDimensaoFilter(value === "todas" ? "" : value)}>
+              <Select
+                value={dimensaoFilter || "todas"}
+                onValueChange={(value) => setDimensaoFilter(value === "todas" ? "" : value)}
+              >
                 <SelectTrigger className="w-full md:w-[250px]">
                   <SelectValue placeholder="Filtrar por dimensão" />
                 </SelectTrigger>
@@ -134,130 +136,22 @@ export default function RegrasQualidadePage() {
               </Select>
             </div>
 
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Descrição</TableHead>
-                    <TableHead>Dimensão</TableHead>
-                    <TableHead>Tabela</TableHead>
-                    <TableHead>Coluna</TableHead>
-                    <TableHead>Responsável</TableHead>
-                    <TableHead className="w-[70px]">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}>
-                        <TableCell>
-                          <Skeleton className="h-4 w-[250px]" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-5 w-[100px]" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-5 w-[100px]" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-5 w-[100px]" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-[100px]" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-8 w-8" />
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : error ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                        Erro ao carregar regras. Tente novamente.
-                      </TableCell>
-                    </TableRow>
-                  ) : regras.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                        Nenhuma regra encontrada
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    regras.map((regra: RegraQualidadeResponse) => {
-                      const dimensao = regra.dimensao || dimensoes.find(d => d.id === regra.dimensaoId)
-                      const tabela = regra.tabela || tabelas.find(t => t.id === regra.tabelaId)
-                      const coluna = regra.coluna || colunas.find(c => c.id === regra.colunaId)
-                      const responsavel = regra.responsavel || papeis.find(p => p.id === regra.responsavelId)
-
-                      return (
-                        <TableRow key={regra.id}>
-                          <TableCell className="font-medium max-w-[300px]">
-                            <div className="truncate" title={regra.descricao}>
-                              {regra.descricao}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {dimensao ? (
-                              <Badge variant="secondary">{dimensao.nome}</Badge>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {tabela ? (
-                              <Badge variant="outline">{tabela.nome}</Badge>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {coluna ? (
-                              <Badge variant="outline">{coluna.nome}</Badge>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {responsavel ? (
-                              <Badge variant="outline">{responsavel.nome}</Badge>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleEdit(regra)}>
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  Editar
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  className="text-destructive"
-                                  onClick={() => handleDelete(regra.id)}
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Excluir
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            <RegrasQualidadeTable
+                data={regras}
+                dimensoes={dimensoes}
+                tabelas={tabelas}
+                colunas={colunas}
+                papeis={papeis}
+                isLoading={isLoading}
+                error={error}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
           </CardContent>
         </Card>
       </div>
 
       <RegraQualidadeForm open={isFormOpen} onOpenChange={setIsFormOpen} regra={selectedRegra} />
     </>
-  )
+  );
 }

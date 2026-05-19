@@ -1,10 +1,15 @@
-﻿"use client"
+﻿"use client";
 
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { usePostColunas, usePutColunasId } from "@/api/generated/endpoints/colunas/colunas";
+import { useGetNecessidadesInformacao } from "@/api/generated/endpoints/necessidades-de-informação/necessidades-de-informação";
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
+import { useGetDefinicoes } from "@/api/generated/endpoints/termos/termos";
+import { TabelaForm } from "@/components/tabelas/tabela-form";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,52 +17,46 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { usePostColunas, usePutColunasId } from "@/api/generated/endpoints/colunas/colunas"
-import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas"
-import { useGetDefinicoes } from "@/api/generated/endpoints/definicoes/definicoes"
-import { useGetNecessidadesInformacao } from "@/api/generated/endpoints/necessidades-informacao/necessidades-informacao"
-import { ColunaResponse } from "@/types/api"
-import { CreateColunaSchema, type CreateColunaFormData } from "@/schemas"
-import { TabelaForm } from "@/components/tabelas/tabela-form"
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { type CreateColunaFormData, CreateColunaSchema } from "@/schemas";
+import type { ColunaResponse } from "@/types/api";
 
 interface ColunaFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  coluna?: ColunaResponse
-  preSelectedTabelaId?: string
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  coluna?: ColunaResponse;
+  preSelectedTabelaId?: string;
 }
 
 export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: ColunaFormProps) {
-  const [tabelaDialogOpen, setTabelaDialogOpen] = useState(false)
-  
-  const createMutation = usePostColunas()
-  const updateMutation = usePutColunasId()
-  const { data: tabelasData } = useGetTabelas()
-  const { data: termosData } = useGetDefinicoes()
-  const { data: necessidadesData } = useGetNecessidadesInformacao()
-  
+  const [tabelaDialogOpen, setTabelaDialogOpen] = useState(false);
+
+  const createMutation = usePostColunas();
+  const updateMutation = usePutColunasId();
+  const { data: tabelasData } = useGetTabelas();
+  const { data: termosData } = useGetDefinicoes();
+  const { data: necessidadesData } = useGetNecessidadesInformacao();
+
   const form = useForm<CreateColunaFormData>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(CreateColunaSchema) as any,
+    resolver: zodResolver(CreateColunaSchema),
     defaultValues: {
       nome: "",
       descricao: null,
@@ -66,7 +65,7 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
       termoId: null,
       necessidadeInformacaoId: null,
     },
-  })
+  });
 
   useEffect(() => {
     if (open) {
@@ -77,7 +76,7 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
           tabelaId: coluna.tabelaId,
           termoId: coluna.termoId || null,
           necessidadeInformacaoId: coluna.necessidadeInformacaoId || null,
-        })
+        });
       } else {
         form.reset({
           nome: "",
@@ -85,53 +84,62 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
           tabelaId: preSelectedTabelaId || "",
           termoId: null,
           necessidadeInformacaoId: null,
-        })
+        });
       }
     }
-  }, [open, coluna, preSelectedTabelaId, form])
+  }, [open, coluna, preSelectedTabelaId, form]);
 
   const onSubmit = async (data: CreateColunaFormData) => {
     try {
       if (coluna) {
         await updateMutation.mutateAsync({
           id: coluna.id,
-          data,
-        })
+          data: {
+            ...data,
+            necessidadeInformacaoId: data.necessidadeInformacaoId ?? '',
+            tabelaId: data.tabelaId,
+            termoId: data.termoId ?? ''
+          },
+        });
       } else {
-        await createMutation.mutateAsync({ data })
+        await createMutation.mutateAsync({
+          data: {
+            ...data,
+            necessidadeInformacaoId: data.necessidadeInformacaoId ?? '',
+            tabelaId: data.tabelaId,
+            termoId: data.termoId ?? ''
+          }
+        });
       }
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar coluna:', error)
+      console.error("Erro ao salvar coluna:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
-  const tabelas = tabelasData?.data ?? []
-  const termos = termosData?.data ?? []
-  const necessidades = necessidadesData?.data ?? []
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
+  const tabelas = tabelasData?.data ?? [];
+  const termos = termosData?.data ?? [];
+  const necessidades = necessidadesData?.data ?? [];
 
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {coluna ? "Editar Coluna" : "Nova Coluna"}
-            </DialogTitle>
+            <DialogTitle>{coluna ? "Editar Coluna" : "Nova Coluna"}</DialogTitle>
             <DialogDescription>
-              {coluna 
+              {coluna
                 ? "Atualize as informações da coluna."
-                : "Preencha os dados para criar uma nova coluna."
-              }
+                : "Preencha os dados para criar uma nova coluna."}
             </DialogDescription>
           </DialogHeader>
 
@@ -146,9 +154,7 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
                     <FormControl>
                       <Input placeholder="Ex: id_cliente, nome_produto" {...field} />
                     </FormControl>
-                    <FormDescription className="text-xs">
-                      Máximo 255 caracteres
-                    </FormDescription>
+                    <FormDescription className="text-xs">Máximo 255 caracteres</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -161,16 +167,14 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
                   <FormItem>
                     <FormLabel>Descrição</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="Descrição da coluna..."
                         className="min-h-[80px]"
                         {...field}
                         value={field.value || ""}
                       />
                     </FormControl>
-                    <FormDescription className="text-xs">
-                      Máximo 1000 caracteres
-                    </FormDescription>
+                    <FormDescription className="text-xs">Máximo 1000 caracteres</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -229,8 +233,8 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Termo</FormLabel>
-                    <Select 
-                      onValueChange={(value) => field.onChange(value === "none" ? null : value)} 
+                    <Select
+                      onValueChange={(value) => field.onChange(value === "none" ? null : value)}
                       value={field.value || "none"}
                     >
                       <FormControl>
@@ -266,8 +270,8 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Questão Gerencial</FormLabel>
-                    <Select 
-                      onValueChange={(value) => field.onChange(value === "none" ? null : value)} 
+                    <Select
+                      onValueChange={(value) => field.onChange(value === "none" ? null : value)}
                       value={field.value || "none"}
                     >
                       <FormControl>
@@ -285,7 +289,9 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
                           necessidades.map((necessidade) => (
                             <SelectItem key={necessidade.id} value={necessidade.id}>
                               <div className="flex flex-col">
-                                <span className="max-w-md line-clamp-1">{necessidade.questaoGerencial}</span>
+                                <span className="max-w-md line-clamp-1">
+                                  {necessidade.questaoGerencial}
+                                </span>
                               </div>
                             </SelectItem>
                           ))
@@ -315,10 +321,7 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
         </DialogContent>
       </Dialog>
 
-      <TabelaForm 
-        open={tabelaDialogOpen}
-        onOpenChange={setTabelaDialogOpen}
-      />
+      <TabelaForm open={tabelaDialogOpen} onOpenChange={setTabelaDialogOpen} />
     </>
-  )
+  );
 }

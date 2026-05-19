@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import { AlertTriangle } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { AlertTriangle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { type Papel } from "@/types/papel"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import type { Papel } from "@/types/papel";
 
 interface ConfirmDeleteDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  papel: Papel | null
-  onConfirm: () => void
-  isDeleting?: boolean
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  papel: Papel | null;
+  onConfirm: () => void;
+  isDeleting?: boolean;
 }
 
 // Mock data das políticas para display
@@ -29,7 +29,7 @@ const mockPoliticasMap = {
   "550e8400-e29b-41d4-a716-446655440002": "Política de Privacidade de Dados",
   "550e8400-e29b-41d4-a716-446655440003": "Política de Retenção de Documentos",
   "550e8400-e29b-41d4-a716-446655440004": "Política de Classificação de Informações",
-}
+};
 
 export function ConfirmDeleteDialog({
   open,
@@ -38,11 +38,14 @@ export function ConfirmDeleteDialog({
   onConfirm,
   isDeleting = false,
 }: ConfirmDeleteDialogProps) {
-  if (!papel) return null
+  if (!papel) return null;
 
   const getPoliticaNome = (politicaId: string): string => {
-    return mockPoliticasMap[politicaId as keyof typeof mockPoliticasMap] || `Política ${politicaId.slice(0, 8)}...`
-  }
+    return (
+      mockPoliticasMap[politicaId as keyof typeof mockPoliticasMap] ||
+      `Política ${politicaId.slice(0, 8)}...`
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -53,9 +56,7 @@ export function ConfirmDeleteDialog({
               <AlertTriangle className="h-5 w-5 text-destructive" />
             </div>
             <div>
-              <DialogTitle className="text-foreground">
-                Confirmar Exclusão
-              </DialogTitle>
+              <DialogTitle className="text-foreground">Confirmar Exclusão</DialogTitle>
               <DialogDescription className="text-muted-foreground">
                 Esta ação não pode ser desfeita.
               </DialogDescription>
@@ -71,21 +72,15 @@ export function ConfirmDeleteDialog({
           <div className="rounded-lg border border-border/60 bg-muted/30 p-4 space-y-3">
             <div className="flex items-start justify-between">
               <div className="space-y-1 flex-1">
-                <h4 className="text-sm font-semibold text-foreground">
-                  {papel.nome}
-                </h4>
-                <p className="text-xs text-muted-foreground">
-                  ID: {papel.id}
-                </p>
+                <h4 className="text-sm font-semibold text-foreground">{papel.nome}</h4>
+                <p className="text-xs text-muted-foreground">ID: {papel.id}</p>
               </div>
             </div>
 
             <div className="space-y-2">
               <div>
                 <span className="text-xs text-muted-foreground">Descrição:</span>
-                <p className="text-sm text-foreground mt-1">
-                  {papel.descricao}
-                </p>
+                <p className="text-sm text-foreground mt-1">{papel.descricao}</p>
               </div>
 
               <div>
@@ -146,5 +141,5 @@ export function ConfirmDeleteDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -1,59 +1,67 @@
-﻿"use client"
+﻿"use client";
 
-import { useState } from "react"
-import { Plus, Search, MoreHorizontal, Edit, Trash2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Edit, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react";
+import { useState } from "react";
 import {
-  useGetProcessos,
   useDeleteProcessosId,
-} from "@/api/generated/endpoints/processos/processos"
-import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades"
-import { ProcessoForm } from "@/components/processos/processo-form"
-import { ProcessoResponse } from "@/types/api"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+  useGetProcessos,
+} from "@/api/generated/endpoints/processos/processos";
+import type { GetProcessos200 } from "@/api/generated/model";
+import { ProcessoForm } from "@/components/processos/processo-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function ProcessosPage() {
-  const [formOpen, setFormOpen] = useState(false)
-  const [editingProcesso, setEditingProcesso] = useState<ProcessoResponse | undefined>()
-  const [search, setSearch] = useState("")
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingProcesso, setEditingProcesso] = useState<
+    GetProcessos200["data"][number] | undefined
+  >();
+  const [search, setSearch] = useState("");
 
-  const { data: processosData, isLoading } = useGetProcessos()
-  const { data: comunidadesData } = useGetComunidades()
-  const deleteMutation = useDeleteProcessosId()
+  const { data: processosData, isLoading } = useGetProcessos();
+  const deleteMutation = useDeleteProcessosId();
 
-  const processos = processosData?.data ?? []
-  const comunidades = comunidadesData?.data ?? []
+  const processos = processosData?.data ?? [];
 
   const filteredProcessos = processos.filter((processo) => {
-    return search === "" ||
+    return (
+      search === "" ||
       processo.nome.toLowerCase().includes(search.toLowerCase()) ||
       processo.descricao?.toLowerCase().includes(search.toLowerCase())
-  })
+    );
+  });
 
-  const handleEdit = (processo: ProcessoResponse) => {
-    setEditingProcesso(processo)
-    setFormOpen(true)
-  }
+  const handleEdit = (processo: GetProcessos200["data"][number]) => {
+    setEditingProcesso(processo);
+    setFormOpen(true);
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este processo?")) {
       try {
-        await deleteMutation.mutateAsync({ id })
+        await deleteMutation.mutateAsync({ id });
       } catch (error) {
-        console.error('Erro ao excluir processo:', error)
+        console.error("Erro ao excluir processo:", error);
       }
     }
-  }
-
-  const getComunidadeNome = (id: string) => {
-    return comunidades.find(c => c.id === id)?.nome || "N/A"
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -73,7 +81,12 @@ export default function ProcessosPage() {
               <CardTitle>Processos</CardTitle>
               <CardDescription>Gerencie os processos</CardDescription>
             </div>
-            <Button onClick={() => { setEditingProcesso(undefined); setFormOpen(true) }}>
+            <Button
+              onClick={() => {
+                setEditingProcesso(undefined);
+                setFormOpen(true);
+              }}
+            >
               <Plus className="mr-2 h-4 w-4" />
               Novo Processo
             </Button>
@@ -105,7 +118,6 @@ export default function ProcessosPage() {
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>Descrição</TableHead>
-                  <TableHead>Comunidade</TableHead>
                   <TableHead>Criado em</TableHead>
                   <TableHead className="w-[70px]">Ações</TableHead>
                 </TableRow>
@@ -115,9 +127,6 @@ export default function ProcessosPage() {
                   <TableRow key={processo.id}>
                     <TableCell className="font-medium">{processo.nome}</TableCell>
                     <TableCell>{processo.descricao || ""}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{getComunidadeNome(processo.comunidadeId)}</Badge>
-                    </TableCell>
                     <TableCell>
                       {format(new Date(processo.createdAt), "dd/MM/yyyy", { locale: ptBR })}
                     </TableCell>
@@ -151,11 +160,7 @@ export default function ProcessosPage() {
         </CardContent>
       </Card>
 
-      <ProcessoForm
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        processo={editingProcesso}
-      />
+      <ProcessoForm open={formOpen} onOpenChange={setFormOpen} processo={editingProcesso} />
     </div>
-  )
+  );
 }

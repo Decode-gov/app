@@ -1,37 +1,37 @@
-"use client"
+"use client";
 
-import { useState } from "react"
 import {
-    ColumnDef,
-    ColumnFiltersState,
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    useReactTable,
-} from "@tanstack/react-table"
-import { Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
+  type ColumnDef,
+  type ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { Search } from "lucide-react";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  parentOptions: { id: string; nome: string }[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  parentOptions: { id: string; nome: string }[];
 }
 
 export function DominiosDataTable<TData, TValue>({
@@ -39,8 +39,8 @@ export function DominiosDataTable<TData, TValue>({
   data,
   parentOptions,
 }: DataTableProps<TData, TValue>) {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [parentFilter, setParentFilter] = useState<string>("")
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [parentFilter, setParentFilter] = useState<string>("");
 
   const table = useReactTable({
     data,
@@ -52,7 +52,7 @@ export function DominiosDataTable<TData, TValue>({
     state: {
       columnFilters,
     },
-  })
+  });
 
   return (
     <div className="space-y-4">
@@ -62,17 +62,15 @@ export function DominiosDataTable<TData, TValue>({
           <Input
             placeholder="Buscar domínios de dados..."
             value={(table.getColumn("nome")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("nome")?.setFilterValue(event.target.value)
-            }
+            onChange={(event) => table.getColumn("nome")?.setFilterValue(event.target.value)}
             className="pl-8"
           />
         </div>
         <Select
           value={parentFilter || "ALL"}
           onValueChange={(value) => {
-            setParentFilter(value)
-            table.getColumn("parentId")?.setFilterValue(value === "ALL" ? "" : value)
+            setParentFilter(value);
+            table.getColumn("parentId")?.setFilterValue(value === "ALL" ? "" : value);
           }}
         >
           <SelectTrigger className="w-[200px]">
@@ -99,12 +97,9 @@ export function DominiosDataTable<TData, TValue>({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -112,16 +107,10 @@ export function DominiosDataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -140,5 +129,5 @@ export function DominiosDataTable<TData, TValue>({
         </Table>
       </div>
     </div>
-  )
+  );
 }

@@ -1,9 +1,14 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import {
+  usePostBancos,
+  usePutBancosId,
+} from "@/api/generated/endpoints/bancos-de-dados/bancos-de-dados";
+import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,47 +16,45 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { useCreateBanco, useUpdateBanco } from "@/hooks/api/use-bancos"
-import { useSistemas } from "@/hooks/api/use-sistemas"
-import { BancoResponse } from "@/types/api"
-import { CreateBancoSchema, type CreateBancoFormData } from "@/schemas"
+} from "@/components/ui/select";
+import { type CreateBancoFormData, CreateBancoSchema } from "@/schemas";
+import type { BancoResponse } from "@/types/api";
 
 interface BancoFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  banco?: BancoResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  banco?: BancoResponse;
 }
 
 export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
-  const createMutation = useCreateBanco()
-  const updateMutation = useUpdateBanco()
-  const { data: sistemasData } = useSistemas({ page: 1, limit: 1000 })
-  
+  const createMutation = usePostBancos();
+  const updateMutation = usePutBancosId();
+  const { data: sistemasData } = useGetSistemas();
+
   const form = useForm<CreateBancoFormData>({
     resolver: zodResolver(CreateBancoSchema),
     defaultValues: {
       nome: "",
       sistemaId: null,
     },
-  })
+  });
 
   useEffect(() => {
     if (open) {
@@ -59,15 +62,15 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
         form.reset({
           nome: banco.nome,
           sistemaId: banco.sistemaId || null,
-        })
+        });
       } else {
         form.reset({
           nome: "",
           sistemaId: null,
-        })
+        });
       }
     }
-  }, [open, banco, form])
+  }, [open, banco, form]);
 
   const onSubmit = async (data: CreateBancoFormData) => {
     try {
@@ -75,39 +78,38 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
         await updateMutation.mutateAsync({
           id: banco.id,
           data,
-        })
+        });
       } else {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync({
+          data
+        });
       }
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar banco:', error)
+      console.error("Erro ao salvar banco:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
-  const sistemas = sistemasData?.data || []
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
+  const sistemas = sistemasData?.data || [];
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>
-            {banco ? "Editar Banco de Dados" : "Novo Banco de Dados"}
-          </DialogTitle>
+          <DialogTitle>{banco ? "Editar Banco de Dados" : "Novo Banco de Dados"}</DialogTitle>
           <DialogDescription>
-            {banco 
+            {banco
               ? "Atualize as informações do banco de dados."
-              : "Preencha os dados para criar um novo banco de dados."
-            }
+              : "Preencha os dados para criar um novo banco de dados."}
           </DialogDescription>
         </DialogHeader>
 
@@ -122,9 +124,7 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
                   <FormControl>
                     <Input placeholder="Ex: PostgreSQL Produção" {...field} />
                   </FormControl>
-                  <FormDescription className="text-xs">
-                    Máximo 255 caracteres
-                  </FormDescription>
+                  <FormDescription className="text-xs">Máximo 255 caracteres</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -136,10 +136,7 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Sistema</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    value={field.value || undefined}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value || undefined}>
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione um sistema" />
@@ -176,5 +173,5 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

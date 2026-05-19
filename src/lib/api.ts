@@ -1,5 +1,5 @@
-import axios from "axios"
-import { getGlobalEmpresaId } from "@/lib/empresa-store"
+import axios from "axios";
+import { getGlobalEmpresaId } from "@/lib/empresa-store";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333",
@@ -7,16 +7,16 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-})
+});
 
 // Injeta empresaId quando ADMIN selecionou uma empresa
 api.interceptors.request.use((config) => {
-  const empresaId = getGlobalEmpresaId()
+  const empresaId = getGlobalEmpresaId();
   if (empresaId) {
-    config.params = { ...config.params, empresaId }
+    config.params = { ...config.params, empresaId };
   }
-  return config
-})
+  return config;
+});
 
 // Interceptor de resposta para tratamento de erros
 api.interceptors.response.use(
@@ -24,10 +24,10 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Redirecionar para login ou lidar com autenticação
-      console.error("Não autorizado")
+      console.error("Não autorizado");
     }
-    return Promise.reject(error)
-  }
-)
+    return Promise.reject(error);
+  },
+);
 
-export default api
+export default api;

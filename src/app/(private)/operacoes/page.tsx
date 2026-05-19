@@ -1,23 +1,49 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Plus, Workflow, Search, Bot, AlertTriangle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton"
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 import {
-  useGetOperacoes,
+  AlertTriangle,
+  Bot,
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+  Workflow,
+} from "lucide-react";
+import { useMemo, useState } from "react";
+import { useGetAtividades } from "@/api/generated/endpoints/atividades/atividades";
+import {
   useDeleteOperacoesId,
-} from "@/api/generated/endpoints/operacoes/operacoes"
-import { useGetAtividades } from "@/api/generated/endpoints/atividades/atividades"
-import { OperacaoForm } from "@/components/operacoes/operacao-form"
-import type { OperacaoResponse } from "@/types/api"
+  useGetOperacoes,
+} from "@/api/generated/endpoints/operacoes/operacoes";
+import { OperacaoForm } from "@/components/operacoes/operacao-form";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { OperacaoResponse } from "@/types/api";
 
 // Helpers para labels
 const getTipoLabel = (tipo: string) => {
@@ -29,9 +55,9 @@ const getTipoLabel = (tipo: string) => {
     PROCESS: "Processamento",
     VALIDATE: "Validação",
     TRANSFORM: "Transformação",
-  }
-  return labels[tipo] || tipo
-}
+  };
+  return labels[tipo] || tipo;
+};
 
 const getTipoBadgeColor = (tipo: string): "default" | "secondary" | "destructive" | "outline" => {
   const colors: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
@@ -42,9 +68,9 @@ const getTipoBadgeColor = (tipo: string): "default" | "secondary" | "destructive
     PROCESS: "default",
     VALIDATE: "secondary",
     TRANSFORM: "outline",
-  }
-  return colors[tipo] || "outline"
-}
+  };
+  return colors[tipo] || "outline";
+};
 
 const getFrequenciaLabel = (frequencia: string) => {
   const labels: Record<string, string> = {
@@ -55,48 +81,48 @@ const getFrequenciaLabel = (frequencia: string) => {
     TRIMESTRAL: "Trimestral",
     ANUAL: "Anual",
     EVENTUAL: "Eventual",
-  }
-  return labels[frequencia] || frequencia
-}
+  };
+  return labels[frequencia] || frequencia;
+};
 
 const getComplexidadeColor = (complexidade: string) => {
   const colors: Record<string, string> = {
     BAIXA: "text-green-600",
     MEDIA: "text-yellow-600",
     ALTA: "text-red-600",
-  }
-  return colors[complexidade] || "text-gray-600"
-}
+  };
+  return colors[complexidade] || "text-gray-600";
+};
 
 const getComplexidadeLabel = (complexidade: string) => {
   const labels: Record<string, string> = {
     BAIXA: "Baixa",
     MEDIA: "Média",
     ALTA: "Alta",
-  }
-  return labels[complexidade] || complexidade
-}
+  };
+  return labels[complexidade] || complexidade;
+};
 
 export default function OperacoesPage() {
-  const [formOpen, setFormOpen] = useState(false)
-  const [selectedOperacao, setSelectedOperacao] = useState<OperacaoResponse | undefined>()
-  const [search, setSearch] = useState("")
-  const [tipoFilter, setTipoFilter] = useState<string>("all")
-  const [frequenciaFilter, setFrequenciaFilter] = useState<string>("all")
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedOperacao, setSelectedOperacao] = useState<OperacaoResponse | undefined>();
+  const [search, setSearch] = useState("");
+  const [tipoFilter, setTipoFilter] = useState<string>("all");
+  const [frequenciaFilter, setFrequenciaFilter] = useState<string>("all");
 
   // Queries
-  const { data, isLoading } = useGetOperacoes()
-  const { data: atividadesData } = useGetAtividades()
-  const { mutate: deleteOperacao } = useDeleteOperacoesId()
+  const { data, isLoading } = useGetOperacoes();
+  const { data: atividadesData } = useGetAtividades();
+  const { mutate: deleteOperacao } = useDeleteOperacoesId();
 
-  const operacoes = data?.data ?? []
-  const atividades = atividadesData?.data ?? []
+  const operacoes = data?.data ?? [];
+  const atividades = atividadesData?.data ?? [];
 
   // Helper para encontrar atividade
   const getAtividadeNome = (atividadeId: string) => {
-    const atividade = atividades.find((a) => a.id === atividadeId)
-    return atividade?.nome ?? "N/A"
-  }
+    const atividade = atividades.find((a) => a.id === atividadeId);
+    return atividade?.nome ?? "N/A";
+  };
 
   // Stats
   const stats = useMemo(() => {
@@ -105,39 +131,39 @@ export default function OperacoesPage() {
       automatizadas: operacoes.filter((o) => o.automatizada).length,
       criticas: operacoes.filter((o) => o.critica).length,
       complexidadeAlta: operacoes.filter((o) => o.complexidade === "ALTA").length,
-    }
-  }, [operacoes])
+    };
+  }, [operacoes]);
 
   // Filtros
   const filteredOperacoes = useMemo(() => {
     return operacoes.filter((operacao) => {
       const matchesSearch =
-        search === "" || operacao.nome.toLowerCase().includes(search.toLowerCase())
+        search === "" || operacao.nome.toLowerCase().includes(search.toLowerCase());
 
-      const matchesTipo = tipoFilter === "all" || operacao.tipo === tipoFilter
+      const matchesTipo = tipoFilter === "all" || operacao.tipo === tipoFilter;
 
       const matchesFrequencia =
-        frequenciaFilter === "all" || operacao.frequencia === frequenciaFilter
+        frequenciaFilter === "all" || operacao.frequencia === frequenciaFilter;
 
-      return matchesSearch && matchesTipo && matchesFrequencia
-    })
-  }, [operacoes, search, tipoFilter, frequenciaFilter])
+      return matchesSearch && matchesTipo && matchesFrequencia;
+    });
+  }, [operacoes, search, tipoFilter, frequenciaFilter]);
 
   const handleEdit = (operacao: OperacaoResponse) => {
-    setSelectedOperacao(operacao)
-    setFormOpen(true)
-  }
+    setSelectedOperacao(operacao);
+    setFormOpen(true);
+  };
 
   const handleDelete = (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta operação?")) {
-      deleteOperacao({ id })
+      deleteOperacao({ id });
     }
-  }
+  };
 
   const handleCloseForm = () => {
-    setFormOpen(false)
-    setSelectedOperacao(undefined)
-  }
+    setFormOpen(false);
+    setSelectedOperacao(undefined);
+  };
 
   return (
     <div className="space-y-6">
@@ -215,11 +241,13 @@ export default function OperacoesPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os tipos</SelectItem>
-            {["CREATE", "READ", "UPDATE", "DELETE", "PROCESS", "VALIDATE", "TRANSFORM"].map((tipo) => (
-              <SelectItem key={tipo} value={tipo}>
-                {getTipoLabel(tipo)}
-              </SelectItem>
-            ))}
+            {["CREATE", "READ", "UPDATE", "DELETE", "PROCESS", "VALIDATE", "TRANSFORM"].map(
+              (tipo) => (
+                <SelectItem key={tipo} value={tipo}>
+                  {getTipoLabel(tipo)}
+                </SelectItem>
+              ),
+            )}
           </SelectContent>
         </Select>
         <Select value={frequenciaFilter} onValueChange={setFrequenciaFilter}>
@@ -228,11 +256,13 @@ export default function OperacoesPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as frequências</SelectItem>
-            {["UNICA", "DIARIA", "SEMANAL", "MENSAL", "TRIMESTRAL", "ANUAL", "EVENTUAL"].map((freq) => (
-              <SelectItem key={freq} value={freq}>
-                {getFrequenciaLabel(freq)}
-              </SelectItem>
-            ))}
+            {["UNICA", "DIARIA", "SEMANAL", "MENSAL", "TRIMESTRAL", "ANUAL", "EVENTUAL"].map(
+              (freq) => (
+                <SelectItem key={freq} value={freq}>
+                  {getFrequenciaLabel(freq)}
+                </SelectItem>
+              ),
+            )}
           </SelectContent>
         </Select>
       </div>
@@ -253,8 +283,8 @@ export default function OperacoesPage() {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
+              Array.from({ length: 5 }, (_, i) => i).map((key) => (
+                <TableRow key={key}>
                   <TableCell>
                     <Skeleton className="h-4 w-[200px]" />
                   </TableCell>
@@ -350,5 +380,5 @@ export default function OperacoesPage() {
       {/* Form Dialog */}
       <OperacaoForm open={formOpen} onOpenChange={handleCloseForm} operacao={selectedOperacao} />
     </div>
-  )
+  );
 }

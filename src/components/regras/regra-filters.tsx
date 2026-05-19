@@ -1,31 +1,37 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, X } from "lucide-react"
+import { Search, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface RegraFiltersProps {
-  search: string
-  onSearchChange: (value: string) => void
+  search: string;
+  onSearchChange: (value: string) => void;
   filters: {
-    termoId?: string
-    politicaId?: string
-    sistemaId?: string
-    responsavelId?: string
-  }
-  onFilterChange: (key: string, value: string) => void
-  onClearFilters: () => void
+    termoId?: string;
+    politicaId?: string;
+    sistemaId?: string;
+    responsavelId?: string;
+  };
+  onFilterChange: (key: string, value: string) => void;
+  onClearFilters: () => void;
 }
 
-export function RegraFilters({ 
-  search, 
-  onSearchChange, 
-  filters, 
-  onFilterChange, 
-  onClearFilters 
+export function RegraFilters({
+  search,
+  onSearchChange,
+  filters,
+  onFilterChange,
+  onClearFilters,
 }: RegraFiltersProps) {
-  const hasFilters = Object.values(filters).some(Boolean) || search
+  const hasFilters = Object.values(filters).some(Boolean) || search;
 
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -39,7 +45,7 @@ export function RegraFilters({
           onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>
-      
+
       <div className="flex flex-col gap-2 md:flex-row md:items-center">
         <div className="flex gap-2">
           <Select
@@ -107,17 +113,12 @@ export function RegraFilters({
         </div>
 
         {hasFilters && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onClearFilters}
-            className="h-10"
-          >
+          <Button variant="outline" size="sm" onClick={onClearFilters} className="h-10">
             <X className="mr-2 h-4 w-4" />
             Limpar
           </Button>
         )}
       </div>
     </div>
-  )
+  );
 }

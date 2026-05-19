@@ -1,18 +1,19 @@
-"use client"
+"use client";
 
-import { Users, FileText, Activity, TrendingUp } from "lucide-react"
-import { type PapelStats } from "@/types/papel"
-import { StatsCards, type StatsCard } from "@/components/ui/stats-cards"
+import { Activity, FileText, TrendingUp, Users } from "lucide-react";
+import { type StatsCard, StatsCards } from "@/components/ui/stats-cards";
+import type { PapelStats } from "@/types/papel";
 
 interface PapelStatsCardsProps {
-  stats: PapelStats
+  stats: PapelStats;
 }
 
 export function PapelStatsCards({ stats }: PapelStatsCardsProps) {
   // Calcular política com mais papéis
-  const politicaComMaisPapeis = Object.entries(stats.porPolitica)
-    .reduce((max, [politicaId, count]) => count > max.count ? { politicaId, count } : max, 
-           { politicaId: "", count: 0 })
+  const politicaComMaisPapeis = Object.entries(stats.porPolitica).reduce(
+    (max, [politicaId, count]) => (count > max.count ? { politicaId, count } : max),
+    { politicaId: "", count: 0 },
+  );
 
   const cards: StatsCard[] = [
     {
@@ -43,7 +44,7 @@ export function PapelStatsCards({ stats }: PapelStatsCardsProps) {
       icon: TrendingUp,
       gradient: "from-purple-500 to-violet-500",
     },
-  ]
+  ];
 
-  return <StatsCards cards={cards} animationDirection="left" />
+  return <StatsCards cards={cards} animationDirection="left" />;
 }

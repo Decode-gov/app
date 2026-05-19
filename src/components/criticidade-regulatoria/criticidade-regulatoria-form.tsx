@@ -1,47 +1,41 @@
 "use client";
 
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
 import {
-    CreateCriticidadeRegulatoriaFormData,
-    CreateCriticidadeRegulatoriaSchema,
-} from "@/schemas";
+  usePostCriticidadesRegulatorias,
+  usePutCriticidadesRegulatoriasId,
+} from "@/api/generated/endpoints/criticidades-regulatórias/criticidades-regulatórias";
+import { useGetRegrasQualidade } from "@/api/generated/endpoints/regras-de-qualidade/regras-de-qualidade";
+import { useGetRegulacoesCompletas } from "@/api/generated/endpoints/regulações-completas/regulações-completas";
+import type { GetCriticidadesRegulatorias200 } from "@/api/generated/model";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
-    useCreateCriticidadeRegulatoria,
-    useUpdateCriticidadeRegulatoria,
-} from "@/hooks/api/use-criticidade-regulatoria";
-import { useRegulacoes } from "@/hooks/api/use-regulacao";
-import { useRegrasQualidade } from "@/hooks/api/use-regras-qualidade";
-import { CriticidadeRegulatoriaResponse } from "@/types/api";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import {
+  type CreateCriticidadeRegulatoriaFormData,
+  CreateCriticidadeRegulatoriaSchema,
+} from "@/schemas";
 
 interface CriticidadeRegulatoriaFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  criticidade?: CriticidadeRegulatoriaResponse;
+  criticidade?: GetCriticidadesRegulatorias200["data"][number];
 }
 
 export function CriticidadeRegulatoriaForm({
@@ -54,34 +48,17 @@ export function CriticidadeRegulatoriaForm({
   const form = useForm<CreateCriticidadeRegulatoriaFormData>({
     resolver: zodResolver(CreateCriticidadeRegulatoriaSchema),
     defaultValues: {
-      regulacaoId: "",
-      regraQualidadeId: "",
-      grauCriticidade: "BAIXA",
+      regulacaoId: criticidade?.regulacaoId,
+      regraQualidadeId: criticidade?.regraQualidadeId,
+      grauCriticidade: criticidade?.grauCriticidade ?? "BAIXA",
     },
   });
 
-  const { data: regulacoes, isLoading: loadingRegulacoes } = useRegulacoes({});
-  const { data: regrasQualidade, isLoading: loadingRegras } =
-    useRegrasQualidade({});
+  const { data: regulacoes, isLoading: loadingRegulacoes } = useGetRegulacoesCompletas();
+  const { data: regrasQualidade, isLoading: loadingRegras } = useGetRegrasQualidade();
 
-  const createMutation = useCreateCriticidadeRegulatoria();
-  const updateMutation = useUpdateCriticidadeRegulatoria();
-
-  useEffect(() => {
-    if (criticidade) {
-      form.reset({
-        regulacaoId: criticidade.regulacaoId,
-        regraQualidadeId: criticidade.regraQualidadeId,
-        grauCriticidade: criticidade.grauCriticidade,
-      });
-    } else {
-      form.reset({
-        regulacaoId: "",
-        regraQualidadeId: "",
-        grauCriticidade: "BAIXA",
-      });
-    }
-  }, [criticidade, form]);
+  const createMutation = usePostCriticidadesRegulatorias();
+  const updateMutation = usePutCriticidadesRegulatoriasId();
 
   const onSubmit = async (data: CreateCriticidadeRegulatoriaFormData) => {
     try {
@@ -91,7 +68,9 @@ export function CriticidadeRegulatoriaForm({
           data,
         });
       } else {
-        await createMutation.mutateAsync(data);
+        await createMutation.mutateAsync({
+          data,
+        });
       }
       onOpenChange(false);
       form.reset();
@@ -101,19 +80,14 @@ export function CriticidadeRegulatoriaForm({
   };
 
   const isLoading =
-    createMutation.isPending ||
-    updateMutation.isPending ||
-    loadingRegulacoes ||
-    loadingRegras;
+    createMutation.isPending || updateMutation.isPending || loadingRegulacoes || loadingRegras;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {isEditing
-              ? "Editar Criticidade Regulatória"
-              : "Nova Criticidade Regulatória"}
+            {isEditing ? "Editar Criticidade Regulatória" : "Nova Criticidade Regulatória"}
           </DialogTitle>
         </DialogHeader>
 
@@ -138,9 +112,7 @@ export function CriticidadeRegulatoriaForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="none">
-                        Selecione uma regulação
-                      </SelectItem>
+                      <SelectItem value="none">Selecione uma regulação</SelectItem>
                       {regulacoes?.data?.map((regulacao) => (
                         <SelectItem key={regulacao.id} value={regulacao.id}>
                           {regulacao.epigrafe} - {regulacao.orgao}
@@ -172,9 +144,7 @@ export function CriticidadeRegulatoriaForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="none">
-                        Selecione uma regra de qualidade
-                      </SelectItem>
+                      <SelectItem value="none">Selecione uma regra de qualidade</SelectItem>
                       {regrasQualidade?.data?.map((regra) => (
                         <SelectItem key={regra.id} value={regra.id}>
                           {regra.descricao}
@@ -193,11 +163,7 @@ export function CriticidadeRegulatoriaForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Grau de Criticidade *</FormLabel>
-                  <Select
-                    disabled={isLoading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                  >
+                  <Select disabled={isLoading} onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione o grau de criticidade" />

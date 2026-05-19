@@ -1,40 +1,50 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Plus, List, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton"
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react"
+import { List, MoreHorizontal, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
 import {
-  useGetListasReferencia,
   useDeleteListasReferenciaId,
-} from "@/api/generated/endpoints/listas-referencia/listas-referencia"
-import { ListaForm } from "@/components/listas-referencia/lista-form"
-import type { ListaReferenciaResponse } from "@/types/api"
+  useGetListasReferencia,
+} from "@/api/generated/endpoints/listas-referencia/listas-referencia";
+import { ListaForm } from "@/components/listas-referencia/lista-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { ListaReferenciaResponse } from "@/types/api";
 
 export default function ListasReferenciaPage() {
-  const [formOpen, setFormOpen] = useState(false)
-  const [selectedLista, setSelectedLista] = useState<ListaReferenciaResponse | undefined>()
-  const [search, setSearch] = useState("")
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedLista, setSelectedLista] = useState<ListaReferenciaResponse | undefined>();
+  const [search, setSearch] = useState("");
 
   // Queries
-  const { data, isLoading } = useGetListasReferencia()
-  const { mutate: deleteLista } = useDeleteListasReferenciaId()
+  const { data, isLoading } = useGetListasReferencia();
+  const { mutate: deleteLista } = useDeleteListasReferenciaId();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const listas = useMemo(() => (data?.data ?? []) as any[], [data?.data])
+  const listas = useMemo(() => data?.data ?? [], [data?.data]);
 
   // Stats
   const stats = useMemo(() => {
     return {
       total: listas.length,
       comDescricao: listas.filter((l) => l.descricao && l.descricao.trim() !== "").length,
-    }
-  }, [listas])
+    };
+  }, [listas]);
 
   // Filtros
   const filteredListas = useMemo(() => {
@@ -42,27 +52,27 @@ export default function ListasReferenciaPage() {
       const matchesSearch =
         search === "" ||
         lista.nome.toLowerCase().includes(search.toLowerCase()) ||
-        (lista.descricao && lista.descricao.toLowerCase().includes(search.toLowerCase()))
+        lista.descricao?.toLowerCase().includes(search.toLowerCase());
 
-      return matchesSearch
-    })
-  }, [listas, search])
+      return matchesSearch;
+    });
+  }, [listas, search]);
 
   const handleEdit = (lista: ListaReferenciaResponse) => {
-    setSelectedLista(lista)
-    setFormOpen(true)
-  }
+    setSelectedLista(lista);
+    setFormOpen(true);
+  };
 
   const handleDelete = (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta lista de referência?")) {
-      deleteLista({ id })
+      deleteLista({ id });
     }
-  }
+  };
 
   const handleCloseForm = () => {
-    setFormOpen(false)
-    setSelectedLista(undefined)
-  }
+    setFormOpen(false);
+    setSelectedLista(undefined);
+  };
 
   return (
     <div className="space-y-6">
@@ -133,70 +143,70 @@ export default function ListasReferenciaPage() {
 
           <div className="rounded-md border">
             <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Descrição</TableHead>
-              <TableHead className="w-[70px]">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[200px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[300px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-8 w-8" />
-                  </TableCell>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Descrição</TableHead>
+                  <TableHead className="w-[70px]">Ações</TableHead>
                 </TableRow>
-              ))
-            ) : filteredListas.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={3} className="text-center text-muted-foreground">
-                  Nenhuma lista de referência encontrada
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredListas.map((lista) => (
-                <TableRow key={lista.id}>
-                  <TableCell className="font-medium">{lista.nome}</TableCell>
-                  <TableCell className="max-w-[300px] truncate">
-                    {lista.descricao || (
-                      <span className="text-muted-foreground italic">Sem descrição</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEdit(lista)}>
-                          <Pencil className="mr-2 h-4 w-4" />
-                          Editar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDelete(lista.id)}
-                          className="text-destructive"
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Excluir
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  Array.from({ length: 5 }, (_, i) => i).map((key) => (
+                    <TableRow key={key}>
+                      <TableCell>
+                        <Skeleton className="h-4 w-[200px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-[300px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-8 w-8" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : filteredListas.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center text-muted-foreground">
+                      Nenhuma lista de referência encontrada
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredListas.map((lista) => (
+                    <TableRow key={lista.id}>
+                      <TableCell className="font-medium">{lista.nome}</TableCell>
+                      <TableCell className="max-w-[300px] truncate">
+                        {lista.descricao || (
+                          <span className="text-muted-foreground italic">Sem descrição</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEdit(lista)}>
+                              <Pencil className="mr-2 h-4 w-4" />
+                              Editar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleDelete(lista.id)}
+                              className="text-destructive"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Excluir
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
@@ -204,5 +214,5 @@ export default function ListasReferenciaPage() {
       {/* Form Dialog */}
       <ListaForm open={formOpen} onOpenChange={handleCloseForm} lista={selectedLista} />
     </div>
-  )
+  );
 }

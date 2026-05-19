@@ -1,22 +1,49 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, ListTodo, Clock, AlertTriangle } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
-  useGetAtividades,
+  AlertTriangle,
+  Clock,
+  Edit,
+  ListTodo,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
+import {
   useDeleteAtividadesId,
-} from "@/api/generated/endpoints/atividades/atividades"
-import { useGetProcessos } from "@/api/generated/endpoints/processos/processos"
-import { AtividadeResponse } from "@/types/api"
-import { AtividadeForm } from "@/components/atividades/atividade-form"
+  useGetAtividades,
+} from "@/api/generated/endpoints/atividades/atividades";
+import { useGetProcessos } from "@/api/generated/endpoints/processos/processos";
+import { AtividadeForm } from "@/components/atividades/atividade-form";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { AtividadeResponse } from "@/types/api";
 
 const getStatusLabel = (status: string) => {
   const labels: Record<string, string> = {
@@ -25,9 +52,9 @@ const getStatusLabel = (status: string) => {
     CONCLUIDA: "Concluída",
     PAUSADA: "Pausada",
     CANCELADA: "Cancelada",
-  }
-  return labels[status] || status
-}
+  };
+  return labels[status] || status;
+};
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
@@ -36,9 +63,9 @@ const getStatusColor = (status: string) => {
     CONCLUIDA: "bg-green-100 text-green-800",
     PAUSADA: "bg-yellow-100 text-yellow-800",
     CANCELADA: "bg-red-100 text-red-800",
-  }
-  return colors[status] || "bg-gray-100 text-gray-800"
-}
+  };
+  return colors[status] || "bg-gray-100 text-gray-800";
+};
 
 const getPrioridadeLabel = (prioridade: string) => {
   const labels: Record<string, string> = {
@@ -46,9 +73,9 @@ const getPrioridadeLabel = (prioridade: string) => {
     MEDIA: "Média",
     ALTA: "Alta",
     CRITICA: "Crítica",
-  }
-  return labels[prioridade] || prioridade
-}
+  };
+  return labels[prioridade] || prioridade;
+};
 
 const getPrioridadeColor = (prioridade: string) => {
   const colors: Record<string, string> = {
@@ -56,52 +83,52 @@ const getPrioridadeColor = (prioridade: string) => {
     MEDIA: "bg-blue-100 text-blue-800",
     ALTA: "bg-orange-100 text-orange-800",
     CRITICA: "bg-red-100 text-red-800",
-  }
-  return colors[prioridade] || "bg-gray-100 text-gray-800"
-}
+  };
+  return colors[prioridade] || "bg-gray-100 text-gray-800";
+};
 
 export default function AtividadesPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState<string>("")
-  const [prioridadeFilter, setPrioridadeFilter] = useState<string>("")
-  const [page] = useState(1)
-  const [limit] = useState(10)
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [selectedAtividade, setSelectedAtividade] = useState<AtividadeResponse | undefined>()
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [prioridadeFilter, setPrioridadeFilter] = useState<string>("");
+  const [page] = useState(1);
+  const [limit] = useState(10);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedAtividade, setSelectedAtividade] = useState<AtividadeResponse | undefined>();
 
-  void page
-  void limit
-  void searchTerm
-  void statusFilter
-  void prioridadeFilter
+  void page;
+  void limit;
+  void searchTerm;
+  void statusFilter;
+  void prioridadeFilter;
 
-  const { data: atividadesData, isLoading, error } = useGetAtividades()
-  const { data: processosData } = useGetProcessos()
+  const { data: atividadesData, isLoading, error } = useGetAtividades();
+  const { data: processosData } = useGetProcessos();
 
-  const deleteAtividade = useDeleteAtividadesId()
+  const deleteAtividade = useDeleteAtividadesId();
 
   const handleEdit = (atividade: AtividadeResponse) => {
-    setSelectedAtividade(atividade)
-    setIsFormOpen(true)
-  }
+    setSelectedAtividade(atividade);
+    setIsFormOpen(true);
+  };
 
   const handleNew = () => {
-    setSelectedAtividade(undefined)
-    setIsFormOpen(true)
-  }
+    setSelectedAtividade(undefined);
+    setIsFormOpen(true);
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta atividade?")) {
-      await deleteAtividade.mutateAsync({ id })
+      await deleteAtividade.mutateAsync({ id });
     }
-  }
+  };
 
-  const atividades = atividadesData?.data ?? []
-  const processos = processosData?.data ?? []
+  const atividades = atividadesData?.data ?? [];
+  const processos = processosData?.data ?? [];
 
-  const atividadesEmAndamento = atividades.filter(a => a.status === 'EM_ANDAMENTO').length
-  const atividadesConcluidas = atividades.filter(a => a.status === 'CONCLUIDA').length
-  const atividadesCriticas = atividades.filter(a => a.prioridade === 'CRITICA').length
+  const atividadesEmAndamento = atividades.filter((a) => a.status === "EM_ANDAMENTO").length;
+  const atividadesConcluidas = atividades.filter((a) => a.status === "CONCLUIDA").length;
+  const atividadesCriticas = atividades.filter((a) => a.prioridade === "CRITICA").length;
 
   return (
     <>
@@ -174,9 +201,7 @@ export default function AtividadesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Atividades</CardTitle>
-                <CardDescription>
-                  Lista de todas as atividades cadastradas
-                </CardDescription>
+                <CardDescription>Lista de todas as atividades cadastradas</CardDescription>
               </div>
               <Button className="gap-2" onClick={handleNew}>
                 <Plus className="h-4 w-4" />
@@ -195,7 +220,10 @@ export default function AtividadesPage() {
                   className="pl-8"
                 />
               </div>
-              <Select value={statusFilter || "todos"} onValueChange={(value) => setStatusFilter(value === "todos" ? "" : value)}>
+              <Select
+                value={statusFilter || "todos"}
+                onValueChange={(value) => setStatusFilter(value === "todos" ? "" : value)}
+              >
                 <SelectTrigger className="w-full md:w-[200px]">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
@@ -208,7 +236,10 @@ export default function AtividadesPage() {
                   <SelectItem value="CANCELADA">Cancelada</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={prioridadeFilter || "todas"} onValueChange={(value) => setPrioridadeFilter(value === "todas" ? "" : value)}>
+              <Select
+                value={prioridadeFilter || "todas"}
+                onValueChange={(value) => setPrioridadeFilter(value === "todas" ? "" : value)}
+              >
                 <SelectTrigger className="w-full md:w-[200px]">
                   <SelectValue placeholder="Prioridade" />
                 </SelectTrigger>
@@ -244,14 +275,14 @@ export default function AtividadesPage() {
                   </TableHeader>
                   <TableBody>
                     {atividades.map((atividade: AtividadeResponse) => {
-                      const processo = processos.find(p => p.id === atividade.processoId)
-                      const dataFim = atividade.dataFim ? new Date(atividade.dataFim).toLocaleDateString('pt-BR') : null
+                      const processo = processos.find((p) => p.id === atividade.processoId);
+                      const dataFim = atividade.dataFim
+                        ? new Date(atividade.dataFim).toLocaleDateString("pt-BR")
+                        : null;
 
                       return (
                         <TableRow key={atividade.id}>
-                          <TableCell className="font-medium">
-                            {atividade.nome}
-                          </TableCell>
+                          <TableCell className="font-medium">{atividade.nome}</TableCell>
                           <TableCell>
                             <Badge className={getStatusColor(atividade.status)}>
                               {getStatusLabel(atividade.status)}
@@ -270,7 +301,9 @@ export default function AtividadesPage() {
                             )}
                           </TableCell>
                           <TableCell>
-                            {atividade.responsavel || <span className="text-muted-foreground">-</span>}
+                            {atividade.responsavel || (
+                              <span className="text-muted-foreground">-</span>
+                            )}
                           </TableCell>
                           <TableCell>
                             {dataFim || <span className="text-muted-foreground">-</span>}
@@ -287,7 +320,7 @@ export default function AtividadesPage() {
                                   <Edit className="mr-2 h-4 w-4" />
                                   Editar
                                 </DropdownMenuItem>
-                                <DropdownMenuItem 
+                                <DropdownMenuItem
                                   className="text-destructive"
                                   onClick={() => handleDelete(atividade.id)}
                                 >
@@ -298,7 +331,7 @@ export default function AtividadesPage() {
                             </DropdownMenu>
                           </TableCell>
                         </TableRow>
-                      )
+                      );
                     })}
                   </TableBody>
                 </Table>
@@ -310,5 +343,5 @@ export default function AtividadesPage() {
 
       <AtividadeForm open={isFormOpen} onOpenChange={setIsFormOpen} atividade={selectedAtividade} />
     </>
-  )
+  );
 }

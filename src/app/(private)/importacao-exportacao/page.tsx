@@ -1,15 +1,28 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Upload, Download, FileSpreadsheet, FileJson, FileText, Search, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useGetImportacaoExportacao } from "@/api/generated/endpoints/importacao-exportacao/importacao-exportacao"
+import { Clock, Download, FileJson, FileSpreadsheet, FileText, Search, Upload } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useGetImportacaoExportacao } from "@/api/generated/endpoints/importacao-exportacao/importacao-exportacao";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 // Helpers para labels e cores
 const getFormatoIcon = (formato: string) => {
@@ -17,18 +30,18 @@ const getFormatoIcon = (formato: string) => {
     EXCEL: FileSpreadsheet,
     CSV: FileText,
     JSON: FileJson,
-  }
-  return icons[formato] || FileText
-}
+  };
+  return icons[formato] || FileText;
+};
 
 const getFormatoLabel = (formato: string) => {
   const labels: Record<string, string> = {
     EXCEL: "Excel",
     CSV: "CSV",
     JSON: "JSON",
-  }
-  return labels[formato] || formato
-}
+  };
+  return labels[formato] || formato;
+};
 
 const getStatusLabel = (status: string) => {
   const labels: Record<string, string> = {
@@ -36,29 +49,31 @@ const getStatusLabel = (status: string) => {
     PROCESSANDO: "Processando",
     CONCLUIDO: "Concluído",
     ERRO: "Erro",
-  }
-  return labels[status] || status
-}
+  };
+  return labels[status] || status;
+};
 
-const getStatusBadgeColor = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+const getStatusBadgeColor = (
+  status: string,
+): "default" | "secondary" | "destructive" | "outline" => {
   const colors: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
     PENDENTE: "secondary",
     PROCESSANDO: "default",
     CONCLUIDO: "outline",
     ERRO: "destructive",
-  }
-  return colors[status] || "outline"
-}
+  };
+  return colors[status] || "outline";
+};
 
 export default function ImportacaoExportacaoPage() {
-  const [search, setSearch] = useState("")
-  const [formatoFilter, setFormatoFilter] = useState<string>("all")
-  const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [search, setSearch] = useState("");
+  const [formatoFilter, setFormatoFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   // Query
-  const { data, isLoading } = useGetImportacaoExportacao()
+  const { data, isLoading } = useGetImportacaoExportacao();
 
-  const operacoes = data?.data ?? []
+  const operacoes = data?.data ?? [];
 
   // Stats
   const stats = useMemo(() => {
@@ -67,35 +82,35 @@ export default function ImportacaoExportacaoPage() {
       concluidas: operacoes.filter((o) => o.status === "CONCLUIDO").length,
       processando: operacoes.filter((o) => o.status === "PROCESSANDO").length,
       erros: operacoes.filter((o) => o.status === "ERRO").length,
-    }
-  }, [operacoes])
+    };
+  }, [operacoes]);
 
   // Filtros
   const filteredOperacoes = useMemo(() => {
     return operacoes.filter((operacao) => {
       const matchesSearch =
         search === "" ||
-        operacao.entidades.some((e) => e.toLowerCase().includes(search.toLowerCase()))
+        operacao.entidades.some((e) => e.toLowerCase().includes(search.toLowerCase()));
 
-      const matchesFormato = formatoFilter === "all" || operacao.formato === formatoFilter
+      const matchesFormato = formatoFilter === "all" || operacao.formato === formatoFilter;
 
-      const matchesStatus = statusFilter === "all" || operacao.status === statusFilter
+      const matchesStatus = statusFilter === "all" || operacao.status === statusFilter;
 
-      return matchesSearch && matchesFormato && matchesStatus
-    })
-  }, [operacoes, search, formatoFilter, statusFilter])
+      return matchesSearch && matchesFormato && matchesStatus;
+    });
+  }, [operacoes, search, formatoFilter, statusFilter]);
 
   // Formatar data
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    })
-  }
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -212,8 +227,8 @@ export default function ImportacaoExportacaoPage() {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
+              Array.from({ length: 5 }, (_, i) => i).map((key) => (
+                <TableRow key={key}>
                   <TableCell>
                     <Skeleton className="h-4 w-[150px]" />
                   </TableCell>
@@ -239,7 +254,7 @@ export default function ImportacaoExportacaoPage() {
               </TableRow>
             ) : (
               filteredOperacoes.map((operacao) => {
-                const FormatoIcon = getFormatoIcon(operacao.formato)
+                const FormatoIcon = getFormatoIcon(operacao.formato);
                 return (
                   <TableRow key={operacao.id}>
                     <TableCell className="font-mono text-xs">
@@ -253,8 +268,8 @@ export default function ImportacaoExportacaoPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {operacao.entidades.slice(0, 3).map((entidade, idx) => (
-                          <Badge key={idx} variant="outline" className="text-xs">
+                        {operacao.entidades.slice(0, 3).map((entidade) => (
+                          <Badge key={entidade} variant="outline" className="text-xs">
                             {entidade}
                           </Badge>
                         ))}
@@ -283,12 +298,12 @@ export default function ImportacaoExportacaoPage() {
                       )}
                     </TableCell>
                   </TableRow>
-                )
+                );
               })
             )}
           </TableBody>
         </Table>
       </Card>
     </div>
-  )
+  );
 }

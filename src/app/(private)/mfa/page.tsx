@@ -1,15 +1,28 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Shield, Smartphone, Mail, Key, Search, CheckCircle, XCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useGetMfa } from "@/api/generated/endpoints/mfa/mfa"
+import { CheckCircle, Key, Mail, Search, Shield, Smartphone, XCircle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useGetMfa } from "@/api/generated/endpoints/mfa/mfa";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 // Helpers para labels e ícones
 const getTipoIcon = (tipo: string) => {
@@ -17,41 +30,40 @@ const getTipoIcon = (tipo: string) => {
     TOTP: Key,
     SMS: Smartphone,
     EMAIL: Mail,
-  }
-  return icons[tipo] || Shield
-}
+  };
+  return icons[tipo] || Shield;
+};
 
 const getTipoLabel = (tipo: string) => {
   const labels: Record<string, string> = {
     TOTP: "Autenticador (TOTP)",
     SMS: "SMS",
     EMAIL: "E-mail",
-  }
-  return labels[tipo] || tipo
-}
+  };
+  return labels[tipo] || tipo;
+};
 
 const getStatusLabel = (status: string) => {
   const labels: Record<string, string> = {
     ATIVO: "Ativo",
     INATIVO: "Inativo",
-  }
-  return labels[status] || status
-}
+  };
+  return labels[status] || status;
+};
 
 const getStatusBadgeColor = (status: string): "default" | "secondary" => {
-  return status === "ATIVO" ? "default" : "secondary"
-}
+  return status === "ATIVO" ? "default" : "secondary";
+};
 
 export default function MfaPage() {
-  const [search, setSearch] = useState("")
-  const [tipoFilter, setTipoFilter] = useState<string>("all")
-  const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [search, setSearch] = useState("");
+  const [tipoFilter, setTipoFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   // Query
-  const { data, isLoading } = useGetMfa()
+  const { data, isLoading } = useGetMfa();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const configuracoes = (data?.data ?? []) as any[]
+  const configuracoes = data?.data ?? [];
 
   // Stats
   const stats = useMemo(() => {
@@ -60,32 +72,32 @@ export default function MfaPage() {
       ativos: configuracoes.filter((c) => c.status === "ATIVO").length,
       totp: configuracoes.filter((c) => c.tipo === "TOTP").length,
       sms: configuracoes.filter((c) => c.tipo === "SMS").length,
-    }
-  }, [configuracoes])
+    };
+  }, [configuracoes]);
 
   // Filtros
   const filteredConfiguracoes = useMemo(() => {
     return configuracoes.filter((config) => {
       const matchesSearch =
-        search === "" || config.usuarioId.toLowerCase().includes(search.toLowerCase())
+        search === "" || config.usuarioId.toLowerCase().includes(search.toLowerCase());
 
-      const matchesTipo = tipoFilter === "all" || config.tipo === tipoFilter
+      const matchesTipo = tipoFilter === "all" || config.tipo === tipoFilter;
 
-      const matchesStatus = statusFilter === "all" || config.status === statusFilter
+      const matchesStatus = statusFilter === "all" || config.status === statusFilter;
 
-      return matchesSearch && matchesTipo && matchesStatus
-    })
-  }, [configuracoes, search, tipoFilter, statusFilter])
+      return matchesSearch && matchesTipo && matchesStatus;
+    });
+  }, [configuracoes, search, tipoFilter, statusFilter]);
 
   // Formatar data
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
-    })
-  }
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -195,8 +207,8 @@ export default function MfaPage() {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
+              Array.from({ length: 5 }, (_, i) => i).map((key) => (
+                <TableRow key={key}>
                   <TableCell>
                     <Skeleton className="h-4 w-[150px]" />
                   </TableCell>
@@ -225,7 +237,7 @@ export default function MfaPage() {
               </TableRow>
             ) : (
               filteredConfiguracoes.map((config) => {
-                const TipoIcon = getTipoIcon(config.tipo)
+                const TipoIcon = getTipoIcon(config.tipo);
                 return (
                   <TableRow key={config.id}>
                     <TableCell className="font-medium">{config.usuarioId}</TableCell>
@@ -261,7 +273,7 @@ export default function MfaPage() {
                       {formatDate(config.updatedAt)}
                     </TableCell>
                   </TableRow>
-                )
+                );
               })
             )}
           </TableBody>
@@ -299,5 +311,5 @@ export default function MfaPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

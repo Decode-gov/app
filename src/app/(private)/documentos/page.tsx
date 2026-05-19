@@ -1,19 +1,22 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Plus, FileText, Eye, Search, Calendar, Pencil, Trash2, Database, Link } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { DocumentoForm } from "@/components/documentos/documento-form"
 import {
-  useGetDocumentos,
+  Calendar,
+  Database,
+  Eye,
+  FileText,
+  Link,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
+import {
   useDeleteDocumentosId,
-} from "@/api/generated/endpoints/documentos/documentos"
-import type { DocumentoResponse } from "@/types/api"
+  useGetDocumentos,
+} from "@/api/generated/endpoints/documentos/documentos";
+import { DocumentoForm } from "@/components/documentos/documento-form";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,32 +26,47 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { DocumentoResponse } from "@/types/api";
 
 export default function DocumentosPage() {
-  const [activeTab, setActiveTab] = useState("polimorficos")
-  const [search, setSearch] = useState("")
-  const [tipoFilter, setTipoFilter] = useState<string | undefined>(undefined)
-  const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined)
-  const [formOpen, setFormOpen] = useState(false)
-  const [selectedDocumento, setSelectedDocumento] = useState<DocumentoResponse | undefined>(undefined)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [documentoToDelete, setDocumentoToDelete] = useState<string | null>(null)
-  
-  const { data: response, isLoading } = useGetDocumentos()
-  const deleteMutation = useDeleteDocumentosId()
+  const [activeTab, setActiveTab] = useState("polimorficos");
+  const [search, setSearch] = useState("");
+  const [tipoFilter, setTipoFilter] = useState<string | undefined>(undefined);
+  const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedDocumento, setSelectedDocumento] = useState<DocumentoResponse | undefined>(
+    undefined,
+  );
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [documentoToDelete, setDocumentoToDelete] = useState<string | null>(null);
 
-  const documentos = response?.data ?? []
+  const { data: response, isLoading } = useGetDocumentos();
+  const deleteMutation = useDeleteDocumentosId();
+
+  const documentos = response?.data ?? [];
 
   const handleEdit = (documento: DocumentoResponse) => {
-    setSelectedDocumento(documento)
-    setFormOpen(true)
-  }
+    setSelectedDocumento(documento);
+    setFormOpen(true);
+  };
 
   const handleDelete = (id: string) => {
-    setDocumentoToDelete(id)
-    setDeleteDialogOpen(true)
-  }
+    setDocumentoToDelete(id);
+    setDeleteDialogOpen(true);
+  };
 
   const confirmDelete = () => {
     if (documentoToDelete) {
@@ -56,43 +74,47 @@ export default function DocumentosPage() {
         { id: documentoToDelete },
         {
           onSuccess: () => {
-            setDeleteDialogOpen(false)
-            setDocumentoToDelete(null)
+            setDeleteDialogOpen(false);
+            setDocumentoToDelete(null);
           },
         },
-      )
+      );
     }
-  }
+  };
 
   const handleFormOpenChange = (open: boolean) => {
-    setFormOpen(open)
+    setFormOpen(open);
     if (!open) {
-      setSelectedDocumento(undefined)
+      setSelectedDocumento(undefined);
     }
-  }
+  };
 
-  const filteredDocumentos = documentos.filter(doc => {
-    const matchesSearch = search === "" || 
+  const filteredDocumentos = documentos.filter((doc) => {
+    const matchesSearch =
+      search === "" ||
       doc.nomeArquivo.toLowerCase().includes(search.toLowerCase()) ||
-      doc.descricao?.toLowerCase().includes(search.toLowerCase())
-    
-    const matchesTipo = !tipoFilter || doc.tipoEntidade === tipoFilter
-    const matchesStatus = !statusFilter || (statusFilter === 'ativo' ? doc.ativo : !doc.ativo)
-    
-    return matchesSearch && matchesTipo && matchesStatus
-  })
+      doc.descricao?.toLowerCase().includes(search.toLowerCase());
+
+    const matchesTipo = !tipoFilter || doc.tipoEntidade === tipoFilter;
+    const matchesStatus = !statusFilter || (statusFilter === "ativo" ? doc.ativo : !doc.ativo);
+
+    return matchesSearch && matchesTipo && matchesStatus;
+  });
 
   const stats = {
     total: documentos.length,
-    ativos: documentos.filter(d => d.ativo).length,
-    inativos: documentos.filter(d => !d.ativo).length,
-    porTipo: documentos.reduce((acc, doc) => {
-      acc[doc.tipoEntidade] = (acc[doc.tipoEntidade] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-  }
+    ativos: documentos.filter((d) => d.ativo).length,
+    inativos: documentos.filter((d) => !d.ativo).length,
+    porTipo: documentos.reduce(
+      (acc, doc) => {
+        acc[doc.tipoEntidade] = (acc[doc.tipoEntidade] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    ),
+  };
 
-  const tiposEntidade = [...new Set(documentos.map(d => d.tipoEntidade))]
+  const tiposEntidade = [...new Set(documentos.map((d) => d.tipoEntidade))];
 
   return (
     <div className="space-y-6">
@@ -141,91 +163,97 @@ export default function DocumentosPage() {
 
           {/* Stats Cards */}
           <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total</CardTitle>
-            <FileText className="h-4 w-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-            <p className="text-xs text-muted-foreground">documentos</p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total</CardTitle>
+                <FileText className="h-4 w-4 text-blue-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.total}</div>
+                <p className="text-xs text-muted-foreground">documentos</p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ativos</CardTitle>
-            <Eye className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.ativos}</div>
-            <p className="text-xs text-muted-foreground">em uso</p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Ativos</CardTitle>
+                <Eye className="h-4 w-4 text-green-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.ativos}</div>
+                <p className="text-xs text-muted-foreground">em uso</p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Inativos</CardTitle>
-            <Calendar className="h-4 w-4 text-gray-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.inativos}</div>
-            <p className="text-xs text-muted-foreground">arquivados</p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Inativos</CardTitle>
+                <Calendar className="h-4 w-4 text-gray-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.inativos}</div>
+                <p className="text-xs text-muted-foreground">arquivados</p>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tipos</CardTitle>
-            <FileText className="h-4 w-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{Object.keys(stats.porTipo).length}</div>
-            <p className="text-xs text-muted-foreground">entidades</p>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Tipos</CardTitle>
+                <FileText className="h-4 w-4 text-blue-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{Object.keys(stats.porTipo).length}</div>
+                <p className="text-xs text-muted-foreground">entidades</p>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Filters */}
           <Card>
             <CardContent className="pt-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div className="flex gap-4 flex-1">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por nome do arquivo..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-8"
-                />
-              </div>
-              
-              <Select value={tipoFilter} onValueChange={(value) => setTipoFilter(value || undefined)}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Tipo de Entidade" />
-                </SelectTrigger>
-                <SelectContent>
-                  {tiposEntidade.map(tipo => (
-                    <SelectItem key={tipo} value={tipo}>
-                      {tipo}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex flex-col gap-4 md:flex-row md:items-center">
+                <div className="flex gap-4 flex-1">
+                  <div className="relative flex-1 max-w-sm">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Buscar por nome do arquivo..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="pl-8"
+                    />
+                  </div>
 
-              <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value || undefined)}>
-                <SelectTrigger className="w-[130px]">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ativo">Ativo</SelectItem>
-                  <SelectItem value="inativo">Inativo</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            </div>
-          </CardContent>
+                  <Select
+                    value={tipoFilter}
+                    onValueChange={(value) => setTipoFilter(value || undefined)}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Tipo de Entidade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {tiposEntidade.map((tipo) => (
+                        <SelectItem key={tipo} value={tipo}>
+                          {tipo}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select
+                    value={statusFilter}
+                    onValueChange={(value) => setStatusFilter(value || undefined)}
+                  >
+                    <SelectTrigger className="w-[130px]">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ativo">Ativo</SelectItem>
+                      <SelectItem value="inativo">Inativo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
           </Card>
 
           {/* Lista de Documentos */}
@@ -242,18 +270,24 @@ export default function DocumentosPage() {
                           <FileText className="h-5 w-5 text-blue-600" />
                           <h3 className="text-lg font-semibold">{documento.nomeArquivo}</h3>
                           <Badge variant="outline">v{documento.versao}</Badge>
-                          <Badge className={documento.ativo ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                            {documento.ativo ? 'Ativo' : 'Inativo'}
+                          <Badge
+                            className={
+                              documento.ativo
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-800"
+                            }
+                          >
+                            {documento.ativo ? "Ativo" : "Inativo"}
                           </Badge>
                           <Badge variant="secondary" className="capitalize">
                             {documento.tipoEntidade}
                           </Badge>
                         </div>
-                        
+
                         {documento.descricao && (
                           <p className="text-sm text-muted-foreground">{documento.descricao}</p>
                         )}
-                        
+
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                           <div>
                             <span className="text-muted-foreground">Entidade ID:</span>
@@ -265,21 +299,27 @@ export default function DocumentosPage() {
                           </div>
                           <div>
                             <span className="text-muted-foreground">Tamanho:</span>
-                            <p className="font-medium">{(documento.tamanhoBytes / 1024).toFixed(2)} KB</p>
+                            <p className="font-medium">
+                              {(documento.tamanhoBytes / 1024).toFixed(2)} KB
+                            </p>
                           </div>
                           <div>
                             <span className="text-muted-foreground">Caminho:</span>
-                            <p className="font-medium text-xs truncate">{documento.caminhoArquivo}</p>
+                            <p className="font-medium text-xs truncate">
+                              {documento.caminhoArquivo}
+                            </p>
                           </div>
                         </div>
-                        
+
                         {documento.checksum && (
                           <div className="text-xs text-muted-foreground">
                             <span>Checksum: </span>
-                            <code className="bg-muted px-1 py-0.5 rounded">{documento.checksum}</code>
+                            <code className="bg-muted px-1 py-0.5 rounded">
+                              {documento.checksum}
+                            </code>
                           </div>
                         )}
-                        
+
                         {documento.metadados && (
                           <div className="text-xs">
                             <span className="text-muted-foreground">Metadados: </span>
@@ -289,13 +329,9 @@ export default function DocumentosPage() {
                           </div>
                         )}
                       </div>
-                      
+
                       <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(documento)}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => handleEdit(documento)}>
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
@@ -349,7 +385,9 @@ export default function DocumentosPage() {
           <div className="flex justify-between items-center">
             <div>
               <h2 className="text-xl font-semibold">Associação Termo ↔ Repositório</h2>
-              <p className="text-sm text-muted-foreground">Vincule termos de negócio a repositórios corporativos</p>
+              <p className="text-sm text-muted-foreground">
+                Vincule termos de negócio a repositórios corporativos
+              </p>
             </div>
             <Button disabled>
               <Plus className="mr-2 h-4 w-4" />
@@ -361,7 +399,9 @@ export default function DocumentosPage() {
             <div className="text-center text-muted-foreground">
               <Link className="h-12 w-12 mx-auto mb-2" />
               <p>Funcionalidade em desenvolvimento</p>
-              <p className="text-xs mt-2">Associar termos de negócio a repositórios de documentos</p>
+              <p className="text-xs mt-2">
+                Associar termos de negócio a repositórios de documentos
+              </p>
             </div>
           </Card>
         </TabsContent>
@@ -378,12 +418,10 @@ export default function DocumentosPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete}>
-              Excluir
-            </AlertDialogAction>
+            <AlertDialogAction onClick={confirmDelete}>Excluir</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }

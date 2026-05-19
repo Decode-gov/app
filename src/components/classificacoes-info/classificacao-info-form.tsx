@@ -1,9 +1,18 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import {
+  usePostClassificacoesInformacao,
+  usePutClassificacoesInformacaoId,
+} from "@/api/generated/endpoints/classificações-de-informação/classificações-de-informação";
+import { useGetListasClassificacao } from "@/api/generated/endpoints/listas-de-classificação/listas-de-classificação";
+import { useGetDefinicoes } from "@/api/generated/endpoints/termos/termos";
+import { TermoForm } from "@/components/termos/termo-form";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,47 +20,45 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Plus } from "lucide-react"
-import { useCreateClassificacao, useUpdateClassificacao } from "@/hooks/api/use-classificacoes-informacao"
-import { useListasClassificacao } from "@/hooks/api/use-listas-classificacao"
-import { useDefinicoes } from "@/hooks/api/use-definicoes"
-import { ClassificacaoInformacaoResponse } from "@/types/api"
-import { Badge } from "@/components/ui/badge"
-import { TermoForm } from "@/components/termos/termo-form"
-import { CreateClassificacaoInformacaoSchema } from "@/schemas"
-import type { CreateClassificacaoInformacaoFormData } from "@/schemas"
+} from "@/components/ui/select";
+import type { CreateClassificacaoInformacaoFormData } from "@/schemas";
+import { CreateClassificacaoInformacaoSchema } from "@/schemas";
+import type { ClassificacaoInformacaoResponse } from "@/types/api";
 
-type ClassificacaoFormValues = CreateClassificacaoInformacaoFormData
+type ClassificacaoFormValues = CreateClassificacaoInformacaoFormData;
 
 interface ClassificacaoInfoFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  classificacao?: ClassificacaoInformacaoResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  classificacao?: ClassificacaoInformacaoResponse;
 }
 
-export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: ClassificacaoInfoFormProps) {
-  const [termoDialogOpen, setTermoDialogOpen] = useState(false)
-  const createMutation = useCreateClassificacao()
-  const updateMutation = useUpdateClassificacao()
-  const { data: listasData } = useListasClassificacao()
-  const { data: termosData } = useDefinicoes()
+export function ClassificacaoInfoForm({
+  open,
+  onOpenChange,
+  classificacao,
+}: ClassificacaoInfoFormProps) {
+  const [termoDialogOpen, setTermoDialogOpen] = useState(false);
+  const createMutation = usePostClassificacoesInformacao();
+  const updateMutation = usePutClassificacoesInformacaoId();
+  const { data: listasData } = useGetListasClassificacao();
+  const { data: termosData } = useGetDefinicoes();
 
   const form = useForm<ClassificacaoFormValues>({
     resolver: zodResolver(CreateClassificacaoInformacaoSchema),
@@ -59,7 +66,7 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
       classificacaoId: "",
       termoId: "",
     },
-  })
+  });
 
   // Resetar form quando a classificacao mudar ou dialog abrir
   useEffect(() => {
@@ -68,15 +75,15 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
         form.reset({
           classificacaoId: classificacao.classificacaoId,
           termoId: classificacao.termoId,
-        })
+        });
       } else {
         form.reset({
           classificacaoId: "",
           termoId: "",
-        })
+        });
       }
     }
-  }, [open, classificacao, form])
+  }, [open, classificacao, form]);
 
   const onSubmit = async (data: ClassificacaoFormValues) => {
     try {
@@ -84,30 +91,32 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
         await updateMutation.mutateAsync({
           id: classificacao.id,
           data,
-        })
+        });
       } else {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync({
+          data,
+        });
       }
 
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar classificação:', error)
+      console.error("Erro ao salvar classificação:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   // Obter dados
-  const listas = listasData?.data || []
-  const termos = termosData?.data || []
+  const listas = listasData?.data || [];
+  const termos = termosData?.data || [];
 
   return (
     <>
@@ -120,8 +129,7 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
             <DialogDescription className="text-muted-foreground">
               {classificacao
                 ? "Atualize as informações da classificação dos termos de negócio."
-                : "Preencha os dados para criar uma nova classificação dos termos de negócio."
-              }
+                : "Preencha os dados para criar uma nova classificação dos termos de negócio."}
             </DialogDescription>
           </DialogHeader>
 
@@ -196,7 +204,6 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
                                         {termo.sigla}
                                       </Badge>
                                     )}
-
                                   </div>
                                 </SelectItem>
                               ))
@@ -238,7 +245,11 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
                   disabled={isSubmitting}
                   className="bg-primary hover:bg-primary/90"
                 >
-                  {isSubmitting ? "Salvando..." : classificacao ? "Salvar Alterações" : "Criar Classificação"}
+                  {isSubmitting
+                    ? "Salvando..."
+                    : classificacao
+                      ? "Salvar Alterações"
+                      : "Criar Classificação"}
                 </Button>
               </DialogFooter>
             </form>
@@ -247,10 +258,7 @@ export function ClassificacaoInfoForm({ open, onOpenChange, classificacao }: Cla
       </Dialog>
 
       {/* Dialog para criar termo inline */}
-      <TermoForm
-        open={termoDialogOpen}
-        onOpenChange={setTermoDialogOpen}
-      />
+      <TermoForm open={termoDialogOpen} onOpenChange={setTermoDialogOpen} />
     </>
-  )
+  );
 }

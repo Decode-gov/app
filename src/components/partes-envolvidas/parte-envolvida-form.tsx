@@ -1,42 +1,65 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useCreateParteEnvolvida, useUpdateParteEnvolvida } from "@/hooks/api/use-partes-envolvidas"
-import { usePapeis } from "@/hooks/api/use-papeis"
-import { ParteEnvolvidaResponse } from "@/types/api"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { usePapeis } from "@/hooks/api/use-papeis";
+import {
+  useCreateParteEnvolvida,
+  useUpdateParteEnvolvida,
+} from "@/hooks/api/use-partes-envolvidas";
+import type { ParteEnvolvidaResponse } from "@/types/api";
 
 const formSchema = z.object({
   nome: z.string({ message: "Nome é obrigatório" }).min(1, "Nome é obrigatório"),
-  tipo: z.enum(['PESSOA_FISICA', 'PESSOA_JURIDICA', 'ORGAO_PUBLICO', 'ENTIDADE_EXTERNA'], {
+  tipo: z.enum(["PESSOA_FISICA", "PESSOA_JURIDICA", "ORGAO_PUBLICO", "ENTIDADE_EXTERNA"], {
     message: "Tipo é obrigatório",
   }),
   contato: z.string().optional(),
   papelId: z.string().optional(),
-})
+});
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof formSchema>;
 
 interface ParteEnvolvidaFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  parte?: ParteEnvolvidaResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  parte?: ParteEnvolvidaResponse;
 }
 
 export function ParteEnvolvidaForm({ open, onOpenChange, parte }: ParteEnvolvidaFormProps) {
-  const isEditing = !!parte
-  const createParte = useCreateParteEnvolvida()
-  const updateParte = useUpdateParteEnvolvida()
+  const isEditing = !!parte;
+  const createParte = useCreateParteEnvolvida();
+  const updateParte = useUpdateParteEnvolvida();
 
-  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 })
-  const papeis = papeisData?.data || []
+  const { data: papeisData } = usePapeis({ page: 1, limit: 1000 });
+  const papeis = papeisData?.data || [];
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -46,7 +69,7 @@ export function ParteEnvolvidaForm({ open, onOpenChange, parte }: ParteEnvolvida
       contato: "",
       papelId: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (parte) {
@@ -55,37 +78,37 @@ export function ParteEnvolvidaForm({ open, onOpenChange, parte }: ParteEnvolvida
         tipo: parte.tipo || "PESSOA_FISICA",
         contato: parte.contato || "",
         papelId: parte.papelId || "",
-      })
+      });
     } else {
       form.reset({
         nome: "",
         tipo: "PESSOA_FISICA",
         contato: "",
         papelId: "",
-      })
+      });
     }
-  }, [parte, form])
+  }, [parte, form]);
 
   const onSubmit = async (data: FormValues) => {
     try {
       const payload = {
         nome: data.nome,
         tipo: data.tipo,
-        contato: data.contato || '',
+        contato: data.contato || "",
         papelId: data.papelId || undefined,
-      }
+      };
 
       if (isEditing) {
-        await updateParte.mutateAsync({ id: parte.id, data: payload })
+        await updateParte.mutateAsync({ id: parte.id, data: payload });
       } else {
-        await createParte.mutateAsync(payload)
+        await createParte.mutateAsync(payload);
       }
-      onOpenChange(false)
-      form.reset()
+      onOpenChange(false);
+      form.reset();
     } catch (error) {
-      console.error("Erro ao salvar parte envolvida:", error)
+      console.error("Erro ao salvar parte envolvida:", error);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -191,5 +214,5 @@ export function ParteEnvolvidaForm({ open, onOpenChange, parte }: ParteEnvolvida
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

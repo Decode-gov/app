@@ -6,14 +6,14 @@ export default defineConfig({
   "decode-gov-api": {
     input: {
       target: API_SPEC,
-      override: {
-        transformer: "./orval/transform-spec.cjs",
-      },
     },
     output: {
       mode: "tags-split",
       target: "./src/api/generated/endpoints",
-      schemas: "./src/api/generated/model",
+      schemas: {
+        path: "./src/api/generated/model",
+        type: 'zod'
+      },
       client: "react-query",
       httpClient: "axios",
       formatter: 'prettier',
@@ -24,13 +24,7 @@ export default defineConfig({
           name: "customInstance",
         },
         query: {
-          signal: true,
-          useQuery: true,
-          useMutation: true,
           useInvalidate: true,
-          options: {
-            staleTime: 10_000,
-          },
         },
       },
     },
@@ -39,13 +33,11 @@ export default defineConfig({
   "decode-gov-zod": {
     input: {
       target: API_SPEC,
-      override: {
-        transformer: "./orval/transform-spec.cjs",
-      },
     },
     output: {
       mode: "tags-split",
       target: "./src/api/generated/zod",
+
       client: "zod",
       fileExtension: ".zod.ts",
       formatter: 'prettier',

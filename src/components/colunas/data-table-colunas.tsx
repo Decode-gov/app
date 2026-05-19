@@ -1,119 +1,108 @@
-"use client"
+"use client";
 
-import { useState } from "react"
 import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-    getPaginationRowModel,
-    getSortedRowModel,
-    SortingState,
-    getFilteredRowModel,
-    ColumnFiltersState,
-} from "@tanstack/react-table"
+  type ColumnDef,
+  type ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
+import { Edit, MoreHorizontal, Search, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useDeleteColunasId } from "@/api/generated/endpoints/colunas/colunas";
+import { Button } from "@/components/ui/button";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Edit, Trash2, Search } from "lucide-react"
-import { ColunaResponse } from "@/types/api"
-import { useDeleteColunasId } from "@/api/generated/endpoints/colunas/colunas"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { ColunaResponse } from "@/types/api";
 
 interface DataTableColunasProps {
-  data: ColunaResponse[]
-  onEdit: (coluna: ColunaResponse) => void
+  data: ColunaResponse[];
+  onEdit: (coluna: ColunaResponse) => void;
 }
 
 export function DataTableColunas({ data, onEdit }: DataTableColunasProps) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  
-  const deleteColuna = useDeleteColunasId()
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  const deleteColuna = useDeleteColunasId();
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta coluna?")) {
-      await deleteColuna.mutateAsync({ id })
+      await deleteColuna.mutateAsync({ id });
     }
-  }
+  };
 
   const columns: ColumnDef<ColunaResponse>[] = [
     {
       accessorKey: "nome",
       header: "Nome da Coluna",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("nome")}</div>
-      ),
+      cell: ({ row }) => <div className="font-medium">{row.getValue("nome")}</div>,
     },
     {
       accessorKey: "tabela.nome",
       header: "Tabela",
       cell: ({ row }) => {
-        const tabela = row.original.tabela
-        return (
-          <div>{tabela?.nome || "Não informado"}</div>
-        )
+        const tabela = row.original.tabela;
+        return <div>{tabela?.nome || "Não informado"}</div>;
       },
     },
     {
       accessorKey: "termo.termo",
       header: "Termo",
       cell: ({ row }) => {
-        const termo = row.original.termo
-        return (
-          <div className="text-muted-foreground">
-            {termo?.termo || "Não informado"}
-          </div>
-        )
+        const termo = row.original.termo;
+        return <div className="text-muted-foreground">{termo?.termo || "Não informado"}</div>;
       },
     },
     {
       accessorKey: "necessidadeInformacao.questaoGerencial",
       header: "Questão Gerencial",
       cell: ({ row }) => {
-        const necessidade = row.original.necessidadeInformacao
+        const necessidade = row.original.necessidadeInformacao;
         return (
-          <div 
-            className="max-w-[300px] truncate text-muted-foreground" 
+          <div
+            className="max-w-[300px] truncate text-muted-foreground"
             title={necessidade?.questaoGerencial}
           >
             {necessidade?.questaoGerencial || "Não informado"}
           </div>
-        )
+        );
       },
     },
     {
       accessorKey: "descricao",
       header: "Descrição",
       cell: ({ row }) => {
-        const descricao = row.getValue("descricao") as string
+        const descricao = row.getValue("descricao") as string;
         return (
-          <div 
-            className="max-w-[200px] truncate text-muted-foreground" 
-            title={descricao}
-          >
+          <div className="max-w-[200px] truncate text-muted-foreground" title={descricao}>
             {descricao || "Não informada"}
           </div>
-        )
+        );
       },
     },
     {
       id: "actions",
       header: "Ações",
       cell: ({ row }) => {
-        const coluna = row.original
+        const coluna = row.original;
 
         return (
           <DropdownMenu>
@@ -136,10 +125,10 @@ export function DataTableColunas({ data, onEdit }: DataTableColunasProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const table = useReactTable({
     data,
@@ -154,7 +143,7 @@ export function DataTableColunas({ data, onEdit }: DataTableColunasProps) {
       sorting,
       columnFilters,
     },
-  })
+  });
 
   return (
     <div className="space-y-4">
@@ -164,9 +153,7 @@ export function DataTableColunas({ data, onEdit }: DataTableColunasProps) {
           <Input
             placeholder="Buscar colunas..."
             value={(table.getColumn("nome")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("nome")?.setFilterValue(event.target.value)
-            }
+            onChange={(event) => table.getColumn("nome")?.setFilterValue(event.target.value)}
             className="pl-8"
           />
         </div>
@@ -181,10 +168,7 @@ export function DataTableColunas({ data, onEdit }: DataTableColunasProps) {
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -193,26 +177,17 @@ export function DataTableColunas({ data, onEdit }: DataTableColunasProps) {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   Nenhuma coluna encontrada
                 </TableCell>
               </TableRow>
@@ -240,5 +215,5 @@ export function DataTableColunas({ data, onEdit }: DataTableColunasProps) {
         </Button>
       </div>
     </div>
-  )
+  );
 }

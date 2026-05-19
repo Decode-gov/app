@@ -1,16 +1,30 @@
-﻿"use client"
+﻿"use client";
 
-import { useState } from "react"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Eye, TrendingUp } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Edit, Eye, MoreHorizontal, Plus, Search, Trash2, TrendingUp } from "lucide-react";
+import { useState } from "react";
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
+import { useDeleteKpisId, useGetKpis } from "@/api/generated/endpoints/kpis/kpis";
+import { useGetProcessos } from "@/api/generated/endpoints/processos/processos";
+import { KpiForm } from "@/components/kpis/kpi-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -18,90 +32,64 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useGetKpis, useDeleteKpisId } from "@/api/generated/endpoints/kpis/kpis"
-import { useGetProcessos } from "@/api/generated/endpoints/processos/processos"
-import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades"
-import { KpiForm } from "@/components/kpis/kpi-form"
-import { KpiResponse } from "@/types/api"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+} from "@/components/ui/table";
+import type { KpiResponse } from "@/types/api";
 
 export default function KpisPage() {
-  const [formOpen, setFormOpen] = useState(false)
-  const [editingKpi, setEditingKpi] = useState<KpiResponse | undefined>()
-  const [search, setSearch] = useState("")
-  const [processoFilter, setProcessoFilter] = useState<string>("all")
-  const [comunidadeFilter, setComunidadeFilter] = useState<string>("all")
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingKpi, setEditingKpi] = useState<KpiResponse | undefined>();
+  const [search, setSearch] = useState("");
+  const [processoFilter, setProcessoFilter] = useState<string>("all");
+  const [comunidadeFilter, setComunidadeFilter] = useState<string>("all");
 
-  const { data: kpisData, isLoading, error } = useGetKpis()
-  const { data: processosData } = useGetProcessos()
-  const { data: comunidadesData } = useGetComunidades()
-  const deleteMutation = useDeleteKpisId()
+  const { data: kpisData, isLoading, error } = useGetKpis();
+  const { data: processosData } = useGetProcessos();
+  const { data: comunidadesData } = useGetComunidades();
+  const deleteMutation = useDeleteKpisId();
 
-  const kpis = kpisData?.data ?? []
-  const processos = processosData?.data ?? []
-  const comunidades = comunidadesData?.data ?? []
+  const kpis = kpisData?.data ?? [];
+  const processos = processosData?.data ?? [];
+  const comunidades = comunidadesData?.data ?? [];
 
   const filteredKpis = kpis.filter((kpi) => {
-    const matchesSearch = 
-      search === "" ||
-      kpi.nome.toLowerCase().includes(search.toLowerCase())
-    
-    const matchesProcesso = 
-      processoFilter === "all" || 
-      kpi.processoId === processoFilter
+    const matchesSearch = search === "" || kpi.nome.toLowerCase().includes(search.toLowerCase());
 
-    const matchesComunidade = 
-      comunidadeFilter === "all" || 
-      kpi.comunidadeId === comunidadeFilter
+    const matchesProcesso = processoFilter === "all" || kpi.processoId === processoFilter;
 
-    return matchesSearch && matchesProcesso && matchesComunidade
-  })
+    const matchesComunidade = comunidadeFilter === "all" || kpi.comunidadeId === comunidadeFilter;
+
+    return matchesSearch && matchesProcesso && matchesComunidade;
+  });
 
   const handleEdit = (kpi: KpiResponse) => {
-    setEditingKpi(kpi)
-    setFormOpen(true)
-  }
+    setEditingKpi(kpi);
+    setFormOpen(true);
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este KPI?")) {
       try {
-        await deleteMutation.mutateAsync({ id })
+        await deleteMutation.mutateAsync({ id });
       } catch (error) {
-        console.error('Erro ao excluir KPI:', error)
+        console.error("Erro ao excluir KPI:", error);
       }
     }
-  }
+  };
 
   const handleNewKpi = () => {
-    setEditingKpi(undefined)
-    setFormOpen(true)
-  }
+    setEditingKpi(undefined);
+    setFormOpen(true);
+  };
 
   const getProcessoNome = (processoId: string) => {
-    const processo = processos.find(p => p.id === processoId)
-    return processo?.nome || "N/A"
-  }
+    const processo = processos.find((p) => p.id === processoId);
+    return processo?.nome || "N/A";
+  };
 
   const getComunidadeNome = (comunidadeId: string) => {
-    const comunidade = comunidades.find(c => c.id === comunidadeId)
-    return comunidade?.nome || "N/A"
-  }
+    const comunidade = comunidades.find((c) => c.id === comunidadeId);
+    return comunidade?.nome || "N/A";
+  };
 
   if (isLoading) {
     return (
@@ -110,9 +98,7 @@ export default function KpisPage() {
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             KPIs
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Gerencie os indicadores chave de performance
-          </p>
+          <p className="text-muted-foreground mt-2">Gerencie os indicadores chave de performance</p>
         </div>
 
         <Card className="animate-pulse">
@@ -133,29 +119,25 @@ export default function KpisPage() {
               <Skeleton className="h-10 w-[100px]" />
             </div>
             <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full" />
+              {Array.from({ length: 5 }, (_, i) => i).map((key) => (
+                <Skeleton key={key} className="h-16 w-full" />
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-destructive">
-            KPIs
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Erro ao carregar KPIs
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-destructive">KPIs</h1>
+          <p className="text-muted-foreground mt-2">Erro ao carregar KPIs</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -179,11 +161,10 @@ export default function KpisPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-purple-600">
-            {kpis.length}
-          </div>
+          <div className="text-2xl font-bold text-purple-600">{kpis.length}</div>
           <p className="text-xs text-muted-foreground">
-            {filteredKpis.length} {filteredKpis.length === 1 ? 'resultado encontrado' : 'resultados encontrados'}
+            {filteredKpis.length}{" "}
+            {filteredKpis.length === 1 ? "resultado encontrado" : "resultados encontrados"}
           </p>
         </CardContent>
       </Card>
@@ -194,9 +175,7 @@ export default function KpisPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Indicadores Chave de Performance</CardTitle>
-              <CardDescription>
-                Lista de todos os KPIs cadastrados
-              </CardDescription>
+              <CardDescription>Lista de todos os KPIs cadastrados</CardDescription>
             </div>
             <Button className="gap-2" onClick={handleNewKpi}>
               <Plus className="h-4 w-4" />
@@ -272,13 +251,19 @@ export default function KpisPage() {
                         </div>
                       </TableCell>
                       <TableCell className="max-w-[200px]">
-                        <div className="truncate" title={kpi.processoId ? getProcessoNome(kpi.processoId) : '-'}>
-                          {kpi.processoId ? getProcessoNome(kpi.processoId) : '-'}
+                        <div
+                          className="truncate"
+                          title={kpi.processoId ? getProcessoNome(kpi.processoId) : "-"}
+                        >
+                          {kpi.processoId ? getProcessoNome(kpi.processoId) : "-"}
                         </div>
                       </TableCell>
                       <TableCell className="max-w-[200px]">
-                        <div className="truncate" title={kpi.comunidadeId ? getComunidadeNome(kpi.comunidadeId) : '-'}>
-                          {kpi.comunidadeId ? getComunidadeNome(kpi.comunidadeId) : '-'}
+                        <div
+                          className="truncate"
+                          title={kpi.comunidadeId ? getComunidadeNome(kpi.comunidadeId) : "-"}
+                        >
+                          {kpi.comunidadeId ? getComunidadeNome(kpi.comunidadeId) : "-"}
                         </div>
                       </TableCell>
                       <TableCell className="text-muted-foreground">
@@ -323,13 +308,13 @@ export default function KpisPage() {
       <KpiForm
         open={formOpen}
         onOpenChange={(open) => {
-          setFormOpen(open)
+          setFormOpen(open);
           if (!open) {
-            setEditingKpi(undefined)
+            setEditingKpi(undefined);
           }
         }}
         kpi={editingKpi}
       />
     </div>
-  )
+  );
 }

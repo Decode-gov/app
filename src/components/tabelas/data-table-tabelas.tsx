@@ -1,80 +1,78 @@
-"use client"
+"use client";
 
-import { useState } from "react"
 import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-    getPaginationRowModel,
-    getSortedRowModel,
-    SortingState,
-    getFilteredRowModel,
-    ColumnFiltersState,
-} from "@tanstack/react-table"
+  type ColumnDef,
+  type ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
+import { Edit, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useDeleteTabelasId } from "@/api/generated/endpoints/tabelas/tabelas";
+import { Button } from "@/components/ui/button";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Edit, Trash2, Plus, Search } from "lucide-react"
-import { TabelaResponse } from "@/types/api"
-import { useDeleteTabelasId } from "@/api/generated/endpoints/tabelas/tabelas"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { TabelaResponse } from "@/types/api";
 
 interface DataTableTabelasProps {
-  data: TabelaResponse[]
-  onEdit: (tabela: TabelaResponse) => void
-  onAddColuna: (tabela: TabelaResponse) => void
+  data: TabelaResponse[];
+  onEdit: (tabela: TabelaResponse) => void;
+  onAddColuna: (tabela: TabelaResponse) => void;
 }
 
 export function DataTableTabelas({ data, onEdit, onAddColuna }: DataTableTabelasProps) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  
-  const deleteTabela = useDeleteTabelasId()
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  const deleteTabela = useDeleteTabelasId();
 
   const handleDelete = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir esta tabela? Todas as colunas associadas também serão excluídas.")) {
-      await deleteTabela.mutateAsync({ id })
+    if (
+      confirm(
+        "Tem certeza que deseja excluir esta tabela? Todas as colunas associadas também serão excluídas.",
+      )
+    ) {
+      await deleteTabela.mutateAsync({ id });
     }
-  }
+  };
 
   const columns: ColumnDef<TabelaResponse>[] = [
     {
       accessorKey: "nome",
       header: "Nome da Tabela",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("nome")}</div>
-      ),
+      cell: ({ row }) => <div className="font-medium">{row.getValue("nome")}</div>,
     },
     {
       accessorKey: "banco.nome",
       header: "Banco de Dados",
       cell: ({ row }) => {
-        const banco = row.original.banco
-        return (
-          <div className="text-muted-foreground">
-            {banco?.nome || "Não informado"}
-          </div>
-        )
+        const banco = row.original.banco;
+        return <div className="text-muted-foreground">{banco?.nome || "Não informado"}</div>;
       },
     },
     {
       id: "actions",
       header: "Ações",
       cell: ({ row }) => {
-        const tabela = row.original
+        const tabela = row.original;
 
         return (
           <DropdownMenu>
@@ -101,10 +99,10 @@ export function DataTableTabelas({ data, onEdit, onAddColuna }: DataTableTabelas
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const table = useReactTable({
     data,
@@ -119,7 +117,7 @@ export function DataTableTabelas({ data, onEdit, onAddColuna }: DataTableTabelas
       sorting,
       columnFilters,
     },
-  })
+  });
 
   return (
     <div className="space-y-4">
@@ -129,9 +127,7 @@ export function DataTableTabelas({ data, onEdit, onAddColuna }: DataTableTabelas
           <Input
             placeholder="Buscar tabelas..."
             value={(table.getColumn("nome")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("nome")?.setFilterValue(event.target.value)
-            }
+            onChange={(event) => table.getColumn("nome")?.setFilterValue(event.target.value)}
             className="pl-8"
           />
         </div>
@@ -146,10 +142,7 @@ export function DataTableTabelas({ data, onEdit, onAddColuna }: DataTableTabelas
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -158,26 +151,17 @@ export function DataTableTabelas({ data, onEdit, onAddColuna }: DataTableTabelas
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   Nenhuma tabela encontrada
                 </TableCell>
               </TableRow>
@@ -205,5 +189,5 @@ export function DataTableTabelas({ data, onEdit, onAddColuna }: DataTableTabelas
         </Button>
       </div>
     </div>
-  )
+  );
 }

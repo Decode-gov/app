@@ -1,54 +1,55 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Plus, Workflow } from "lucide-react"
+import { Plus, Workflow } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 import {
-  useGetAtribuicoes,
   useDeleteAtribuicoesId,
-} from "@/api/generated/endpoints/atribuicoes/atribuicoes"
-import { useGetPapeis } from "@/api/generated/endpoints/papeis/papeis"
-import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades"
-import { AtribuicaoForm } from "@/components/atribuicoes/atribuicao-form"
-import { AtribuicoesTable } from "@/components/atribuicoes/atribuicoes-table"
-import { getAtribuicoesColumns } from "@/components/atribuicoes/atribuicoes-table-columns"
-import { Skeleton } from "@/components/ui/skeleton"
-import { AtribuicaoResponse } from "@/types/api"
+  useGetAtribuicoes,
+} from "@/api/generated/endpoints/atribuições-papel-domínio/atribuições-papel-domínio";
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
+import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
+import { AtribuicaoForm } from "@/components/atribuicoes/atribuicao-form";
+import { AtribuicoesTable } from "@/components/atribuicoes/atribuicoes-table";
+import { getAtribuicoesColumns } from "@/components/atribuicoes/atribuicoes-table-columns";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { AtribuicaoResponse } from "@/types/api";
 
 export default function AtribuicoesPage() {
-  const [formOpen, setFormOpen] = useState(false)
-  const [selectedAtribuicao, setSelectedAtribuicao] = useState<AtribuicaoResponse | undefined>()
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedAtribuicao, setSelectedAtribuicao] = useState<AtribuicaoResponse | undefined>();
 
-  const { data: atribuicoesData, isLoading, error } = useGetAtribuicoes()
-  const { data: papeisData } = useGetPapeis()
-  const { data: comunidadesData } = useGetComunidades()
-  const deleteAtribuicao = useDeleteAtribuicoesId()
+  const { data: atribuicoesData, isLoading, error } = useGetAtribuicoes();
+  const { data: papeisData } = useGetPapeis();
+  const { data: comunidadesData } = useGetComunidades();
+  const deleteAtribuicao = useDeleteAtribuicoesId();
 
   // Memoização dos dados
-  const papeis = useMemo(() => papeisData?.data ?? [], [papeisData?.data])
-  const dominios = useMemo(() => comunidadesData?.data ?? [], [comunidadesData?.data])
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const atribuicoes = useMemo(() => (atribuicoesData?.data ?? []) as any[], [atribuicoesData?.data])
+  const papeis = useMemo(() => papeisData?.data ?? [], [papeisData?.data]);
+  const dominios = useMemo(() => comunidadesData?.data ?? [], [comunidadesData?.data]);
+  const atribuicoes = useMemo(() => atribuicoesData?.data ?? [], [atribuicoesData?.data]);
 
   // Handlers para as ações da tabela
-  const handleEdit = (atribuicao: AtribuicaoResponse) => {
-    setSelectedAtribuicao(atribuicao)
-    setFormOpen(true)
-  }
+  const handleEdit = useCallback((atribuicao: AtribuicaoResponse) => {
+    setSelectedAtribuicao(atribuicao);
+    setFormOpen(true);
+  }, []);
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir esta atribuição?")) {
-      await deleteAtribuicao.mutateAsync({ id })
-    }
-  }
+  const handleDelete = useCallback(
+    async (id: string) => {
+      if (confirm("Tem certeza que deseja excluir esta atribuição?")) {
+        await deleteAtribuicao.mutateAsync({ id });
+      }
+    },
+    [deleteAtribuicao],
+  );
 
   // Colunas da tabela
   const columns = useMemo(
     () => getAtribuicoesColumns({ onEdit: handleEdit, onDelete: handleDelete }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  )
+    [handleEdit, handleDelete],
+  );
 
   // Opções de filtros
   const filterOptions = useMemo(
@@ -70,8 +71,8 @@ export default function AtribuicoesPage() {
         })),
       },
     ],
-    [papeis, dominios]
-  )
+    [papeis, dominios],
+  );
 
   if (isLoading) {
     return (
@@ -86,8 +87,8 @@ export default function AtribuicoesPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="animate-pulse">
+          {Array.from({ length: 3 }, (_, i) => i).map((key) => (
+            <Card key={key} className="animate-pulse">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <Skeleton className="h-4 w-[100px]" />
                 <Skeleton className="h-8 w-8 rounded-lg" />
@@ -106,14 +107,14 @@ export default function AtribuicoesPage() {
               <Skeleton className="h-10 w-[300px]" />
             </div>
             <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full" />
+              {Array.from({ length: 5 }, (_, i) => i).map((key) => (
+                <Skeleton key={key} className="h-16 w-full" />
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -123,12 +124,10 @@ export default function AtribuicoesPage() {
           <h1 className="text-3xl font-bold tracking-tight text-destructive">
             Atribuições Papel↔Domínio
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Erro ao carregar atribuições
-          </p>
+          <p className="text-muted-foreground mt-2">Erro ao carregar atribuições</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -152,9 +151,7 @@ export default function AtribuicoesPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {atribuicoes.length}
-            </div>
+            <div className="text-2xl font-bold text-blue-600">{atribuicoes.length}</div>
             <p className="text-xs text-muted-foreground">atribuições cadastradas</p>
           </CardContent>
         </Card>
@@ -168,7 +165,7 @@ export default function AtribuicoesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {atribuicoes.filter(a => a.onboarding).length}
+              {atribuicoes.filter((a) => a.onboarding).length}
             </div>
             <p className="text-xs text-muted-foreground">requerem onboarding</p>
           </CardContent>
@@ -182,9 +179,7 @@ export default function AtribuicoesPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">
-              {atribuicoes.length}
-            </div>
+            <div className="text-2xl font-bold text-purple-600">{atribuicoes.length}</div>
             <p className="text-xs text-muted-foreground">atribuições ativas</p>
           </CardContent>
         </Card>
@@ -200,10 +195,13 @@ export default function AtribuicoesPage() {
                 Lista de todas as atribuições entre papéis e domínios cadastradas
               </CardDescription>
             </div>
-            <Button className="gap-2" onClick={() => {
-              setSelectedAtribuicao(undefined)
-              setFormOpen(true)
-            }}>
+            <Button
+              className="gap-2"
+              onClick={() => {
+                setSelectedAtribuicao(undefined);
+                setFormOpen(true);
+              }}
+            >
               <Plus className="h-4 w-4" />
               Nova Atribuição
             </Button>
@@ -223,13 +221,13 @@ export default function AtribuicoesPage() {
       <AtribuicaoForm
         open={formOpen}
         onOpenChange={(open) => {
-          setFormOpen(open)
+          setFormOpen(open);
           if (!open) {
-            setSelectedAtribuicao(undefined)
+            setSelectedAtribuicao(undefined);
           }
         }}
         atribuicao={selectedAtribuicao}
       />
     </div>
-  )
+  );
 }

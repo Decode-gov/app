@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import { useState } from "react"
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
+} from "@tanstack/react-table";
+import { Search } from "lucide-react";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -19,18 +19,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
-export function TermosDataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+export function TermosDataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
@@ -42,7 +39,7 @@ export function TermosDataTable<TData, TValue>({
     state: {
       columnFilters,
     },
-  })
+  });
 
   return (
     <div className="space-y-4">
@@ -51,9 +48,7 @@ export function TermosDataTable<TData, TValue>({
         <Input
           placeholder="Buscar por termo ou definição..."
           value={(table.getColumn("termo")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("termo")?.setFilterValue(event.target.value)
-          }
+          onChange={(event) => table.getColumn("termo")?.setFilterValue(event.target.value)}
           className="pl-8"
         />
       </div>
@@ -68,12 +63,9 @@ export function TermosDataTable<TData, TValue>({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -81,16 +73,10 @@ export function TermosDataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -109,5 +95,5 @@ export function TermosDataTable<TData, TValue>({
         </Table>
       </div>
     </div>
-  )
+  );
 }

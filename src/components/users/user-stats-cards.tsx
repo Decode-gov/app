@@ -1,9 +1,9 @@
-import { Users, UserCheck, UserX } from "lucide-react"
-import { UsuarioStats } from "@/types/user"
-import { StatsCards, type StatsCard } from "@/components/ui/stats-cards"
+import { UserCheck, Users, UserX } from "lucide-react";
+import { type StatsCard, StatsCards } from "@/components/ui/stats-cards";
+import type { UsuarioStats } from "@/types/user";
 
 interface UserStatsCardsProps {
-  stats: UsuarioStats
+  stats: UsuarioStats;
 }
 
 export function UserStatsCards({ stats }: UserStatsCardsProps) {
@@ -29,7 +29,7 @@ export function UserStatsCards({ stats }: UserStatsCardsProps) {
       icon: UserX,
       gradient: "from-red-500 to-rose-500",
     },
-  ]
+  ];
 
-  return <StatsCards cards={cards} animationDirection="right" />
+  return <StatsCards cards={cards} animationDirection="right" />;
 }

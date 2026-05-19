@@ -1,106 +1,105 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
+  usePostComitesAprovadores,
+  usePutComitesAprovadoresId,
+} from "@/api/generated/endpoints/comitês-aprovadores/comitês-aprovadores";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useCreateComiteAprovador, useUpdateComiteAprovador } from "@/hooks/api/use-comites-aprovadores"
-import { ComiteAprovadorResponse } from "@/types/api"
-
-const comiteAprovadorSchema = z.object({
-  nome: z.string().min(1, "Nome é obrigatório").max(255),
-})
-
-type ComiteAprovadorFormValues = z.infer<typeof comiteAprovadorSchema>
+  type PostComitesAprovadoresBody,
+  PostComitesAprovadoresBody as PostComitesAprovadoresBodySchema,
+} from "@/api/generated/model";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import type { GetComiteAprovador200DataItem } from "@/types/api";
 
 interface ComiteAprovadorFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  comite?: ComiteAprovadorResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  comite?: GetComiteAprovador200DataItem;
 }
 
 export function ComiteAprovadorForm({ open, onOpenChange, comite }: ComiteAprovadorFormProps) {
-  const createMutation = useCreateComiteAprovador()
-  const updateMutation = useUpdateComiteAprovador()
-  
-  const form = useForm<ComiteAprovadorFormValues>({
-    resolver: zodResolver(comiteAprovadorSchema),
+  const createMutation = usePostComitesAprovadores();
+  const updateMutation = usePutComitesAprovadoresId();
+
+  const form = useForm<PostComitesAprovadoresBody>({
+    resolver: zodResolver(PostComitesAprovadoresBodySchema),
     defaultValues: {
       nome: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (open) {
       if (comite) {
         form.reset({
           nome: comite.nome,
-        })
+        });
       } else {
         form.reset({
           nome: "",
-        })
+        });
       }
     }
-  }, [open, comite, form])
+  }, [open, comite, form]);
 
-  const onSubmit = async (data: ComiteAprovadorFormValues) => {
+  const onSubmit = async (data: PostComitesAprovadoresBody) => {
     try {
       if (comite) {
         await updateMutation.mutateAsync({
           id: comite.id,
           data,
-        })
+        });
       } else {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync({
+          data
+        });
       }
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar comitê aprovador:', error)
+      console.error("Erro ao salvar comitê aprovador:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>
-            {comite ? "Editar comitê aprovador" : "Novo comitê aprovador"}
-          </DialogTitle>
+          <DialogTitle>{comite ? "Editar comitê aprovador" : "Novo comitê aprovador"}</DialogTitle>
           <DialogDescription>
-            {comite 
+            {comite
               ? "Atualize as informações do comitê aprovador."
-              : "Preencha os dados para criar um novo comitê aprovador."
-            }
+              : "Preencha os dados para criar um novo comitê aprovador."}
           </DialogDescription>
         </DialogHeader>
 
@@ -115,9 +114,7 @@ export function ComiteAprovadorForm({ open, onOpenChange, comite }: ComiteAprova
                   <FormControl>
                     <Input placeholder="Ex: Comitê de Governança" {...field} />
                   </FormControl>
-                  <FormDescription className="text-xs">
-                    Máximo 255 caracteres
-                  </FormDescription>
+                  <FormDescription className="text-xs">Máximo 255 caracteres</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -140,5 +137,5 @@ export function ComiteAprovadorForm({ open, onOpenChange, comite }: ComiteAprova
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

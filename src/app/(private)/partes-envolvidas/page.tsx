@@ -1,22 +1,49 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Users, Building2, UserCheck } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
-  useGetPartesEnvolvidas,
+  Building2,
+  Edit,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Trash2,
+  UserCheck,
+  Users,
+} from "lucide-react";
+import { useState } from "react";
+import { useGetPapeis } from "@/api/generated/endpoints/papeis/papeis";
+import {
   useDeletePartesEnvolvidasId,
-} from "@/api/generated/endpoints/partes-envolvidas/partes-envolvidas"
-import { useGetPapeis } from "@/api/generated/endpoints/papeis/papeis"
-import { ParteEnvolvidaResponse } from "@/types/api"
-import { ParteEnvolvidaForm } from "@/components/partes-envolvidas/parte-envolvida-form"
+  useGetPartesEnvolvidas,
+} from "@/api/generated/endpoints/partes-envolvidas/partes-envolvidas";
+import { ParteEnvolvidaForm } from "@/components/partes-envolvidas/parte-envolvida-form";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { ParteEnvolvidaResponse } from "@/types/api";
 
 const getTipoLabel = (tipo: string) => {
   const labels: Record<string, string> = {
@@ -24,9 +51,9 @@ const getTipoLabel = (tipo: string) => {
     PESSOA_JURIDICA: "Pessoa Jurídica",
     ORGAO_PUBLICO: "Órgão Público",
     ENTIDADE_EXTERNA: "Entidade Externa",
-  }
-  return labels[tipo] || tipo
-}
+  };
+  return labels[tipo] || tipo;
+};
 
 const getTipoBadgeColor = (tipo: string) => {
   const colors: Record<string, string> = {
@@ -34,50 +61,50 @@ const getTipoBadgeColor = (tipo: string) => {
     PESSOA_JURIDICA: "bg-green-100 text-green-800",
     ORGAO_PUBLICO: "bg-purple-100 text-purple-800",
     ENTIDADE_EXTERNA: "bg-orange-100 text-orange-800",
-  }
-  return colors[tipo] || "bg-gray-100 text-gray-800"
-}
+  };
+  return colors[tipo] || "bg-gray-100 text-gray-800";
+};
 
 export default function PartesEnvolvidasPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [tipoFilter, setTipoFilter] = useState<string>("")
-  const [page] = useState(1)
-  const [limit] = useState(10)
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [selectedParte, setSelectedParte] = useState<ParteEnvolvidaResponse | undefined>()
+  const [searchTerm, setSearchTerm] = useState("");
+  const [tipoFilter, setTipoFilter] = useState<string>("");
+  const [page] = useState(1);
+  const [limit] = useState(10);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedParte, setSelectedParte] = useState<ParteEnvolvidaResponse | undefined>();
 
-  void page
-  void limit
-  void searchTerm
-  void tipoFilter
+  void page;
+  void limit;
+  void searchTerm;
+  void tipoFilter;
 
-  const { data: partesData, isLoading, error } = useGetPartesEnvolvidas()
-  const { data: papeisData } = useGetPapeis()
+  const { data: partesData, isLoading, error } = useGetPartesEnvolvidas();
+  const { data: papeisData } = useGetPapeis();
 
-  const deleteParte = useDeletePartesEnvolvidasId()
+  const deleteParte = useDeletePartesEnvolvidasId();
 
   const handleEdit = (parte: ParteEnvolvidaResponse) => {
-    setSelectedParte(parte)
-    setIsFormOpen(true)
-  }
+    setSelectedParte(parte);
+    setIsFormOpen(true);
+  };
 
   const handleNew = () => {
-    setSelectedParte(undefined)
-    setIsFormOpen(true)
-  }
+    setSelectedParte(undefined);
+    setIsFormOpen(true);
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta parte envolvida?")) {
-      await deleteParte.mutateAsync({ id })
+      await deleteParte.mutateAsync({ id });
     }
-  }
+  };
 
-  const partes = partesData?.data ?? []
-  const papeis = papeisData?.data ?? []
+  const partes = partesData?.data ?? [];
+  const papeis = papeisData?.data ?? [];
 
-  const pessoasFisicas = partes.filter(p => p.tipo === 'PESSOA_FISICA').length
-  const pessoasJuridicas = partes.filter(p => p.tipo === 'PESSOA_JURIDICA').length
-  const partesComPapel = partes.filter(p => p.papelId).length
+  const pessoasFisicas = partes.filter((p) => p.tipo === "PESSOA_FISICA").length;
+  const pessoasJuridicas = partes.filter((p) => p.tipo === "PESSOA_JURIDICA").length;
+  const partesComPapel = partes.filter((p) => p.papelId).length;
 
   return (
     <>
@@ -150,9 +177,7 @@ export default function PartesEnvolvidasPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Partes Envolvidas</CardTitle>
-                <CardDescription>
-                  Lista de todas as partes envolvidas cadastradas
-                </CardDescription>
+                <CardDescription>Lista de todas as partes envolvidas cadastradas</CardDescription>
               </div>
               <Button className="gap-2" onClick={handleNew}>
                 <Plus className="h-4 w-4" />
@@ -171,7 +196,10 @@ export default function PartesEnvolvidasPage() {
                   className="pl-8"
                 />
               </div>
-              <Select value={tipoFilter || "todos"} onValueChange={(value) => setTipoFilter(value === "todos" ? "" : value)}>
+              <Select
+                value={tipoFilter || "todos"}
+                onValueChange={(value) => setTipoFilter(value === "todos" ? "" : value)}
+              >
                 <SelectTrigger className="w-full md:w-[250px]">
                   <SelectValue placeholder="Filtrar por tipo" />
                 </SelectTrigger>
@@ -206,13 +234,13 @@ export default function PartesEnvolvidasPage() {
                   </TableHeader>
                   <TableBody>
                     {partes.map((parte: ParteEnvolvidaResponse) => {
-                      const papel = parte.papelId ? papeis.find(p => p.id === parte.papelId) : null
+                      const papel = parte.papelId
+                        ? papeis.find((p) => p.id === parte.papelId)
+                        : null;
 
                       return (
                         <TableRow key={parte.id}>
-                          <TableCell className="font-medium">
-                            {parte.nome}
-                          </TableCell>
+                          <TableCell className="font-medium">{parte.nome}</TableCell>
                           <TableCell>
                             <Badge className={getTipoBadgeColor(parte.tipo)}>
                               {getTipoLabel(parte.tipo)}
@@ -229,7 +257,7 @@ export default function PartesEnvolvidasPage() {
                             )}
                           </TableCell>
                           <TableCell className="text-muted-foreground">
-                            {new Date(parte.createdAt).toLocaleDateString('pt-BR')}
+                            {new Date(parte.createdAt).toLocaleDateString("pt-BR")}
                           </TableCell>
                           <TableCell>
                             <DropdownMenu>
@@ -243,7 +271,7 @@ export default function PartesEnvolvidasPage() {
                                   <Edit className="mr-2 h-4 w-4" />
                                   Editar
                                 </DropdownMenuItem>
-                                <DropdownMenuItem 
+                                <DropdownMenuItem
                                   className="text-destructive"
                                   onClick={() => handleDelete(parte.id)}
                                 >
@@ -254,7 +282,7 @@ export default function PartesEnvolvidasPage() {
                             </DropdownMenu>
                           </TableCell>
                         </TableRow>
-                      )
+                      );
                     })}
                   </TableBody>
                 </Table>
@@ -266,5 +294,5 @@ export default function PartesEnvolvidasPage() {
 
       <ParteEnvolvidaForm open={isFormOpen} onOpenChange={setIsFormOpen} parte={selectedParte} />
     </>
-  )
+  );
 }

@@ -1,16 +1,20 @@
-"use client"
+"use client";
 
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type SortingState,
   useReactTable,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
+import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -18,16 +22,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, X, ChevronLeft, ChevronRight } from "lucide-react"
-import { useState } from "react"
+} from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  searchPlaceholder?: string
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  searchPlaceholder?: string;
 }
 
 export function ReferencialTable<TData, TValue>({
@@ -35,9 +35,9 @@ export function ReferencialTable<TData, TValue>({
   data,
   searchPlaceholder = "Buscar...",
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [globalFilter, setGlobalFilter] = useState("")
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const table = useReactTable({
     data,
@@ -50,17 +50,14 @@ export function ReferencialTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: (row) => {
-      const searchValue = globalFilter.toLowerCase()
-      
+      const searchValue = globalFilter.toLowerCase();
+
       // Busca nos campos principais
-      const original = row.original as Record<string, unknown>
-      const categoria = (original?.categoria as string)?.toLowerCase() || ""
-      const descricao = (original?.descricao as string)?.toLowerCase() || ""
-      
-      return (
-        categoria.includes(searchValue) ||
-        descricao.includes(searchValue)
-      )
+      const original = row.original as Record<string, unknown>;
+      const categoria = (original?.categoria as string)?.toLowerCase() || "";
+      const descricao = (original?.descricao as string)?.toLowerCase() || "";
+
+      return categoria.includes(searchValue) || descricao.includes(searchValue);
     },
     state: {
       sorting,
@@ -72,14 +69,14 @@ export function ReferencialTable<TData, TValue>({
         pageSize: 10,
       },
     },
-  })
+  });
 
-  const hasFilters = globalFilter !== "" || columnFilters.length > 0
+  const hasFilters = globalFilter !== "" || columnFilters.length > 0;
 
   const clearFilters = () => {
-    setGlobalFilter("")
-    setColumnFilters([])
-  }
+    setGlobalFilter("");
+    setColumnFilters([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -157,8 +154,9 @@ export function ReferencialTable<TData, TValue>({
               até{" "}
               <span className="font-medium">
                 {Math.min(
-                  (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-                  table.getFilteredRowModel().rows.length
+                  (table.getState().pagination.pageIndex + 1) *
+                    table.getState().pagination.pageSize,
+                  table.getFilteredRowModel().rows.length,
                 )}
               </span>{" "}
               de <span className="font-medium">{table.getFilteredRowModel().rows.length}</span>{" "}
@@ -194,5 +192,5 @@ export function ReferencialTable<TData, TValue>({
         </div>
       </div>
     </div>
-  )
+  );
 }

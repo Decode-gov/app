@@ -1,40 +1,53 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Search, BarChart3, Activity } from "lucide-react"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Badge } from "@/components/ui/badge"
-import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensoes-qualidade/dimensoes-qualidade"
-import { useGetRegrasQualidade } from "@/api/generated/endpoints/regras-qualidade/regras-qualidade"
+import { Activity, BarChart3, Search } from "lucide-react";
+import { useState } from "react";
+import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensões-de-qualidade/dimensões-de-qualidade";
+import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { useGetRegrasQualidade } from "@/api/generated/endpoints/regras-de-qualidade/regras-de-qualidade";
+import { DimensoesTable } from "@/components/dimensoes/dimensoes-table";
+import { RegrasQualidadeTable } from "@/components/regras-qualidade/regras-qualidade-table";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
+import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
+import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
 
 export default function MetricasQualidadePage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [page] = useState(1)
-  const [limit] = useState(10)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page] = useState(1);
+  const [limit] = useState(10);
+
+  void page;
+  void limit;
+  void searchTerm;
+
+  const {
+    data: dimensoesData,
+    isLoading: isLoadingDimensoes,
+    error: errorDimensoes,
+  } = useGetDimensoesQualidade();
+  const {
+    data: regrasData,
+    isLoading: isLoadingRegras,
+    error: errorRegras,
+  } = useGetRegrasQualidade();
+
+  const { data: politicasData } = useGetPoliticasInternas();
+  const { data: tabelasData } = useGetTabelas();
+  const { data: colunasData } = useGetColunas();
+  const { data: papeisData } = useGetPapeis();
+
+  const politicas = politicasData?.data ?? [];
+  const dimensoes = dimensoesData?.data ?? [];
+  const tabelas = tabelasData?.data ?? [];
+  const colunas = colunasData?.data ?? [];
+  const papeis = papeisData?.data ?? [];
+  const regras = regrasData?.data ?? [];
   
-  void page
-  void limit
-  void searchTerm
-
-  const { data: dimensoesData, isLoading: isLoadingDimensoes, error: errorDimensoes } = useGetDimensoesQualidade()
-  const { data: regrasData, isLoading: isLoadingRegras, error: errorRegras } = useGetRegrasQualidade()
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const dimensoes = (dimensoesData?.data ?? []) as any[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const regras = (regrasData?.data ?? []) as any[]
-  const isLoading = isLoadingDimensoes || isLoadingRegras
-  const error = errorDimensoes || errorRegras
+  const isLoading = isLoadingDimensoes || isLoadingRegras;
+  const error = errorDimensoes || errorRegras;
 
   if (isLoading) {
     return (
@@ -49,8 +62,8 @@ export default function MetricasQualidadePage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <Card key={i} className="animate-pulse">
+          {Array.from({ length: 2 }, (_, i) => i).map((key) => (
+            <Card key={key} className="animate-pulse">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <Skeleton className="h-4 w-[120px]" />
                 <Skeleton className="h-8 w-8 rounded-lg" />
@@ -67,14 +80,14 @@ export default function MetricasQualidadePage() {
           <CardContent className="space-y-4 pt-6">
             <Skeleton className="h-10 w-[300px]" />
             <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full" />
+              {Array.from({ length: 5 }, (_, i) => i).map((key) => (
+                <Skeleton key={key} className="h-16 w-full" />
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -84,12 +97,10 @@ export default function MetricasQualidadePage() {
           <h1 className="text-3xl font-bold tracking-tight text-destructive">
             Métricas de Qualidade
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Erro ao carregar métricas de qualidade
-          </p>
+          <p className="text-muted-foreground mt-2">Erro ao carregar métricas de qualidade</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -113,9 +124,7 @@ export default function MetricasQualidadePage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {dimensoes.length}
-            </div>
+            <div className="text-2xl font-bold text-blue-600">{dimensoes.length}</div>
             <p className="text-xs text-muted-foreground">dimensões cadastradas</p>
           </CardContent>
         </Card>
@@ -128,9 +137,7 @@ export default function MetricasQualidadePage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              {regras.length}
-            </div>
+            <div className="text-2xl font-bold text-green-600">{regras.length}</div>
             <p className="text-xs text-muted-foreground">regras de qualidade</p>
           </CardContent>
         </Card>
@@ -140,9 +147,7 @@ export default function MetricasQualidadePage() {
       <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
         <CardHeader>
           <CardTitle>Dimensões de Qualidade</CardTitle>
-          <CardDescription>
-            Lista de todas as dimensões de qualidade cadastradas
-          </CardDescription>
+          <CardDescription>Lista de todas as dimensões de qualidade cadastradas</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-2">
@@ -157,54 +162,12 @@ export default function MetricasQualidadePage() {
             </div>
           </div>
 
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead>Criado em</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {isLoadingDimensoes ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <TableRow key={i}>
-                      <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                    </TableRow>
-                  ))
-                ) : errorDimensoes ? (
-                  <TableRow>
-                    <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
-                      Erro ao carregar dimensões. Tente novamente.
-                    </TableCell>
-                  </TableRow>
-                ) : dimensoes.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
-                      Nenhuma dimensão encontrada
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  dimensoes.map((dimensao) => (
-                    <TableRow key={dimensao.id}>
-                      <TableCell className="font-medium">{dimensao.nome}</TableCell>
-                      <TableCell className="max-w-[300px]">
-                        <div className="truncate" title={dimensao.descricao}>
-                          {dimensao.descricao}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {new Date(dimensao.createdAt).toLocaleDateString('pt-BR')}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <DimensoesTable
+            data={dimensoes}
+            politicas={politicas}
+            isLoading={isLoading}
+            error={error}
+          />
         </CardContent>
       </Card>
 
@@ -212,63 +175,20 @@ export default function MetricasQualidadePage() {
       <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
         <CardHeader>
           <CardTitle>Regras de Qualidade</CardTitle>
-          <CardDescription>
-            Lista de todas as regras de qualidade cadastradas
-          </CardDescription>
+          <CardDescription>Lista de todas as regras de qualidade cadastradas</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead>Dimensão</TableHead>
-                  <TableHead>Criado em</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {isLoadingRegras ? (
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <TableRow key={i}>
-                      <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                    </TableRow>
-                  ))
-                ) : errorRegras ? (
-                  <TableRow>
-                    <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
-                      Erro ao carregar regras. Tente novamente.
-                    </TableCell>
-                  </TableRow>
-                ) : regras.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
-                      Nenhuma regra encontrada
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  regras.map((regra) => (
-                    <TableRow key={regra.id}>
-                      <TableCell className="font-medium max-w-[300px]">
-                        <div className="truncate" title={regra.descricao}>
-                          {regra.descricao}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{regra.dimensaoId}</Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {regra.createdAt ? new Date(regra.createdAt).toLocaleDateString('pt-BR') : '-'}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          <RegrasQualidadeTable
+            data={regras}
+            dimensoes={dimensoes}
+            tabelas={tabelas}
+            colunas={colunas}
+            papeis={papeis}
+            isLoading={isLoading}
+            error={error}
+          />
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -1,29 +1,25 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react"
+import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
 
 interface HydrationContextType {
-  isHydrated: boolean
+  isHydrated: boolean;
 }
 
 const HydrationContext = createContext<HydrationContextType>({
-  isHydrated: false
-})
+  isHydrated: false,
+});
 
 export function HydrationProvider({ children }: { children: ReactNode }) {
-  const [isHydrated, setIsHydrated] = useState(false)
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    setIsHydrated(true)
-  }, [])
+    setIsHydrated(true);
+  }, []);
 
-  return (
-    <HydrationContext.Provider value={{ isHydrated }}>
-      {children}
-    </HydrationContext.Provider>
-  )
+  return <HydrationContext.Provider value={{ isHydrated }}>{children}</HydrationContext.Provider>;
 }
 
 export function useHydration() {
-  return useContext(HydrationContext)
+  return useContext(HydrationContext);
 }

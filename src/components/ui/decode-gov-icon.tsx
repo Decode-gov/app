@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 interface DecodeGovIconProps {
-  className?: string
-  size?: number
+  className?: string;
+  size?: number;
 }
 
 export function DecodeGovIcon({ className, size = 32 }: DecodeGovIconProps) {
@@ -18,6 +18,7 @@ export function DecodeGovIcon({ className, size = 32 }: DecodeGovIconProps) {
         xmlns="http://www.w3.org/2000/svg"
         className="drop-shadow-sm"
       >
+        <title>DECODE-GOV</title>
         {/* Base hexagonal (representando estrutura/governança) */}
         <path
           d="M16 2L26 8V24L16 30L6 24V8L16 2Z"
@@ -26,7 +27,7 @@ export function DecodeGovIcon({ className, size = 32 }: DecodeGovIconProps) {
           strokeWidth="1.5"
           className="text-primary"
         />
-        
+
         {/* Camadas de dados (três círculos concêntricos) */}
         <circle
           cx="16"
@@ -48,21 +49,14 @@ export function DecodeGovIcon({ className, size = 32 }: DecodeGovIconProps) {
           className="text-primary"
           opacity="0.6"
         />
-        <circle
-          cx="16"
-          cy="16"
-          r="4"
-          fill="currentColor"
-          className="text-primary"
-          opacity="0.4"
-        />
-        
+        <circle cx="16" cy="16" r="4" fill="currentColor" className="text-primary" opacity="0.4" />
+
         {/* Pontos de dados conectados */}
         <circle cx="16" cy="9" r="1.5" fill="currentColor" className="text-secondary" />
         <circle cx="23" cy="16" r="1.5" fill="currentColor" className="text-secondary" />
         <circle cx="16" cy="23" r="1.5" fill="currentColor" className="text-secondary" />
         <circle cx="9" cy="16" r="1.5" fill="currentColor" className="text-secondary" />
-        
+
         {/* Linhas conectoras (representando fluxo de dados) */}
         <line
           x1="16"
@@ -104,19 +98,13 @@ export function DecodeGovIcon({ className, size = 32 }: DecodeGovIconProps) {
           className="text-secondary"
           opacity="0.7"
         />
-        
+
         {/* Centro - representando governança central */}
-        <circle
-          cx="16"
-          cy="16"
-          r="2"
-          fill="currentColor"
-          className="text-primary"
-        />
+        <circle cx="16" cy="16" r="2" fill="currentColor" className="text-primary" />
       </svg>
-      
+
       {/* Efeito de brilho/pulso */}
       <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 animate-pulse blur-sm" />
     </div>
-  )
+  );
 }

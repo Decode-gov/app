@@ -1,10 +1,15 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  useGetComunidades,
+  usePostComunidades,
+  usePutComunidadesId,
+} from "@/api/generated/endpoints/comunidades/comunidades";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,52 +17,51 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { useCreateComunidade, useUpdateComunidade, useComunidades } from "@/hooks/api/use-comunidades"
-import { ComunidadeResponse } from "@/types/api"
+} from "@/components/ui/select";
+import type { ComunidadeResponse } from "@/types/api";
 
 const comunidadeSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório").max(255),
   parentId: z.string().optional(),
-})
+});
 
-type ComunidadeFormValues = z.infer<typeof comunidadeSchema>
+type ComunidadeFormValues = z.infer<typeof comunidadeSchema>;
 
 interface ComunidadeFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  comunidade?: ComunidadeResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  comunidade?: ComunidadeResponse;
 }
 
 export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFormProps) {
-  const createMutation = useCreateComunidade()
-  const updateMutation = useUpdateComunidade()
-  const { data: comunidadesData } = useComunidades()
-  
+  const createMutation = usePostComunidades();
+  const updateMutation = usePutComunidadesId();
+  const { data: comunidadesData } = useGetComunidades();
+
   const form = useForm<ComunidadeFormValues>({
     resolver: zodResolver(comunidadeSchema),
     defaultValues: {
       nome: "",
       parentId: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (open) {
@@ -65,50 +69,52 @@ export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFor
         form.reset({
           nome: comunidade.nome,
           parentId: comunidade.parentId || "",
-        })
+        });
       } else {
         form.reset({
           nome: "",
           parentId: "",
-        })
+        });
       }
     }
-  }, [open, comunidade, form])
+  }, [open, comunidade, form]);
 
   const onSubmit = async (data: ComunidadeFormValues) => {
     try {
       const payload = {
         ...data,
         parentId: data.parentId || undefined,
-      }
-      
+      };
+
       if (comunidade) {
         await updateMutation.mutateAsync({
           id: comunidade.id,
           data: payload,
-        })
+        });
       } else {
-        await createMutation.mutateAsync(payload)
+        await createMutation.mutateAsync({
+          data: payload,
+        });
       }
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar comunidade:', error)
+      console.error("Erro ao salvar comunidade:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
-  const comunidades = comunidadesData?.data || []
-  
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
+  const comunidades = comunidadesData?.data || [];
+
   // Filtrar comunidades para não incluir a própria comunidade sendo editada
-  const availableParents = comunidades.filter(c => c.id !== comunidade?.id)
+  const availableParents = comunidades.filter((c) => c.id !== comunidade?.id);
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -118,10 +124,9 @@ export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFor
             {comunidade ? "Editar domínio de dados" : "Novo domínio de dados"}
           </DialogTitle>
           <DialogDescription>
-            {comunidade 
+            {comunidade
               ? "Atualize as informações do domínio de dados."
-              : "Preencha os dados para criar um novo domínio de dados."
-            }
+              : "Preencha os dados para criar um novo domínio de dados."}
           </DialogDescription>
         </DialogHeader>
 
@@ -136,9 +141,7 @@ export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFor
                   <FormControl>
                     <Input placeholder="Ex: Vendas, TI, Marketing" {...field} />
                   </FormControl>
-                  <FormDescription className="text-xs">
-                    Máximo 255 caracteres
-                  </FormDescription>
+                  <FormDescription className="text-xs">Máximo 255 caracteres</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -150,8 +153,8 @@ export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFor
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Comunidade Pai (Opcional)</FormLabel>
-                  <Select 
-                    onValueChange={(value) => field.onChange(value === "NONE" ? "" : value)} 
+                  <Select
+                    onValueChange={(value) => field.onChange(value === "NONE" ? "" : value)}
                     value={field.value || "NONE"}
                   >
                     <FormControl>
@@ -193,5 +196,5 @@ export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFor
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

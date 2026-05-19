@@ -1,45 +1,45 @@
-"use client"
+"use client";
 
 import {
-    ColumnDef,
-    ColumnFiltersState,
-    SortingState,
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-} from "@tanstack/react-table"
+  type ColumnDef,
+  type ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
+import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { Search, X, ChevronLeft, ChevronRight } from "lucide-react"
-import { useState } from "react"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  searchPlaceholder?: string
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  searchPlaceholder?: string;
   filters?: Array<{
-    column: string
-    label: string
-    options: Array<{ label: string; value: string }>
-  }>
+    column: string;
+    label: string;
+    options: Array<{ label: string; value: string }>;
+  }>;
 }
 
 export function AtribuicoesTable<TData, TValue>({
@@ -48,9 +48,9 @@ export function AtribuicoesTable<TData, TValue>({
   searchPlaceholder = "Buscar...",
   filters = [],
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [globalFilter, setGlobalFilter] = useState("")
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
 
   const table = useReactTable({
     data,
@@ -63,19 +63,21 @@ export function AtribuicoesTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: (row) => {
-      const searchValue = globalFilter.toLowerCase()
-      
+      const searchValue = globalFilter.toLowerCase();
+
       // Busca nos campos principais
-      const original = row.original as Record<string, unknown>
-      const papel = ((original?.papel as Record<string, unknown>)?.nome as string)?.toLowerCase() || ""
-      const dominio = ((original?.dominio as Record<string, unknown>)?.nome as string)?.toLowerCase() || ""
-      const responsavel = (original?.responsavel as string)?.toLowerCase() || ""
-      
+      const original = row.original as Record<string, unknown>;
+      const papel =
+        ((original?.papel as Record<string, unknown>)?.nome as string)?.toLowerCase() || "";
+      const dominio =
+        ((original?.dominio as Record<string, unknown>)?.nome as string)?.toLowerCase() || "";
+      const responsavel = (original?.responsavel as string)?.toLowerCase() || "";
+
       return (
         papel.includes(searchValue) ||
         dominio.includes(searchValue) ||
         responsavel.includes(searchValue)
-      )
+      );
     },
     state: {
       sorting,
@@ -87,14 +89,14 @@ export function AtribuicoesTable<TData, TValue>({
         pageSize: 10,
       },
     },
-  })
+  });
 
-  const hasFilters = globalFilter !== "" || columnFilters.length > 0
+  const hasFilters = globalFilter !== "" || columnFilters.length > 0;
 
   const clearFilters = () => {
-    setGlobalFilter("")
-    setColumnFilters([])
-  }
+    setGlobalFilter("");
+    setColumnFilters([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -118,15 +120,15 @@ export function AtribuicoesTable<TData, TValue>({
             value={(columnFilters.find((f) => f.id === filter.column)?.value as string) || "all"}
             onValueChange={(value) => {
               if (value === "all") {
-                setColumnFilters((prev) => prev.filter((f) => f.id !== filter.column))
+                setColumnFilters((prev) => prev.filter((f) => f.id !== filter.column));
               } else {
                 setColumnFilters((prev) => {
-                  const existing = prev.find((f) => f.id === filter.column)
+                  const existing = prev.find((f) => f.id === filter.column);
                   if (existing) {
-                    return prev.map((f) => (f.id === filter.column ? { ...f, value } : f))
+                    return prev.map((f) => (f.id === filter.column ? { ...f, value } : f));
                   }
-                  return [...prev, { id: filter.column, value }]
-                })
+                  return [...prev, { id: filter.column, value }];
+                });
               }
             }}
           >
@@ -205,8 +207,9 @@ export function AtribuicoesTable<TData, TValue>({
               até{" "}
               <span className="font-medium">
                 {Math.min(
-                  (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-                  table.getFilteredRowModel().rows.length
+                  (table.getState().pagination.pageIndex + 1) *
+                    table.getState().pagination.pageSize,
+                  table.getFilteredRowModel().rows.length,
                 )}
               </span>{" "}
               de <span className="font-medium">{table.getFilteredRowModel().rows.length}</span>{" "}
@@ -242,5 +245,5 @@ export function AtribuicoesTable<TData, TValue>({
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,21 +1,42 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Plus } from "lucide-react"
-import { useCreateOperacao, useUpdateOperacao } from "@/hooks/api/use-operacoes"
-import { useAtividades } from "@/hooks/api/use-atividades"
-import type { OperacaoResponse } from "@/types/api"
-import { Skeleton } from "@/components/ui/skeleton"
-import { AtividadeForm } from "@/components/atividades/atividade-form"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { AtividadeForm } from "@/components/atividades/atividade-form";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAtividades } from "@/hooks/api/use-atividades";
+import { useCreateOperacao, useUpdateOperacao } from "@/hooks/api/use-operacoes";
+import type { OperacaoResponse } from "@/types/api";
 
 const formSchema = z.object({
   nome: z.string().min(1, { message: "Nome é obrigatório" }),
@@ -29,14 +50,14 @@ const formSchema = z.object({
   atividadeId: z.string().min(1, { message: "Atividade é obrigatória" }),
   automatizada: z.boolean().optional(),
   critica: z.boolean().optional(),
-})
+});
 
-type FormData = z.infer<typeof formSchema>
+type FormData = z.infer<typeof formSchema>;
 
 interface OperacaoFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  operacao?: OperacaoResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  operacao?: OperacaoResponse;
 }
 
 // Helper para labels do tipo
@@ -49,9 +70,9 @@ const getTipoLabel = (tipo: string) => {
     PROCESS: "Processamento",
     VALIDATE: "Validação",
     TRANSFORM: "Transformação",
-  }
-  return labels[tipo] || tipo
-}
+  };
+  return labels[tipo] || tipo;
+};
 
 // Helper para labels da frequência
 const getFrequenciaLabel = (frequencia: string) => {
@@ -63,9 +84,9 @@ const getFrequenciaLabel = (frequencia: string) => {
     TRIMESTRAL: "Trimestral",
     ANUAL: "Anual",
     EVENTUAL: "Eventual",
-  }
-  return labels[frequencia] || frequencia
-}
+  };
+  return labels[frequencia] || frequencia;
+};
 
 // Helper para labels da complexidade
 const getComplexidadeLabel = (complexidade: string) => {
@@ -73,13 +94,13 @@ const getComplexidadeLabel = (complexidade: string) => {
     BAIXA: "Baixa",
     MEDIA: "Média",
     ALTA: "Alta",
-  }
-  return labels[complexidade] || complexidade
-}
+  };
+  return labels[complexidade] || complexidade;
+};
 
 export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps) {
-  const isEditing = !!operacao
-  const [atividadeDialogOpen, setAtividadeDialogOpen] = useState(false)
+  const isEditing = !!operacao;
+  const [atividadeDialogOpen, setAtividadeDialogOpen] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -92,44 +113,49 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
       automatizada: operacao?.automatizada ?? false,
       critica: operacao?.critica ?? false,
     },
-  })
+  });
 
-  const { mutate: createOperacao, isPending: isCreating } = useCreateOperacao()
-  const { mutate: updateOperacao, isPending: isUpdating } = useUpdateOperacao()
-  const isPending = isCreating || isUpdating
+  const { mutate: createOperacao, isPending: isCreating } = useCreateOperacao();
+  const { mutate: updateOperacao, isPending: isUpdating } = useUpdateOperacao();
+  const isPending = isCreating || isUpdating;
 
   // Queries para selects
-  const { data: atividadesData, isLoading: isLoadingAtividades } = useAtividades({ page: 1, limit: 1000 })
-  const atividades = atividadesData?.data ?? []
+  const { data: atividadesData, isLoading: isLoadingAtividades } = useAtividades({
+    page: 1,
+    limit: 1000,
+  });
+  const atividades = atividadesData?.data ?? [];
 
   const onSubmit = (data: FormData) => {
     const payload = {
       ...data,
       automatizada: data.automatizada ?? false,
       critica: data.critica ?? false,
-    }
+    };
 
     if (isEditing) {
       updateOperacao(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: form type workaround
         { id: operacao.id, data: payload as any },
         {
           onSuccess: () => {
-            onOpenChange(false)
-            form.reset()
+            onOpenChange(false);
+            form.reset();
           },
-        }
-      )
+        },
+      );
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // biome-ignore lint/suspicious/noExplicitAny: form type workaround
       createOperacao(payload as any, {
         onSuccess: () => {
-          onOpenChange(false)
-          form.reset()
+          onOpenChange(false);
+          form.reset();
         },
-      })
+      });
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -173,7 +199,15 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {["CREATE", "READ", "UPDATE", "DELETE", "PROCESS", "VALIDATE", "TRANSFORM"].map((tipo) => (
+                      {[
+                        "CREATE",
+                        "READ",
+                        "UPDATE",
+                        "DELETE",
+                        "PROCESS",
+                        "VALIDATE",
+                        "TRANSFORM",
+                      ].map((tipo) => (
                         <SelectItem key={tipo} value={tipo}>
                           {getTipoLabel(tipo)}
                         </SelectItem>
@@ -199,13 +233,19 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {["UNICA", "DIARIA", "SEMANAL", "MENSAL", "TRIMESTRAL", "ANUAL", "EVENTUAL"].map(
-                        (freq) => (
-                          <SelectItem key={freq} value={freq}>
-                            {getFrequenciaLabel(freq)}
-                          </SelectItem>
-                        )
-                      )}
+                      {[
+                        "UNICA",
+                        "DIARIA",
+                        "SEMANAL",
+                        "MENSAL",
+                        "TRIMESTRAL",
+                        "ANUAL",
+                        "EVENTUAL",
+                      ].map((freq) => (
+                        <SelectItem key={freq} value={freq}>
+                          {getFrequenciaLabel(freq)}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -290,7 +330,9 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>Automatizada</FormLabel>
-                    <FormDescription>Marque se a operação é executada automaticamente</FormDescription>
+                    <FormDescription>
+                      Marque se a operação é executada automaticamente
+                    </FormDescription>
                   </div>
                 </FormItem>
               )}
@@ -307,9 +349,7 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
                   </FormControl>
                   <div className="space-y-1 leading-none">
                     <FormLabel>Crítica</FormLabel>
-                    <FormDescription>
-                      Marque se a operação é crítica para o negócio
-                    </FormDescription>
+                    <FormDescription>Marque se a operação é crítica para o negócio</FormDescription>
                   </div>
                 </FormItem>
               )}
@@ -327,10 +367,7 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
         </Form>
       </DialogContent>
 
-      <AtividadeForm
-        open={atividadeDialogOpen}
-        onOpenChange={setAtividadeDialogOpen}
-      />
+      <AtividadeForm open={atividadeDialogOpen} onOpenChange={setAtividadeDialogOpen} />
     </Dialog>
-  )
+  );
 }

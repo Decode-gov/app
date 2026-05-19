@@ -1,9 +1,20 @@
-﻿"use client"
+﻿"use client";
 
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import {
+  usePostAtribuicoes,
+  usePutAtribuicoesId,
+} from "@/api/generated/endpoints/atribuições-papel-domínio/atribuições-papel-domínio";
+import { useGetComitesAprovadores } from "@/api/generated/endpoints/comitês-aprovadores/comitês-aprovadores";
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
+import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
+import { ComiteAprovadorForm } from "@/components/comites/comite-aprovador-form";
+import { ComunidadeForm } from "@/components/dominios/comunidade-form";
+import { PapelGovernancaForm } from "@/components/papeis/papel-governanca-form";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,64 +22,57 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { Plus } from "lucide-react"
-import { useCreateAtribuicao, useUpdateAtribuicao } from "@/hooks/api/use-atribuicoes"
-import { usePapeis } from "@/hooks/api/use-papeis"
-import { useComunidades } from "@/hooks/api/use-comunidades"
-import { useComitesAprovadores } from "@/hooks/api/use-comites-aprovadores"
-import { AtribuicaoResponse } from "@/types/api"
-import { AtribuicaoSchema, CreateAtribuicaoFormData } from "@/schemas"
-import { PapelGovernancaForm } from "@/components/papeis/papel-governanca-form"
-import { ComunidadeForm } from "@/components/dominios/comunidade-form"
-import { ComiteAprovadorForm } from "@/components/comites/comite-aprovador-form"
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { AtribuicaoSchema, type CreateAtribuicaoFormData } from "@/schemas";
+import type { AtribuicaoResponse } from "@/types/api";
 
-type AtribuicaoFormValues = CreateAtribuicaoFormData
+type AtribuicaoFormValues = CreateAtribuicaoFormData;
 
 interface AtribuicaoFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  atribuicao?: AtribuicaoResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  atribuicao?: AtribuicaoResponse;
 }
 
 export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFormProps) {
-  const isEditing = !!atribuicao
-  const [papelDialogOpen, setPapelDialogOpen] = useState(false)
-  const [dominioDialogOpen, setDominioDialogOpen] = useState(false)
-  const [comiteDialogOpen, setComiteDialogOpen] = useState(false)
-  
-  const createAtribuicao = useCreateAtribuicao()
-  const updateAtribuicao = useUpdateAtribuicao()
+  const isEditing = !!atribuicao;
+  const [papelDialogOpen, setPapelDialogOpen] = useState(false);
+  const [dominioDialogOpen, setDominioDialogOpen] = useState(false);
+  const [comiteDialogOpen, setComiteDialogOpen] = useState(false);
 
-  const { data: papeisData } = usePapeis({  })
-  const { data: comunidadesData } = useComunidades({  })
-  const { data: comitesData } = useComitesAprovadores({ })
+  const createAtribuicao = usePostAtribuicoes();
+  const updateAtribuicao = usePutAtribuicoesId();
 
-  const papeis = papeisData?.data ?? []
-  const dominios = comunidadesData?.data ?? []
-  const comites = comitesData?.data ?? []
+  const { data: papeisData } = useGetPapeis();
+  const { data: comunidadesData } = useGetComunidades();
+  const { data: comitesData } = useGetComitesAprovadores();
+
+  const papeis = papeisData?.data ?? [];
+  const dominios = comunidadesData?.data ?? [];
+  const comites = comitesData?.data ?? [];
 
   const form = useForm<CreateAtribuicaoFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: form type workaround
     resolver: zodResolver(AtribuicaoSchema) as any,
     defaultValues: {
       papelId: "",
@@ -78,7 +82,7 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
       onboarding: false,
       responsavel: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (atribuicao && open) {
@@ -89,7 +93,7 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
         comiteAprovadorId: atribuicao.comiteAprovadorId,
         onboarding: atribuicao.onboarding,
         responsavel: atribuicao.responsavel,
-      })
+      });
     } else if (!open) {
       form.reset({
         papelId: "",
@@ -98,31 +102,31 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
         comiteAprovadorId: "",
         onboarding: false,
         responsavel: "",
-      })
+      });
     }
-  }, [atribuicao, open, form])
+  }, [atribuicao, open, form]);
 
   const onSubmit = async (data: AtribuicaoFormValues) => {
     try {
       if (isEditing) {
-        await updateAtribuicao.mutateAsync({ id: atribuicao.id, data })
+        await updateAtribuicao.mutateAsync({ id: atribuicao.id, data });
       } else {
-        await createAtribuicao.mutateAsync(data)
+        await createAtribuicao.mutateAsync({
+          data,
+        });
       }
-      onOpenChange(false)
-      form.reset()
+      onOpenChange(false);
+      form.reset();
     } catch (error) {
-      console.error("Erro ao salvar atribuição:", error)
+      console.error("Erro ao salvar atribuição:", error);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>
-            {isEditing ? "Editar Atribuição" : "Nova Atribuição"}
-          </DialogTitle>
+          <DialogTitle>{isEditing ? "Editar Atribuição" : "Nova Atribuição"}</DialogTitle>
           <DialogDescription>
             {isEditing
               ? "Atualize os dados da atribuição."
@@ -294,21 +298,14 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
             />
 
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
               <Button
@@ -327,18 +324,9 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
       </DialogContent>
 
       {/* Dialogs para criar novos registros */}
-      <PapelGovernancaForm
-        open={papelDialogOpen}
-        onOpenChange={setPapelDialogOpen}
-      />
-      <ComunidadeForm
-        open={dominioDialogOpen}
-        onOpenChange={setDominioDialogOpen}
-      />
-      <ComiteAprovadorForm
-        open={comiteDialogOpen}
-        onOpenChange={setComiteDialogOpen}
-      />
+      <PapelGovernancaForm open={papelDialogOpen} onOpenChange={setPapelDialogOpen} />
+      <ComunidadeForm open={dominioDialogOpen} onOpenChange={setDominioDialogOpen} />
+      <ComiteAprovadorForm open={comiteDialogOpen} onOpenChange={setComiteDialogOpen} />
     </Dialog>
-  )
+  );
 }

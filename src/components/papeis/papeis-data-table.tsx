@@ -1,17 +1,24 @@
-"use client"
+"use client";
 
-import { useState } from "react"
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { ChevronLeft, ChevronRight, Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
+} from "@tanstack/react-table";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -19,20 +26,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Button } from "../ui/button"
+} from "@/components/ui/table";
+import { Button } from "../ui/button";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  politicaOptions: { id: string; nome: string }[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  politicaOptions: { id: string; nome: string }[];
 }
 
 export function PapeisDataTable<TData, TValue>({
@@ -40,8 +40,8 @@ export function PapeisDataTable<TData, TValue>({
   data,
   politicaOptions,
 }: DataTableProps<TData, TValue>) {
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [politicaFilter, setPoliticaFilter] = useState<string>("")
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [politicaFilter, setPoliticaFilter] = useState<string>("");
 
   const table = useReactTable({
     data,
@@ -53,15 +53,15 @@ export function PapeisDataTable<TData, TValue>({
     state: {
       columnFilters,
     },
-  })
+  });
 
   // Filtro customizado para política
   const filteredData = politicaFilter
     ? data.filter((item) => {
-        const papel = item as { politicaId: string }
-        return papel.politicaId === politicaFilter
+        const papel = item as { politicaId: string };
+        return papel.politicaId === politicaFilter;
       })
-    : data
+    : data;
 
   // Atualizar tabela com dados filtrados
   const filteredTable = useReactTable({
@@ -74,9 +74,9 @@ export function PapeisDataTable<TData, TValue>({
     state: {
       columnFilters,
     },
-  })
+  });
 
-  const activeTable = politicaFilter ? filteredTable : table
+  const activeTable = politicaFilter ? filteredTable : table;
 
   return (
     <div className="space-y-4">
@@ -86,18 +86,16 @@ export function PapeisDataTable<TData, TValue>({
           <Input
             placeholder="Buscar papéis..."
             value={(activeTable.getColumn("nome")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              activeTable.getColumn("nome")?.setFilterValue(event.target.value)
-            }
+            onChange={(event) => activeTable.getColumn("nome")?.setFilterValue(event.target.value)}
             className="pl-8"
           />
         </div>
         <Select
           value={politicaFilter || "ALL"}
           onValueChange={(value) => {
-            setPoliticaFilter(value)
+            setPoliticaFilter(value);
             // Limpar filtro de nome ao mudar política
-            activeTable.getColumn("politicaId")?.setFilterValue(value === "ALL" ? "" : value)
+            activeTable.getColumn("politicaId")?.setFilterValue(value === "ALL" ? "" : value);
           }}
         >
           <SelectTrigger className="w-[250px]">
@@ -124,12 +122,9 @@ export function PapeisDataTable<TData, TValue>({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -137,16 +132,10 @@ export function PapeisDataTable<TData, TValue>({
           <TableBody>
             {activeTable.getRowModel().rows?.length ? (
               activeTable.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -189,5 +178,5 @@ export function PapeisDataTable<TData, TValue>({
         </div>
       </div>
     </div>
-  )
+  );
 }

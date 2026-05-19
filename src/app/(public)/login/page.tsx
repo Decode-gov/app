@@ -1,16 +1,15 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { usePostUsuariosLogin } from "@/api/generated/endpoints/usuarios/usuarios"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { DecodeGovIcon } from "@/components/ui/decode-gov-icon"
-import { Loader2, Lock, Mail, ShieldCheck } from "lucide-react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, Lock, Mail, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { usePostUsuariosLogin } from "@/api/generated/endpoints/usuários/usuários";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DecodeGovIcon } from "@/components/ui/decode-gov-icon";
 import {
   Form,
   FormControl,
@@ -18,19 +17,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 const loginSchema = z.object({
   email: z.email({ message: "Digite um e-mail válido" }),
   senha: z.string().min(6, { message: "A senha deve ter no mínimo 6 caracteres" }),
-})
+});
 
-type LoginFormData = z.infer<typeof loginSchema>
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const router = useRouter()
-  const login = usePostUsuariosLogin()
-  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter();
+  const { mutate, isPending } = usePostUsuariosLogin();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -38,18 +38,18 @@ export default function LoginPage() {
       email: "",
       senha: "",
     },
-  })
+  });
 
   const onSubmit = (data: LoginFormData) => {
-    usePostUsuariosLogin(
+    mutate(
       { data },
       {
         onSuccess: () => {
-          router.push("/")
+          router.push("/");
         },
       },
-    )
-  }
+    );
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 relative overflow-hidden">
@@ -168,5 +168,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

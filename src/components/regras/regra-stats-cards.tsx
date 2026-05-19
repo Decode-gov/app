@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileText, Users, Shield, Building } from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Building, FileText, Shield, Users } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface RegraStatsCardsProps {
   stats: {
-    total: number
-    porTermo: number
-    porPolitica: number
-    comResponsavel: number
-  }
-  isLoading?: boolean
+    total: number;
+    porTermo: number;
+    porPolitica: number;
+    comResponsavel: number;
+  };
+  isLoading?: boolean;
 }
 
 export function RegraStatsCards({ stats, isLoading }: RegraStatsCardsProps) {
   if (isLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i}>
+        {Array.from({ length: 4 }, (_, i) => i).map((key) => (
+          <Card key={key}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <Skeleton className="h-4 w-[100px]" />
               <Skeleton className="h-4 w-4" />
@@ -31,7 +31,7 @@ export function RegraStatsCards({ stats, isLoading }: RegraStatsCardsProps) {
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   const cards = [
@@ -63,7 +63,7 @@ export function RegraStatsCards({ stats, isLoading }: RegraStatsCardsProps) {
       icon: Users,
       color: "bg-purple-500",
     },
-  ]
+  ];
 
   return (
     <div className="grid gap-4 md:grid-cols-4">
@@ -82,5 +82,5 @@ export function RegraStatsCards({ stats, isLoading }: RegraStatsCardsProps) {
         </Card>
       ))}
     </div>
-  )
+  );
 }

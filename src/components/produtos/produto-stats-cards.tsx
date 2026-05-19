@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Package, Layers, FileText, ShieldCheck } from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
+import { FileText, Layers, Package, ShieldCheck } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProdutoDadosStatsCardsProps {
   stats: {
-    total: number
-    comTermos: number
-    comRegulacao: number
-    comAtivos: number
-  }
-  isLoading?: boolean
+    total: number;
+    comTermos: number;
+    comRegulacao: number;
+    comAtivos: number;
+  };
+  isLoading?: boolean;
 }
 
 export function ProdutoDadosStatsCards({ stats, isLoading }: ProdutoDadosStatsCardsProps) {
   if (isLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i}>
+        {Array.from({ length: 4 }, (_, i) => i).map((key) => (
+          <Card key={key}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <Skeleton className="h-4 w-[100px]" />
               <Skeleton className="h-4 w-4" />
@@ -31,7 +31,7 @@ export function ProdutoDadosStatsCards({ stats, isLoading }: ProdutoDadosStatsCa
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   const cards = [
@@ -63,7 +63,7 @@ export function ProdutoDadosStatsCards({ stats, isLoading }: ProdutoDadosStatsCa
       icon: Layers,
       color: "bg-purple-500",
     },
-  ]
+  ];
 
   return (
     <div className="grid gap-4 md:grid-cols-4">
@@ -82,5 +82,5 @@ export function ProdutoDadosStatsCards({ stats, isLoading }: ProdutoDadosStatsCa
         </Card>
       ))}
     </div>
-  )
+  );
 }

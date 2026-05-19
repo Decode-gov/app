@@ -1,26 +1,43 @@
-"use client"
+"use client";
 
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { useCreateListaReferencia, useUpdateListaReferencia } from "@/hooks/api/use-listas-referencia"
-import type { ListaReferenciaResponse } from "@/types/api"
-import { CreateListaReferenciaSchema, type CreateListaReferenciaFormData } from "@/schemas"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  useCreateListaReferencia,
+  useUpdateListaReferencia,
+} from "@/hooks/api/use-listas-referencia";
+import { type CreateListaReferenciaFormData, CreateListaReferenciaSchema } from "@/schemas";
+import type { ListaReferenciaResponse } from "@/types/api";
 
-type FormData = CreateListaReferenciaFormData
+type FormData = CreateListaReferenciaFormData;
 
 interface ListaFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  lista?: ListaReferenciaResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  lista?: ListaReferenciaResponse;
 }
 
 export function ListaForm({ open, onOpenChange, lista }: ListaFormProps) {
-  const isEditing = !!lista
+  const isEditing = !!lista;
 
   const form = useForm<FormData>({
     resolver: zodResolver(CreateListaReferenciaSchema),
@@ -28,39 +45,41 @@ export function ListaForm({ open, onOpenChange, lista }: ListaFormProps) {
       nome: lista?.nome ?? "",
       descricao: lista?.descricao ?? "",
     },
-  })
+  });
 
-  const { mutate: createLista, isPending: isCreating } = useCreateListaReferencia()
-  const { mutate: updateLista, isPending: isUpdating } = useUpdateListaReferencia()
-  const isPending = isCreating || isUpdating
+  const { mutate: createLista, isPending: isCreating } = useCreateListaReferencia();
+  const { mutate: updateLista, isPending: isUpdating } = useUpdateListaReferencia();
+  const isPending = isCreating || isUpdating;
 
   const onSubmit = (data: FormData) => {
     const payload = {
       nome: data.nome,
       descricao: data.descricao,
-    }
+    };
 
     if (isEditing) {
       updateLista(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // biome-ignore lint/suspicious/noExplicitAny: form type workaround
         { id: lista.id, data: payload as any },
         {
           onSuccess: () => {
-            onOpenChange(false)
-            form.reset()
+            onOpenChange(false);
+            form.reset();
           },
-        }
-      )
+        },
+      );
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // biome-ignore lint/suspicious/noExplicitAny: form type workaround
       createLista(payload as any, {
         onSuccess: () => {
-          onOpenChange(false)
-          form.reset()
+          onOpenChange(false);
+          form.reset();
         },
-      })
+      });
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -121,5 +140,5 @@ export function ListaForm({ open, onOpenChange, lista }: ListaFormProps) {
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

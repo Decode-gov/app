@@ -1,58 +1,58 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus, Database } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas"
-import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas"
-import { ColunaResponse, TabelaResponse } from "@/types/api"
-import { ColunaForm } from "@/components/colunas/coluna-form"
-import { TabelaForm } from "@/components/tabelas/tabela-form"
-import { DataTableTabelas } from "@/components/tabelas/data-table-tabelas"
-import { DataTableColunas } from "@/components/colunas/data-table-colunas"
+import { Database, Plus } from "lucide-react";
+import { useState } from "react";
+import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
+import { ColunaForm } from "@/components/colunas/coluna-form";
+import { DataTableColunas } from "@/components/colunas/data-table-colunas";
+import { DataTableTabelas } from "@/components/tabelas/data-table-tabelas";
+import { TabelaForm } from "@/components/tabelas/tabela-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { ColunaResponse, TabelaResponse } from "@/types/api";
 
 export default function TabelasColunasPage() {
-  const [isColunaFormOpen, setIsColunaFormOpen] = useState(false)
-  const [isTabelaFormOpen, setIsTabelaFormOpen] = useState(false)
-  const [selectedColuna, setSelectedColuna] = useState<ColunaResponse | undefined>()
-  const [selectedTabela, setSelectedTabela] = useState<TabelaResponse | undefined>()
-  const [preSelectedTabelaId, setPreSelectedTabelaId] = useState<string | undefined>()
+  const [isColunaFormOpen, setIsColunaFormOpen] = useState(false);
+  const [isTabelaFormOpen, setIsTabelaFormOpen] = useState(false);
+  const [selectedColuna, setSelectedColuna] = useState<ColunaResponse | undefined>();
+  const [selectedTabela, setSelectedTabela] = useState<TabelaResponse | undefined>();
+  const [preSelectedTabelaId, setPreSelectedTabelaId] = useState<string | undefined>();
 
-  const { data: colunasData } = useGetColunas()
-  const { data: tabelasData } = useGetTabelas()
+  const { data: colunasData } = useGetColunas();
+  const { data: tabelasData } = useGetTabelas();
 
   const handleEditColuna = (coluna: ColunaResponse) => {
-    setSelectedColuna(coluna)
-    setPreSelectedTabelaId(undefined)
-    setIsColunaFormOpen(true)
-  }
+    setSelectedColuna(coluna);
+    setPreSelectedTabelaId(undefined);
+    setIsColunaFormOpen(true);
+  };
 
   const handleNewColuna = () => {
-    setSelectedColuna(undefined)
-    setPreSelectedTabelaId(undefined)
-    setIsColunaFormOpen(true)
-  }
+    setSelectedColuna(undefined);
+    setPreSelectedTabelaId(undefined);
+    setIsColunaFormOpen(true);
+  };
 
   const handleAddColunaToTabela = (tabela: TabelaResponse) => {
-    setSelectedColuna(undefined)
-    setPreSelectedTabelaId(tabela.id)
-    setIsColunaFormOpen(true)
-  }
+    setSelectedColuna(undefined);
+    setPreSelectedTabelaId(tabela.id);
+    setIsColunaFormOpen(true);
+  };
 
   const handleEditTabela = (tabela: TabelaResponse) => {
-    setSelectedTabela(tabela)
-    setIsTabelaFormOpen(true)
-  }
+    setSelectedTabela(tabela);
+    setIsTabelaFormOpen(true);
+  };
 
   const handleNewTabela = () => {
-    setSelectedTabela(undefined)
-    setIsTabelaFormOpen(true)
-  }
+    setSelectedTabela(undefined);
+    setIsTabelaFormOpen(true);
+  };
 
-  const colunas = colunasData?.data ?? []
-  const tabelas = tabelasData?.data ?? []
+  const colunas = colunasData?.data ?? [];
+  const tabelas = tabelasData?.data ?? [];
 
   return (
     <>
@@ -94,71 +94,63 @@ export default function TabelasColunasPage() {
           </Card>
         </div>
 
-        <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
-          <Tabs defaultValue="tabelas" className="w-full">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <TabsList className="grid w-full md:w-[400px] grid-cols-2 bg-foreground/10">
-                  <TabsTrigger value="tabelas">Tabelas</TabsTrigger>
-                  <TabsTrigger value="colunas">Colunas</TabsTrigger>
-                </TabsList>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <TabsContent value="tabelas" className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Tabelas Mapeadas</CardTitle>
-                    <CardDescription>
-                      Lista de todas as tabelas cadastradas
-                    </CardDescription>
-                  </div>
-                  <Button className="gap-2" onClick={handleNewTabela}>
-                    <Plus className="h-4 w-4" />
-                    Nova Tabela
-                  </Button>
+        <Tabs defaultValue="tabelas">
+          <TabsList className="grid w-full md:w-[400px] grid-cols-2 bg-foreground/10">
+            <TabsTrigger value="tabelas">Tabelas</TabsTrigger>
+            <TabsTrigger value="colunas">Colunas</TabsTrigger>
+          </TabsList>
+          <TabsContent value="tabelas" className="space-y-4">
+            <Card>
+              <CardHeader className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Tabelas Mapeadas</CardTitle>
+                  <CardDescription>Lista de todas as tabelas cadastradas</CardDescription>
                 </div>
-                <DataTableTabelas 
-                  data={tabelas} 
+                <Button className="gap-2" onClick={handleNewTabela}>
+                  <Plus className="h-4 w-4" />
+                  Nova Tabela
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <DataTableTabelas
+                  data={tabelas}
                   onEdit={handleEditTabela}
                   onAddColuna={handleAddColunaToTabela}
                 />
-              </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-              <TabsContent value="colunas" className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Colunas Mapeadas</CardTitle>
-                    <CardDescription>
-                      Lista de todas as colunas cadastradas
-                    </CardDescription>
-                  </div>
-                  <Button className="gap-2" onClick={handleNewColuna}>
-                    <Plus className="h-4 w-4" />
-                    Nova Coluna
-                  </Button>
+          <TabsContent value="colunas" className="space-y-4">
+            <Card>
+              <CardHeader className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Colunas Mapeadas</CardTitle>
+                  <CardDescription>Lista de todas as colunas cadastradas</CardDescription>
                 </div>
-                <DataTableColunas 
-                  data={colunas} 
-                  onEdit={handleEditColuna}
-                />
-              </TabsContent>
-            </CardContent>
-          </Tabs>
-        </Card>
+                <Button className="gap-2" onClick={handleNewColuna}>
+                  <Plus className="h-4 w-4" />
+                  Nova Coluna
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <DataTableColunas data={colunas} onEdit={handleEditColuna} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-
-      <ColunaForm 
-        open={isColunaFormOpen} 
-        onOpenChange={setIsColunaFormOpen} 
+      <ColunaForm
+        open={isColunaFormOpen}
+        onOpenChange={setIsColunaFormOpen}
         coluna={selectedColuna}
         preSelectedTabelaId={preSelectedTabelaId}
       />
-      <TabelaForm 
-        open={isTabelaFormOpen} 
-        onOpenChange={setIsTabelaFormOpen} 
-        tabela={selectedTabela} 
+      <TabelaForm
+        open={isTabelaFormOpen}
+        onOpenChange={setIsTabelaFormOpen}
+        tabela={selectedTabela}
       />
     </>
-  )
+  );
 }

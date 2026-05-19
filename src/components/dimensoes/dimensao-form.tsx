@@ -1,39 +1,63 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useCreateDimensaoQualidade, useUpdateDimensaoQualidade } from "@/hooks/api/use-dimensoes-qualidade-new"
-import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
-import { DimensaoQualidadeResponse } from "@/types/api"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  usePostDimensoesQualidade,
+  usePutDimensoesQualidadeId,
+} from "@/api/generated/endpoints/dimensões-de-qualidade/dimensões-de-qualidade";
+import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import type { DimensaoQualidadeResponse } from "@/types/api";
 
 const dimensaoFormSchema = z.object({
   nome: z.string().min(1, "Nome da dimensão é obrigatório").max(255),
   descricao: z.string().min(1, "Descrição é obrigatória"),
   politicaId: z.string().min(1, "Política é obrigatória"),
-})
+});
 
-type DimensaoFormValues = z.infer<typeof dimensaoFormSchema>
+type DimensaoFormValues = z.infer<typeof dimensaoFormSchema>;
 
 interface DimensaoFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  dimensao?: DimensaoQualidadeResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  dimensao?: DimensaoQualidadeResponse;
 }
 
 export function DimensaoQualidadeForm({ open, onOpenChange, dimensao }: DimensaoFormProps) {
-  const createDimensao = useCreateDimensaoQualidade()
-  const updateDimensao = useUpdateDimensaoQualidade()
+  const createDimensao = usePostDimensoesQualidade();
+  const updateDimensao = usePutDimensoesQualidadeId();
 
-  const { data: politicasData } = usePoliticasInternas({ page: 1, limit: 1000 })
-  const politicas = politicasData?.data || []
+  const { data: politicasData } = useGetPoliticasInternas();
+  const politicas = politicasData?.data || [];
 
   const form = useForm<DimensaoFormValues>({
     resolver: zodResolver(dimensaoFormSchema),
@@ -42,23 +66,23 @@ export function DimensaoQualidadeForm({ open, onOpenChange, dimensao }: Dimensao
       descricao: "",
       politicaId: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (dimensao) {
       form.reset({
         nome: dimensao.nome,
-        descricao: dimensao.descricao,
+        descricao: dimensao.descricao ?? "",
         politicaId: dimensao.politicaId,
-      })
+      });
     } else {
       form.reset({
         nome: "",
         descricao: "",
         politicaId: "",
-      })
+      });
     }
-  }, [dimensao, form])
+  }, [dimensao, form]);
 
   const onSubmit = async (data: DimensaoFormValues) => {
     try {
@@ -66,20 +90,22 @@ export function DimensaoQualidadeForm({ open, onOpenChange, dimensao }: Dimensao
         nome: data.nome,
         descricao: data.descricao,
         politicaId: data.politicaId,
-      }
+      };
 
       if (dimensao) {
-        await updateDimensao.mutateAsync({ id: dimensao.id, data: payload })
+        await updateDimensao.mutateAsync({ id: dimensao.id, data: payload });
       } else {
-        await createDimensao.mutateAsync(payload)
+        await createDimensao.mutateAsync({
+          data,
+        });
       }
-      
-      onOpenChange(false)
-      form.reset()
+
+      onOpenChange(false);
+      form.reset();
     } catch (error) {
-      console.error("Erro ao salvar dimensão de qualidade:", error)
+      console.error("Erro ao salvar dimensão de qualidade:", error);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -87,10 +113,12 @@ export function DimensaoQualidadeForm({ open, onOpenChange, dimensao }: Dimensao
         <DialogHeader>
           <DialogTitle>{dimensao ? "Editar" : "Nova"} Dimensão de Qualidade</DialogTitle>
           <DialogDescription>
-            {dimensao ? "Edite as informações da dimensão" : "Preencha os dados para cadastrar uma nova dimensão de qualidade"}
+            {dimensao
+              ? "Edite as informações da dimensão"
+              : "Preencha os dados para cadastrar uma nova dimensão de qualidade"}
           </DialogDescription>
         </DialogHeader>
-        
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -102,9 +130,7 @@ export function DimensaoQualidadeForm({ open, onOpenChange, dimensao }: Dimensao
                   <FormControl>
                     <Input placeholder="Ex: Acurácia" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    Nome identificador da dimensão de qualidade
-                  </FormDescription>
+                  <FormDescription>Nome identificador da dimensão de qualidade</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -117,15 +143,13 @@ export function DimensaoQualidadeForm({ open, onOpenChange, dimensao }: Dimensao
                 <FormItem>
                   <FormLabel>Descrição *</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Descreva a dimensão de qualidade..." 
+                    <Textarea
+                      placeholder="Descreva a dimensão de qualidade..."
                       rows={4}
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Descrição detalhada da dimensão
-                  </FormDescription>
+                  <FormDescription>Descrição detalhada da dimensão</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -145,15 +169,13 @@ export function DimensaoQualidadeForm({ open, onOpenChange, dimensao }: Dimensao
                     </FormControl>
                     <SelectContent>
                       {politicas.map((politica) => (
-                        <SelectItem key={politica.id ?? ''} value={politica.id ?? ''}>
+                        <SelectItem key={politica.id ?? ""} value={politica.id ?? ""}>
                           {politica.nome}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormDescription>
-                    Política interna relacionada a esta dimensão
-                  </FormDescription>
+                  <FormDescription>Política interna relacionada a esta dimensão</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -171,5 +193,5 @@ export function DimensaoQualidadeForm({ open, onOpenChange, dimensao }: Dimensao
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

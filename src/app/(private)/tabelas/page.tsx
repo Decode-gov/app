@@ -1,115 +1,105 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Plus, Search, MoreHorizontal, Edit, Trash2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Edit, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useGetBancos } from "@/api/generated/endpoints/bancos/bancos";
+import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
+import { useDeleteTabelasId, useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
+import { TabelaForm } from "@/components/tabelas/tabela-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { useGetTabelas, useDeleteTabelasId } from "@/api/generated/endpoints/tabelas/tabelas"
-import { useGetBancos } from "@/api/generated/endpoints/bancos/bancos"
-import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas"
-import { TabelaForm } from "@/components/tabelas/tabela-form"
-import { TabelaResponse } from "@/types/api"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { TabelaResponse } from "@/types/api";
 
 export default function TabelasPage() {
-  const [formOpen, setFormOpen] = useState(false)
-  const [editingTabela, setEditingTabela] = useState<TabelaResponse | undefined>()
-  const [search, setSearch] = useState("")
-  const [sistemaFilter, setSistemaFilter] = useState<string>("all")
-  const [bancoFilter, setBancoFilter] = useState<string>("all")
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingTabela, setEditingTabela] = useState<TabelaResponse | undefined>();
+  const [search, setSearch] = useState("");
+  const [sistemaFilter, setSistemaFilter] = useState<string>("all");
+  const [bancoFilter, setBancoFilter] = useState<string>("all");
 
-  const { data: tabelasData, isLoading } = useGetTabelas()
-  const { data: sistemasData } = useGetSistemas()
-  const { data: bancosData } = useGetBancos()
-  const deleteMutation = useDeleteTabelasId()
+  const { data: tabelasData, isLoading } = useGetTabelas();
+  const { data: sistemasData } = useGetSistemas();
+  const { data: bancosData } = useGetBancos();
+  const deleteMutation = useDeleteTabelasId();
 
-  const tabelas = tabelasData?.data ?? []
-  const sistemas = sistemasData?.data ?? []
-  const bancos = bancosData?.data ?? []
+  const tabelas = tabelasData?.data ?? [];
+  const sistemas = sistemasData?.data ?? [];
+  const bancos = bancosData?.data ?? [];
 
   const filteredTabelas = tabelas.filter((tabela) => {
-    const matchesSearch = 
+    const matchesSearch =
       search === "" ||
       tabela.nome.toLowerCase().includes(search.toLowerCase()) ||
-      tabela.termo?.definicao?.toLowerCase().includes(search.toLowerCase())
-    
-    const matchesSistema = 
-      sistemaFilter === "all" || 
-      tabela.banco?.sistemaId === sistemaFilter
+      tabela.termo?.definicao?.toLowerCase().includes(search.toLowerCase());
 
-    const matchesBanco = 
-      bancoFilter === "all" || 
-      tabela.bancoId === bancoFilter
+    const matchesSistema = sistemaFilter === "all" || tabela.banco?.sistemaId === sistemaFilter;
 
-    return matchesSearch && matchesSistema && matchesBanco
-  })
+    const matchesBanco = bancoFilter === "all" || tabela.bancoId === bancoFilter;
+
+    return matchesSearch && matchesSistema && matchesBanco;
+  });
 
   const handleEdit = (tabela: TabelaResponse) => {
-    setEditingTabela(tabela)
-    setFormOpen(true)
-  }
+    setEditingTabela(tabela);
+    setFormOpen(true);
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta tabela?")) {
       try {
-        await deleteMutation.mutateAsync({ id })
+        await deleteMutation.mutateAsync({ id });
       } catch (error) {
-        console.error('Erro ao excluir tabela:', error)
+        console.error("Erro ao excluir tabela:", error);
       }
     }
-  }
+  };
 
   const handleNewTabela = () => {
-    setEditingTabela(undefined)
-    setFormOpen(true)
-  }
+    setEditingTabela(undefined);
+    setFormOpen(true);
+  };
 
   const getBancoNome = (bancoId?: string | null) => {
-    if (!bancoId) return "N/A"
-    const banco = bancos.find(b => b.id === bancoId)
-    return banco?.nome || "N/A"
-  }
+    if (!bancoId) return "N/A";
+    const banco = bancos.find((b) => b.id === bancoId);
+    return banco?.nome || "N/A";
+  };
 
   const getSistemaNome = (sistemaId?: string | null) => {
-    if (!sistemaId) return "N/A"
-    const sistema = sistemas.find(s => s.id === sistemaId)
-    return sistema?.nome || "N/A"
-  }
+    if (!sistemaId) return "N/A";
+    const sistema = sistemas.find((s) => s.id === sistemaId);
+    return sistema?.nome || "N/A";
+  };
 
-  const getSistemaDescricao = (sistemaId?: string | null) => {
-    if (!sistemaId) return null
-    const sistema = sistemas.find(s => s.id === sistemaId)
-    return sistema?.descricao
-  }
+  const _getSistemaDescricao = (sistemaId?: string | null) => {
+    if (!sistemaId) return null;
+    const sistema = sistemas.find((s) => s.id === sistemaId);
+    return sistema?.descricao;
+  };
 
   return (
     <div className="space-y-6">
@@ -117,14 +107,13 @@ export default function TabelasPage() {
       <div className="grid gap-4 md:grid-cols-1">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Tabelas
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Tabelas</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{tabelas.length}</div>
             <p className="text-xs text-muted-foreground">
-              {filteredTabelas.length} {filteredTabelas.length === 1 ? 'resultado encontrado' : 'resultados encontrados'}
+              {filteredTabelas.length}{" "}
+              {filteredTabelas.length === 1 ? "resultado encontrado" : "resultados encontrados"}
             </p>
           </CardContent>
         </Card>
@@ -136,9 +125,7 @@ export default function TabelasPage() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle>Tabelas</CardTitle>
-              <CardDescription>
-                Gerencie as tabelas do sistema
-              </CardDescription>
+              <CardDescription>Gerencie as tabelas do sistema</CardDescription>
             </div>
             <Button onClick={handleNewTabela}>
               <Plus className="mr-2 h-4 w-4" />
@@ -220,9 +207,7 @@ export default function TabelasPage() {
                 <TableBody>
                   {filteredTabelas.map((tabela) => (
                     <TableRow key={tabela.id}>
-                      <TableCell className="font-medium">
-                        {tabela.nome}
-                      </TableCell>
+                      <TableCell className="font-medium">{tabela.nome}</TableCell>
                       <TableCell>
                         <div className="flex flex-col">
                           <span className="text-sm">{getBancoNome(tabela.bancoId)}</span>
@@ -240,7 +225,9 @@ export default function TabelasPage() {
                       </TableCell>
                       <TableCell>
                         <span className="text-sm text-muted-foreground">
-                          {tabela.createdAt ? format(new Date(tabela.createdAt), "dd/MM/yyyy", { locale: ptBR }) : '-'}
+                          {tabela.createdAt
+                            ? format(new Date(tabela.createdAt), "dd/MM/yyyy", { locale: ptBR })
+                            : "-"}
                         </span>
                       </TableCell>
                       <TableCell>
@@ -275,11 +262,7 @@ export default function TabelasPage() {
         </CardContent>
       </Card>
 
-      <TabelaForm
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        tabela={editingTabela}
-      />
+      <TabelaForm open={formOpen} onOpenChange={setFormOpen} tabela={editingTabela} />
     </div>
-  )
+  );
 }

@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { usePostSistemas, usePutSistemasId } from "@/api/generated/endpoints/sistemas/sistemas";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,39 +12,38 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { usePostSistemas, usePutSistemasId } from "@/api/generated/endpoints/sistemas/sistemas"
-import { SistemaResponse } from "@/types/api"
-import { CreateSistemaSchema, type CreateSistemaFormData } from "@/schemas"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { type CreateSistemaFormData, CreateSistemaSchema } from "@/schemas";
+import type { SistemaResponse } from "@/types/api";
 
 interface SistemaFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  sistema?: SistemaResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  sistema?: SistemaResponse;
 }
 
 export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
-  const createMutation = usePostSistemas()
-  const updateMutation = usePutSistemasId()
-  
+  const createMutation = usePostSistemas();
+  const updateMutation = usePutSistemasId();
+
   const form = useForm<CreateSistemaFormData>({
     resolver: zodResolver(CreateSistemaSchema),
     defaultValues: {
       nome: "",
       descricao: null,
     },
-  })
+  });
 
   useEffect(() => {
     if (open) {
@@ -52,16 +52,16 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
           nome: sistema.nome,
           descricao: sistema.descricao || null,
           repositorio: undefined,
-        })
+        });
       } else {
         form.reset({
           nome: "",
           descricao: null,
           repositorio: undefined,
-        })
+        });
       }
     }
-  }, [open, sistema, form])
+  }, [open, sistema, form]);
 
   const onSubmit = async (data: CreateSistemaFormData) => {
     try {
@@ -69,38 +69,35 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
         await updateMutation.mutateAsync({
           id: sistema.id,
           data,
-        })
+        });
       } else {
-        await createMutation.mutateAsync({ data })
+        await createMutation.mutateAsync({ data });
       }
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar sistema:', error)
+      console.error("Erro ao salvar sistema:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>
-            {sistema ? "Editar Sistema" : "Novo Sistema"}
-          </DialogTitle>
+          <DialogTitle>{sistema ? "Editar Sistema" : "Novo Sistema"}</DialogTitle>
           <DialogDescription>
-            {sistema 
+            {sistema
               ? "Atualize as informações do sistema."
-              : "Preencha os dados para criar um novo sistema."
-            }
+              : "Preencha os dados para criar um novo sistema."}
           </DialogDescription>
         </DialogHeader>
 
@@ -115,9 +112,7 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
                   <FormControl>
                     <Input placeholder="Ex: ERP Financeiro" {...field} />
                   </FormControl>
-                  <FormDescription className="text-xs">
-                    Máximo 255 caracteres
-                  </FormDescription>
+                  <FormDescription className="text-xs">Máximo 255 caracteres</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -130,7 +125,7 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Descrição do sistema..."
                       className="min-h-[80px]"
                       {...field}
@@ -159,5 +154,5 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

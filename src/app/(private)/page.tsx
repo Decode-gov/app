@@ -1,29 +1,22 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Users,
-  BookOpen,
-  Shield,
-  Building,
-  Database,
-  FolderOpen
-} from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { StatsCards } from "@/components/ui/stats-cards";
+import { BookOpen, Building, Database, FolderOpen, Shield, Users } from "lucide-react";
 import { useGetDashboardMetricas } from "@/api/generated/endpoints/dashboard/dashboard";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { StatsCards } from "@/components/ui/stats-cards";
 
 function MetricCard({
   title,
   data,
   icon: Icon,
-  description
+  description,
 }: {
-  title: string
-  data: Record<string, number>
-  icon: React.ComponentType<{ className?: string }>
-  description: string
+  title: string;
+  data: Record<string, number>;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
 }) {
   return (
     <Card className="group hover:shadow-lg transition-all duration-300">
@@ -44,9 +37,14 @@ function MetricCard({
             <div key={categoria} className="flex items-center justify-between group/item">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-primary/60 group-hover/item:bg-primary transition-colors duration-200" />
-                <span className="text-sm font-medium group-hover/item:text-primary transition-colors duration-200">{categoria}</span>
+                <span className="text-sm font-medium group-hover/item:text-primary transition-colors duration-200">
+                  {categoria}
+                </span>
               </div>
-              <Badge variant="outline" className="group-hover/item:border-primary/50 transition-colors duration-200">
+              <Badge
+                variant="outline"
+                className="group-hover/item:border-primary/50 transition-colors duration-200"
+              >
                 {quantidade}
               </Badge>
             </div>
@@ -54,12 +52,12 @@ function MetricCard({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function DashboardPage() {
-  const { data: dashboardResponse, isLoading, error } = useGetDashboardMetricas()
-  const dashboardData = dashboardResponse?.data
+  const { data: dashboardResponse, isLoading, error } = useGetDashboardMetricas();
+  const dashboardData = dashboardResponse?.data;
 
   if (isLoading) {
     return (
@@ -74,8 +72,8 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Card key={i} className="animate-pulse">
+          {Array.from({ length: 8 }, (_, i) => i).map((key) => (
+            <Card key={key} className="animate-pulse">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <Skeleton className="h-4 w-[100px]" />
                 <Skeleton className="h-8 w-8 rounded-lg" />
@@ -97,8 +95,8 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="flex items-center justify-between">
+                {Array.from({ length: 4 }, (_, i) => i).map((key) => (
+                  <div key={key} className="flex items-center justify-between">
                     <Skeleton className="h-4 w-[120px]" />
                     <Skeleton className="h-6 w-[40px]" />
                   </div>
@@ -114,8 +112,8 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="flex items-center justify-between">
+                {Array.from({ length: 3 }, (_, i) => i).map((key) => (
+                  <div key={key} className="flex items-center justify-between">
                     <Skeleton className="h-4 w-[100px]" />
                     <Skeleton className="h-6 w-[30px]" />
                   </div>
@@ -125,7 +123,7 @@ export default function DashboardPage() {
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -133,12 +131,10 @@ export default function DashboardPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-4xl font-bold tracking-tight text-destructive">Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
-            Erro ao carregar dados do dashboard
-          </p>
+          <p className="text-muted-foreground mt-2">Erro ao carregar dados do dashboard</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -192,7 +188,6 @@ export default function DashboardPage() {
               icon: Database,
               gradient: "from-teal-500 to-cyan-500",
             },
-
           ]}
           animationDirection="left"
         />
@@ -203,9 +198,9 @@ export default function DashboardPage() {
         <MetricCard
           title="Documentos por Categoria"
           data={{
-            "Comunidades": dashboardData?.totalComunidades || 0,
-            "Políticas": dashboardData?.totalPoliticas || 0,
-            "Processos": dashboardData?.totalProcessos || 0,
+            Comunidades: dashboardData?.totalComunidades || 0,
+            Políticas: dashboardData?.totalPoliticas || 0,
+            Processos: dashboardData?.totalProcessos || 0,
           }}
           icon={FolderOpen}
           description="Distribuição dos documentos por categoria"
@@ -214,14 +209,14 @@ export default function DashboardPage() {
         <MetricCard
           title="Estrutura de Dados"
           data={{
-            "Tabelas": dashboardData?.totalTabelas || 0,
-            "Colunas": dashboardData?.totalColunas || 0,
-            "Sistemas": dashboardData?.totalSistemas || 0,
+            Tabelas: dashboardData?.totalTabelas || 0,
+            Colunas: dashboardData?.totalColunas || 0,
+            Sistemas: dashboardData?.totalSistemas || 0,
           }}
           icon={Database}
           description="Estrutura técnica do sistema"
         />
       </div>
     </div>
-  )
+  );
 }

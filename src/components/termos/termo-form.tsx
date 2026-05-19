@@ -1,10 +1,11 @@
-﻿"use client"
+﻿"use client";
 
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
-import { Loader2, Plus } from "lucide-react"
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -21,35 +22,30 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { type CreateDefinicaoFormData, CreateDefinicaoSchema } from "@/schemas";
+import type { DefinicaoResponse } from "@/types/api";
+import { ComunidadeForm } from "../dominios/comunidade-form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { usePostDefinicoes, usePutDefinicoesId } from "@/api/generated/endpoints/termos/termos";
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
 
-import { Button } from "@/components/ui/button"
-import { DefinicaoResponse } from "@/types/api"
-import {
-  usePostDefinicoes,
-  usePutDefinicoesId,
-} from "@/api/generated/endpoints/definicoes/definicoes"
-import { CreateDefinicaoSchema, type CreateDefinicaoFormData } from "@/schemas"
-import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import { ComunidadeForm } from "../dominios/comunidade-form"
-
-type FormData = CreateDefinicaoFormData
+type FormData = CreateDefinicaoFormData;
 
 interface TermoFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  termo?: DefinicaoResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  termo?: DefinicaoResponse;
 }
 
 export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
-  const [dominioDialogOpen, setDominioDialogOpen] = useState(false)
+  const [dominioDialogOpen, setDominioDialogOpen] = useState(false);
 
-  const createMutation = usePostDefinicoes()
-  const updateMutation = usePutDefinicoesId()
-  const { data: comunidadesData } = useGetComunidades()
+  const createMutation = usePostDefinicoes();
+  const updateMutation = usePutDefinicoesId();
+  const { data: comunidadesData } = useGetComunidades();
 
   const form = useForm<FormData>({
     resolver: zodResolver(CreateDefinicaoSchema),
@@ -59,7 +55,7 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
       comunidadeId: undefined,
       sigla: undefined,
     },
-  })
+  });
 
   useEffect(() => {
     if (termo) {
@@ -68,41 +64,39 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
         definicao: termo.definicao,
         sigla: termo.sigla || undefined,
         comunidadeId: termo.comunidadeId || undefined,
-      })
+      });
     } else {
       form.reset({
         termo: "",
         definicao: "",
         sigla: undefined,
-        comunidadeId: undefined
-      })
+        comunidadeId: undefined,
+      });
     }
-  }, [termo, form])
+  }, [termo, form]);
 
   const onSubmit = async (data: FormData) => {
     try {
       if (termo) {
-        await updateMutation.mutateAsync({ id: termo.id, data })
+        await updateMutation.mutateAsync({ id: termo.id, data });
       } else {
-        await createMutation.mutateAsync({ data })
+        await createMutation.mutateAsync({ data });
       }
-      onOpenChange(false)
-      form.reset()
+      onOpenChange(false);
+      form.reset();
     } catch (error) {
-      console.error("Erro ao salvar termo:", error)
+      console.error("Erro ao salvar termo:", error);
     }
-  }
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {termo ? "Editar Termo" : "Novo Termo"}
-            </DialogTitle>
+            <DialogTitle>{termo ? "Editar Termo" : "Novo Termo"}</DialogTitle>
             <DialogDescription>
               {termo
                 ? "Atualize as informações do termo."
@@ -229,10 +223,7 @@ export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
       </Dialog>
 
       {/* Dialog para criar domínio inline */}
-      <ComunidadeForm
-        open={dominioDialogOpen}
-        onOpenChange={setDominioDialogOpen}
-      />
+      <ComunidadeForm open={dominioDialogOpen} onOpenChange={setDominioDialogOpen} />
     </>
-  )
+  );
 }

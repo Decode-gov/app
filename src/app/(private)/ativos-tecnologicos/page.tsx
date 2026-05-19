@@ -1,102 +1,108 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Plus, Server, Database, GitBranch, HardDrive, FolderGit2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Database, FolderGit2, Plus, Server } from "lucide-react";
+import { useState } from "react";
 import {
-  useGetSistemas,
-  useDeleteSistemasId,
-} from "@/api/generated/endpoints/sistemas/sistemas"
-import {
-  useGetBancos,
   useDeleteBancosId,
-} from "@/api/generated/endpoints/bancos/bancos"
+  useGetBancos,
+} from "@/api/generated/endpoints/bancos-de-dados/bancos-de-dados";
 import {
-  useGetRepositoriosDocumento,
   useDeleteRepositoriosDocumentoId,
-} from "@/api/generated/endpoints/repositorios-documento/repositorios-documento"
-import { SistemaResponse, BancoResponse, RepositorioDocumentoResponse } from "@/types/api"
-import { SistemaForm } from "@/components/sistemas/sistema-form"
-import { BancoForm } from "@/components/bancos/banco-form"
-import { RepositorioForm } from "@/components/repositorios-documento/repositorio-form"
-import { SistemaTable } from "@/components/sistemas/sistema-table"
-import { BancoTable } from "@/components/bancos/banco-table"
-import { RepositorioTable } from "@/components/repositorios-documento/repositorio-table"
+  useGetRepositoriosDocumento,
+} from "@/api/generated/endpoints/repositórios-de-documento/repositórios-de-documento";
+import { useDeleteSistemasId, useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
+import { BancoForm } from "@/components/bancos/banco-form";
+import { BancoTable } from "@/components/bancos/banco-table";
+import { RepositorioForm } from "@/components/repositorios-documento/repositorio-form";
+import { RepositorioTable } from "@/components/repositorios-documento/repositorio-table";
+import { SistemaForm } from "@/components/sistemas/sistema-form";
+import { SistemaTable } from "@/components/sistemas/sistema-table";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { BancoResponse, RepositorioDocumentoResponse, SistemaResponse } from "@/types/api";
 
 export default function AtivosTecnologicosPage() {
-  const [isSistemaFormOpen, setIsSistemaFormOpen] = useState(false)
-  const [isBancoFormOpen, setIsBancoFormOpen] = useState(false)
-  const [isRepositorioFormOpen, setIsRepositorioFormOpen] = useState(false)
-  const [selectedSistema, setSelectedSistema] = useState<SistemaResponse | undefined>()
-  const [selectedBanco, setSelectedBanco] = useState<BancoResponse | undefined>()
-  const [selectedRepositorio, setSelectedRepositorio] = useState<RepositorioDocumentoResponse | undefined>()
+  const [isSistemaFormOpen, setIsSistemaFormOpen] = useState(false);
+  const [isBancoFormOpen, setIsBancoFormOpen] = useState(false);
+  const [isRepositorioFormOpen, setIsRepositorioFormOpen] = useState(false);
+  const [selectedSistema, setSelectedSistema] = useState<SistemaResponse | undefined>();
+  const [selectedBanco, setSelectedBanco] = useState<BancoResponse | undefined>();
+  const [selectedRepositorio, setSelectedRepositorio] = useState<
+    RepositorioDocumentoResponse | undefined
+  >();
 
-  const { data: sistemasData, isLoading: isLoadingSistemas, error: errorSistemas } = useGetSistemas()
-  const { data: bancosData, isLoading: isLoadingBancos, error: errorBancos } = useGetBancos()
-  const { data: repositoriosData, isLoading: isLoadingRepositorios, error: errorRepositorios } = useGetRepositoriosDocumento()
+  const {
+    data: sistemasData,
+    isLoading: isLoadingSistemas,
+    error: errorSistemas,
+  } = useGetSistemas();
+  const { data: bancosData, isLoading: isLoadingBancos, error: errorBancos } = useGetBancos();
+  const {
+    data: repositoriosData,
+    isLoading: isLoadingRepositorios,
+    error: errorRepositorios,
+  } = useGetRepositoriosDocumento();
 
-  const deleteSistema = useDeleteSistemasId()
-  const deleteBanco = useDeleteBancosId()
-  const deleteRepositorio = useDeleteRepositoriosDocumentoId()
+  const deleteSistema = useDeleteSistemasId();
+  const deleteBanco = useDeleteBancosId();
+  const deleteRepositorio = useDeleteRepositoriosDocumentoId();
 
   const handleEditSistema = (sistema: SistemaResponse) => {
-    setSelectedSistema(sistema)
-    setIsSistemaFormOpen(true)
-  }
+    setSelectedSistema(sistema);
+    setIsSistemaFormOpen(true);
+  };
 
   const handleNewSistema = () => {
-    setSelectedSistema(undefined)
-    setIsSistemaFormOpen(true)
-  }
+    setSelectedSistema(undefined);
+    setIsSistemaFormOpen(true);
+  };
 
   const handleDeleteSistema = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este sistema?")) {
-      await deleteSistema.mutateAsync({ id })
+      await deleteSistema.mutateAsync({ id });
     }
-  }
+  };
 
   const handleEditBanco = (banco: BancoResponse) => {
-    setSelectedBanco(banco)
-    setIsBancoFormOpen(true)
-  }
+    setSelectedBanco(banco);
+    setIsBancoFormOpen(true);
+  };
 
   const handleNewBanco = () => {
-    setSelectedBanco(undefined)
-    setIsBancoFormOpen(true)
-  }
+    setSelectedBanco(undefined);
+    setIsBancoFormOpen(true);
+  };
 
   const handleDeleteBanco = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este banco de dados?")) {
-      await deleteBanco.mutateAsync({ id })
+      await deleteBanco.mutateAsync({ id });
     }
-  }
+  };
 
   const handleEditRepositorio = (repositorio: RepositorioDocumentoResponse) => {
-    setSelectedRepositorio(repositorio)
-    setIsRepositorioFormOpen(true)
-  }
+    setSelectedRepositorio(repositorio);
+    setIsRepositorioFormOpen(true);
+  };
 
   const handleNewRepositorio = () => {
-    setSelectedRepositorio(undefined)
-    setIsRepositorioFormOpen(true)
-  }
+    setSelectedRepositorio(undefined);
+    setIsRepositorioFormOpen(true);
+  };
 
   const handleDeleteRepositorio = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este repositório de documentos?")) {
-      await deleteRepositorio.mutateAsync({ id })
+      await deleteRepositorio.mutateAsync({ id });
     }
-  }
+  };
 
-  const sistemas = sistemasData?.data ?? []
-  const bancos = bancosData?.data ?? []
-  const repositorios = repositoriosData?.data ?? []
+  const sistemas = sistemasData?.data ?? [];
+  const bancos = bancosData?.data ?? [];
+  const repositorios = repositoriosData?.data ?? [];
 
-  const totalSistemas = sistemas.length
-  const totalBancos = bancos.length
-  const totalRepositorios = repositorios.length
-  const sistemasComBanco = sistemas.filter(s => s.bancos && s.bancos.length > 0).length
+  const totalSistemas = sistemas.length;
+  const totalBancos = bancos.length;
+  const totalRepositorios = repositorios.length;
 
   return (
     <>
@@ -110,7 +116,7 @@ export default function AtivosTecnologicosPage() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-3">
           <Card className="group hover:shadow-lg transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Sistemas</CardTitle>
@@ -150,23 +156,10 @@ export default function AtivosTecnologicosPage() {
             </CardContent>
           </Card>
 
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Sistemas com BD</CardTitle>
-              <div className="p-2 rounded-lg bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
-                <HardDrive className="h-4 w-4 text-purple-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{sistemasComBanco}</div>
-              <p className="text-xs text-muted-foreground">com banco de dados</p>
-            </CardContent>
-          </Card>
-
         </div>
 
         <Tabs defaultValue="sistemas" className="w-full">
-          <TabsList className="grid w-full md:w-[600px] grid-cols-3 bg-foreground/10">
+          <TabsList className="grid w-full grid-cols-3 bg-foreground/10">
             <TabsTrigger value="sistemas">Sistemas</TabsTrigger>
             <TabsTrigger value="bancos">Bancos de Dados</TabsTrigger>
             <TabsTrigger value="repositorios">Repositórios</TabsTrigger>
@@ -212,9 +205,7 @@ export default function AtivosTecnologicosPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>Bancos de Dados Cadastrados</CardTitle>
-                    <CardDescription>
-                      Lista de todos os bancos de dados cadastrados
-                    </CardDescription>
+                    <CardDescription>Lista de todos os bancos de dados cadastrados</CardDescription>
                   </div>
                   <Button className="gap-2" onClick={handleNewBanco}>
                     <Plus className="h-4 w-4" />
@@ -230,11 +221,7 @@ export default function AtivosTecnologicosPage() {
                     Erro ao carregar bancos. Tente novamente.
                   </p>
                 ) : (
-                  <BancoTable
-                    data={bancos}
-                    onEdit={handleEditBanco}
-                    onDelete={handleDeleteBanco}
-                  />
+                  <BancoTable data={bancos} onEdit={handleEditBanco} onDelete={handleDeleteBanco} />
                 )}
               </CardContent>
             </Card>
@@ -276,9 +263,17 @@ export default function AtivosTecnologicosPage() {
         </Tabs>
       </div>
 
-      <SistemaForm open={isSistemaFormOpen} onOpenChange={setIsSistemaFormOpen} sistema={selectedSistema} />
+      <SistemaForm
+        open={isSistemaFormOpen}
+        onOpenChange={setIsSistemaFormOpen}
+        sistema={selectedSistema}
+      />
       <BancoForm open={isBancoFormOpen} onOpenChange={setIsBancoFormOpen} banco={selectedBanco} />
-      <RepositorioForm open={isRepositorioFormOpen} onOpenChange={setIsRepositorioFormOpen} repositorio={selectedRepositorio} />
+      <RepositorioForm
+        open={isRepositorioFormOpen}
+        onOpenChange={setIsRepositorioFormOpen}
+        repositorio={selectedRepositorio}
+      />
     </>
-  )
+  );
 }

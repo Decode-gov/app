@@ -1,5 +1,31 @@
-"use client"
+"use client";
 
+import {
+  Activity,
+  BarChart3,
+  BookOpen,
+  Building,
+  CheckCircle,
+  Database,
+  FileCheck,
+  FileText,
+  HelpCircle,
+  Home,
+  Loader2,
+  LogOut,
+  Server,
+  Shield,
+  Table,
+  Tag,
+  UserCheck,
+  Users,
+  Workflow,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { usePostUsuariosLogout } from "@/api/generated/endpoints/usuários/usuários";
+import { Button } from "@/components/ui/button";
+import { DecodeGovIcon } from "@/components/ui/decode-gov-icon";
 import {
   Sidebar,
   SidebarContent,
@@ -11,28 +37,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import {
-  Users, BarChart3, Database,
-  Shield,
-  BookOpen, Building, FileCheck, Home,
-  Workflow,
-  Tag,
-  UserCheck,
-  HelpCircle,
-  Table, FileSpreadsheet,
-  Server,
-  FileText,
-  Activity,
-  CheckCircle,
-  LogOut,
-  Loader2
-} from "lucide-react"
-import { DecodeGovIcon } from "@/components/ui/decode-gov-icon"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { usePostUsuariosLogout } from "@/api/generated/endpoints/usuarios/usuarios"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/sidebar";
+import { Separator } from "../ui/separator";
+import { EmpresaSelector } from "./empresa-selector";
 
 const menuItems = [
   {
@@ -98,27 +105,20 @@ const menuItems = [
       { title: "Produtos de Dados", icon: Database, url: "/produtos-dados" },
     ],
   },
-  // {
-  //   title: "Gestão Documental",
-  //   items: [
-  //     { title: "Documentos", icon: FileText, url: "/documentos" },
-  //     { title: "Partes Envolvidas", icon: Users, url: "/partes-envolvidas" },
-  //   ],
-  // },
-]
+];
 
 export function AppSidebar() {
-  const pathname = usePathname()
-  const router = useRouter()
-  const { mutate: logout, isPending: isLoggingOut } = usePostUsuariosLogout()
+  const pathname = usePathname();
+  const router = useRouter();
+  const { mutate: logout, isPending: isLoggingOut } = usePostUsuariosLogout();
 
   const handleLogout = () => {
     logout(undefined as never, {
       onSuccess: () => {
-        router.push("/login")
+        router.push("/login");
       },
-    })
-  }
+    });
+  };
 
   return (
     <Sidebar variant="inset" className="border-r border-sidebar-border/60">
@@ -134,20 +134,28 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent className="bg-sidebar/30 backdrop-blur-sm">
-        {menuItems.map((item, index) => (
-          <SidebarGroup key={index} className="px-2">
+        <EmpresaSelector />
+        <Separator />
+        {menuItems.map((item) => (
+          <SidebarGroup key={item.title} className="px-2">
             {item.title && !item.items && (
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton 
-                    asChild 
+                  <SidebarMenuButton
+                    asChild
                     className={`group transition-all duration-200 hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground ${
-                      pathname === item.url ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm' : ''
+                      pathname === item.url
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
+                        : ""
                     }`}
                   >
-                    <Link href={item.url!}>
-                      {item.icon && <item.icon className="group-hover:scale-110 transition-transform duration-200" />}
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">{item.title}</span>
+                    <Link href={item.url ?? "#"}>
+                      {item.icon && (
+                        <item.icon className="group-hover:scale-110 transition-transform duration-200" />
+                      )}
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        {item.title}
+                      </span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -162,15 +170,19 @@ export function AppSidebar() {
                   <SidebarMenu>
                     {item.items.map((subItem) => (
                       <SidebarMenuItem key={subItem.title}>
-                        <SidebarMenuButton 
-                          asChild 
+                        <SidebarMenuButton
+                          asChild
                           className={`group transition-all duration-200 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground ml-2 ${
-                            pathname === subItem.url ? 'bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary' : ''
+                            pathname === subItem.url
+                              ? "bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary"
+                              : ""
                           }`}
                         >
                           <Link href={subItem.url}>
                             <subItem.icon className="group-hover:scale-110 transition-transform duration-200" />
-                            <span className="group-hover:translate-x-1 transition-transform duration-200">{subItem.title}</span>
+                            <span className="group-hover:translate-x-1 transition-transform duration-200">
+                              {subItem.title}
+                            </span>
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -202,9 +214,7 @@ export function AppSidebar() {
               </>
             )}
           </Button>
-          <div className="text-xs text-muted-foreground/80">
-            Sistema de Governança de Dados
-          </div>
+          <div className="text-xs text-muted-foreground/80">Sistema de Governança de Dados</div>
           <div className="text-xs text-muted-foreground/60 flex items-center gap-1">
             <span>v1.0</span>
             <span className="text-primary">•</span>
@@ -213,5 +223,5 @@ export function AppSidebar() {
         </div>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

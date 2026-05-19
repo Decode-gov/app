@@ -1,22 +1,21 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import type { ColumnDef } from "@tanstack/react-table";
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { PapelResponse } from "@/types/api"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
+} from "@/components/ui/dropdown-menu";
+import type { PapelResponse } from "@/types/api";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface ColumnsProps {
-  onEdit: (papel: PapelResponse) => void
-  onDelete: (id: string) => void
-  getPoliticaNome: (politicaId: string) => string
+  onEdit: (papel: PapelResponse) => void;
+  onDelete: (id: string) => void;
+  getPoliticaNome: (politicaId: string) => string;
 }
 
 export const createColumns = ({
@@ -24,85 +23,78 @@ export const createColumns = ({
   onDelete,
   getPoliticaNome,
 }: ColumnsProps): ColumnDef<PapelResponse>[] => [
-    {
-      accessorKey: "nome",
-      header: "Nome",
-      cell: ({ row }) => {
-        const papel = row.original
+  {
+    accessorKey: "nome",
+    header: "Nome",
+    cell: ({ row }) => {
+      const papel = row.original;
 
-        return (
-          <Tooltip>
-            <TooltipTrigger>
-              <div className="font-medium max-w-[200px] truncate" title={papel.nome}>
-                {papel.nome}
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <div className="truncate">{papel.nome || '-'}</div>
-            </TooltipContent>
-          </Tooltip>
-        )
-      },
+      return (
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="font-medium max-w-[200px] truncate" title={papel.nome}>
+              {papel.nome}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <div className="truncate">{papel.nome || "-"}</div>
+          </TooltipContent>
+        </Tooltip>
+      );
     },
-    {
-      accessorKey: "descricao",
-      header: "Descrição",
-      cell: ({ row }) => {
-        const papel = row.original
-        return (
-          <Tooltip>
-            <TooltipTrigger>
-              <div className="font-medium max-w-[500px] truncate">{papel.descricao || '-'}</div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <div className="truncate">{papel.descricao || '-'}</div>
-            </TooltipContent>
-          </Tooltip>
-        )
-      },
+  },
+  {
+    accessorKey: "descricao",
+    header: "Descrição",
+    cell: ({ row }) => {
+      const papel = row.original;
+      return (
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="font-medium max-w-[500px] truncate">{papel.descricao || "-"}</div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <div className="truncate">{papel.descricao || "-"}</div>
+          </TooltipContent>
+        </Tooltip>
+      );
     },
-    {
-      accessorKey: "politicaId",
-      header: "Política",
-      cell: ({ row }) => {
-        const politicaId = row.getValue("politicaId") as string
-        const politicaNome = getPoliticaNome(politicaId)
+  },
+  {
+    accessorKey: "politicaId",
+    header: "Política",
+    cell: ({ row }) => {
+      const politicaId = row.getValue("politicaId") as string;
+      const politicaNome = getPoliticaNome(politicaId);
 
-        return (
-          <div className="max-w-max truncate">
-            {politicaNome}
-          </div>
-        )
-      },
+      return <div className="max-w-max truncate">{politicaNome}</div>;
     },
-    {
-      id: "actions",
-      header: "Ações",
-      cell: ({ row }) => {
-        const papel = row.original
+  },
+  {
+    id: "actions",
+    header: "Ações",
+    cell: ({ row }) => {
+      const papel = row.original;
 
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(papel)}>
-                <Edit className="mr-2 h-4 w-4" />
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onDelete(papel.id)}
-                className="text-destructive"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Excluir
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
-      },
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => onEdit(papel)}>
+              <Edit className="mr-2 h-4 w-4" />
+              Editar
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(papel.id)} className="text-destructive">
+              <Trash2 className="mr-2 h-4 w-4" />
+              Excluir
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
     },
-  ]
+  },
+];

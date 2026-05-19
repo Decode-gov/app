@@ -1,39 +1,60 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { usePostBancos, usePutBancosId } from "@/api/generated/endpoints/bancos/bancos"
-import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas"
-import { BancoResponse } from "@/types/api"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { usePostBancos, usePutBancosId } from "@/api/generated/endpoints/bancos/bancos";
+import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import type { BancoResponse } from "@/types/api";
 
 const bancoSchema = z.object({
   nome: z.string().min(1, "Nome do banco é obrigatório").max(255),
   descricao: z.string().max(1000).optional(),
   sistemaId: z.string().optional(),
-})
+});
 
-type BancoFormValues = z.infer<typeof bancoSchema>
+type BancoFormValues = z.infer<typeof bancoSchema>;
 
 interface BancoFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  banco?: BancoResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  banco?: BancoResponse;
 }
 
 export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
-  const isEditing = !!banco
-  const createBanco = usePostBancos()
-  const updateBanco = usePutBancosId()
-  const { data: sistemasData } = useGetSistemas()
+  const isEditing = !!banco;
+  const createBanco = usePostBancos();
+  const updateBanco = usePutBancosId();
+  const { data: sistemasData } = useGetSistemas();
 
   const form = useForm<BancoFormValues>({
     resolver: zodResolver(bancoSchema),
@@ -42,18 +63,18 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
       descricao: "",
       sistemaId: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (banco && open) {
       form.reset({
         nome: banco.nome,
         sistemaId: banco.sistemaId || "",
-      })
+      });
     } else if (!open) {
-      form.reset()
+      form.reset();
     }
-  }, [banco, open, form])
+  }, [banco, open, form]);
 
   const onSubmit = async (data: BancoFormValues) => {
     try {
@@ -62,23 +83,23 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
         ...data,
         descricao: data.descricao || undefined,
         sistemaId: data.sistemaId || undefined,
-      }
+      };
 
       if (isEditing) {
-        await updateBanco.mutateAsync({ id: banco.id, data: payload })
+        await updateBanco.mutateAsync({ id: banco.id, data: payload });
       } else {
-        await createBanco.mutateAsync({ data: payload })
+        await createBanco.mutateAsync({ data: payload });
       }
-      onOpenChange(false)
-      form.reset()
+      onOpenChange(false);
+      form.reset();
     } catch (error) {
-      console.error("Erro:", error)
+      console.error("Erro:", error);
     }
-  }
+  };
 
-  const sistemas = sistemasData?.data ?? []
-  const sistemaSelecionado = form.watch("sistemaId")
-  const sistema = sistemas.find(s => s.id === sistemaSelecionado)
+  const sistemas = sistemasData?.data ?? [];
+  const sistemaSelecionado = form.watch("sistemaId");
+  const sistema = sistemas.find((s) => s.id === sistemaSelecionado);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -86,10 +107,9 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
         <DialogHeader>
           <DialogTitle>{isEditing ? "Editar Banco de Dados" : "Novo Banco de Dados"}</DialogTitle>
           <DialogDescription>
-            {isEditing 
-              ? "Atualize os dados do banco de dados." 
-              : "Preencha os dados para criar um novo banco de dados."
-            }
+            {isEditing
+              ? "Atualize os dados do banco de dados."
+              : "Preencha os dados para criar um novo banco de dados."}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -103,7 +123,9 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
                   <FormControl>
                     <Input placeholder="Ex: db_producao, db_analytics" {...field} />
                   </FormControl>
-                  <FormDescription>Nome ou identificador do banco de dados (máx. 255 caracteres)</FormDescription>
+                  <FormDescription>
+                    Nome ou identificador do banco de dados (máx. 255 caracteres)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -116,13 +138,15 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Descrição do banco de dados, finalidade, etc." 
-                      rows={3} 
-                      {...field} 
+                    <Textarea
+                      placeholder="Descrição do banco de dados, finalidade, etc."
+                      rows={3}
+                      {...field}
                     />
                   </FormControl>
-                  <FormDescription>Informações adicionais sobre o banco (opcional, máx. 1000 caracteres)</FormDescription>
+                  <FormDescription>
+                    Informações adicionais sobre o banco (opcional, máx. 1000 caracteres)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -134,11 +158,11 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Sistema</FormLabel>
-                  <Select 
+                  <Select
                     onValueChange={(value) => {
                       // Converter "none" de volta para string vazia
-                      field.onChange(value === "none" ? "" : value)
-                    }} 
+                      field.onChange(value === "none" ? "" : value);
+                    }}
                     value={field.value || "none"}
                   >
                     <FormControl>
@@ -159,7 +183,7 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
                           Nenhum sistema cadastrado
                         </div>
                       ) : (
-                        sistemas.map(sistema => (
+                        sistemas.map((sistema) => (
                           <SelectItem key={sistema.id} value={sistema.id}>
                             <div className="flex flex-col gap-1">
                               <span className="font-medium">{sistema.nome}</span>
@@ -184,19 +208,17 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
-              <Button 
-                type="submit" 
-                disabled={createBanco.isPending || updateBanco.isPending}
-              >
-                {createBanco.isPending || updateBanco.isPending 
-                  ? "Salvando..." 
-                  : isEditing ? "Atualizar" : "Criar"
-                }
+              <Button type="submit" disabled={createBanco.isPending || updateBanco.isPending}>
+                {createBanco.isPending || updateBanco.isPending
+                  ? "Salvando..."
+                  : isEditing
+                    ? "Atualizar"
+                    : "Criar"}
               </Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

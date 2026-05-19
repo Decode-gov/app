@@ -1,29 +1,29 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Filter, Plus, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Search, Filter, Plus } from "lucide-react"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 
 interface TermoFiltersProps {
-  searchTerm: string
-  onSearchChange: (value: string) => void
-  selectedStatus: string | null
-  onStatusChange: (status: string | null) => void
-  onNewTermo: () => void
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+  selectedStatus: string | null;
+  onStatusChange: (status: string | null) => void;
+  onNewTermo: () => void;
 }
 
-export function TermoFilters({ 
-  searchTerm, 
-  onSearchChange, 
-  selectedStatus, 
-  onStatusChange, 
-  onNewTermo 
+export function TermoFilters({
+  searchTerm,
+  onSearchChange,
+  selectedStatus,
+  onStatusChange,
+  onNewTermo,
 }: TermoFiltersProps) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center animate-slide-in-left">
@@ -39,21 +39,22 @@ export function TermoFilters({
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className={`gap-2 bg-background/50 backdrop-blur-sm border-border/60 hover:bg-accent/50 ${selectedStatus ? 'border-primary/50' : ''}`}>
+            <Button
+              variant="outline"
+              className={`gap-2 bg-background/50 backdrop-blur-sm border-border/60 hover:bg-accent/50 ${selectedStatus ? "border-primary/50" : ""}`}
+            >
               <Filter className="h-4 w-4" />
-              {selectedStatus === 'true' ? 'Ativos' : selectedStatus === 'false' ? 'Inativos' : 'Status'}
+              {selectedStatus === "true"
+                ? "Ativos"
+                : selectedStatus === "false"
+                  ? "Inativos"
+                  : "Status"}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => onStatusChange(null)}>
-              Todos
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onStatusChange("true")}>
-              Ativos
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onStatusChange("false")}>
-              Inativos
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onStatusChange(null)}>Todos</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onStatusChange("true")}>Ativos</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onStatusChange("false")}>Inativos</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -68,5 +69,5 @@ export function TermoFilters({
         </Button>
       </div>
     </div>
-  )
+  );
 }

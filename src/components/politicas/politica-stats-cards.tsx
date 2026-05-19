@@ -1,18 +1,19 @@
-"use client"
+"use client";
 
-import { FileText, CheckCircle, Clock, AlertCircle } from "lucide-react"
-import { type PoliticaStats } from "@/types/politica"
-import { StatsCards, type StatsCard } from "@/components/ui/stats-cards"
+import { AlertCircle, CheckCircle, Clock, FileText } from "lucide-react";
+import { type StatsCard, StatsCards } from "@/components/ui/stats-cards";
+import type { PoliticaStats } from "@/types/politica";
 
 interface PoliticaStatsCardsProps {
-  stats: PoliticaStats
+  stats: PoliticaStats;
 }
 
 export function PoliticaStatsCards({ stats }: PoliticaStatsCardsProps) {
   // Calcular categoria com mais políticas
-  const categoriaComMaisPoliticas = Object.entries(stats.porCategoria)
-    .reduce((max, [categoria, count]) => count > max.count ? { categoria, count } : max, 
-           { categoria: "", count: 0 })
+  const categoriaComMaisPoliticas = Object.entries(stats.porCategoria).reduce(
+    (max, [categoria, count]) => (count > max.count ? { categoria, count } : max),
+    { categoria: "", count: 0 },
+  );
 
   const cards: StatsCard[] = [
     {
@@ -43,7 +44,7 @@ export function PoliticaStatsCards({ stats }: PoliticaStatsCardsProps) {
       icon: AlertCircle,
       gradient: "from-purple-500 to-violet-500",
     },
-  ]
+  ];
 
-  return <StatsCards cards={cards} animationDirection="left" />
+  return <StatsCards cards={cards} animationDirection="left" />;
 }

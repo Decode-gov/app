@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { BookOpen, CheckCircle, XCircle } from "lucide-react"
-import { type TermoStats } from "@/types/termo"
-import { StatsCards, type StatsCard } from "@/components/ui/stats-cards"
+import { BookOpen, CheckCircle, XCircle } from "lucide-react";
+import { type StatsCard, StatsCards } from "@/components/ui/stats-cards";
+import type { TermoStats } from "@/types/termo";
 
 interface TermoStatsCardsProps {
-  stats: TermoStats
+  stats: TermoStats;
 }
 
 export function TermoStatsCards({ stats }: TermoStatsCardsProps) {
@@ -18,7 +18,7 @@ export function TermoStatsCards({ stats }: TermoStatsCardsProps) {
       gradient: "from-blue-500 to-cyan-500",
     },
     {
-      title: "Termos Ativos", 
+      title: "Termos Ativos",
       value: stats.ativos,
       description: "Termos em uso",
       icon: CheckCircle,
@@ -26,12 +26,12 @@ export function TermoStatsCards({ stats }: TermoStatsCardsProps) {
     },
     {
       title: "Termos Inativos",
-      value: stats.inativos, 
+      value: stats.inativos,
       description: "Termos arquivados",
       icon: XCircle,
       gradient: "from-red-500 to-rose-500",
     },
-  ]
+  ];
 
-  return <StatsCards cards={cards} animationDirection="left" />
+  return <StatsCards cards={cards} animationDirection="left" />;
 }

@@ -1,42 +1,59 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react"
-import { useEmpresas } from "@/hooks/api/use-empresas"
-import { setGlobalEmpresaId } from "@/lib/empresa-store"
-import type { GetEmpresas200DataItem } from "@/api/generated/model"
-import { useGetUsuariosPerfil } from "@/api/generated/endpoints/usuarios/usuarios";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { createContext, type ReactNode, useCallback, useContext, useEffect } from "react";
+import { useGetEmpresas } from "@/api/generated/endpoints/empresas/empresas";
+import { useGetUsuariosPerfil } from "@/api/generated/endpoints/usuários/usuários";
+import type { GetEmpresas200 } from "@/api/generated/model";
+import { setGlobalEmpresaId } from "@/lib/empresa-store";
 
 interface EmpresaAdminContextValue {
-  isAdmin: boolean
-  empresas: GetEmpresas200DataItem[]
-  selectedEmpresaId: string | null
-  setSelectedEmpresaId: (id: string | null) => void
-  isLoading: boolean
+  isAdmin: boolean;
+  empresas: GetEmpresas200["data"];
+  selectedEmpresaId: string | null;
+  setSelectedEmpresaId: (id: string | null) => void;
+  isLoading: boolean;
 }
 
-const EmpresaAdminContext = createContext<EmpresaAdminContextValue | null>(null)
+const EmpresaAdminContext = createContext<EmpresaAdminContextValue | null>(null);
 
 export function EmpresaAdminProvider({ children }: { children: ReactNode }) {
-  const [selectedEmpresaId, setSelectedEmpresaIdState] = useState<string | null>(null)
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const { data: perfil, isLoading: isLoadingPerfil } = useGetUsuariosPerfil()
-  const isAdmin = (perfil?.data as { tipo?: string } | undefined)?.tipo === "ADMIN"
+  const { data: perfil, isLoading: isLoadingPerfil } = useGetUsuariosPerfil();
+  const isAdmin = (perfil?.data as { tipo?: string } | undefined)?.tipo === "ADMIN";
 
-  const { data: empresasData, isLoading: isLoadingEmpresas } = useEmpresas(undefined, isAdmin)
+  const { data: empresasData, isLoading: isLoadingEmpresas } = useGetEmpresas({
+    query: { enabled: isAdmin },
+  });
 
-  const empresas = empresasData?.data ?? []
+  const empresas = empresasData?.data ?? [];
+  const selectedEmpresaId = searchParams.get("empresaId");
 
-  const setSelectedEmpresaId = useCallback((id: string | null) => {
-    setSelectedEmpresaIdState(id)
-    setGlobalEmpresaId(id)
-  }, [])
+  useEffect(() => {
+    setGlobalEmpresaId(selectedEmpresaId);
+  }, [selectedEmpresaId]);
 
-  // Limpa empresaId global ao desmontar (logout/troca de usuário)
   useEffect(() => {
     return () => {
-      setGlobalEmpresaId(null)
-    }
-  }, [])
+      setGlobalEmpresaId(null);
+    };
+  }, []);
+
+  const setSelectedEmpresaId = useCallback(
+    (id: string | null) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (id) {
+        params.set("empresaId", id);
+      } else {
+        params.delete("empresaId");
+      }
+      router.replace(`${pathname}?${params.toString()}`);
+    },
+    [router, pathname, searchParams],
+  );
 
   return (
     <EmpresaAdminContext.Provider
@@ -50,11 +67,11 @@ export function EmpresaAdminProvider({ children }: { children: ReactNode }) {
     >
       {children}
     </EmpresaAdminContext.Provider>
-  )
+  );
 }
 
 export function useEmpresaAdmin(): EmpresaAdminContextValue {
-  const ctx = useContext(EmpresaAdminContext)
-  if (!ctx) throw new Error("useEmpresaAdmin must be used within EmpresaAdminProvider")
-  return ctx
+  const ctx = useContext(EmpresaAdminContext);
+  if (!ctx) throw new Error("useEmpresaAdmin must be used within EmpresaAdminProvider");
+  return ctx;
 }

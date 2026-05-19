@@ -1,54 +1,53 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus, UserCheck } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useGetPapeis, useDeletePapeisId } from "@/api/generated/endpoints/papeis/papeis"
-import { useGetPoliticasInternas } from "@/api/generated/endpoints/politicas-internas/politicas-internas"
-import { PapelGovernancaForm } from "@/components/papeis/papel-governanca-form"
-import { PapeisDataTable } from "@/components/papeis/papeis-data-table"
-import { createColumns } from "@/components/papeis/columns"
-import { PapelResponse } from "@/types/api"
+import { Plus, UserCheck } from "lucide-react";
+import { useState } from "react";
+import { useDeletePapeisId, useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
+import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { createColumns } from "@/components/papeis/columns";
+import { PapeisDataTable } from "@/components/papeis/papeis-data-table";
+import { PapelGovernancaForm } from "@/components/papeis/papel-governanca-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { PapelResponse } from "@/types/api";
 
 export default function PapeisPage() {
-  const [formOpen, setFormOpen] = useState(false)
-  const [selectedPapel, setSelectedPapel] = useState<PapelResponse | undefined>()
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedPapel, setSelectedPapel] = useState<PapelResponse | undefined>();
 
-  const { data: papeisData, isLoading, error } = useGetPapeis()
-  const { data: politicasData } = useGetPoliticasInternas()
-  const deletePapel = useDeletePapeisId()
+  const { data: papeisData, isLoading, error } = useGetPapeis();
+  const { data: politicasData } = useGetPoliticasInternas();
+  const deletePapel = useDeletePapeisId();
 
   // Extração dos arrays de dados
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const papeis = (papeisData?.data ?? []) as any[]
-  const politicas = politicasData?.data ?? []
+  const papeis = papeisData?.data ?? [];
+  const politicas = politicasData?.data ?? [];
 
   const handleEdit = (papel: PapelResponse) => {
-    setSelectedPapel(papel)
-    setFormOpen(true)
-  }
+    setSelectedPapel(papel);
+    setFormOpen(true);
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este papel?")) {
-      await deletePapel.mutateAsync({ id })
+      await deletePapel.mutateAsync({ id });
     }
-  }
+  };
 
   // Obter nome da política
   const getPoliticaNome = (politicaId: string) => {
-    const politica = politicas.find(p => p.id === politicaId)
-    return politica?.nome || "Política não encontrada"
-  }
+    const politica = politicas.find((p) => p.id === politicaId);
+    return politica?.nome || "Política não encontrada";
+  };
 
   const columns = createColumns({
     onEdit: handleEdit,
     onDelete: handleDelete,
     getPoliticaNome,
-  })
+  });
 
-  const politicaOptions = politicas.map(p => ({ id: p.id ?? '', nome: p.nome ?? '' }))
+  const politicaOptions = politicas.map((p) => ({ id: p.id ?? "", nome: p.nome ?? "" }));
 
   if (isLoading) {
     return (
@@ -62,8 +61,8 @@ export default function PapeisPage() {
           </p>
         </div>
         <div className="grid gap-4 md:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i}>
+          {Array.from({ length: 4 }, (_, i) => i).map((key) => (
+            <Card key={key}>
               <CardHeader>
                 <Skeleton className="h-4 w-20" />
               </CardHeader>
@@ -80,7 +79,7 @@ export default function PapeisPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -102,7 +101,7 @@ export default function PapeisPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -139,9 +138,7 @@ export default function PapeisPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {politicas.length}
-            </div>
+            <div className="text-2xl font-bold text-blue-600">{politicas.length}</div>
             <p className="text-xs text-muted-foreground">políticas disponíveis</p>
           </CardContent>
         </Card>
@@ -153,39 +150,36 @@ export default function PapeisPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Papéis de Governança</CardTitle>
-              <CardDescription>
-                Lista de todos os papéis cadastrados no sistema
-              </CardDescription>
+              <CardDescription>Lista de todos os papéis cadastrados no sistema</CardDescription>
             </div>
-            <Button className="gap-2" onClick={() => {
-              setSelectedPapel(undefined)
-              setFormOpen(true)
-            }}>
+            <Button
+              className="gap-2"
+              onClick={() => {
+                setSelectedPapel(undefined);
+                setFormOpen(true);
+              }}
+            >
               <Plus className="h-4 w-4" />
               Novo Papel
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <PapeisDataTable
-            columns={columns}
-            data={papeis}
-            politicaOptions={politicaOptions}
-          />
+          <PapeisDataTable columns={columns} data={papeis} politicaOptions={politicaOptions} />
         </CardContent>
       </Card>
 
       {/* Formulário de Criação/Edição */}
-      <PapelGovernancaForm 
+      <PapelGovernancaForm
         open={formOpen}
         onOpenChange={(open) => {
-          setFormOpen(open)
+          setFormOpen(open);
           if (!open) {
-            setSelectedPapel(undefined)
+            setSelectedPapel(undefined);
           }
         }}
         papel={selectedPapel}
       />
     </div>
-  )
+  );
 }

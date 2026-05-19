@@ -1,53 +1,54 @@
-"use client"
+"use client";
 
-import { useState, useMemo, useCallback } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Plus, Shield } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 import {
-  useGetPoliticasInternas,
   useDeletePoliticasInternasId,
-  getGetPoliticasInternasQueryKey,
-} from "@/api/generated/endpoints/politicas-internas/politicas-internas";
+  useGetPoliticasInternas,
+} from "@/api/generated/endpoints/políticas-internas/políticas-internas";
 import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form";
-import { Skeleton } from "@/components/ui/skeleton";
-import { PoliticasInternasDataTable } from "@/components/politicas/politicas-internas-data-table";
 import { createColumns } from "@/components/politicas/politicas-internas-columns";
-import { GetPoliticasInternas200DataItem } from "@/api/generated/model";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { PoliticasInternasDataTable } from "@/components/politicas/politicas-internas-data-table";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { GetPoliticasInternas200DataItem } from "@/types/api";
 
 export default function PoliticasPage() {
-  const [statusFilter, setStatusFilter] = useState<string>("")
-  const [formOpen, setFormOpen] = useState(false)
-  const [selectedPolitica, setSelectedPolitica] = useState<GetPoliticasInternas200DataItem | undefined>()
-  const queryClient = useQueryClient()
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedPolitica, setSelectedPolitica] = useState<
+    GetPoliticasInternas200DataItem | undefined
+  >();
 
-  const { data: politicasData, isLoading, error } = useGetPoliticasInternas()
+  const { data: politicasData, isLoading, error } = useGetPoliticasInternas();
+  const { mutateAsync: deletePolitica } = useDeletePoliticasInternasId();
 
-  // Extração do array de dados
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const politicas = (politicasData?.data ?? []) as any[]
+  const politicas = politicasData?.data ?? [];
 
-  const handleDelete = useCallback(async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir esta política interna?")) {
-      await useDeletePoliticasInternasId(id)
-    }
-  }, [])
+  const handleDelete = useCallback(
+    async (id: string) => {
+      if (confirm("Tem certeza que deseja excluir esta política interna?")) {
+        await deletePolitica({ id });
+      }
+    },
+    [deletePolitica],
+  );
 
   const handleEdit = useCallback((politica: GetPoliticasInternas200DataItem) => {
-    setSelectedPolitica(politica)
-    setFormOpen(true)
-  }, [])
+    setSelectedPolitica(politica);
+    setFormOpen(true);
+  }, []);
 
   // Criação das colunas com memoization
   const columns = useMemo(
-    () => createColumns({
-      onEdit: handleEdit,
-      onDelete: handleDelete,
-    }),
-    [handleEdit, handleDelete]
-  )
+    () =>
+      createColumns({
+        onEdit: handleEdit,
+        onDelete: handleDelete,
+      }),
+    [handleEdit, handleDelete],
+  );
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -61,8 +62,8 @@ export default function PoliticasPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="animate-pulse">
+          {Array.from({ length: 3 }, (_, i) => i).map((key) => (
+            <Card key={key} className="animate-pulse">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <Skeleton className="h-4 w-[100px]" />
                 <Skeleton className="h-8 w-8 rounded-lg" />
@@ -82,29 +83,25 @@ export default function PoliticasPage() {
               <Skeleton className="h-10 w-[100px]" />
             </div>
             <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full" />
+              {Array.from({ length: 5 }, (_, i) => i).map((key) => (
+                <Skeleton key={key} className="h-16 w-full" />
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-destructive">
-            Políticas Internas
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Erro ao carregar políticas internas
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-destructive">Políticas Internas</h1>
+          <p className="text-muted-foreground mt-2">Erro ao carregar políticas internas</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -129,7 +126,7 @@ export default function PoliticasPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {politicas.filter(p => p.status === "Vigente").length}
+              {politicas.filter((p) => p.status === "Vigente").length}
             </div>
             <p className="text-xs text-muted-foreground">políticas vigentes</p>
           </CardContent>
@@ -144,7 +141,7 @@ export default function PoliticasPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-slate-700">
-              {politicas.filter(p => p.status === "Em_elaboracao").length}
+              {politicas.filter((p) => p.status === "Em_elaboracao").length}
             </div>
             <p className="text-xs text-muted-foreground">em elaboração</p>
           </CardContent>
@@ -159,7 +156,7 @@ export default function PoliticasPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {politicas.filter(p => p.status === "Revogada").length}
+              {politicas.filter((p) => p.status === "Revogada").length}
             </div>
             <p className="text-xs text-muted-foreground">revogadas</p>
           </CardContent>
@@ -176,10 +173,13 @@ export default function PoliticasPage() {
                 Lista de todas as políticas internas de governança cadastradas
               </CardDescription>
             </div>
-            <Button className="gap-2" onClick={() => {
-              setSelectedPolitica(undefined)
-              setFormOpen(true)
-            }}>
+            <Button
+              className="gap-2"
+              onClick={() => {
+                setSelectedPolitica(undefined);
+                setFormOpen(true);
+              }}
+            >
               <Plus className="h-4 w-4" />
               Nova Política
             </Button>
@@ -201,13 +201,13 @@ export default function PoliticasPage() {
       <PoliticaInternaForm
         open={formOpen}
         onOpenChange={(open) => {
-          setFormOpen(open)
+          setFormOpen(open);
           if (!open) {
-            setSelectedPolitica(undefined)
+            setSelectedPolitica(undefined);
           }
         }}
         politica={selectedPolitica}
       />
     </div>
-  )
+  );
 }

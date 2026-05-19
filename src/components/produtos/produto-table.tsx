@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
+import { Edit, FileText, Layers, Package, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Edit, Trash2, Package, FileText, Layers } from "lucide-react"
-import { ProdutoDados } from "@/types"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { ProdutoDados } from "@/types";
 
 interface ProdutoDadosTableProps {
-  data: ProdutoDados[]
-  isLoading?: boolean
-  onEdit: (produto: ProdutoDados) => void
-  onDelete: (produto: ProdutoDados) => void
+  data: ProdutoDados[];
+  isLoading?: boolean;
+  onEdit: (produto: ProdutoDados) => void;
+  onDelete: (produto: ProdutoDados) => void;
 }
 
 export function ProdutoDadosTable({ data, isLoading, onEdit, onDelete }: ProdutoDadosTableProps) {
@@ -38,14 +38,26 @@ export function ProdutoDadosTable({ data, isLoading, onEdit, onDelete }: Produto
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <TableRow key={i}>
-                <TableCell><Skeleton className="h-4 w-[150px]" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-[200px]" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-[60px]" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-[60px]" /></TableCell>
+            {Array.from({ length: 5 }, (_, i) => i).map((key) => (
+              <TableRow key={key}>
+                <TableCell>
+                  <Skeleton className="h-4 w-[150px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[200px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[100px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[80px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[60px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[60px]" />
+                </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Skeleton className="h-8 w-8" />
@@ -57,7 +69,7 @@ export function ProdutoDadosTable({ data, isLoading, onEdit, onDelete }: Produto
           </TableBody>
         </Table>
       </div>
-    )
+    );
   }
 
   if (!data || data.length === 0) {
@@ -87,7 +99,7 @@ export function ProdutoDadosTable({ data, isLoading, onEdit, onDelete }: Produto
           </TableBody>
         </Table>
       </div>
-    )
+    );
   }
 
   return (
@@ -176,5 +188,5 @@ export function ProdutoDadosTable({ data, isLoading, onEdit, onDelete }: Produto
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }

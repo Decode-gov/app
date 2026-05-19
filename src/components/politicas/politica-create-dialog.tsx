@@ -1,10 +1,14 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +16,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -20,23 +24,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { CalendarIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { type Politica } from "@/types/classificacao"
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import type { Politica } from "@/types/classificacao";
 
 const politicaFormSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -49,35 +49,35 @@ const politicaFormSchema = z.object({
   dataCriacao: z.date({ message: "Data de criação é obrigatória" }),
   dataInicioVigencia: z.date({ message: "Data de início de vigência é obrigatória" }),
   dataTermino: z.date().optional(),
-  status: z.enum(["Em_elaboracao", "Vigente", "Revogada"], { 
-    message: "Status é obrigatório"
+  status: z.enum(["Em_elaboracao", "Vigente", "Revogada"], {
+    message: "Status é obrigatório",
   }),
   versao: z.string().min(1, "Versão é obrigatória"),
   anexosUrl: z.string().optional(),
   relacionamento: z.string().optional(),
   observacoes: z.string().optional(),
-})
+});
 
-type PoliticaFormData = z.infer<typeof politicaFormSchema>
+type PoliticaFormData = z.infer<typeof politicaFormSchema>;
 
 interface PoliticaCreateDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onPoliticaCreated: (politica: Politica) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onPoliticaCreated: (politica: Politica) => void;
 }
 
 const statusOptions = [
   { value: "Em_elaboracao", label: "Em Elaboração" },
   { value: "Vigente", label: "Vigente" },
   { value: "Revogada", label: "Revogada" },
-]
+];
 
 export function PoliticaCreateDialog({
   open,
   onOpenChange,
   onPoliticaCreated,
 }: PoliticaCreateDialogProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<PoliticaFormData>({
     resolver: zodResolver(politicaFormSchema),
@@ -98,14 +98,14 @@ export function PoliticaCreateDialog({
       relacionamento: "",
       observacoes: "",
     },
-  })
+  });
 
   const handleSubmit = async (data: PoliticaFormData) => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
       // Simular criação da política
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const novaPolitica: Politica = {
         id: `politica_${Date.now()}`,
         nome: data.nome,
@@ -122,25 +122,25 @@ export function PoliticaCreateDialog({
         versao: data.versao,
         anexosUrl: data.anexosUrl || null,
         relacionamento: data.relacionamento || null,
-        observacoes: data.observacoes || null
-      }
+        observacoes: data.observacoes || null,
+      };
 
-      onPoliticaCreated(novaPolitica)
-      form.reset()
-      onOpenChange(false)
+      onPoliticaCreated(novaPolitica);
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error("Erro ao criar política:", error)
+      console.error("Erro ao criar política:", error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !isSubmitting) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -345,7 +345,7 @@ export function PoliticaCreateDialog({
                             variant="outline"
                             className={cn(
                               "bg-background/50 border-border/60 pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
@@ -362,9 +362,7 @@ export function PoliticaCreateDialog({
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                           initialFocus
                         />
                       </PopoverContent>
@@ -387,7 +385,7 @@ export function PoliticaCreateDialog({
                             variant="outline"
                             className={cn(
                               "bg-background/50 border-border/60 pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
@@ -404,9 +402,7 @@ export function PoliticaCreateDialog({
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date < new Date("1900-01-01")}
                           initialFocus
                         />
                       </PopoverContent>
@@ -429,7 +425,7 @@ export function PoliticaCreateDialog({
                             variant="outline"
                             className={cn(
                               "bg-background/50 border-border/60 pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              !field.value && "text-muted-foreground",
                             )}
                           >
                             {field.value ? (
@@ -446,9 +442,7 @@ export function PoliticaCreateDialog({
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date("1900-01-01")
-                          }
+                          disabled={(date) => date < new Date("1900-01-01")}
                           initialFocus
                         />
                       </PopoverContent>
@@ -537,5 +531,5 @@ export function PoliticaCreateDialog({
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

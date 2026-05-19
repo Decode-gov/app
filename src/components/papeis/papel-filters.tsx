@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
-import { Search, X, Filter } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Filter, Search, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface PapelFiltersProps {
-  searchTerm: string
-  onSearchTermChange: (value: string) => void
-  politicaFilter: string
-  onPoliticaFilterChange: (value: string) => void
-  onClearFilters: () => void
-  resultsCount: number
+  searchTerm: string;
+  onSearchTermChange: (value: string) => void;
+  politicaFilter: string;
+  onPoliticaFilterChange: (value: string) => void;
+  onClearFilters: () => void;
+  resultsCount: number;
 }
 
 // Mock data das políticas para os filtros
@@ -27,8 +27,11 @@ const politicaOptions = [
   { value: "550e8400-e29b-41d4-a716-446655440001", label: "Política de Segurança da Informação" },
   { value: "550e8400-e29b-41d4-a716-446655440002", label: "Política de Privacidade de Dados" },
   { value: "550e8400-e29b-41d4-a716-446655440003", label: "Política de Retenção de Documentos" },
-  { value: "550e8400-e29b-41d4-a716-446655440004", label: "Política de Classificação de Informações" },
-]
+  {
+    value: "550e8400-e29b-41d4-a716-446655440004",
+    label: "Política de Classificação de Informações",
+  },
+];
 
 export function PapelFilters({
   searchTerm,
@@ -38,8 +41,8 @@ export function PapelFilters({
   onClearFilters,
   resultsCount,
 }: PapelFiltersProps) {
-  const hasActiveFilters = searchTerm !== "" || politicaFilter !== "todos"
-  const activePoliticaLabel = politicaOptions.find(opt => opt.value === politicaFilter)?.label
+  const hasActiveFilters = searchTerm !== "" || politicaFilter !== "todos";
+  const activePoliticaLabel = politicaOptions.find((opt) => opt.value === politicaFilter)?.label;
 
   return (
     <div className="space-y-4">
@@ -98,7 +101,7 @@ export function PapelFilters({
       {hasActiveFilters && (
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-muted-foreground">Filtros ativos:</span>
-          
+
           {searchTerm && (
             <Badge variant="secondary" className="gap-1">
               Busca: &quot;{searchTerm}&quot;
@@ -135,10 +138,10 @@ export function PapelFilters({
           {resultsCount === 0
             ? "Nenhum resultado encontrado"
             : resultsCount === 1
-            ? "1 papel encontrado"
-            : `${resultsCount} papéis encontrados`}
+              ? "1 papel encontrado"
+              : `${resultsCount} papéis encontrados`}
         </p>
       </div>
     </div>
-  )
+  );
 }

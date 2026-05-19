@@ -1,58 +1,63 @@
-﻿"use client"
+﻿"use client";
 
-import { useState, useMemo } from "react"
-import { Button } from "@/components/ui/button"
-import { FileText, Plus } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import { FileText, Plus } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 import {
-  useGetListasClassificacao,
   useDeleteListasClassificacaoId,
-} from "@/api/generated/endpoints/listas-classificacao/listas-classificacao"
-import { useGetPoliticasInternas } from "@/api/generated/endpoints/politicas-internas/politicas-internas"
-import { ListaClassificacaoResponse } from "@/types/api"
-import { ReferencialForm } from "@/components/referencial/referencial-form"
-import { ReferencialTable } from "@/components/referencial/referencial-table"
-import { getReferencialColumns } from "@/components/referencial/referencial-table-columns"
+  useGetListasClassificacao,
+} from "@/api/generated/endpoints/listas-de-classificação/listas-de-classificação";
+import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { ReferencialForm } from "@/components/referencial/referencial-form";
+import { ReferencialTable } from "@/components/referencial/referencial-table";
+import { getReferencialColumns } from "@/components/referencial/referencial-table-columns";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { ListaClassificacaoResponse } from "@/types/api";
 
 export default function ReferencialClassificacaoPage() {
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [selectedReferencial, setSelectedReferencial] = useState<ListaClassificacaoResponse | undefined>()
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedReferencial, setSelectedReferencial] = useState<
+    ListaClassificacaoResponse | undefined
+  >();
 
-  const { data: referenciaisData, isLoading, error } = useGetListasClassificacao()
-  const { data: politicasData } = useGetPoliticasInternas()
-  const deleteReferencial = useDeleteListasClassificacaoId()
+  const { data: referenciaisData, isLoading, error } = useGetListasClassificacao();
+  const { data: politicasData } = useGetPoliticasInternas();
+  const deleteReferencial = useDeleteListasClassificacaoId();
 
-  const politicas = useMemo(() => politicasData?.data ?? [], [politicasData?.data])
-  const referenciais = useMemo(() => referenciaisData?.data ?? [], [referenciaisData?.data])
+  const politicas = useMemo(() => politicasData?.data ?? [], [politicasData?.data]);
+  const referenciais = useMemo(() => referenciaisData?.data ?? [], [referenciaisData?.data]);
 
   // Handlers
-  const handleEdit = (referencial: ListaClassificacaoResponse) => {
-    setSelectedReferencial(referencial)
-    setIsFormOpen(true)
-  }
+  const handleEdit = useCallback((referencial: ListaClassificacaoResponse) => {
+    setSelectedReferencial(referencial);
+    setIsFormOpen(true);
+  }, []);
 
   const handleNew = () => {
-    setSelectedReferencial(undefined)
-    setIsFormOpen(true)
-  }
+    setSelectedReferencial(undefined);
+    setIsFormOpen(true);
+  };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir este referencial de classificação?")) {
-      await deleteReferencial.mutateAsync({ id })
-    }
-  }
+  const handleDelete = useCallback(
+    async (id: string) => {
+      if (confirm("Tem certeza que deseja excluir este referencial de classificação?")) {
+        await deleteReferencial.mutateAsync({ id });
+      }
+    },
+    [deleteReferencial],
+  );
 
   // Colunas da tabela
   const columns = useMemo(
-    () => getReferencialColumns({ 
-      onEdit: handleEdit, 
-      onDelete: handleDelete,
-      politicas 
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [politicas]
-  )
+    () =>
+      getReferencialColumns({
+        onEdit: handleEdit,
+        onDelete: handleDelete,
+        politicas,
+      }),
+    [politicas, handleEdit, handleDelete],
+  );
 
   if (isLoading) {
     return (
@@ -82,7 +87,7 @@ export default function ReferencialClassificacaoPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -104,7 +109,7 @@ export default function ReferencialClassificacaoPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -122,7 +127,9 @@ export default function ReferencialClassificacaoPage() {
         <div className="grid gap-4 md:grid-cols-1">
           <Card className="group hover:shadow-lg transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total de tipologia de classificação</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total de tipologia de classificação
+              </CardTitle>
               <div className="p-2 rounded-lg bg-accent/10 group-hover:bg-accent/20 transition-colors duration-300">
                 <FileText className="h-4 w-4 text-accent group-hover:text-accent-foreground transition-colors duration-300" />
               </div>
@@ -159,7 +166,11 @@ export default function ReferencialClassificacaoPage() {
         </Card>
       </div>
 
-      <ReferencialForm open={isFormOpen} onOpenChange={setIsFormOpen} referencial={selectedReferencial} />
+      <ReferencialForm
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        referencial={selectedReferencial}
+      />
     </>
-  )
+  );
 }

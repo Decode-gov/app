@@ -1,22 +1,35 @@
-"use client"
+"use client";
 
-import { useState, useMemo } from "react"
-import { Shield, Search, Calendar, User, Activity } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useGetAuditoria } from "@/api/generated/endpoints/auditoria/auditoria"
+import { Activity, Calendar, Search, Shield, User } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useGetAuditoria } from "@/api/generated/endpoints/auditoria/auditoria";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 // Helper para status HTTP
 const getStatusBadgeColor = (status: number): "default" | "secondary" | "destructive" => {
-  if (status >= 200 && status < 300) return "default"
-  if (status >= 400 && status < 500) return "destructive"
-  if (status >= 500) return "destructive"
-  return "secondary"
-}
+  if (status >= 200 && status < 300) return "default";
+  if (status >= 400 && status < 500) return "destructive";
+  if (status >= 500) return "destructive";
+  return "secondary";
+};
 
 const getMetodoColor = (metodo: string) => {
   const colors: Record<string, string> = {
@@ -25,20 +38,19 @@ const getMetodoColor = (metodo: string) => {
     PUT: "text-yellow-600",
     DELETE: "text-red-600",
     PATCH: "text-purple-600",
-  }
-  return colors[metodo] || "text-gray-600"
-}
+  };
+  return colors[metodo] || "text-gray-600";
+};
 
 export default function AuditoriaPage() {
-  const [search, setSearch] = useState("")
-  const [metodoFilter, setMetodoFilter] = useState<string>("all")
-  const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [search, setSearch] = useState("");
+  const [metodoFilter, setMetodoFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   // Query
-  const { data, isLoading } = useGetAuditoria()
+  const { data, isLoading } = useGetAuditoria();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const logs = (data?.data ?? []) as any[]
+  const logs = data?.data ?? [];
 
   // Stats
   const stats = useMemo(() => {
@@ -47,8 +59,8 @@ export default function AuditoriaPage() {
       sucesso: logs.filter((l) => l.status >= 200 && l.status < 300).length,
       erro: logs.filter((l) => l.status >= 400).length,
       usuariosUnicos: new Set(logs.map((l) => l.usuario)).size,
-    }
-  }, [logs])
+    };
+  }, [logs]);
 
   // Filtros
   const filteredLogs = useMemo(() => {
@@ -56,23 +68,23 @@ export default function AuditoriaPage() {
       const matchesSearch =
         search === "" ||
         log.usuario.toLowerCase().includes(search.toLowerCase()) ||
-        log.endpoint.toLowerCase().includes(search.toLowerCase())
+        log.endpoint.toLowerCase().includes(search.toLowerCase());
 
-      const matchesMetodo = metodoFilter === "all" || log.metodo === metodoFilter
+      const matchesMetodo = metodoFilter === "all" || log.metodo === metodoFilter;
 
       const matchesStatus =
         statusFilter === "all" ||
         (statusFilter === "2xx" && log.status >= 200 && log.status < 300) ||
         (statusFilter === "4xx" && log.status >= 400 && log.status < 500) ||
-        (statusFilter === "5xx" && log.status >= 500)
+        (statusFilter === "5xx" && log.status >= 500);
 
-      return matchesSearch && matchesMetodo && matchesStatus
-    })
-  }, [logs, search, metodoFilter, statusFilter])
+      return matchesSearch && matchesMetodo && matchesStatus;
+    });
+  }, [logs, search, metodoFilter, statusFilter]);
 
   // Formatar data
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
@@ -80,8 +92,8 @@ export default function AuditoriaPage() {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
-    })
-  }
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -194,8 +206,8 @@ export default function AuditoriaPage() {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array.from({ length: 10 }).map((_, i) => (
-                <TableRow key={i}>
+              Array.from({ length: 10 }, (_, i) => i).map((key) => (
+                <TableRow key={key}>
                   <TableCell>
                     <Skeleton className="h-4 w-[150px]" />
                   </TableCell>
@@ -230,9 +242,7 @@ export default function AuditoriaPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className={`font-bold ${getMetodoColor(log.metodo)}`}>
-                      {log.metodo}
-                    </span>
+                    <span className={`font-bold ${getMetodoColor(log.metodo)}`}>{log.metodo}</span>
                   </TableCell>
                   <TableCell className="font-mono text-xs max-w-[300px] truncate">
                     {log.endpoint}
@@ -247,5 +257,5 @@ export default function AuditoriaPage() {
         </Table>
       </Card>
     </div>
-  )
+  );
 }

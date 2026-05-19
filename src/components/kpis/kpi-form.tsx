@@ -1,68 +1,66 @@
-﻿"use client"
+﻿"use client";
 
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
+import { usePostKpis, usePutKpisId } from "@/api/generated/endpoints/kpis/kpis";
+import { useGetProcessos } from "@/api/generated/endpoints/processos/processos";
+import { ComunidadeForm } from "@/components/dominios/comunidade-form";
+import { ProcessoForm } from "@/components/processos/processo-form";
+import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { Plus } from "lucide-react"
-import { useCreateKpi, useUpdateKpi } from "@/hooks/api/use-kpis"
-import { useProcessos } from "@/hooks/api/use-processos"
-import { useComunidades } from "@/hooks/api/use-comunidades"
-import { KpiResponse } from "@/types/api"
-
-import { ProcessoForm } from "@/components/processos/processo-form"
-import { ComunidadeForm } from "@/components/dominios/comunidade-form"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { KpiResponse } from "@/types/api";
 
 const kpiSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório").max(255),
   processoId: z.string().optional(),
   comunidadeId: z.string().optional(),
-})
+});
 
-type KpiFormValues = z.infer<typeof kpiSchema>
+type KpiFormValues = z.infer<typeof kpiSchema>;
 
 interface KpiFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  kpi?: KpiResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  kpi?: KpiResponse;
 }
 
 export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
-  const [processoDialogOpen, setProcessoDialogOpen] = useState(false)
-  const [comunidadeDialogOpen, setComunidadeDialogOpen] = useState(false)
-  
-  const createMutation = useCreateKpi()
-  const updateMutation = useUpdateKpi()
-  const { data: processosData } = useProcessos()
-  const { data: comunidadesData } = useComunidades()
-  
+  const [processoDialogOpen, setProcessoDialogOpen] = useState(false);
+  const [comunidadeDialogOpen, setComunidadeDialogOpen] = useState(false);
+
+  const createMutation = usePostKpis();
+  const updateMutation = usePutKpisId();
+  const { data: processosData } = useGetProcessos();
+  const { data: comunidadesData } = useGetComunidades();
+
   const form = useForm<KpiFormValues>({
     resolver: zodResolver(kpiSchema),
     defaultValues: {
@@ -70,7 +68,7 @@ export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
       processoId: "",
       comunidadeId: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (open) {
@@ -79,16 +77,16 @@ export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
           nome: kpi.nome,
           processoId: kpi.processoId || "",
           comunidadeId: kpi.comunidadeId || "",
-        })
+        });
       } else {
         form.reset({
           nome: "",
           processoId: "",
           comunidadeId: "",
-        })
+        });
       }
     }
-  }, [open, kpi, form])
+  }, [open, kpi, form]);
 
   const onSubmit = async (data: KpiFormValues) => {
     try {
@@ -96,41 +94,40 @@ export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
         await updateMutation.mutateAsync({
           id: kpi.id,
           data,
-        })
+        });
       } else {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync({
+          data,
+        });
       }
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar KPI:', error)
+      console.error("Erro ao salvar KPI:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
-  const processos = processosData?.data || []
-  const comunidades = comunidadesData?.data || []
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
+  const processos = processosData?.data || [];
+  const comunidades = comunidadesData?.data || [];
 
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {kpi ? "Editar KPI" : "Novo KPI"}
-            </DialogTitle>
+            <DialogTitle>{kpi ? "Editar KPI" : "Novo KPI"}</DialogTitle>
             <DialogDescription>
-              {kpi 
+              {kpi
                 ? "Atualize as informações do KPI."
-                : "Preencha os dados para criar um novo KPI."
-              }
+                : "Preencha os dados para criar um novo KPI."}
             </DialogDescription>
           </DialogHeader>
 
@@ -145,9 +142,7 @@ export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
                     <FormControl>
                       <Input placeholder="Ex: Taxa de Conversão" {...field} />
                     </FormControl>
-                    <FormDescription className="text-xs">
-                      Máximo 255 caracteres
-                    </FormDescription>
+                    <FormDescription className="text-xs">Máximo 255 caracteres</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -272,15 +267,9 @@ export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
         </DialogContent>
       </Dialog>
 
-      <ProcessoForm 
-        open={processoDialogOpen}
-        onOpenChange={setProcessoDialogOpen}
-      />
+      <ProcessoForm open={processoDialogOpen} onOpenChange={setProcessoDialogOpen} />
 
-      <ComunidadeForm 
-        open={comunidadeDialogOpen}
-        onOpenChange={setComunidadeDialogOpen}
-      />
+      <ComunidadeForm open={comunidadeDialogOpen} onOpenChange={setComunidadeDialogOpen} />
     </>
-  )
+  );
 }

@@ -21,7 +21,27 @@
       "Bash(awk '{print $2}')",
       "Bash(xargs git rm -f)",
       "Bash(xargs git checkout --theirs)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(Select-Object FullName)",
+      "Bash(npm run *)",
+      "Bash(npm install *)",
+      "Bash(npx biome *)",
+      "Bash(del eslint.config.mjs)",
+      "Bash(grep \"src\\\\\\\\\")",
+      "Bash(node -e \"const s = require\\('./node_modules/@biomejs/biome/configuration_schema.json'\\); console.log\\(JSON.stringify\\(Object.keys\\(s.definitions?.CssParser?.properties ?? {}\\)\\)\\)\")",
+      "Bash(node -e \"const s = require\\('./node_modules/@biomejs/biome/configuration_schema.json'\\); const defs = s.definitions; const cssKey = Object.keys\\(defs\\).find\\(k => k.toLowerCase\\(\\).includes\\('css'\\) && defs[k].properties\\); console.log\\(cssKey, JSON.stringify\\(Object.keys\\(defs[cssKey]?.properties ?? {}\\)\\)\\)\")",
+      "Bash(node -e 'const s = require\\('\\\\''./node_modules/@biomejs/biome/configuration_schema.json'\\\\''\\); console.log\\(JSON.stringify\\(Object.keys\\(s.definitions ?? s['\\\\''$defs'\\\\''] ?? {}\\)\\).substring\\(0,500\\)\\)')",
+      "Bash(node -e \"const s = require\\('./node_modules/@biomejs/biome/configuration_schema.json'\\); console.log\\(JSON.stringify\\(s.definitions['CssParserConfiguration']\\)\\)\")",
+      "Bash(node -e 'const fs = require\\('\\\\''fs'\\\\''\\); const s = JSON.parse\\(fs.readFileSync\\('\\\\''./node_modules/@biomejs/biome/configuration_schema.json'\\\\'', '\\\\''utf8'\\\\''\\)\\); const defs = s.definitions || s['\\\\''$defs'\\\\'']; console.log\\(JSON.stringify\\(defs['\\\\''CssParserConfiguration'\\\\'']\\)\\)')",
+      "Bash(grep -n \"key={i}\\\\|map\\(\\(_, i\\)\" \"D:\\\\Trabalho\\\\Dean Melo\\\\decode-gov-app\\\\src\\\\components\\\\layout\\\\app-sidebar.tsx\")",
+      "Bash(sed -i 's/ as any\\\\[\\\\]//g' \"src/app/\\(private\\)/listas-referencia/page.tsx\")",
+      "Bash(sed -i '/eslint-disable.*no-explicit-any/d' \"src/app/\\(private\\)/listas-referencia/page.tsx\")",
+      "Bash(node -e ' *)",
+      "Bash(Sort-Object)",
+      "Bash(Kpis\" | head -20)",
+      "Bash(Get-Content *)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs"
     ]
   }
 }

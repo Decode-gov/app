@@ -1,21 +1,28 @@
-"use client"
+"use client";
 
-import { useState } from "react"
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
+  type SortingState,
   useReactTable,
-  VisibilityState,
-} from "@tanstack/react-table"
-import { Search, ChevronLeft, ChevronRight } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+  type VisibilityState,
+} from "@tanstack/react-table";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -23,22 +30,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  searchKey?: string
-  searchPlaceholder?: string
-  statusFilter?: string
-  onStatusFilterChange?: (value: string) => void
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  searchKey?: string;
+  searchPlaceholder?: string;
+  statusFilter?: string;
+  onStatusFilterChange?: (value: string) => void;
 }
 
 export function PoliticasInternasDataTable<TData, TValue>({
@@ -49,9 +49,9 @@ export function PoliticasInternasDataTable<TData, TValue>({
   statusFilter = "",
   onStatusFilterChange,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const table = useReactTable({
     data,
@@ -73,7 +73,7 @@ export function PoliticasInternasDataTable<TData, TValue>({
         pageSize: 10,
       },
     },
-  })
+  });
 
   return (
     <div className="space-y-4">
@@ -84,9 +84,7 @@ export function PoliticasInternasDataTable<TData, TValue>({
           <Input
             placeholder={searchPlaceholder}
             value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn(searchKey)?.setFilterValue(event.target.value)
-            }
+            onChange={(event) => table.getColumn(searchKey)?.setFilterValue(event.target.value)}
             className="pl-8"
           />
         </div>
@@ -94,9 +92,9 @@ export function PoliticasInternasDataTable<TData, TValue>({
           <Select
             value={statusFilter || "ALL"}
             onValueChange={(value) => {
-              const newValue = value === "ALL" ? "" : value
-              onStatusFilterChange(newValue)
-              table.getColumn("status")?.setFilterValue(newValue ? [newValue] : [])
+              const newValue = value === "ALL" ? "" : value;
+              onStatusFilterChange(newValue);
+              table.getColumn("status")?.setFilterValue(newValue ? [newValue] : []);
             }}
           >
             <SelectTrigger className="w-[200px]">
@@ -123,12 +121,9 @@ export function PoliticasInternasDataTable<TData, TValue>({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -136,16 +131,10 @@ export function PoliticasInternasDataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -189,5 +178,5 @@ export function PoliticasInternasDataTable<TData, TValue>({
         </div>
       </div>
     </div>
-  )
+  );
 }

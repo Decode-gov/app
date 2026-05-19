@@ -1,49 +1,49 @@
-"use client"
+"use client";
 
-import { useState } from "react"
 import {
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-    type ColumnDef,
-    type SortingState,
-    type ColumnFiltersState,
-    type VisibilityState,
-} from "@tanstack/react-table"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+  type ColumnDef,
+  type ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable,
+  type VisibilityState,
+} from "@tanstack/react-table";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { ChevronLeft, ChevronRight, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { ChevronLeft, ChevronRight, Pencil, MoreHorizontal, Trash2 } from "lucide-react"
-import { type Politica } from "@/types/politica"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Politica } from "@/types/politica";
 
 interface PoliticaTableProps {
-  data: Politica[]
-  onEdit: (politica: Politica) => void
-  onDelete: (politica: Politica) => void
+  data: Politica[];
+  onEdit: (politica: Politica) => void;
+  onDelete: (politica: Politica) => void;
 }
 
 export function PoliticaTable({ data, onEdit, onDelete }: PoliticaTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -52,27 +52,27 @@ export function PoliticaTable({ data, onEdit, onDelete }: PoliticaTableProps) {
           <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-200 whitespace-nowrap">
             Vigente
           </Badge>
-        )
+        );
       case "Em_elaboracao":
         return (
           <Badge variant="outline" className="border-yellow-300 text-yellow-700 whitespace-nowrap">
             Em Elaboração
           </Badge>
-        )
+        );
       case "Revogada":
         return (
           <Badge variant="secondary" className="whitespace-nowrap">
             Revogada
           </Badge>
-        )
+        );
       default:
         return (
           <Badge variant="outline" className="whitespace-nowrap">
             {status}
           </Badge>
-        )
+        );
     }
-  }
+  };
 
   const columns: ColumnDef<Politica>[] = [
     {
@@ -81,9 +81,7 @@ export function PoliticaTable({ data, onEdit, onDelete }: PoliticaTableProps) {
       cell: ({ row }) => (
         <div className=" flex items-center gap-2 font-medium text-foreground">
           <div className="font-semibold">{row.getValue("nome")}</div>
-          <Badge className="text-xs">
-            v{row.original.versao}
-          </Badge>
+          <Badge className="text-xs">v{row.original.versao}</Badge>
         </div>
       ),
     },
@@ -104,53 +102,48 @@ export function PoliticaTable({ data, onEdit, onDelete }: PoliticaTableProps) {
     {
       accessorKey: "responsavel",
       header: "Responsável",
-      cell: ({ row }) => (
-        <div className="text-muted-foreground">
-          {row.getValue("responsavel")}
-        </div>
-      ),
+      cell: ({ row }) => <div className="text-muted-foreground">{row.getValue("responsavel")}</div>,
     },
     {
       accessorKey: "dataInicioVigencia",
       header: "Vigência",
       cell: ({ row }) => {
-        const dataInicioVigencia = row.getValue("dataInicioVigencia") as Date
+        const dataInicioVigencia = row.getValue("dataInicioVigencia") as Date;
         return (
           <div className="text-muted-foreground">
             <div className="text-sm">
               {format(dataInicioVigencia, "dd/MM/yyyy", { locale: ptBR })}
             </div>
           </div>
-        )
+        );
       },
     },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const politica = row.original
+        const politica = row.original;
 
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className="h-8 w-8 p-0 hover:bg-accent/50" 
-                size="sm"
-              >
+              <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-accent/50" size="sm">
                 <span className="sr-only">Abrir menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-sm border-border/60">
-              <DropdownMenuItem 
+            <DropdownMenuContent
+              align="end"
+              className="bg-background/95 backdrop-blur-sm border-border/60"
+            >
+              <DropdownMenuItem
                 onClick={() => onEdit(politica)}
                 className="hover:bg-accent/50 focus:bg-accent/50"
               >
                 <Pencil className="mr-2 h-4 w-4" />
                 Editar
               </DropdownMenuItem>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={() => onDelete(politica)}
                 className="text-destructive hover:bg-destructive/10 focus:bg-destructive/10 hover:text-destructive focus:text-destructive"
               >
@@ -159,10 +152,10 @@ export function PoliticaTable({ data, onEdit, onDelete }: PoliticaTableProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const table = useReactTable({
     data,
@@ -184,7 +177,7 @@ export function PoliticaTable({ data, onEdit, onDelete }: PoliticaTableProps) {
         pageSize: 10,
       },
     },
-  })
+  });
 
   return (
     <div className="space-y-4">
@@ -198,12 +191,9 @@ export function PoliticaTable({ data, onEdit, onDelete }: PoliticaTableProps) {
                     <TableHead key={header.id} className="text-foreground font-semibold">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -218,18 +208,15 @@ export function PoliticaTable({ data, onEdit, onDelete }: PoliticaTableProps) {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="py-3">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell 
-                  colSpan={columns.length} 
+                <TableCell
+                  colSpan={columns.length}
                   className="h-24 text-center text-muted-foreground"
                 >
                   Nenhuma política encontrada.
@@ -273,5 +260,5 @@ export function PoliticaTable({ data, onEdit, onDelete }: PoliticaTableProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

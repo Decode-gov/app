@@ -1,69 +1,59 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { usePostProcessos, usePutProcessosId } from "@/api/generated/endpoints/processos/processos";
+import type { GetProcessos200 } from "@/api/generated/model";
+import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { Plus } from "lucide-react"
-import { useCreateProcesso, useUpdateProcesso } from "@/hooks/api/use-processos"
-import { useComunidades } from "@/hooks/api/use-comunidades"
-import { ProcessoResponse } from "@/types/api"
-import { ComunidadeForm } from "../dominios/comunidade-form"
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ComunidadeForm } from "../dominios/comunidade-form";
 
 const processoSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório").max(255),
   descricao: z.string().max(1000).optional(),
-})
+});
 
-type ProcessoFormValues = z.infer<typeof processoSchema>
+type ProcessoFormValues = z.infer<typeof processoSchema>;
 
 interface ProcessoFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  processo?: ProcessoResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  processo?: GetProcessos200["data"][number];
 }
 
 export function ProcessoForm({ open, onOpenChange, processo }: ProcessoFormProps) {
-  const [comunidadeDialogOpen, setComunidadeDialogOpen] = useState(false)
-  
-  const createMutation = useCreateProcesso()
-  const updateMutation = useUpdateProcesso()
-  const { data: comunidadesData } = useComunidades()
-  
+  const [comunidadeDialogOpen, setComunidadeDialogOpen] = useState(false);
+
+  const createMutation = usePostProcessos();
+  const updateMutation = usePutProcessosId();
+
   const form = useForm<ProcessoFormValues>({
     resolver: zodResolver(processoSchema),
     defaultValues: {
       nome: "",
       descricao: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (open) {
@@ -71,15 +61,15 @@ export function ProcessoForm({ open, onOpenChange, processo }: ProcessoFormProps
         form.reset({
           nome: processo.nome,
           descricao: processo.descricao || "",
-        })
+        });
       } else {
         form.reset({
           nome: "",
           descricao: "",
-        })
+        });
       }
     }
-  }, [open, processo, form])
+  }, [open, processo, form]);
 
   const onSubmit = async (data: ProcessoFormValues) => {
     try {
@@ -87,40 +77,36 @@ export function ProcessoForm({ open, onOpenChange, processo }: ProcessoFormProps
         await updateMutation.mutateAsync({
           id: processo.id,
           data,
-        })
+        });
       } else {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync({ data });
       }
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar processo:', error)
+      console.error("Erro ao salvar processo:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
-  const comunidades = comunidadesData?.data || []
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>
-              {processo ? "Editar Processo" : "Novo Processo"}
-            </DialogTitle>
+            <DialogTitle>{processo ? "Editar Processo" : "Novo Processo"}</DialogTitle>
             <DialogDescription>
-              {processo 
+              {processo
                 ? "Atualize as informações do processo."
-                : "Preencha os dados para criar um novo processo."
-              }
+                : "Preencha os dados para criar um novo processo."}
             </DialogDescription>
           </DialogHeader>
 
@@ -135,9 +121,7 @@ export function ProcessoForm({ open, onOpenChange, processo }: ProcessoFormProps
                     <FormControl>
                       <Input placeholder="Ex: Processo de Vendas" {...field} />
                     </FormControl>
-                    <FormDescription className="text-xs">
-                      Máximo 255 caracteres
-                    </FormDescription>
+                    <FormDescription className="text-xs">Máximo 255 caracteres</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -150,15 +134,13 @@ export function ProcessoForm({ open, onOpenChange, processo }: ProcessoFormProps
                   <FormItem>
                     <FormLabel>Descrição</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="Descrição do processo..."
                         className="min-h-[80px]"
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
-                    <FormDescription className="text-xs">
-                      Máximo 1000 caracteres
-                    </FormDescription>
+                    <FormDescription className="text-xs">Máximo 1000 caracteres</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -182,10 +164,7 @@ export function ProcessoForm({ open, onOpenChange, processo }: ProcessoFormProps
         </DialogContent>
       </Dialog>
 
-      <ComunidadeForm 
-        open={comunidadeDialogOpen}
-        onOpenChange={setComunidadeDialogOpen}
-      />
+      <ComunidadeForm open={comunidadeDialogOpen} onOpenChange={setComunidadeDialogOpen} />
     </>
-  )
+  );
 }

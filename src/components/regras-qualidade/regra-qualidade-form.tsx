@@ -1,50 +1,68 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
+import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensões-de-qualidade/dimensões-de-qualidade";
+import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
+import { useGetRegrasNegocio } from "@/api/generated/endpoints/regras-de-negócio/regras-de-negócio";
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
+import { Button } from "@/components/ui/button";
 import {
-  usePostRegrasQualidade,
-  usePutRegrasQualidadeId,
-} from "@/api/generated/endpoints/regras-qualidade/regras-qualidade"
-import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensoes-qualidade/dimensoes-qualidade"
-import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas"
-import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas"
-import { useGetPapeis } from "@/api/generated/endpoints/papeis/papeis"
-import { useGetRegrasNegocio } from "@/api/generated/endpoints/regras-negocio/regras-negocio"
-import { RegraQualidadeResponse } from "@/types/api"
-import { CreateRegraQualidadeSchema, type CreateRegraQualidadeFormData } from "@/schemas"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { type CreateRegraQualidadeFormData, CreateRegraQualidadeSchema } from "@/schemas";
+import type { RegraQualidadeResponse } from "@/types/api";
+import { usePostRegrasQualidade, usePutRegrasQualidadeId } from "@/api/generated/endpoints/regras-de-qualidade/regras-de-qualidade";
 
 interface RegraQualidadeFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  regra?: RegraQualidadeResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  regra?: RegraQualidadeResponse;
 }
 
 export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidadeFormProps) {
-  const isEditing = !!regra
-  const createRegra = usePostRegrasQualidade()
-  const updateRegra = usePutRegrasQualidadeId()
+  const isEditing = !!regra;
+  const createRegra = usePostRegrasQualidade();
+  const updateRegra = usePutRegrasQualidadeId();
 
-  const { data: dimensoesData } = useGetDimensoesQualidade()
-  const { data: tabelasData } = useGetTabelas()
-  const { data: colunasData } = useGetColunas()
-  const { data: papeisData } = useGetPapeis()
-  const { data: regrasNegocioData } = useGetRegrasNegocio()
+  const { data: dimensoesData } = useGetDimensoesQualidade();
+  const { data: tabelasData } = useGetTabelas();
+  const { data: colunasData } = useGetColunas();
+  const { data: papeisData } = useGetPapeis();
+  const { data: regrasNegocioData } = useGetRegrasNegocio();
 
-  const dimensoes = dimensoesData?.data ?? []
-  const tabelas = tabelasData?.data ?? []
-  const colunas = colunasData?.data ?? []
-  const papeis = papeisData?.data ?? []
-  const regrasNegocio = regrasNegocioData?.data ?? []
+  const dimensoes = dimensoesData?.data ?? [];
+  const tabelas = tabelasData?.data ?? [];
+  const colunas = colunasData?.data ?? [];
+  const papeis = papeisData?.data ?? [];
+  const regrasNegocio = regrasNegocioData?.data ?? [];
 
   const form = useForm<CreateRegraQualidadeFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: form type workaround
     resolver: zodResolver(CreateRegraQualidadeSchema) as any,
     defaultValues: {
       descricao: "",
@@ -54,7 +72,7 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
       colunaId: null,
       responsavelId: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (regra) {
@@ -65,7 +83,7 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
         tabelaId: regra.tabelaId || null,
         colunaId: regra.colunaId || null,
         responsavelId: regra.responsavelId || "",
-      })
+      });
     } else {
       form.reset({
         descricao: "",
@@ -74,23 +92,23 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
         tabelaId: null,
         colunaId: null,
         responsavelId: "",
-      })
+      });
     }
-  }, [regra, form])
+  }, [regra, form]);
 
   const onSubmit = async (data: CreateRegraQualidadeFormData) => {
     try {
       if (isEditing) {
-        await updateRegra.mutateAsync({ id: regra.id, data })
+        await updateRegra.mutateAsync({ id: regra.id, data });
       } else {
-        await createRegra.mutateAsync({ data })
+        await createRegra.mutateAsync({ data });
       }
-      onOpenChange(false)
-      form.reset()
+      onOpenChange(false);
+      form.reset();
     } catch (error) {
-      console.error("Erro ao salvar regra:", error)
+      console.error("Erro ao salvar regra:", error);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -268,5 +286,5 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

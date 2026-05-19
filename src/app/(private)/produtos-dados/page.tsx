@@ -1,65 +1,70 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, Package, Database, FileText } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
-  useGetProdutosDados,
-  useDeleteProdutosDadosId,
-} from "@/api/generated/endpoints/produtos-dados/produtos-dados"
-import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades"
-import { ProdutoDadosResponse } from "@/types/api"
-import { ProdutoForm } from "@/components/produtos/produto-form"
+  Edit,
+  MoreHorizontal,
+  Package,
+  Plus,
+  Search,
+  Trash2
+} from "lucide-react";
+import { useState } from "react";
+import { useDeleteProdutosDadosId, useGetProdutosDados } from "@/api/generated/endpoints/produtos-de-dados/produtos-de-dados";
+import { ProdutoForm } from "@/components/produtos/produto-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { ProdutoDadosResponse } from "@/types/api";
 
 export default function ProdutosDadosPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [dominioFilter, setDominioFilter] = useState<string>("")
-  const [page] = useState(1)
-  const [limit] = useState(10)
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [selectedProduto, setSelectedProduto] = useState<ProdutoDadosResponse | undefined>()
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dominioFilter, setDominioFilter] = useState<string>("");
+  const [page] = useState(1);
+  const [limit] = useState(10);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedProduto, setSelectedProduto] = useState<ProdutoDadosResponse | undefined>();
 
-  void page
-  void limit
-  void searchTerm
-  void dominioFilter
+  void page;
+  void limit;
+  void searchTerm;
+  void dominioFilter;
 
-  const { data: produtosData, isLoading, error } = useGetProdutosDados()
-  const { data: comunidadesData } = useGetComunidades()
+  const { data: produtosData, isLoading, error } = useGetProdutosDados();
 
-  const deleteProduto = useDeleteProdutosDadosId()
+  const deleteProduto = useDeleteProdutosDadosId();
 
   const handleEdit = (produto: ProdutoDadosResponse) => {
-    setSelectedProduto(produto)
-    setIsFormOpen(true)
-  }
+    setSelectedProduto(produto);
+    setIsFormOpen(true);
+  };
 
   const handleNew = () => {
-    setSelectedProduto(undefined)
-    setIsFormOpen(true)
-  }
+    setSelectedProduto(undefined);
+    setIsFormOpen(true);
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este produto de dados?")) {
-      await deleteProduto.mutateAsync({ id })
+      await deleteProduto.mutateAsync({ id });
     }
-  }
+  };
 
-  const produtos = produtosData?.data ?? []
-  const comunidades = comunidadesData?.data ?? []
-
-  const produtosComDominio = produtos.filter(p => p.dominioId).length
-  const produtosComPolitica = produtos.filter(p => p.politicaId).length
-  const mediaTermos = produtos.length > 0 
-    ? Math.round(produtos.reduce((acc, p) => acc + (p.termos?.length || 0), 0) / produtos.length)
-    : 0
+  const produtos = produtosData?.data ?? [];
 
   return (
     <>
@@ -73,68 +78,12 @@ export default function ProdutosDadosPage() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total</CardTitle>
-              <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
-                <Package className="h-4 w-4 text-blue-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{produtos.length}</div>
-              <p className="text-xs text-muted-foreground">produtos cadastrados</p>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Com Domínio</CardTitle>
-              <div className="p-2 rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
-                <Database className="h-4 w-4 text-green-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{produtosComDominio}</div>
-              <p className="text-xs text-muted-foreground">vinculados a domínios</p>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Com Política</CardTitle>
-              <div className="p-2 rounded-lg bg-purple-100 group-hover:bg-purple-200 transition-colors duration-300">
-                <FileText className="h-4 w-4 text-purple-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{produtosComPolitica}</div>
-              <p className="text-xs text-muted-foreground">com política definida</p>
-            </CardContent>
-          </Card>
-
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Média de Termos</CardTitle>
-              <div className="p-2 rounded-lg bg-orange-100 group-hover:bg-orange-200 transition-colors duration-300">
-                <FileText className="h-4 w-4 text-orange-600 transition-colors duration-300" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{mediaTermos}</div>
-              <p className="text-xs text-muted-foreground">termos por produto</p>
-            </CardContent>
-          </Card>
-        </div>
-
         <Card className="bg-card/80 backdrop-blur-sm border-border/60 shadow-lg">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Produtos de Dados</CardTitle>
-                <CardDescription>
-                  Lista de todos os produtos cadastrados
-                </CardDescription>
+                <CardDescription>Lista de todos os produtos cadastrados</CardDescription>
               </div>
               <Button className="gap-2" onClick={handleNew}>
                 <Plus className="h-4 w-4" />
@@ -153,19 +102,6 @@ export default function ProdutosDadosPage() {
                   className="pl-8"
                 />
               </div>
-              <Select value={dominioFilter || "todos"} onValueChange={(value) => setDominioFilter(value === "todos" ? "" : value)}>
-                <SelectTrigger className="w-full md:w-[250px]">
-                  <SelectValue placeholder="Filtrar por domínio" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos os domínios</SelectItem>
-                  {comunidades.map((comunidade) => (
-                    <SelectItem key={comunidade.id} value={comunidade.id}>
-                      {comunidade.nome}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
 
             {isLoading ? (
@@ -189,10 +125,6 @@ export default function ProdutosDadosPage() {
                   </TableHeader>
                   <TableBody>
                     {produtos.map((produto: ProdutoDadosResponse) => {
-                      const dominio = produto.dominioId ? comunidades.find(c => c.id === produto.dominioId) : null
-                      const termosCount = produto.termos?.length || 0
-                      const ativosCount = produto.ativos?.length || 0
-
                       return (
                         <TableRow key={produto.id}>
                           <TableCell className="font-medium">
@@ -206,31 +138,7 @@ export default function ProdutosDadosPage() {
                               {produto.descricao}
                             </div>
                           </TableCell>
-                          <TableCell>
-                            {dominio ? (
-                              <Badge variant="secondary">{dominio.nome}</Badge>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {termosCount > 0 ? (
-                              <Badge variant="outline" className="bg-blue-50">
-                                {termosCount} {termosCount === 1 ? 'termo' : 'termos'}
-                              </Badge>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {ativosCount > 0 ? (
-                              <Badge variant="outline" className="bg-green-50">
-                                {ativosCount} {ativosCount === 1 ? 'ativo' : 'ativos'}
-                              </Badge>
-                            ) : (
-                              <span className="text-muted-foreground">-</span>
-                            )}
-                          </TableCell>
+
                           <TableCell>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -243,7 +151,7 @@ export default function ProdutosDadosPage() {
                                   <Edit className="mr-2 h-4 w-4" />
                                   Editar
                                 </DropdownMenuItem>
-                                <DropdownMenuItem 
+                                <DropdownMenuItem
                                   className="text-destructive"
                                   onClick={() => handleDelete(produto.id)}
                                 >
@@ -254,7 +162,7 @@ export default function ProdutosDadosPage() {
                             </DropdownMenu>
                           </TableCell>
                         </TableRow>
-                      )
+                      );
                     })}
                   </TableBody>
                 </Table>
@@ -266,5 +174,5 @@ export default function ProdutosDadosPage() {
 
       <ProdutoForm open={isFormOpen} onOpenChange={setIsFormOpen} produto={selectedProduto} />
     </>
-  )
+  );
 }

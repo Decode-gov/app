@@ -1,52 +1,72 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus } from "lucide-react"
-import { useCreateAtividade, useUpdateAtividade } from "@/hooks/api/use-atividades"
-import { useProcessos } from "@/hooks/api/use-processos"
-import { AtividadeResponse } from "@/types/api"
-import { ProcessoForm } from "@/components/processos/processo-form"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { ProcessoForm } from "@/components/processos/processo-form";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useCreateAtividade, useUpdateAtividade } from "@/hooks/api/use-atividades";
+import { useProcessos } from "@/hooks/api/use-processos";
+import type { AtividadeResponse } from "@/types/api";
 
 const formSchema = z.object({
   nome: z.string({ message: "Nome é obrigatório" }).min(1, "Nome é obrigatório"),
   descricao: z.string({ message: "Descrição é obrigatória" }).min(1, "Descrição é obrigatória"),
-  status: z.enum(['PLANEJADA', 'EM_ANDAMENTO', 'CONCLUIDA', 'CANCELADA', 'PAUSADA'], {
+  status: z.enum(["PLANEJADA", "EM_ANDAMENTO", "CONCLUIDA", "CANCELADA", "PAUSADA"], {
     message: "Status é obrigatório",
   }),
-  prioridade: z.enum(['BAIXA', 'MEDIA', 'ALTA', 'CRITICA'], {
+  prioridade: z.enum(["BAIXA", "MEDIA", "ALTA", "CRITICA"], {
     message: "Prioridade é obrigatória",
   }),
   processoId: z.string({ message: "Processo é obrigatório" }),
   responsavel: z.string().optional(),
   dataInicio: z.string().optional(),
   dataFim: z.string().optional(),
-})
+});
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof formSchema>;
 
 interface AtividadeFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  atividade?: AtividadeResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  atividade?: AtividadeResponse;
 }
 
 export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormProps) {
-  const isEditing = !!atividade
-  const [processoDialogOpen, setProcessoDialogOpen] = useState(false)
-  const createAtividade = useCreateAtividade()
-  const updateAtividade = useUpdateAtividade()
+  const isEditing = !!atividade;
+  const [processoDialogOpen, setProcessoDialogOpen] = useState(false);
+  const createAtividade = useCreateAtividade();
+  const updateAtividade = useUpdateAtividade();
 
-  const { data: processosData } = useProcessos({ page: 1, limit: 1000 })
-  const processos = processosData?.data || []
+  const { data: processosData } = useProcessos({ page: 1, limit: 1000 });
+  const processos = processosData?.data || [];
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -60,7 +80,7 @@ export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormPr
       dataInicio: "",
       dataFim: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (atividade) {
@@ -71,9 +91,9 @@ export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormPr
         prioridade: atividade.prioridade || "MEDIA",
         processoId: atividade.processoId || "",
         responsavel: atividade.responsavel || "",
-        dataInicio: atividade.dataInicio ? atividade.dataInicio.split('T')[0] : "",
-        dataFim: atividade.dataFim ? atividade.dataFim.split('T')[0] : "",
-      })
+        dataInicio: atividade.dataInicio ? atividade.dataInicio.split("T")[0] : "",
+        dataFim: atividade.dataFim ? atividade.dataFim.split("T")[0] : "",
+      });
     } else {
       form.reset({
         nome: "",
@@ -84,9 +104,9 @@ export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormPr
         responsavel: "",
         dataInicio: "",
         dataFim: "",
-      })
+      });
     }
-  }, [atividade, form])
+  }, [atividade, form]);
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -96,22 +116,22 @@ export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormPr
         status: data.status,
         prioridade: data.prioridade,
         processoId: data.processoId,
-        responsavel: data.responsavel || '',
+        responsavel: data.responsavel || "",
         dataInicio: data.dataInicio || undefined,
         dataFim: data.dataFim || undefined,
-      }
+      };
 
       if (isEditing) {
-        await updateAtividade.mutateAsync({ id: atividade.id, data: payload })
+        await updateAtividade.mutateAsync({ id: atividade.id, data: payload });
       } else {
-        await createAtividade.mutateAsync(payload)
+        await createAtividade.mutateAsync(payload);
       }
-      onOpenChange(false)
-      form.reset()
+      onOpenChange(false);
+      form.reset();
     } catch (error) {
-      console.error("Erro ao salvar atividade:", error)
+      console.error("Erro ao salvar atividade:", error);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -294,7 +314,10 @@ export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormPr
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
-              <Button type="submit" disabled={createAtividade.isPending || updateAtividade.isPending}>
+              <Button
+                type="submit"
+                disabled={createAtividade.isPending || updateAtividade.isPending}
+              >
                 {createAtividade.isPending || updateAtividade.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </DialogFooter>
@@ -302,10 +325,7 @@ export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormPr
         </Form>
       </DialogContent>
 
-      <ProcessoForm
-        open={processoDialogOpen}
-        onOpenChange={setProcessoDialogOpen}
-      />
+      <ProcessoForm open={processoDialogOpen} onOpenChange={setProcessoDialogOpen} />
     </Dialog>
-  )
+  );
 }

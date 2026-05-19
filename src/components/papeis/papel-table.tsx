@@ -1,20 +1,27 @@
-"use client"
+"use client";
 
-import { useState } from "react"
 import {
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
   type SortingState,
-  type ColumnFiltersState,
+  useReactTable,
   type VisibilityState,
-} from "@tanstack/react-table"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+} from "@tanstack/react-table";
+import { ChevronLeft, ChevronRight, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -22,20 +29,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { ChevronLeft, ChevronRight, Pencil, MoreHorizontal, Trash2 } from "lucide-react"
-import { type Papel } from "@/types/papel"
+} from "@/components/ui/table";
+import type { Papel } from "@/types/papel";
 
 interface PapelTableProps {
-  data: Papel[]
-  onEdit: (papel: Papel) => void
-  onDelete: (papel: Papel) => void
+  data: Papel[];
+  onEdit: (papel: Papel) => void;
+  onDelete: (papel: Papel) => void;
 }
 
 // Mock data das políticas para display
@@ -44,16 +44,19 @@ const mockPoliticasMap = {
   "550e8400-e29b-41d4-a716-446655440002": "Política de Privacidade de Dados",
   "550e8400-e29b-41d4-a716-446655440003": "Política de Retenção de Documentos",
   "550e8400-e29b-41d4-a716-446655440004": "Política de Classificação de Informações",
-}
+};
 
 export function PapelTable({ data, onEdit, onDelete }: PapelTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const getPoliticaNome = (politicaId: string): string => {
-    return mockPoliticasMap[politicaId as keyof typeof mockPoliticasMap] || `Política ${politicaId.slice(0, 8)}...`
-  }
+    return (
+      mockPoliticasMap[politicaId as keyof typeof mockPoliticasMap] ||
+      `Política ${politicaId.slice(0, 8)}...`
+    );
+  };
 
   const columns: ColumnDef<Papel>[] = [
     {
@@ -78,42 +81,44 @@ export function PapelTable({ data, onEdit, onDelete }: PapelTableProps) {
       accessorKey: "politicaId",
       header: "Política",
       cell: ({ row }) => {
-        const politicaId = row.getValue("politicaId") as string
-        const politicaNome = getPoliticaNome(politicaId)
+        const politicaId = row.getValue("politicaId") as string;
+        const politicaNome = getPoliticaNome(politicaId);
         return (
-          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 whitespace-nowrap">
+          <Badge
+            variant="outline"
+            className="bg-primary/10 text-primary border-primary/20 whitespace-nowrap"
+          >
             {politicaNome}
           </Badge>
-        )
+        );
       },
     },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const papel = row.original
+        const papel = row.original;
 
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                className="h-8 w-8 p-0 hover:bg-accent/50" 
-                size="sm"
-              >
+              <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-accent/50" size="sm">
                 <span className="sr-only">Abrir menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-sm border-border/60">
-              <DropdownMenuItem 
+            <DropdownMenuContent
+              align="end"
+              className="bg-background/95 backdrop-blur-sm border-border/60"
+            >
+              <DropdownMenuItem
                 onClick={() => onEdit(papel)}
                 className="hover:bg-accent/50 focus:bg-accent/50"
               >
                 <Pencil className="mr-2 h-4 w-4" />
                 Editar
               </DropdownMenuItem>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={() => onDelete(papel)}
                 className="text-destructive hover:bg-destructive/10 focus:bg-destructive/10 hover:text-destructive focus:text-destructive"
               >
@@ -122,10 +127,10 @@ export function PapelTable({ data, onEdit, onDelete }: PapelTableProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        )
+        );
       },
     },
-  ]
+  ];
 
   const table = useReactTable({
     data,
@@ -147,7 +152,7 @@ export function PapelTable({ data, onEdit, onDelete }: PapelTableProps) {
         pageSize: 10,
       },
     },
-  })
+  });
 
   return (
     <div className="space-y-4">
@@ -161,12 +166,9 @@ export function PapelTable({ data, onEdit, onDelete }: PapelTableProps) {
                     <TableHead key={header.id} className="text-foreground font-semibold">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -181,18 +183,15 @@ export function PapelTable({ data, onEdit, onDelete }: PapelTableProps) {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="py-3">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell 
-                  colSpan={columns.length} 
+                <TableCell
+                  colSpan={columns.length}
                   className="h-24 text-center text-muted-foreground"
                 >
                   Nenhum papel encontrado.
@@ -236,5 +235,5 @@ export function PapelTable({ data, onEdit, onDelete }: PapelTableProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

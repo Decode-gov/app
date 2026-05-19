@@ -1,10 +1,23 @@
-"use client"
+"use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { CalendarIcon, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { z } from "zod";
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
+import {
+  getGetPoliticasInternasQueryKey,
+  usePostPoliticasInternas,
+  usePutPoliticasInternasId,
+} from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { ComunidadeForm } from "@/components/dominios/comunidade-form";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -16,14 +29,14 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -31,18 +44,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { CalendarIcon, Plus } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { ComunidadeForm } from "@/components/dominios/comunidade-form";
-import { GetPoliticasInternas200DataItem } from "@/api/generated/model";
-import { getGetPoliticasInternasQueryKey, usePostPoliticasInternas, usePutPoliticasInternasId } from "@/api/generated/endpoints/politicas-internas/politicas-internas";
-import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import type { GetPoliticasInternas200DataItem } from "@/types/api";
 
 const politicaInternaFormSchema = z.object({
   nome: z.string().min(1).optional(),
@@ -55,107 +59,107 @@ const politicaInternaFormSchema = z.object({
   dataCriacao: z.coerce.date(),
   dataInicioVigencia: z.coerce.date(),
   dataTermino: z.coerce.date().optional(),
-  status: z.enum(['Em_elaboracao', 'Vigente', 'Revogada']),
+  status: z.enum(["Em_elaboracao", "Vigente", "Revogada"]),
   versao: z.string().min(1),
   anexosUrl: z.string().optional(),
   relacionamento: z.string().optional(),
-  observacoes: z.string().optional()
-})
+  observacoes: z.string().optional(),
+});
 
-type PoliticaInternaFormValues = z.infer<typeof politicaInternaFormSchema>
+type PoliticaInternaFormValues = z.infer<typeof politicaInternaFormSchema>;
 
 interface PoliticaInternaFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  politica?: GetPoliticasInternas200DataItem
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  politica?: GetPoliticasInternas200DataItem;
 }
 
 export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaInternaFormProps) {
-  const [dominioDialogOpen, setDominioDialogOpen] = useState(false)
-  const queryClient = useQueryClient()
+  const [dominioDialogOpen, setDominioDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const createMutation = usePostPoliticasInternas({
     mutation: {
       onSuccess: () => {
-        toast.success('Politica interna criada com sucesso!')
+        toast.success("Politica interna criada com sucesso!");
 
         queryClient.invalidateQueries({
-          queryKey: getGetPoliticasInternasQueryKey()
-        })
+          queryKey: getGetPoliticasInternasQueryKey(),
+        });
       },
       onError: () => {
-        toast.error('Falha ao criar Politica interna!')
-      }
-    }
-  })
+        toast.error("Falha ao criar Politica interna!");
+      },
+    },
+  });
   const updateMutation = usePutPoliticasInternasId({
     mutation: {
       onSuccess: () => {
-        toast.success('Politica interna atualizada com sucesso!')
+        toast.success("Politica interna atualizada com sucesso!");
 
         queryClient.invalidateQueries({
-          queryKey: getGetPoliticasInternasQueryKey()
-        })
+          queryKey: getGetPoliticasInternasQueryKey(),
+        });
       },
       onError: () => {
-        toast.error('Falha ao atualizar Politica interna!')
-      }
-    }
-  })
-  const { data: comunidadesData } = useGetComunidades()
+        toast.error("Falha ao atualizar Politica interna!");
+      },
+    },
+  });
+  const { data: comunidadesData } = useGetComunidades();
 
-  const comunidades = comunidadesData?.data || []
+  const comunidades = comunidadesData?.data || [];
 
   const form = useForm<PoliticaInternaFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: form type workaround
     resolver: zodResolver(politicaInternaFormSchema) as any,
     defaultValues: {
-      nome: politica ? politica.nome : '',
-      descricao: politica ? politica.descricao : '',
-      categoria: politica ? politica.categoria : '',
-      objetivo: politica ? politica.objetivo : '',
-      escopo: politica ? politica.escopo : '',
-      dominioDadosId: politica ? politica.dominioDadosId : '',
-      responsavel: politica ? politica.responsavel : '',
+      nome: politica ? politica.nome : "",
+      descricao: politica ? politica.descricao : "",
+      categoria: politica ? politica.categoria : "",
+      objetivo: politica ? politica.objetivo : "",
+      escopo: politica ? politica.escopo : "",
+      dominioDadosId: (politica?.dominioDadosId) ? politica.dominioDadosId : '',
+      responsavel: politica ? politica.responsavel : "",
       dataCriacao: politica ? new Date(politica.dataCriacao) : new Date(),
       dataInicioVigencia: politica ? new Date(politica.dataInicioVigencia) : new Date(),
       status: politica ? politica.status : "Em_elaboracao",
-      versao: politica ? politica.versao : '',
-      anexosUrl: politica ? politica.anexosUrl : '',
-      relacionamento: politica ? politica.relacionamento : '',
-      observacoes: politica ? politica.observacoes : '',
+      versao: politica ? politica.versao : "",
+      anexosUrl: (politica?.anexosUrl) ? politica.anexosUrl : "",
+      relacionamento: (politica?.relacionamento) ? politica.relacionamento : "",
+      observacoes: (politica?.observacoes) ? politica.observacoes : "",
     },
-  })
+  });
 
   const onSubmit = async (data: PoliticaInternaFormValues) => {
     try {
-
       if (politica) {
         await updateMutation.mutateAsync({
-          id: politica.id ?? '',
+          id: politica.id ?? "",
           data,
-        })
+        });
       } else {
         await createMutation.mutateAsync({
-          data
-        })
+          data,
+        });
       }
 
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar política:', error)
+      console.error("Erro ao salvar política:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   return (
     <>
@@ -168,8 +172,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
             <DialogDescription className="text-muted-foreground">
               {politica
                 ? "Atualize as informações da política de governança."
-                : "Preencha os dados para criar uma nova política de governança."
-              }
+                : "Preencha os dados para criar uma nova política de governança."}
             </DialogDescription>
           </DialogHeader>
 
@@ -277,12 +280,12 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                               variant="outline"
                               className={cn(
                                 "w-full pl-3 text-left font-normal bg-background/50 border-border/60",
-                                !field.value && "text-muted-foreground"
+                                !field.value && "text-muted-foreground",
                               )}
                             >
                               {field.value ? (
                                 format(field.value, "dd/MM/yyyy", {
-                                  locale: ptBR
+                                  locale: ptBR,
                                 })
                               ) : (
                                 <span>Selecione data</span>
@@ -320,7 +323,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                               variant="outline"
                               className={cn(
                                 "w-full pl-3 text-left font-normal bg-background/50 border-border/60",
-                                !field.value && "text-muted-foreground"
+                                !field.value && "text-muted-foreground",
                               )}
                             >
                               {field.value ? (
@@ -361,7 +364,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
                               variant="outline"
                               className={cn(
                                 "w-full pl-3 text-left font-normal bg-background/50 border-border/60",
-                                !field.value && "text-muted-foreground"
+                                !field.value && "text-muted-foreground",
                               )}
                             >
                               {field.value ? (
@@ -601,10 +604,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
       </Dialog>
 
       {/* Dialog para criar domínio inline */}
-      <ComunidadeForm
-        open={dominioDialogOpen}
-        onOpenChange={setDominioDialogOpen}
-      />
+      <ComunidadeForm open={dominioDialogOpen} onOpenChange={setDominioDialogOpen} />
     </>
-  )
+  );
 }

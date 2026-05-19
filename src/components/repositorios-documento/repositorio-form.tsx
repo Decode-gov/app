@@ -1,54 +1,58 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "@/components/ui/button"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import {
   usePostRepositoriosDocumento,
   usePutRepositoriosDocumentoId,
-} from "@/api/generated/endpoints/repositorios-documento/repositorios-documento"
-import { RepositorioDocumentoResponse } from "@/types/api"
-import { CreateRepositorioDocumentoSchema, type CreateRepositorioDocumentoFormData } from "@/schemas"
+} from "@/api/generated/endpoints/repositórios-de-documento/repositórios-de-documento";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  type CreateRepositorioDocumentoFormData,
+  CreateRepositorioDocumentoSchema,
+} from "@/schemas";
+import type { RepositorioDocumentoResponse } from "@/types/api";
 
 interface RepositorioFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  repositorio?: RepositorioDocumentoResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  repositorio?: RepositorioDocumentoResponse;
 }
 
 export function RepositorioForm({ open, onOpenChange, repositorio }: RepositorioFormProps) {
-  const createMutation = usePostRepositoriosDocumento()
-  const updateMutation = usePutRepositoriosDocumentoId()
-  
+  const createMutation = usePostRepositoriosDocumento();
+  const updateMutation = usePutRepositoriosDocumentoId();
+
   const form = useForm<CreateRepositorioDocumentoFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: form type workaround
     resolver: zodResolver(CreateRepositorioDocumentoSchema) as any,
     defaultValues: {
       nome: "",
       ged: false,
       rede: false,
     },
-  })
+  });
 
   useEffect(() => {
     if (open) {
@@ -57,16 +61,16 @@ export function RepositorioForm({ open, onOpenChange, repositorio }: Repositorio
           nome: repositorio.nome,
           ged: repositorio.ged,
           rede: repositorio.rede,
-        })
+        });
       } else {
         form.reset({
           nome: "",
           ged: false,
           rede: false,
-        })
+        });
       }
     }
-  }, [open, repositorio, form])
+  }, [open, repositorio, form]);
 
   const onSubmit = async (data: CreateRepositorioDocumentoFormData) => {
     try {
@@ -74,25 +78,25 @@ export function RepositorioForm({ open, onOpenChange, repositorio }: Repositorio
         await updateMutation.mutateAsync({
           id: repositorio.id,
           data,
-        })
+        });
       } else {
-        await createMutation.mutateAsync({ data })
+        await createMutation.mutateAsync({ data });
       }
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar repositório:', error)
+      console.error("Erro ao salvar repositório:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -102,10 +106,9 @@ export function RepositorioForm({ open, onOpenChange, repositorio }: Repositorio
             {repositorio ? "Editar Repositório de Documentos" : "Novo Repositório de Documentos"}
           </DialogTitle>
           <DialogDescription>
-            {repositorio 
+            {repositorio
               ? "Atualize as informações do repositório de documentos."
-              : "Preencha os dados para criar um novo repositório de documentos."
-            }
+              : "Preencha os dados para criar um novo repositório de documentos."}
           </DialogDescription>
         </DialogHeader>
 
@@ -120,9 +123,7 @@ export function RepositorioForm({ open, onOpenChange, repositorio }: Repositorio
                   <FormControl>
                     <Input placeholder="Ex: Repositório Central de Documentos" {...field} />
                   </FormControl>
-                  <FormDescription className="text-xs">
-                    Máximo 255 caracteres
-                  </FormDescription>
+                  <FormDescription className="text-xs">Máximo 255 caracteres</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -134,15 +135,10 @@ export function RepositorioForm({ open, onOpenChange, repositorio }: Repositorio
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                   <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      GED (Gerenciamento Eletrônico de Documentos)
-                    </FormLabel>
+                    <FormLabel>GED (Gerenciamento Eletrônico de Documentos)</FormLabel>
                     <FormDescription className="text-xs">
                       Indica se este é um repositório de GED
                     </FormDescription>
@@ -157,15 +153,10 @@ export function RepositorioForm({ open, onOpenChange, repositorio }: Repositorio
               render={({ field }) => (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
                   <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      Repositório em Rede
-                    </FormLabel>
+                    <FormLabel>Repositório em Rede</FormLabel>
                     <FormDescription className="text-xs">
                       Indica se este repositório está em rede compartilhada
                     </FormDescription>
@@ -191,5 +182,5 @@ export function RepositorioForm({ open, onOpenChange, repositorio }: Repositorio
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

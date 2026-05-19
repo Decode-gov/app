@@ -1,9 +1,13 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useGetBancos } from "@/api/generated/endpoints/bancos-de-dados/bancos-de-dados";
+import { usePostTabelas, usePutTabelasId } from "@/api/generated/endpoints/tabelas/tabelas";
+import { BancoForm } from "@/components/bancos/banco-form";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,52 +15,49 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Plus } from "lucide-react"
-import { useCreateTabela, useUpdateTabela } from "@/hooks/api/use-tabelas"
-import { useBancos } from "@/hooks/api/use-bancos"
-import { TabelaResponse } from "@/types/api"
-import { CreateTabelaSchema, type CreateTabelaFormData } from "@/schemas"
-import { BancoForm } from "@/components/bancos/banco-form"
+} from "@/components/ui/select";
+import { type CreateTabelaFormData, CreateTabelaSchema } from "@/schemas";
+import type { TabelaResponse } from "@/types/api";
 
 interface TabelaFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  tabela?: TabelaResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  tabela?: TabelaResponse;
 }
 
 export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
-  const [bancoDialogOpen, setBancoDialogOpen] = useState(false)
-  
-  const createMutation = useCreateTabela()
-  const updateMutation = useUpdateTabela()
-  const { data: bancosData } = useBancos()
-  
+  const [bancoDialogOpen, setBancoDialogOpen] = useState(false);
+
+  const createMutation = usePostTabelas();
+  const updateMutation = usePutTabelasId();
+  const { data: bancosData } = useGetBancos();
+
   const form = useForm<CreateTabelaFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: form type workaround
     resolver: zodResolver(CreateTabelaSchema) as any,
     defaultValues: {
       nome: "",
       bancoId: null,
     },
-  })
+  });
 
   useEffect(() => {
     if (open) {
@@ -64,15 +65,15 @@ export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
         form.reset({
           nome: tabela.nome,
           bancoId: tabela.bancoId || null,
-        })
+        });
       } else {
         form.reset({
           nome: "",
           bancoId: null,
-        })
+        });
       }
     }
-  }, [open, tabela, form])
+  }, [open, tabela, form]);
 
   const onSubmit = async (data: CreateTabelaFormData) => {
     try {
@@ -80,40 +81,39 @@ export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
         await updateMutation.mutateAsync({
           id: tabela.id,
           data,
-        })
+        });
       } else {
-        await createMutation.mutateAsync(data)
+        await createMutation.mutateAsync({
+          data,
+        });
       }
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar tabela:', error)
+      console.error("Erro ao salvar tabela:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
-  const bancos = bancosData?.data || []
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
+  const bancos = bancosData?.data || [];
 
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {tabela ? "Editar Tabela" : "Nova Tabela"}
-            </DialogTitle>
+            <DialogTitle>{tabela ? "Editar Tabela" : "Nova Tabela"}</DialogTitle>
             <DialogDescription>
-              {tabela 
+              {tabela
                 ? "Atualize as informações da tabela."
-                : "Preencha os dados para criar uma nova tabela."
-              }
+                : "Preencha os dados para criar uma nova tabela."}
             </DialogDescription>
           </DialogHeader>
 
@@ -128,9 +128,7 @@ export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
                     <FormControl>
                       <Input placeholder="Ex: tb_clientes" {...field} />
                     </FormControl>
-                    <FormDescription className="text-xs">
-                      Máximo 255 caracteres
-                    </FormDescription>
+                    <FormDescription className="text-xs">Máximo 255 caracteres</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -144,7 +142,7 @@ export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
                     <FormLabel>Banco de Dados</FormLabel>
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <Select onValueChange={field.onChange} value={field.value ?? ''}>
+                        <Select onValueChange={field.onChange} value={field.value ?? ""}>
                           <FormControl>
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Selecione o banco" />
@@ -202,10 +200,7 @@ export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
         </DialogContent>
       </Dialog>
 
-      <BancoForm 
-        open={bancoDialogOpen}
-        onOpenChange={setBancoDialogOpen}
-      />
+      <BancoForm open={bancoDialogOpen} onOpenChange={setBancoDialogOpen} />
     </>
-  )
+  );
 }

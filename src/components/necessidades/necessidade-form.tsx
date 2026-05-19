@@ -1,9 +1,17 @@
-"use client"
+"use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { z } from "zod";
+import {
+  getGetNecessidadesInformacaoQueryKey,
+  usePostNecessidadesInformacao,
+  usePutNecessidadesInformacaoId,
+} from "@/api/generated/endpoints/necessidades-de-informação/necessidades-de-informação";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,61 +32,69 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { NecessidadeInformacaoResponse } from "@/types/api";
-import { Loader2 } from "lucide-react";
-import { getGetNecessidadesInformacaoQueryKey, usePostNecessidadesInformacao, usePutNecessidadesInformacaoId } from "@/api/generated/endpoints/necessidades-informacao/necessidades-informacao";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import type { NecessidadeInformacaoResponse } from "@/types/api";
 
 const necessidadeSchema = z.object({
-  questaoGerencial: z.string().min(1, "Questão gerencial é obrigatória").max(2000, "Questão gerencial deve ter no máximo 2000 caracteres"),
-  elementoEstrategico: z.string().max(500, "Elemento estratégico deve ter no máximo 500 caracteres").optional(),
-  elementoTatico: z.string().max(500, "Elemento tático deve ter no máximo 500 caracteres").optional(),
-  origemQuestao: z.string().min(1, "Origem da questão é obrigatória").max(255, "Origem deve ter no máximo 255 caracteres"),
-})
+  questaoGerencial: z
+    .string()
+    .min(1, "Questão gerencial é obrigatória")
+    .max(2000, "Questão gerencial deve ter no máximo 2000 caracteres"),
+  elementoEstrategico: z
+    .string()
+    .max(500, "Elemento estratégico deve ter no máximo 500 caracteres")
+    .optional(),
+  elementoTatico: z
+    .string()
+    .max(500, "Elemento tático deve ter no máximo 500 caracteres")
+    .optional(),
+  origemQuestao: z
+    .string()
+    .min(1, "Origem da questão é obrigatória")
+    .max(255, "Origem deve ter no máximo 255 caracteres"),
+});
 
-type NecessidadeFormValues = z.infer<typeof necessidadeSchema>
+type NecessidadeFormValues = z.infer<typeof necessidadeSchema>;
 
 interface NecessidadeFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  necessidade?: NecessidadeInformacaoResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  necessidade?: NecessidadeInformacaoResponse;
 }
 
 export function NecessidadeForm({ open, onOpenChange, necessidade }: NecessidadeFormProps) {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const createMutation = usePostNecessidadesInformacao({
     mutation: {
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: getGetNecessidadesInformacaoQueryKey()
-        })
-        toast.success('Necessidade de informação criada com sucesso!')
+          queryKey: getGetNecessidadesInformacaoQueryKey(),
+        });
+        toast.success("Necessidade de informação criada com sucesso!");
       },
       onError: () => {
         queryClient.invalidateQueries({
-          queryKey: getGetNecessidadesInformacaoQueryKey()
-        })
-        toast.error('Falha ao criar Necessidade de informação!')
-      }
-    }
-  })
+          queryKey: getGetNecessidadesInformacaoQueryKey(),
+        });
+        toast.error("Falha ao criar Necessidade de informação!");
+      },
+    },
+  });
   const updateMutation = usePutNecessidadesInformacaoId({
     mutation: {
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: getGetNecessidadesInformacaoQueryKey()
-        })
-        toast.success('Necessidade de informação atualizada com sucesso!')
+          queryKey: getGetNecessidadesInformacaoQueryKey(),
+        });
+        toast.success("Necessidade de informação atualizada com sucesso!");
       },
       onError: () => {
         queryClient.invalidateQueries({
-          queryKey: getGetNecessidadesInformacaoQueryKey()
-        })
-        toast.error('Falha ao atualizar Necessidade de informação!')
-      }
-    }
-  })
+          queryKey: getGetNecessidadesInformacaoQueryKey(),
+        });
+        toast.error("Falha ao atualizar Necessidade de informação!");
+      },
+    },
+  });
 
   const form = useForm<NecessidadeFormValues>({
     resolver: zodResolver(necessidadeSchema),
@@ -88,7 +104,7 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
       elementoTatico: "",
       origemQuestao: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (necessidade) {
@@ -96,17 +112,17 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
         questaoGerencial: necessidade.questaoGerencial,
         elementoEstrategico: necessidade.elementoEstrategico || "",
         elementoTatico: necessidade.elementoTatico || "",
-        origemQuestao: necessidade.origemQuestao
-      })
+        origemQuestao: necessidade.origemQuestao,
+      });
     } else {
       form.reset({
         questaoGerencial: "",
         elementoEstrategico: "",
         elementoTatico: "",
-        origemQuestao: ""
-      })
+        origemQuestao: "",
+      });
     }
-  }, [necessidade, form])
+  }, [necessidade, form]);
 
   async function onSubmit(values: NecessidadeFormValues) {
     try {
@@ -114,20 +130,20 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
         await updateMutation.mutateAsync({
           id: necessidade.id,
           data: values,
-        })
+        });
       } else {
         await createMutation.mutateAsync({
-          data: values
-        })
+          data: values,
+        });
       }
-      onOpenChange(false)
-      form.reset()
+      onOpenChange(false);
+      form.reset();
     } catch (error) {
-      console.error("Erro ao salvar necessidade:", error)
+      console.error("Erro ao salvar necessidade:", error);
     }
   }
 
-  const isLoading = createMutation.isPending || updateMutation.isPending
+  const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -137,7 +153,8 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
             {necessidade ? "Editar Necessidade de Informação" : "Nova Necessidade de Informação"}
           </DialogTitle>
           <DialogDescription>
-            Preencha os campos abaixo para {necessidade ? "atualizar" : "criar"} uma necessidade de informação
+            Preencha os campos abaixo para {necessidade ? "atualizar" : "criar"} uma necessidade de
+            informação
           </DialogDescription>
         </DialogHeader>
 
@@ -156,9 +173,7 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Questão principal que precisa ser respondida
-                  </FormDescription>
+                  <FormDescription>Questão principal que precisa ser respondida</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -171,10 +186,7 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
                 <FormItem>
                   <FormLabel>Elemento Estratégico</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Elemento estratégico relacionado..."
-                      {...field}
-                    />
+                    <Input placeholder="Elemento estratégico relacionado..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -188,10 +200,7 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
                 <FormItem>
                   <FormLabel>Elemento Tático</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Elemento tático relacionado..."
-                      {...field}
-                    />
+                    <Input placeholder="Elemento tático relacionado..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -205,10 +214,7 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
                 <FormItem>
                   <FormLabel>Origem da Questão *</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="De onde surgiu a questão..."
-                      {...field}
-                    />
+                    <Input placeholder="De onde surgiu a questão..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -233,5 +239,5 @@ export function NecessidadeForm({ open, onOpenChange, necessidade }: Necessidade
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

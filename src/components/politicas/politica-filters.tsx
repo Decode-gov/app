@@ -1,26 +1,26 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Filter, Search, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Search, X, Filter } from "lucide-react"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface PoliticaFiltersProps {
-  searchTerm: string
-  onSearchTermChange: (value: string) => void
-  statusFilter: string
-  onStatusFilterChange: (value: string) => void
-  categoriaFilter: string
-  onCategoriaFilterChange: (value: string) => void
-  onClearFilters: () => void
-  resultsCount: number
+  searchTerm: string;
+  onSearchTermChange: (value: string) => void;
+  statusFilter: string;
+  onStatusFilterChange: (value: string) => void;
+  categoriaFilter: string;
+  onCategoriaFilterChange: (value: string) => void;
+  onClearFilters: () => void;
+  resultsCount: number;
 }
 
 export function PoliticaFilters({
@@ -33,7 +33,7 @@ export function PoliticaFilters({
   onClearFilters,
   resultsCount,
 }: PoliticaFiltersProps) {
-  const hasActiveFilters = searchTerm || statusFilter !== "todos" || categoriaFilter !== "todos"
+  const hasActiveFilters = searchTerm || statusFilter !== "todos" || categoriaFilter !== "todos";
 
   return (
     <div className="space-y-4">
@@ -96,9 +96,13 @@ export function PoliticaFilters({
       <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
           {resultsCount === 1 ? (
-            <>Mostrando <strong>1</strong> política</>
+            <>
+              Mostrando <strong>1</strong> política
+            </>
           ) : (
-            <>Mostrando <strong>{resultsCount}</strong> políticas</>
+            <>
+              Mostrando <strong>{resultsCount}</strong> políticas
+            </>
           )}
           {hasActiveFilters && " com filtros aplicados"}
         </div>
@@ -109,19 +113,24 @@ export function PoliticaFilters({
             {searchTerm && (
               <Badge variant="secondary" className="gap-1">
                 Busca: &quot;{searchTerm}&quot;
-                <X 
-                  className="h-3 w-3 cursor-pointer hover:bg-background/20 rounded-full" 
+                <X
+                  className="h-3 w-3 cursor-pointer hover:bg-background/20 rounded-full"
                   onClick={() => onSearchTermChange("")}
                 />
               </Badge>
             )}
             {statusFilter !== "todos" && (
               <Badge variant="secondary" className="gap-1">
-                Status: {statusFilter === "Vigente" ? "Vigentes" : 
-                        statusFilter === "Em_elaboracao" ? "Em Elaboração" :
-                        statusFilter === "Revogada" ? "Revogadas" : statusFilter}
-                <X 
-                  className="h-3 w-3 cursor-pointer hover:bg-background/20 rounded-full" 
+                Status:{" "}
+                {statusFilter === "Vigente"
+                  ? "Vigentes"
+                  : statusFilter === "Em_elaboracao"
+                    ? "Em Elaboração"
+                    : statusFilter === "Revogada"
+                      ? "Revogadas"
+                      : statusFilter}
+                <X
+                  className="h-3 w-3 cursor-pointer hover:bg-background/20 rounded-full"
                   onClick={() => onStatusFilterChange("todos")}
                 />
               </Badge>
@@ -129,8 +138,8 @@ export function PoliticaFilters({
             {categoriaFilter !== "todos" && (
               <Badge variant="secondary" className="gap-1">
                 Categoria: {categoriaFilter}
-                <X 
-                  className="h-3 w-3 cursor-pointer hover:bg-background/20 rounded-full" 
+                <X
+                  className="h-3 w-3 cursor-pointer hover:bg-background/20 rounded-full"
                   onClick={() => onCategoriaFilterChange("todos")}
                 />
               </Badge>
@@ -139,5 +148,5 @@ export function PoliticaFilters({
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -1,16 +1,27 @@
-﻿"use client"
+﻿"use client";
 
-import { useState } from "react"
-import { Plus, Search, MoreHorizontal, Edit, Trash2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Edit, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { useDeleteColunasId, useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
+import { useGetTiposDados } from "@/api/generated/endpoints/tipos-dados/tipos-dados";
+import { ColunaForm } from "@/components/colunas/coluna-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -18,92 +29,70 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { useGetColunas, useDeleteColunasId } from "@/api/generated/endpoints/colunas/colunas"
-import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas"
-import { useGetTiposDados } from "@/api/generated/endpoints/tipos-dados/tipos-dados"
-import { ColunaForm } from "@/components/colunas/coluna-form"
-import { ColunaResponse } from "@/types/api"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+} from "@/components/ui/table";
+import type { ColunaResponse } from "@/types/api";
 
 export default function ColunasPage() {
-  const [formOpen, setFormOpen] = useState(false)
-  const [editingColuna, setEditingColuna] = useState<ColunaResponse | undefined>()
-  const [search, setSearch] = useState("")
-  const [tabelaFilter, setTabelaFilter] = useState<string>("all")
-  const [tipoDadosFilter, setTipoDadosFilter] = useState<string>("all")
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingColuna, setEditingColuna] = useState<ColunaResponse | undefined>();
+  const [search, setSearch] = useState("");
+  const [tabelaFilter, setTabelaFilter] = useState<string>("all");
+  const [tipoDadosFilter, setTipoDadosFilter] = useState<string>("all");
 
-  const { data: colunasData, isLoading } = useGetColunas()
-  const { data: tabelasData } = useGetTabelas()
-  const { data: tiposDadosData } = useGetTiposDados()
-  const deleteMutation = useDeleteColunasId()
+  const { data: colunasData, isLoading } = useGetColunas();
+  const { data: tabelasData } = useGetTabelas();
+  const { data: tiposDadosData } = useGetTiposDados();
+  const deleteMutation = useDeleteColunasId();
 
-  const colunas = colunasData?.data ?? []
-  const tabelas = tabelasData?.data ?? []
-  const tiposDados = tiposDadosData?.data ?? []
+  const colunas = colunasData?.data ?? [];
+  const tabelas = tabelasData?.data ?? [];
+  const tiposDados = tiposDadosData?.data ?? [];
 
   const filteredColunas = colunas.filter((coluna) => {
-    const matchesSearch = 
+    const matchesSearch =
       search === "" ||
       coluna.nome.toLowerCase().includes(search.toLowerCase()) ||
-      coluna.descricao?.toLowerCase().includes(search.toLowerCase())
-    
-    const matchesTabela = 
-      tabelaFilter === "all" || 
-      coluna.tabelaId === tabelaFilter
+      coluna.descricao?.toLowerCase().includes(search.toLowerCase());
 
-    return matchesSearch && matchesTabela
-  })
+    const matchesTabela = tabelaFilter === "all" || coluna.tabelaId === tabelaFilter;
+
+    return matchesSearch && matchesTabela;
+  });
 
   const handleEdit = (coluna: ColunaResponse) => {
-    setEditingColuna(coluna)
-    setFormOpen(true)
-  }
+    setEditingColuna(coluna);
+    setFormOpen(true);
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta coluna?")) {
       try {
-        await deleteMutation.mutateAsync({ id })
+        await deleteMutation.mutateAsync({ id });
       } catch (error) {
-        console.error('Erro ao excluir coluna:', error)
+        console.error("Erro ao excluir coluna:", error);
       }
     }
-  }
+  };
 
   const handleNewColuna = () => {
-    setEditingColuna(undefined)
-    setFormOpen(true)
-  }
+    setEditingColuna(undefined);
+    setFormOpen(true);
+  };
 
   const getTabelaNome = (tabelaId: string) => {
-    const tabela = tabelas.find(t => t.id === tabelaId)
-    return tabela?.nome || "N/A"
-  }
+    const tabela = tabelas.find((t) => t.id === tabelaId);
+    return tabela?.nome || "N/A";
+  };
 
-  const getTipoDadosNome = (tipoDadosId: string) => {
-    const tipoDados = tiposDados.find(t => t.id === tipoDadosId)
-    return tipoDados?.nome || "N/A"
-  }
+  const _getTipoDadosNome = (tipoDadosId: string) => {
+    const tipoDados = tiposDados.find((t) => t.id === tipoDadosId);
+    return tipoDados?.nome || "N/A";
+  };
 
-  const getTipoDadosCategoria = (tipoDadosId: string) => {
-    const tipoDados = tiposDados.find(t => t.id === tipoDadosId)
-    return tipoDados?.categoria
-  }
+  const _getTipoDadosCategoria = (tipoDadosId: string) => {
+    const tipoDados = tiposDados.find((t) => t.id === tipoDadosId);
+    return tipoDados?.categoria;
+  };
 
   return (
     <div className="space-y-6">
@@ -111,14 +100,13 @@ export default function ColunasPage() {
       <div className="grid gap-4 md:grid-cols-1">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Colunas
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Colunas</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{colunas.length}</div>
             <p className="text-xs text-muted-foreground">
-              {filteredColunas.length} {filteredColunas.length === 1 ? 'resultado encontrado' : 'resultados encontrados'}
+              {filteredColunas.length}{" "}
+              {filteredColunas.length === 1 ? "resultado encontrado" : "resultados encontrados"}
             </p>
           </CardContent>
         </Card>
@@ -130,9 +118,7 @@ export default function ColunasPage() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle>Colunas</CardTitle>
-              <CardDescription>
-                Gerencie as colunas das tabelas
-              </CardDescription>
+              <CardDescription>Gerencie as colunas das tabelas</CardDescription>
             </div>
             <Button onClick={handleNewColuna}>
               <Plus className="mr-2 h-4 w-4" />
@@ -212,9 +198,7 @@ export default function ColunasPage() {
                 <TableBody>
                   {filteredColunas.map((coluna) => (
                     <TableRow key={coluna.id}>
-                      <TableCell className="font-medium">
-                        {coluna.nome}
-                      </TableCell>
+                      <TableCell className="font-medium">{coluna.nome}</TableCell>
                       <TableCell>
                         <span className="text-sm">{getTabelaNome(coluna.tabelaId)}</span>
                       </TableCell>
@@ -255,11 +239,7 @@ export default function ColunasPage() {
         </CardContent>
       </Card>
 
-      <ColunaForm
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        coluna={editingColuna}
-      />
+      <ColunaForm open={formOpen} onOpenChange={setFormOpen} coluna={editingColuna} />
     </div>
-  )
+  );
 }

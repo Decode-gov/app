@@ -1,57 +1,60 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { useCreateDocumento, useUpdateDocumento } from "@/hooks/api/use-documentos"
-import { DocumentoResponse } from "@/types/api"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { useCreateDocumento, useUpdateDocumento } from "@/hooks/api/use-documentos";
+import type { DocumentoResponse } from "@/types/api";
 
 // Schema baseado nos requisitos
 const documentoFormSchema = z.object({
   entidadeId: z.string().uuid("ID de entidade inválido").min(1, "Entidade é obrigatória"),
-  tipoEntidade: z.enum([
-    'Politica',
-    'Papel',
-    'Atribuicao',
-    'Processo',
-    'Termo',
-    'KPI',
-    'RegraNegocio',
-    'RegraQualidade',
-    'Dominio',
-    'Sistema',
-    'Tabela',
-    'Coluna'
-  ], { message: "Tipo de entidade é obrigatório" }),
+  tipoEntidade: z.enum(
+    [
+      "Politica",
+      "Papel",
+      "Atribuicao",
+      "Processo",
+      "Termo",
+      "KPI",
+      "RegraNegocio",
+      "RegraQualidade",
+      "Dominio",
+      "Sistema",
+      "Tabela",
+      "Coluna",
+    ],
+    { message: "Tipo de entidade é obrigatório" },
+  ),
   nomeArquivo: z.string().min(1, "Nome do arquivo é obrigatório"),
   tamanhoBytes: z.number().int().positive("Tamanho deve ser positivo"),
   tipoArquivo: z.string().min(1, "Tipo de arquivo é obrigatório"),
@@ -61,38 +64,39 @@ const documentoFormSchema = z.object({
   checksum: z.string().optional(),
   versao: z.number().int().positive().default(1),
   ativo: z.boolean().default(true),
-})
+});
 
-type DocumentoFormValues = z.infer<typeof documentoFormSchema>
+type DocumentoFormValues = z.infer<typeof documentoFormSchema>;
 
 interface DocumentoFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  documento?: DocumentoResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  documento?: DocumentoResponse;
 }
 
 const tiposEntidade = [
-  { value: 'Politica', label: 'Política' },
-  { value: 'Papel', label: 'Papel' },
-  { value: 'Atribuicao', label: 'Atribuição' },
-  { value: 'Processo', label: 'Processo' },
-  { value: 'Termo', label: 'Termo' },
-  { value: 'KPI', label: 'KPI' },
-  { value: 'RegraNegocio', label: 'Regra de Negócio' },
-  { value: 'RegraQualidade', label: 'Regra de Qualidade' },
-  { value: 'Dominio', label: 'Domínio' },
-  { value: 'Sistema', label: 'Sistema' },
-  { value: 'Tabela', label: 'Tabela' },
-  { value: 'Coluna', label: 'Coluna' },
-]
+  { value: "Politica", label: "Política" },
+  { value: "Papel", label: "Papel" },
+  { value: "Atribuicao", label: "Atribuição" },
+  { value: "Processo", label: "Processo" },
+  { value: "Termo", label: "Termo" },
+  { value: "KPI", label: "KPI" },
+  { value: "RegraNegocio", label: "Regra de Negócio" },
+  { value: "RegraQualidade", label: "Regra de Qualidade" },
+  { value: "Dominio", label: "Domínio" },
+  { value: "Sistema", label: "Sistema" },
+  { value: "Tabela", label: "Tabela" },
+  { value: "Coluna", label: "Coluna" },
+];
 
 export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormProps) {
-  const isEditing = !!documento
-  const createMutation = useCreateDocumento()
-  const updateMutation = useUpdateDocumento()
-  
+  const isEditing = !!documento;
+  const createMutation = useCreateDocumento();
+  const updateMutation = useUpdateDocumento();
+
   const form = useForm<DocumentoFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: form type workaround
     resolver: zodResolver(documentoFormSchema) as any,
     defaultValues: {
       entidadeId: "",
@@ -107,7 +111,7 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
       versao: 1,
       ativo: true,
     },
-  })
+  });
 
   useEffect(() => {
     if (open) {
@@ -124,7 +128,7 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
           checksum: documento.checksum || "",
           versao: documento.versao,
           ativo: documento.ativo,
-        })
+        });
       } else {
         form.reset({
           entidadeId: "",
@@ -138,10 +142,10 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
           checksum: "",
           versao: 1,
           ativo: true,
-        })
+        });
       }
     }
-  }, [open, documento, form])
+  }, [open, documento, form]);
 
   const onSubmit = async (data: DocumentoFormValues) => {
     try {
@@ -153,28 +157,33 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
             descricao: data.descricao,
             metadados: data.metadados,
             ativo: data.ativo,
+            // biome-ignore lint/suspicious/noExplicitAny: form type workaround
           } as any,
-        })
+        });
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await createMutation.mutateAsync({ ...data, tamanhoBytes: String(data.tamanhoBytes) } as any)
+        await createMutation.mutateAsync({
+          ...data,
+          tamanhoBytes: String(data.tamanhoBytes),
+          // biome-ignore lint/suspicious/noExplicitAny: form type workaround
+        } as any);
       }
 
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar documento:', error)
+      console.error("Erro ao salvar documento:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -289,7 +298,7 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
                             type="number"
                             placeholder="1024"
                             {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                            onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -309,7 +318,7 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
                             type="number"
                             placeholder="1"
                             {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                            onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 1)}
                           />
                         </FormControl>
                         <FormMessage />
@@ -328,9 +337,7 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
                       <FormControl>
                         <Input placeholder="/uploads/documentos/arquivo.pdf" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        Caminho onde o arquivo está armazenado
-                      </FormDescription>
+                      <FormDescription>Caminho onde o arquivo está armazenado</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -389,9 +396,7 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Metadados adicionais no formato JSON (opcional)
-                  </FormDescription>
+                  <FormDescription>Metadados adicionais no formato JSON (opcional)</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -404,18 +409,11 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Documento Ativo
-                    </FormLabel>
-                    <FormDescription>
-                      Define se o documento está ativo no sistema
-                    </FormDescription>
+                    <FormLabel className="text-base">Documento Ativo</FormLabel>
+                    <FormDescription>Define se o documento está ativo no sistema</FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                 </FormItem>
               )}
@@ -438,5 +436,5 @@ export function DocumentoForm({ open, onOpenChange, documento }: DocumentoFormPr
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

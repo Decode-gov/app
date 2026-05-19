@@ -1,34 +1,49 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { usePostSistemas, usePutSistemasId } from "@/api/generated/endpoints/sistemas/sistemas"
-import { SistemaResponse } from "@/types/api"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { usePostSistemas, usePutSistemasId } from "@/api/generated/endpoints/sistemas/sistemas";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import type { SistemaResponse } from "@/types/api";
 
 const sistemaSchema = z.object({
   nome: z.string().min(1, "Nome do sistema é obrigatório").max(255),
   descricao: z.string().max(500).optional().nullable(),
   repositorio: z.string().url("URL inválida").max(500).optional().or(z.literal("")),
-})
+});
 
-type SistemaFormValues = z.infer<typeof sistemaSchema>
+type SistemaFormValues = z.infer<typeof sistemaSchema>;
 
 interface SistemaFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  sistema?: SistemaResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  sistema?: SistemaResponse;
 }
 
 export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
-  const isEditing = !!sistema
-  const createSistema = usePostSistemas()
-  const updateSistema = usePutSistemasId()
+  const isEditing = !!sistema;
+  const createSistema = usePostSistemas();
+  const updateSistema = usePutSistemasId();
 
   const form = useForm<SistemaFormValues>({
     resolver: zodResolver(sistemaSchema),
@@ -37,7 +52,7 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
       descricao: "",
       repositorio: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (sistema && open) {
@@ -45,11 +60,11 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
         nome: sistema.nome,
         descricao: sistema.descricao || "",
         repositorio: sistema.repositorio || "",
-      })
+      });
     } else if (!open) {
-      form.reset()
+      form.reset();
     }
-  }, [sistema, open, form])
+  }, [sistema, open, form]);
 
   const onSubmit = async (data: SistemaFormValues) => {
     try {
@@ -57,19 +72,19 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
         nome: data.nome,
         descricao: data.descricao || null,
         repositorio: data.repositorio || "",
-      }
+      };
 
       if (isEditing) {
-        await updateSistema.mutateAsync({ id: sistema.id, data: payload })
+        await updateSistema.mutateAsync({ id: sistema.id, data: payload });
       } else {
-        await createSistema.mutateAsync({ data: payload })
+        await createSistema.mutateAsync({ data: payload });
       }
-      onOpenChange(false)
-      form.reset()
+      onOpenChange(false);
+      form.reset();
     } catch (error) {
-      console.error("Erro:", error)
+      console.error("Erro:", error);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -77,10 +92,9 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
         <DialogHeader>
           <DialogTitle>{isEditing ? "Editar Sistema" : "Novo Sistema"}</DialogTitle>
           <DialogDescription>
-            {isEditing 
-              ? "Atualize os dados do sistema." 
-              : "Preencha os dados para criar um novo sistema."
-            }
+            {isEditing
+              ? "Atualize os dados do sistema."
+              : "Preencha os dados para criar um novo sistema."}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -94,7 +108,9 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
                   <FormControl>
                     <Input placeholder="Ex: Sistema de Gestão Integrada" {...field} />
                   </FormControl>
-                  <FormDescription>Nome do sistema ou aplicação (máx. 255 caracteres)</FormDescription>
+                  <FormDescription>
+                    Nome do sistema ou aplicação (máx. 255 caracteres)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -107,9 +123,15 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Input placeholder="Descrição do sistema" {...field} value={field.value || ""} />
+                    <Input
+                      placeholder="Descrição do sistema"
+                      {...field}
+                      value={field.value || ""}
+                    />
                   </FormControl>
-                  <FormDescription>Descrição do sistema (opcional, máx. 500 caracteres)</FormDescription>
+                  <FormDescription>
+                    Descrição do sistema (opcional, máx. 500 caracteres)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -134,19 +156,17 @@ export function SistemaForm({ open, onOpenChange, sistema }: SistemaFormProps) {
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancelar
               </Button>
-              <Button 
-                type="submit" 
-                disabled={createSistema.isPending || updateSistema.isPending}
-              >
-                {createSistema.isPending || updateSistema.isPending 
-                  ? "Salvando..." 
-                  : isEditing ? "Atualizar" : "Criar"
-                }
+              <Button type="submit" disabled={createSistema.isPending || updateSistema.isPending}>
+                {createSistema.isPending || updateSistema.isPending
+                  ? "Salvando..."
+                  : isEditing
+                    ? "Atualizar"
+                    : "Criar"}
               </Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

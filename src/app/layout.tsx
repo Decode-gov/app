@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { DM_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { QueryProvider } from "@/providers/query-provider";
 import { HydrationProvider } from "@/providers/hydration-provider";
+import { QueryProvider } from "@/providers/query-provider";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -28,13 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body
-        className={`${dmSans.variable} ${spaceGrotesk.variable} antialiased`}
-      >
+      <body className={`${dmSans.variable} ${spaceGrotesk.variable} antialiased`}>
         <HydrationProvider>
-          <QueryProvider>
-            {children}
-          </QueryProvider>
+          <QueryProvider>{children}</QueryProvider>
         </HydrationProvider>
       </body>
     </html>

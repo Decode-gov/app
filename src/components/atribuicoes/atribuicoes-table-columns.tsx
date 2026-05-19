@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { Button } from "@/components/ui/button"
+import type { ColumnDef } from "@tanstack/react-table";
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Edit, MoreHorizontal, Trash2 } from "lucide-react"
-import { AtribuicaoResponse } from "@/types/api"
+} from "@/components/ui/dropdown-menu";
+import type { AtribuicaoResponse } from "@/types/api";
 
 interface ColumnActionsProps {
-  onEdit: () => void
-  onDelete: () => void
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
 function ColumnActions({ onEdit, onDelete }: ColumnActionsProps) {
@@ -36,12 +36,12 @@ function ColumnActions({ onEdit, onDelete }: ColumnActionsProps) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
 interface GetColumnsParams {
-  onEdit: (atribuicao: AtribuicaoResponse) => void
-  onDelete: (id: string) => void
+  onEdit: (atribuicao: AtribuicaoResponse) => void;
+  onDelete: (id: string) => void;
 }
 
 export function getAtribuicoesColumns({
@@ -53,57 +53,57 @@ export function getAtribuicoesColumns({
       accessorKey: "papel.nome",
       header: "Papel",
       cell: ({ row }) => {
-        const nome = row.original.papel.nome
+        const nome = row.original.papel.nome;
         return (
           <div className="font-medium">
             <div className="max-w-[200px] truncate" title={nome}>
               {nome}
             </div>
           </div>
-        )
+        );
       },
     },
     {
       accessorKey: "dominio.nome",
       header: "Domínio",
       cell: ({ row }) => {
-        const nome = row.original.dominio.nome
+        const nome = row.original.dominio.nome;
         return (
           <div className="max-w-[200px] truncate" title={nome}>
             {nome}
           </div>
-        )
+        );
       },
     },
     {
       accessorKey: "responsavel",
       header: "Responsável",
       cell: ({ row }) => {
-        const responsavel = row.getValue("responsavel") as string
+        const responsavel = row.getValue("responsavel") as string;
         return (
           <div className="max-w-[200px] truncate" title={responsavel}>
             {responsavel}
           </div>
-        )
+        );
       },
     },
     {
       accessorKey: "comiteAprovador",
       header: "Comitê Aprovador",
       cell: ({ row }) => {
-        const comite = row.original.comiteAprovador
+        const comite = row.original.comiteAprovador;
         return (
           <div className="text-muted-foreground">
             {comite?.nome || row.original.comiteAprovadorId || "—"}
           </div>
-        )
+        );
       },
     },
     {
       accessorKey: "onboarding",
       header: "Onboarding",
       cell: ({ row }) => {
-        const onboarding = row.getValue("onboarding") as boolean
+        const onboarding = row.getValue("onboarding") as boolean;
         return (
           <div className="text-center">
             {onboarding ? (
@@ -116,22 +116,22 @@ export function getAtribuicoesColumns({
               </span>
             )}
           </div>
-        )
+        );
       },
     },
     {
       id: "actions",
       header: () => <div className="text-center">Ações</div>,
       cell: ({ row }) => {
-        const atribuicao = row.original
+        const atribuicao = row.original;
         return (
           <ColumnActions
             onEdit={() => onEdit(atribuicao)}
             onDelete={() => onDelete(atribuicao.id)}
           />
-        )
+        );
       },
       size: 70,
     },
-  ]
+  ];
 }

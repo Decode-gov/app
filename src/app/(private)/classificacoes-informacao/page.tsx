@@ -1,55 +1,75 @@
-﻿"use client"
+﻿"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Plus, Search, MoreHorizontal, Edit, Trash2, FileText } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Edit, FileText, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react";
+import { useState } from "react";
 import {
-  useGetClassificacoesInformacao,
   useDeleteClassificacoesInformacaoId,
-} from "@/api/generated/endpoints/classificacoes-informacao/classificacoes-informacao"
-import { useGetListasClassificacao } from "@/api/generated/endpoints/listas-classificacao/listas-classificacao"
-import { ClassificacaoInformacaoResponse } from "@/types/api"
-import { ClassificacaoInfoForm } from "@/components/classificacoes-info/classificacao-info-form"
+  useGetClassificacoesInformacao,
+} from "@/api/generated/endpoints/classificações-de-informação/classificações-de-informação";
+import { useGetListasClassificacao } from "@/api/generated/endpoints/listas-de-classificação/listas-de-classificação";
+import { ClassificacaoInfoForm } from "@/components/classificacoes-info/classificacao-info-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { ClassificacaoInformacaoResponse } from "@/types/api";
 
 export default function ClassificacoesInformacaoPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [listaFilter, setListaFilter] = useState<string>("")
-  const [page] = useState(1)
-  const [limit] = useState(10)
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [selectedClassificacao, setSelectedClassificacao] = useState<ClassificacaoInformacaoResponse | undefined>()
+  const [searchTerm, setSearchTerm] = useState("");
+  const [listaFilter, setListaFilter] = useState<string>("");
+  const [page] = useState(1);
+  const [limit] = useState(10);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedClassificacao, setSelectedClassificacao] = useState<
+    ClassificacaoInformacaoResponse | undefined
+  >();
 
-  void page
-  void limit
-  void searchTerm
-  void listaFilter
+  void page;
+  void limit;
+  void searchTerm;
+  void listaFilter;
 
-  const { data: classificacoesData, isLoading, error } = useGetClassificacoesInformacao()
-  const { data: listasData } = useGetListasClassificacao()
+  const { data: classificacoesData, isLoading, error } = useGetClassificacoesInformacao();
+  const { data: listasData } = useGetListasClassificacao();
 
-  const deleteClassificacao = useDeleteClassificacoesInformacaoId()
+  const deleteClassificacao = useDeleteClassificacoesInformacaoId();
 
   const handleEdit = (classificacao: ClassificacaoInformacaoResponse) => {
-    setSelectedClassificacao(classificacao)
-    setIsFormOpen(true)
-  }
+    setSelectedClassificacao(classificacao);
+    setIsFormOpen(true);
+  };
 
   const handleNew = () => {
-    setSelectedClassificacao(undefined)
-    setIsFormOpen(true)
-  }
+    setSelectedClassificacao(undefined);
+    setIsFormOpen(true);
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta classificação?")) {
-      await deleteClassificacao.mutateAsync({ id })
+      await deleteClassificacao.mutateAsync({ id });
     }
-  }
+  };
 
   if (isLoading) {
     return (
@@ -79,7 +99,7 @@ export default function ClassificacoesInformacaoPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -101,13 +121,13 @@ export default function ClassificacoesInformacaoPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
-  const classificacoes = classificacoesData?.data ?? []
-  const listas = listasData?.data ?? []
-  
-  const totalClassificacoes = classificacoes.length
+  const classificacoes = classificacoesData?.data ?? [];
+  const listas = listasData?.data ?? [];
+
+  const totalClassificacoes = classificacoes.length;
 
   return (
     <>
@@ -141,9 +161,7 @@ export default function ClassificacoesInformacaoPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Classificação dos termos de negócio</CardTitle>
-                <CardDescription>
-                  Lista de todas as classificações cadastradas
-                </CardDescription>
+                <CardDescription>Lista de todas as classificações cadastradas</CardDescription>
               </div>
               <Button className="gap-2" onClick={handleNew}>
                 <Plus className="h-4 w-4" />
@@ -169,7 +187,7 @@ export default function ClassificacoesInformacaoPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas as tipologias</SelectItem>
-                    {listas.map(lista => (
+                    {listas.map((lista) => (
                       <SelectItem key={lista.id} value={lista.id}>
                         {lista.classificacao}
                       </SelectItem>
@@ -204,9 +222,7 @@ export default function ClassificacoesInformacaoPage() {
                       </TableCell>
                       <TableCell>
                         {classificacao.termo ? (
-                          <div className="flex flex-col gap-1">
-                            {classificacao.termo.termo}
-                          </div>
+                          <div className="flex flex-col gap-1">{classificacao.termo.termo}</div>
                         ) : (
                           <span className="text-muted-foreground">-</span>
                         )}
@@ -233,7 +249,7 @@ export default function ClassificacoesInformacaoPage() {
                               <Edit className="mr-2 h-4 w-4" />
                               Editar
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                               className="text-destructive"
                               onClick={() => handleDelete(classificacao.id)}
                             >
@@ -252,7 +268,11 @@ export default function ClassificacoesInformacaoPage() {
         </Card>
       </div>
 
-      <ClassificacaoInfoForm open={isFormOpen} onOpenChange={setIsFormOpen} classificacao={selectedClassificacao} />
+      <ClassificacaoInfoForm
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        classificacao={selectedClassificacao}
+      />
     </>
-  )
+  );
 }

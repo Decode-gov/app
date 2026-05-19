@@ -1,41 +1,42 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form";
+import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Plus } from "lucide-react"
-import { useCreatePapel, useUpdatePapel } from "@/hooks/api/use-papeis"
-import { usePoliticasInternas } from "@/hooks/api/use-politicas-internas"
-import { PapelResponse } from "@/types/api"
-import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form"
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import type { PapelResponse } from "@/types/api";
+import { usePostPapeis, usePutPapeisId } from "@/api/generated/endpoints/papéis/papéis";
+import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { CreatePapelSchema, PapelFormData } from "@/schemas";
 
 // Schema alinhado com a especificação do prompt e tipos da API
 const papelSchema = z.object({
@@ -43,52 +44,52 @@ const papelSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório").max(255, "Nome deve ter no máximo 255 caracteres"),
   descricao: z.string().max(2000, "Descrição deve ter no máximo 2000 caracteres").optional(),
   politicaId: z.uuid("Política é obrigatória"),
-})
+});
 
-type PapelFormValues = z.infer<typeof papelSchema>
+type PapelFormValues = z.infer<typeof papelSchema>;
 
 interface PapelGovernancaFormProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  papel?: PapelResponse
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  papel?: PapelResponse;
 }
 
 export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernancaFormProps) {
-  const [politicaDialogOpen, setPoliticaDialogOpen] = useState(false)
-  const createMutation = useCreatePapel()
-  const updateMutation = useUpdatePapel()
-  const { data: politicasData } = usePoliticasInternas()
-  
-  const form = useForm<PapelFormValues>({
+  const [politicaDialogOpen, setPoliticaDialogOpen] = useState(false);
+  const createMutation = usePostPapeis();
+  const updateMutation = usePutPapeisId();
+  const { data: politicasData } = useGetPoliticasInternas();
+
+  const form = useForm<PapelFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(papelSchema) as any,
+    // biome-ignore lint/suspicious/noExplicitAny: form type workaround
+    resolver: zodResolver(CreatePapelSchema) as any,
     defaultValues: {
       nome: "",
       descricao: "",
       politicaId: "",
     },
-    mode: "onChange"
-  })
+    mode: "onChange",
+  });
 
   // Resetar form quando o papel mudar ou dialog abrir
   useEffect(() => {
     if (open) {
       if (papel) {
         form.reset({
-          listaPapelId: papel.listaPapelId,
           nome: papel.nome,
           descricao: papel.descricao || "",
           politicaId: papel.politicaId,
-        })
+        });
       } else {
         form.reset({
           nome: "",
           descricao: "",
           politicaId: "",
-        })
+        });
       }
     }
-  }, [open, papel, form])
+  }, [open, papel, form]);
 
   const onSubmit = async (data: PapelFormValues) => {
     try {
@@ -96,31 +97,33 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
         await updateMutation.mutateAsync({
           id: papel.id,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // biome-ignore lint/suspicious/noExplicitAny: form type workaround
           data: data as any,
-        })
+        });
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await createMutation.mutateAsync(data as any)
+        // biome-ignore lint/suspicious/noExplicitAny: form type workaround
+        await createMutation.mutateAsync(data as any);
       }
 
-      form.reset()
-      onOpenChange(false)
+      form.reset();
+      onOpenChange(false);
     } catch (error) {
-      console.error('Erro ao salvar papel:', error)
+      console.error("Erro ao salvar papel:", error);
     }
-  }
+  };
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen && !createMutation.isPending && !updateMutation.isPending) {
-      form.reset()
+      form.reset();
     }
-    onOpenChange(newOpen)
-  }
+    onOpenChange(newOpen);
+  };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   // Filtrar políticas ativas
-  const politicasAtivas = politicasData?.data ?? []
+  const politicasAtivas = politicasData?.data ?? [];
 
   return (
     <>
@@ -131,17 +134,14 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
               {papel ? "Editar Papel de Governança" : "Novo Papel de Governança"}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              {papel 
+              {papel
                 ? "Atualize as informações do papel de governança."
-                : "Preencha os dados para criar um novo papel de governança."
-              }
+                : "Preencha os dados para criar um novo papel de governança."}
             </DialogDescription>
           </DialogHeader>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              
-
               {/* Nome (obrigatório) */}
               <FormField
                 control={form.control}
@@ -208,7 +208,7 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
                               </div>
                             ) : (
                               politicasAtivas.map((politica) => (
-                                <SelectItem key={politica.id ?? ''} value={politica.id ?? ''}>
+                                <SelectItem key={politica.id ?? ""} value={politica.id ?? ""}>
                                   {politica.nome}
                                 </SelectItem>
                               ))
@@ -259,10 +259,7 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
       </Dialog>
 
       {/* Dialog para criar política inline */}
-      <PoliticaInternaForm 
-        open={politicaDialogOpen}
-        onOpenChange={setPoliticaDialogOpen}
-      />
+      <PoliticaInternaForm open={politicaDialogOpen} onOpenChange={setPoliticaDialogOpen} />
     </>
-  )
+  );
 }

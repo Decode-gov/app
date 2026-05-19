@@ -1,53 +1,50 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Plus, BookOpen } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import {
-  useGetDefinicoes,
-  useDeleteDefinicoesId,
-} from "@/api/generated/endpoints/definicoes/definicoes"
-import { TermoForm } from "@/components/termos/termo-form"
-import { TermosDataTable } from "@/components/termos/termos-data-table"
-import { createColumns } from "@/components/termos/columns"
-import { DefinicaoResponse } from "@/types/api"
+import { BookOpen, Plus } from "lucide-react";
+import { useState } from "react";
+import { useDeleteDefinicoesId, useGetDefinicoes } from "@/api/generated/endpoints/termos/termos";
+import { createColumns } from "@/components/termos/columns";
+import { TermoForm } from "@/components/termos/termo-form";
+import { TermosDataTable } from "@/components/termos/termos-data-table";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { DefinicaoResponse } from "@/types/api";
 
 export default function TermosNegocioPage() {
-  const [formOpen, setFormOpen] = useState(false)
-  const [selectedTermo, setSelectedTermo] = useState<DefinicaoResponse | undefined>()
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedTermo, setSelectedTermo] = useState<DefinicaoResponse | undefined>();
 
-  const { data: termosData, isLoading, error } = useGetDefinicoes()
-  const { mutate: deleteTermo } = useDeleteDefinicoesId()
+  const { data: termosData, isLoading, error } = useGetDefinicoes();
+  const { mutate: deleteTermo } = useDeleteDefinicoesId();
 
-  const termos = termosData?.data ?? []
+  const termos = termosData?.data ?? [];
 
   const handleEdit = (termo: DefinicaoResponse) => {
-    setSelectedTermo(termo)
-    setFormOpen(true)
-  }
+    setSelectedTermo(termo);
+    setFormOpen(true);
+  };
 
   const handleDelete = (id: string) => {
     if (confirm("Tem certeza que deseja excluir este termo?")) {
-      deleteTermo({ id })
+      deleteTermo({ id });
     }
-  }
+  };
 
   const handleNewTermo = () => {
-    setSelectedTermo(undefined)
-    setFormOpen(true)
-  }
+    setSelectedTermo(undefined);
+    setFormOpen(true);
+  };
 
   const handleCloseForm = () => {
-    setFormOpen(false)
-    setSelectedTermo(undefined)
-  }
+    setFormOpen(false);
+    setSelectedTermo(undefined);
+  };
 
   const columns = createColumns({
     onEdit: handleEdit,
     onDelete: handleDelete,
-  })
+  });
 
   if (isLoading) {
     return (
@@ -56,14 +53,12 @@ export default function TermosNegocioPage() {
           <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             Termos de Negócio
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Gerencie o glossário de termos do sistema
-          </p>
+          <p className="text-muted-foreground mt-2">Gerencie o glossário de termos do sistema</p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="animate-pulse">
+          {Array.from({ length: 3 }, (_, i) => i).map((key) => (
+            <Card key={key} className="animate-pulse">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <Skeleton className="h-4 w-[100px]" />
                 <Skeleton className="h-8 w-8 rounded-lg" />
@@ -83,29 +78,25 @@ export default function TermosNegocioPage() {
               <Skeleton className="h-10 w-[100px]" />
             </div>
             <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full" />
+              {Array.from({ length: 5 }, (_, i) => i).map((key) => (
+                <Skeleton key={key} className="h-16 w-full" />
               ))}
             </div>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-destructive">
-            Termos de Negócio
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Erro ao carregar termos de negócio
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-destructive">Termos de Negócio</h1>
+          <p className="text-muted-foreground mt-2">Erro ao carregar termos de negócio</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -157,5 +148,5 @@ export default function TermosNegocioPage() {
       {/* Form Dialog */}
       <TermoForm open={formOpen} onOpenChange={handleCloseForm} termo={selectedTermo} />
     </div>
-  )
+  );
 }
