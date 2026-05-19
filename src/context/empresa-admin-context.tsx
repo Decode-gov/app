@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react"
-import { useEmpresas } from "@/hooks/api/use-empresas"
+import { useGetEmpresas } from "@/api/generated/endpoints/empresas/empresas"
 import { setGlobalEmpresaId } from "@/lib/empresa-store"
 import type { GetEmpresas200DataItem } from "@/api/generated/model"
 import { useGetUsuariosPerfil } from "@/api/generated/endpoints/usuarios/usuarios";
@@ -22,7 +22,7 @@ export function EmpresaAdminProvider({ children }: { children: ReactNode }) {
   const { data: perfil, isLoading: isLoadingPerfil } = useGetUsuariosPerfil()
   const isAdmin = (perfil?.data as { tipo?: string } | undefined)?.tipo === "ADMIN"
 
-  const { data: empresasData, isLoading: isLoadingEmpresas } = useEmpresas(undefined, isAdmin)
+  const { data: empresasData, isLoading: isLoadingEmpresas } = useGetEmpresas({ query: { enabled: isAdmin } })
 
   const empresas = empresasData?.data ?? []
 

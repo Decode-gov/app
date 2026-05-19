@@ -15,7 +15,7 @@ import {
 import {
   Users, BarChart3, Database,
   Shield,
-  BookOpen, Building, FileCheck, Home,
+  BookOpen, Building, Building2, FileCheck, Home,
   Workflow,
   Tag,
   UserCheck,
@@ -30,9 +30,10 @@ import {
 } from "lucide-react"
 import { DecodeGovIcon } from "@/components/ui/decode-gov-icon"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { usePostUsuariosLogout } from "@/api/generated/endpoints/usuarios/usuarios"
 import { Button } from "@/components/ui/button"
+import { useEmpresaAdmin } from "@/context/empresa-admin-context"
 
 const menuItems = [
   {
@@ -111,6 +112,12 @@ export function AppSidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const { mutate: logout, isPending: isLoggingOut } = usePostUsuariosLogout()
+  const { isAdmin } = useEmpresaAdmin()
+  const searchParams = useSearchParams()
+  const empresaId = isAdmin ? searchParams.get("empresaId") : null
+
+  const buildHref = (url: string) =>
+    empresaId ? `${url}?empresaId=${empresaId}` : url
 
   const handleLogout = () => {
     logout(undefined as never, {
@@ -134,6 +141,34 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent className="bg-sidebar/30 backdrop-blur-sm">
+        {isAdmin && (
+          <SidebarGroup className="px-2">
+            <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground/80 px-2 py-1 uppercase tracking-wide">
+              Administração
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    className={`group transition-all duration-200 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground ml-2 ${
+                      pathname === "/empresas"
+                        ? "bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary"
+                        : ""
+                    }`}
+                  >
+                    <Link href={buildHref("/empresas")}>
+                      <Building2 className="group-hover:scale-110 transition-transform duration-200" />
+                      <span className="group-hover:translate-x-1 transition-transform duration-200">
+                        Empresas
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
         {menuItems.map((item, index) => (
           <SidebarGroup key={index} className="px-2">
             {item.title && !item.items && (
@@ -145,7 +180,7 @@ export function AppSidebar() {
                       pathname === item.url ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-sm' : ''
                     }`}
                   >
-                    <Link href={item.url!}>
+                    <Link href={buildHref(item.url!)}>
                       {item.icon && <item.icon className="group-hover:scale-110 transition-transform duration-200" />}
                       <span className="group-hover:translate-x-1 transition-transform duration-200">{item.title}</span>
                     </Link>
@@ -168,7 +203,7 @@ export function AppSidebar() {
                             pathname === subItem.url ? 'bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary' : ''
                           }`}
                         >
-                          <Link href={subItem.url}>
+                          <Link href={buildHref(subItem.url)}>
                             <subItem.icon className="group-hover:scale-110 transition-transform duration-200" />
                             <span className="group-hover:translate-x-1 transition-transform duration-200">{subItem.title}</span>
                           </Link>
