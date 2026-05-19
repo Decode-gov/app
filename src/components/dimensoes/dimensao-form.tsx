@@ -36,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { DimensaoQualidadeResponse } from "@/types/api";
 
 const dimensaoFormSchema = z.object({
@@ -53,10 +54,11 @@ interface DimensaoFormProps {
 }
 
 export function DimensaoQualidadeForm({ open, onOpenChange, dimensao }: DimensaoFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const createDimensao = usePostDimensoesQualidade();
   const updateDimensao = usePutDimensoesQualidadeId();
 
-  const { data: politicasData } = useGetPoliticasInternas();
+  const { data: politicasData } = useGetPoliticasInternas(empresaParams);
   const politicas = politicasData?.data || [];
 
   const form = useForm<DimensaoFormValues>({

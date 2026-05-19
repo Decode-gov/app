@@ -36,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { type CreateColunaFormData, CreateColunaSchema } from "@/schemas";
 import type { ColunaResponse } from "@/types/api";
 
@@ -47,13 +48,14 @@ interface ColunaFormProps {
 }
 
 export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: ColunaFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const [tabelaDialogOpen, setTabelaDialogOpen] = useState(false);
 
   const createMutation = usePostColunas();
   const updateMutation = usePutColunasId();
   const { data: tabelasData } = useGetTabelas();
-  const { data: termosData } = useGetDefinicoes();
-  const { data: necessidadesData } = useGetNecessidadesInformacao();
+  const { data: termosData } = useGetDefinicoes(empresaParams);
+  const { data: necessidadesData } = useGetNecessidadesInformacao(empresaParams);
 
   const form = useForm<CreateColunaFormData>({
     resolver: zodResolver(CreateColunaSchema),

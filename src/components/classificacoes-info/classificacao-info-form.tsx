@@ -37,6 +37,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { CreateClassificacaoInformacaoFormData } from "@/schemas";
 import { CreateClassificacaoInformacaoSchema } from "@/schemas";
 import type { ClassificacaoInformacaoResponse } from "@/types/api";
@@ -54,11 +55,12 @@ export function ClassificacaoInfoForm({
   onOpenChange,
   classificacao,
 }: ClassificacaoInfoFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const [termoDialogOpen, setTermoDialogOpen] = useState(false);
   const createMutation = usePostClassificacoesInformacao();
   const updateMutation = usePutClassificacoesInformacaoId();
-  const { data: listasData } = useGetListasClassificacao();
-  const { data: termosData } = useGetDefinicoes();
+  const { data: listasData } = useGetListasClassificacao(empresaParams);
+  const { data: termosData } = useGetDefinicoes(empresaParams);
 
   const form = useForm<ClassificacaoFormValues>({
     resolver: zodResolver(CreateClassificacaoInformacaoSchema),

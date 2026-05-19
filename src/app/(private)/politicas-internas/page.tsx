@@ -6,6 +6,7 @@ import {
   useDeletePoliticasInternasId,
   useGetPoliticasInternas,
 } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form";
 import { createColumns } from "@/components/politicas/politicas-internas-columns";
 import { PoliticasInternasDataTable } from "@/components/politicas/politicas-internas-data-table";
@@ -15,13 +16,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { GetPoliticasInternas200DataItem } from "@/types/api";
 
 export default function PoliticasPage() {
+  const empresaParams = useEmpresaIdParam();
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [formOpen, setFormOpen] = useState(false);
   const [selectedPolitica, setSelectedPolitica] = useState<
     GetPoliticasInternas200DataItem | undefined
   >();
 
-  const { data: politicasData, isLoading, error } = useGetPoliticasInternas();
+  const { data: politicasData, isLoading, error } = useGetPoliticasInternas(empresaParams);
   const { mutateAsync: deletePolitica } = useDeletePoliticasInternasId();
 
   const politicas = politicasData?.data ?? [];

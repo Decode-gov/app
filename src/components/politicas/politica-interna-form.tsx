@@ -45,6 +45,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { cn } from "@/lib/utils";
 import type { GetPoliticasInternas200DataItem } from "@/types/api";
 
@@ -75,6 +76,7 @@ interface PoliticaInternaFormProps {
 }
 
 export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaInternaFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const [dominioDialogOpen, setDominioDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -106,7 +108,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
       },
     },
   });
-  const { data: comunidadesData } = useGetComunidades();
+  const { data: comunidadesData } = useGetComunidades(empresaParams);
 
   const comunidades = comunidadesData?.data || [];
 

@@ -7,6 +7,7 @@ import {
   useGetDimensoesQualidade,
 } from "@/api/generated/endpoints/dimensões-de-qualidade/dimensões-de-qualidade";
 import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { DimensaoQualidadeForm } from "@/components/dimensoes/dimensao-form";
 import { DimensoesTable } from "@/components/dimensoes/dimensoes-table";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ import {
 import type { DimensaoQualidadeResponse } from "@/types/api";
 
 export default function DimensoesQualidadePage() {
+  const empresaParams = useEmpresaIdParam();
   const [searchTerm, setSearchTerm] = useState("");
   const [politicaFilter, setPoliticaFilter] = useState<string>("");
   const [page] = useState(1);
@@ -34,8 +36,8 @@ export default function DimensoesQualidadePage() {
   void searchTerm;
   void politicaFilter;
 
-  const { data: dimensoesData, isLoading, error } = useGetDimensoesQualidade();
-  const { data: politicasData } = useGetPoliticasInternas();
+  const { data: dimensoesData, isLoading, error } = useGetDimensoesQualidade(empresaParams);
+  const { data: politicasData } = useGetPoliticasInternas(empresaParams);
 
   const deleteDimensao = useDeleteDimensoesQualidadeId();
 

@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { BancoResponse } from "@/types/api";
 
 const bancoSchema = z.object({
@@ -51,10 +52,11 @@ interface BancoFormProps {
 }
 
 export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const isEditing = !!banco;
   const createBanco = usePostBancos();
   const updateBanco = usePutBancosId();
-  const { data: sistemasData } = useGetSistemas();
+  const { data: sistemasData } = useGetSistemas(empresaParams);
 
   const form = useForm<BancoFormValues>({
     resolver: zodResolver(bancoSchema),

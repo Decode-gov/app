@@ -4,6 +4,7 @@ import { Database, Plus } from "lucide-react";
 import { useState } from "react";
 import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
 import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { ColunaForm } from "@/components/colunas/coluna-form";
 import { DataTableColunas } from "@/components/colunas/data-table-colunas";
 import { DataTableTabelas } from "@/components/tabelas/data-table-tabelas";
@@ -14,13 +15,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ColunaResponse, TabelaResponse } from "@/types/api";
 
 export default function TabelasColunasPage() {
+  const empresaParams = useEmpresaIdParam();
   const [isColunaFormOpen, setIsColunaFormOpen] = useState(false);
   const [isTabelaFormOpen, setIsTabelaFormOpen] = useState(false);
   const [selectedColuna, setSelectedColuna] = useState<ColunaResponse | undefined>();
   const [selectedTabela, setSelectedTabela] = useState<TabelaResponse | undefined>();
   const [preSelectedTabelaId, setPreSelectedTabelaId] = useState<string | undefined>();
 
-  const { data: colunasData } = useGetColunas();
+  const { data: colunasData } = useGetColunas(empresaParams);
   const { data: tabelasData } = useGetTabelas();
 
   const handleEditColuna = (coluna: ColunaResponse) => {

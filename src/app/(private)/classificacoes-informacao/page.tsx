@@ -7,6 +7,7 @@ import {
   useGetClassificacoesInformacao,
 } from "@/api/generated/endpoints/classificações-de-informação/classificações-de-informação";
 import { useGetListasClassificacao } from "@/api/generated/endpoints/listas-de-classificação/listas-de-classificação";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { ClassificacaoInfoForm } from "@/components/classificacoes-info/classificacao-info-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,6 +37,7 @@ import {
 import type { ClassificacaoInformacaoResponse } from "@/types/api";
 
 export default function ClassificacoesInformacaoPage() {
+  const empresaParams = useEmpresaIdParam();
   const [searchTerm, setSearchTerm] = useState("");
   const [listaFilter, setListaFilter] = useState<string>("");
   const [page] = useState(1);
@@ -50,8 +52,8 @@ export default function ClassificacoesInformacaoPage() {
   void searchTerm;
   void listaFilter;
 
-  const { data: classificacoesData, isLoading, error } = useGetClassificacoesInformacao();
-  const { data: listasData } = useGetListasClassificacao();
+  const { data: classificacoesData, isLoading, error } = useGetClassificacoesInformacao(empresaParams);
+  const { data: listasData } = useGetListasClassificacao(empresaParams);
 
   const deleteClassificacao = useDeleteClassificacoesInformacaoId();
 

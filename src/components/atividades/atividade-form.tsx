@@ -34,6 +34,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { usePostAtividades, usePutAtividadesId } from "@/api/generated/endpoints/atividades/atividades";
 import { useGetProcessos } from "@/api/generated/endpoints/processos/processos";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { AtividadeResponse } from "@/types/api";
 
 const formSchema = z.object({
@@ -60,12 +61,13 @@ interface AtividadeFormProps {
 }
 
 export function AtividadeForm({ open, onOpenChange, atividade }: AtividadeFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const isEditing = !!atividade;
   const [processoDialogOpen, setProcessoDialogOpen] = useState(false);
   const createAtividade = usePostAtividades();
   const updateAtividade = usePutAtividadesId();
 
-  const { data: processosData } = useGetProcessos();
+  const { data: processosData } = useGetProcessos(empresaParams);
   const processos = processosData?.data || [];
 
   const form = useForm<FormValues>({

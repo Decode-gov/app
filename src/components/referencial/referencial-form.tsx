@@ -36,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { type CreateListaClassificacaoFormData, ListaClassificacaoSchema } from "@/schemas";
 import type { ListaClassificacaoResponse } from "@/types/api";
 import { Input } from "../ui/input";
@@ -49,11 +50,12 @@ interface ReferencialFormProps {
 }
 
 export function ReferencialForm({ open, onOpenChange, referencial }: ReferencialFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const isEditing = !!referencial;
   const [isPoliticaFormOpen, setIsPoliticaFormOpen] = useState(false);
   const createReferencial = usePostListasClassificacao();
   const updateReferencial = usePutListasClassificacaoId();
-  const { data: politicasData } = useGetPoliticasInternas();
+  const { data: politicasData } = useGetPoliticasInternas(empresaParams);
 
   const politicas = politicasData?.data || [];
 

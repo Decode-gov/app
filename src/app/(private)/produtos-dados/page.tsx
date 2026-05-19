@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useDeleteProdutosDadosId, useGetProdutosDados } from "@/api/generated/endpoints/produtos-de-dados/produtos-de-dados";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { ProdutoForm } from "@/components/produtos/produto-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +33,7 @@ import {
 import type { ProdutoDadosResponse } from "@/types/api";
 
 export default function ProdutosDadosPage() {
+  const empresaParams = useEmpresaIdParam();
   const [searchTerm, setSearchTerm] = useState("");
   const [dominioFilter, setDominioFilter] = useState<string>("");
   const [page] = useState(1);
@@ -44,7 +46,7 @@ export default function ProdutosDadosPage() {
   void searchTerm;
   void dominioFilter;
 
-  const { data: produtosData, isLoading, error } = useGetProdutosDados();
+  const { data: produtosData, isLoading, error } = useGetProdutosDados(empresaParams);
 
   const deleteProduto = useDeleteProdutosDadosId();
 

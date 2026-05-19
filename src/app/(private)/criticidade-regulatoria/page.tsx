@@ -6,6 +6,7 @@ import {
   useDeleteCriticidadesRegulatoriasId,
   useGetCriticidadesRegulatorias,
 } from "@/api/generated/endpoints/criticidades-regulatórias/criticidades-regulatórias";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { CriticidadeRegulatoriaForm } from "@/components/criticidade-regulatoria/criticidade-regulatoria-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,11 +60,12 @@ const getGrauLabel = (grau: string) => {
 };
 
 export default function CriticidadeRegulatoriPage() {
+  const empresaParams = useEmpresaIdParam();
   const [search, setSearch] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [selectedCriticidade, setSelectedCriticidade] = useState<CriticidadeRegulatoriaResponse>();
 
-  const { data, isLoading, isError } = useGetCriticidadesRegulatorias();
+  const { data, isLoading, isError } = useGetCriticidadesRegulatorias(empresaParams);
   const deleteMutation = useDeleteCriticidadesRegulatoriasId();
 
   const criticidades = data?.data ?? [];

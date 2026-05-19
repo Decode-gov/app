@@ -3,6 +3,7 @@
 import { BookOpen, Plus } from "lucide-react";
 import { useState } from "react";
 import { useDeleteDefinicoesId, useGetDefinicoes } from "@/api/generated/endpoints/termos/termos";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { createColumns } from "@/components/termos/columns";
 import { TermoForm } from "@/components/termos/termo-form";
 import { TermosDataTable } from "@/components/termos/termos-data-table";
@@ -12,10 +13,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { DefinicaoResponse } from "@/types/api";
 
 export default function TermosNegocioPage() {
+  const empresaParams = useEmpresaIdParam();
   const [formOpen, setFormOpen] = useState(false);
   const [selectedTermo, setSelectedTermo] = useState<DefinicaoResponse | undefined>();
 
-  const { data: termosData, isLoading, error } = useGetDefinicoes();
+  const { data: termosData, isLoading, error } = useGetDefinicoes(empresaParams);
   const { mutate: deleteTermo } = useDeleteDefinicoesId();
 
   const termos = termosData?.data ?? [];

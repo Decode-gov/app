@@ -10,6 +10,7 @@ import {
 } from "@/api/generated/endpoints/regras-de-negócio/regras-de-negócio";
 import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
 import { useGetDefinicoes } from "@/api/generated/endpoints/termos/termos";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { RegraForm } from "@/components/regras/regra-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,16 +41,17 @@ import {
 import type { RegraNegocioResponse } from "@/types/api";
 
 export default function RegrasNegocioPage() {
+  const empresaParams = useEmpresaIdParam();
   const [search, setSearch] = useState("");
   const [politicaFilter, setPoliticaFilter] = useState<string>("");
   const [formOpen, setFormOpen] = useState(false);
   const [selectedRegra, setSelectedRegra] = useState<RegraNegocioResponse | undefined>();
 
-  const { data: regrasData, isLoading, error } = useGetRegrasNegocio();
-  const { data: politicasData } = useGetPoliticasInternas();
-  const { data: sistemasData } = useGetSistemas();
-  const { data: papeisData } = useGetPapeis();
-  const { data: definicoesData } = useGetDefinicoes();
+  const { data: regrasData, isLoading, error } = useGetRegrasNegocio(empresaParams);
+  const { data: politicasData } = useGetPoliticasInternas(empresaParams);
+  const { data: sistemasData } = useGetSistemas(empresaParams);
+  const { data: papeisData } = useGetPapeis(empresaParams);
+  const { data: definicoesData } = useGetDefinicoes(empresaParams);
   const deleteRegra = useDeleteRegrasNegocioId();
 
   // Extração do array de dados

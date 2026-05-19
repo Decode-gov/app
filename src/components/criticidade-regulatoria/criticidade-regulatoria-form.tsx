@@ -27,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import {
   type CreateCriticidadeRegulatoriaFormData,
   CreateCriticidadeRegulatoriaSchema,
@@ -54,8 +55,9 @@ export function CriticidadeRegulatoriaForm({
     },
   });
 
-  const { data: regulacoes, isLoading: loadingRegulacoes } = useGetRegulacoesCompletas();
-  const { data: regrasQualidade, isLoading: loadingRegras } = useGetRegrasQualidade();
+  const empresaParams = useEmpresaIdParam();
+  const { data: regulacoes, isLoading: loadingRegulacoes } = useGetRegulacoesCompletas(empresaParams);
+  const { data: regrasQualidade, isLoading: loadingRegras } = useGetRegrasQualidade(empresaParams);
 
   const createMutation = usePostCriticidadesRegulatorias();
   const updateMutation = usePutCriticidadesRegulatoriasId();

@@ -7,6 +7,7 @@ import {
   useGetListasClassificacao,
 } from "@/api/generated/endpoints/listas-de-classificação/listas-de-classificação";
 import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { ReferencialForm } from "@/components/referencial/referencial-form";
 import { ReferencialTable } from "@/components/referencial/referencial-table";
 import { getReferencialColumns } from "@/components/referencial/referencial-table-columns";
@@ -16,13 +17,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { ListaClassificacaoResponse } from "@/types/api";
 
 export default function ReferencialClassificacaoPage() {
+  const empresaParams = useEmpresaIdParam();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedReferencial, setSelectedReferencial] = useState<
     ListaClassificacaoResponse | undefined
   >();
 
-  const { data: referenciaisData, isLoading, error } = useGetListasClassificacao();
-  const { data: politicasData } = useGetPoliticasInternas();
+  const { data: referenciaisData, isLoading, error } = useGetListasClassificacao(empresaParams);
+  const { data: politicasData } = useGetPoliticasInternas(empresaParams);
   const deleteReferencial = useDeleteListasClassificacaoId();
 
   const politicas = useMemo(() => politicasData?.data ?? [], [politicasData?.data]);

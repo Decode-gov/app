@@ -32,9 +32,7 @@ export function EmpresaAdminProvider({ children }: { children: ReactNode }) {
   const empresas = empresasData?.data ?? [];
   const selectedEmpresaId = searchParams.get("empresaId");
 
-  useEffect(() => {
-    setGlobalEmpresaId(selectedEmpresaId);
-  }, [selectedEmpresaId]);
+  setGlobalEmpresaId(selectedEmpresaId);
 
   useEffect(() => {
     return () => {

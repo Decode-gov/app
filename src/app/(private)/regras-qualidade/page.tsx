@@ -10,6 +10,7 @@ import {
   useGetRegrasQualidade,
 } from "@/api/generated/endpoints/regras-de-qualidade/regras-de-qualidade";
 import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { RegraQualidadeForm } from "@/components/regras-qualidade/regra-qualidade-form";
 import { RegrasQualidadeTable } from "@/components/regras-qualidade/regras-qualidade-table";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ import {
 import type { RegraQualidadeResponse } from "@/types/api";
 
 export default function RegrasQualidadePage() {
+  const empresaParams = useEmpresaIdParam();
   const [searchTerm, setSearchTerm] = useState("");
   const [dimensaoFilter, setDimensaoFilter] = useState<string>("");
   const [page] = useState(1);
@@ -37,11 +39,11 @@ export default function RegrasQualidadePage() {
   void searchTerm;
   void dimensaoFilter;
 
-  const { data: regrasData, isLoading, error } = useGetRegrasQualidade();
-  const { data: dimensoesData } = useGetDimensoesQualidade();
+  const { data: regrasData, isLoading, error } = useGetRegrasQualidade(empresaParams);
+  const { data: dimensoesData } = useGetDimensoesQualidade(empresaParams);
   const { data: tabelasData } = useGetTabelas();
-  const { data: colunasData } = useGetColunas();
-  const { data: papeisData } = useGetPapeis();
+  const { data: colunasData } = useGetColunas(empresaParams);
+  const { data: papeisData } = useGetPapeis(empresaParams);
 
   const deleteRegra = useDeleteRegrasQualidadeId();
 

@@ -11,6 +11,7 @@ import {
   useGetRepositoriosDocumento,
 } from "@/api/generated/endpoints/repositórios-de-documento/repositórios-de-documento";
 import { useDeleteSistemasId, useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { BancoForm } from "@/components/bancos/banco-form";
 import { BancoTable } from "@/components/bancos/banco-table";
 import { RepositorioForm } from "@/components/repositorios-documento/repositorio-form";
@@ -23,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { BancoResponse, RepositorioDocumentoResponse, SistemaResponse } from "@/types/api";
 
 export default function AtivosTecnologicosPage() {
+  const empresaParams = useEmpresaIdParam();
   const [isSistemaFormOpen, setIsSistemaFormOpen] = useState(false);
   const [isBancoFormOpen, setIsBancoFormOpen] = useState(false);
   const [isRepositorioFormOpen, setIsRepositorioFormOpen] = useState(false);
@@ -36,13 +38,13 @@ export default function AtivosTecnologicosPage() {
     data: sistemasData,
     isLoading: isLoadingSistemas,
     error: errorSistemas,
-  } = useGetSistemas();
-  const { data: bancosData, isLoading: isLoadingBancos, error: errorBancos } = useGetBancos();
+  } = useGetSistemas(empresaParams);
+  const { data: bancosData, isLoading: isLoadingBancos, error: errorBancos } = useGetBancos(empresaParams);
   const {
     data: repositoriosData,
     isLoading: isLoadingRepositorios,
     error: errorRepositorios,
-  } = useGetRepositoriosDocumento();
+  } = useGetRepositoriosDocumento(empresaParams);
 
   const deleteSistema = useDeleteSistemasId();
   const deleteBanco = useDeleteBancosId();

@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { type CreateBancoFormData, CreateBancoSchema } from "@/schemas";
 import type { BancoResponse } from "@/types/api";
 
@@ -44,9 +45,10 @@ interface BancoFormProps {
 }
 
 export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const createMutation = usePostBancos();
   const updateMutation = usePutBancosId();
-  const { data: sistemasData } = useGetSistemas();
+  const { data: sistemasData } = useGetSistemas(empresaParams);
 
   const form = useForm<CreateBancoFormData>({
     resolver: zodResolver(CreateBancoSchema),

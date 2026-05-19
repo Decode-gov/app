@@ -34,6 +34,7 @@ import {
   usePostPartesEnvolvidas,
   usePutPartesEnvolvidasId,
 } from "@/api/generated/endpoints/partes-envolvidas/partes-envolvidas";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { ParteEnvolvidaResponse } from "@/types/api";
 
 const formSchema = z.object({
@@ -54,11 +55,12 @@ interface ParteEnvolvidaFormProps {
 }
 
 export function ParteEnvolvidaForm({ open, onOpenChange, parte }: ParteEnvolvidaFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const isEditing = !!parte;
   const createParte = usePostPartesEnvolvidas();
   const updateParte = usePutPartesEnvolvidasId();
 
-  const { data: papeisData } = useGetPapeis();
+  const { data: papeisData } = useGetPapeis(empresaParams);
   const papeis = papeisData?.data || [];
 
   const form = useForm<FormValues>({

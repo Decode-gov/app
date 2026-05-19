@@ -4,6 +4,7 @@ import { Plus, UserCheck } from "lucide-react";
 import { useState } from "react";
 import { useDeletePapeisId, useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
 import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { createColumns } from "@/components/papeis/columns";
 import { PapeisDataTable } from "@/components/papeis/papeis-data-table";
 import { PapelGovernancaForm } from "@/components/papeis/papel-governanca-form";
@@ -13,11 +14,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { PapelResponse } from "@/types/api";
 
 export default function PapeisPage() {
+  const empresaParams = useEmpresaIdParam();
   const [formOpen, setFormOpen] = useState(false);
   const [selectedPapel, setSelectedPapel] = useState<PapelResponse | undefined>();
 
-  const { data: papeisData, isLoading, error } = useGetPapeis();
-  const { data: politicasData } = useGetPoliticasInternas();
+  const { data: papeisData, isLoading, error } = useGetPapeis(empresaParams);
+  const { data: politicasData } = useGetPoliticasInternas(empresaParams);
   const deletePapel = useDeletePapeisId();
 
   // Extração dos arrays de dados

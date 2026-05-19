@@ -42,6 +42,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { AtribuicaoSchema, type CreateAtribuicaoFormData } from "@/schemas";
 import type { AtribuicaoResponse } from "@/types/api";
 
@@ -54,6 +55,7 @@ interface AtribuicaoFormProps {
 }
 
 export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const isEditing = !!atribuicao;
   const [papelDialogOpen, setPapelDialogOpen] = useState(false);
   const [dominioDialogOpen, setDominioDialogOpen] = useState(false);
@@ -62,9 +64,9 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
   const createAtribuicao = usePostAtribuicoes();
   const updateAtribuicao = usePutAtribuicoesId();
 
-  const { data: papeisData } = useGetPapeis();
-  const { data: comunidadesData } = useGetComunidades();
-  const { data: comitesData } = useGetComitesAprovadores();
+  const { data: papeisData } = useGetPapeis(empresaParams);
+  const { data: comunidadesData } = useGetComunidades(empresaParams);
+  const { data: comitesData } = useGetComitesAprovadores(empresaParams);
 
   const papeis = papeisData?.data ?? [];
   const dominios = comunidadesData?.data ?? [];

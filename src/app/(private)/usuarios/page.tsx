@@ -17,9 +17,11 @@ import { UserForm } from "@/components/users/user-form";
 import { UserStatsCards } from "@/components/users/user-stats-cards";
 import { UserTable } from "@/components/users/user-table";
 import type { UsuarioFormData } from "@/schemas";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { GetUsuarios200DataItem, Usuario } from "@/types/api";
 
 export default function UsuariosPage() {
+  const empresaParams = useEmpresaIdParam();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export default function UsuariosPage() {
   const [userToDelete, setUserToDelete] = useState<GetUsuarios200DataItem | null>(null);
 
   // Hooks da API
-  const { data: usuariosData, isFetching, error } = useGetUsuarios();
+  const { data: usuariosData, isFetching, error } = useGetUsuarios(empresaParams);
   const createMutation = usePostUsuariosRegister();
   const updateMutation = usePutUsuariosId();
   const deleteMutation = useDeleteUsuariosId();

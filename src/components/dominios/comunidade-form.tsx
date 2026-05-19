@@ -35,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { ComunidadeResponse } from "@/types/api";
 
 const comunidadeSchema = z.object({
@@ -51,9 +52,10 @@ interface ComunidadeFormProps {
 }
 
 export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const createMutation = usePostComunidades();
   const updateMutation = usePutComunidadesId();
-  const { data: comunidadesData } = useGetComunidades();
+  const { data: comunidadesData } = useGetComunidades(empresaParams);
 
   const form = useForm<ComunidadeFormValues>({
     resolver: zodResolver(comunidadeSchema),

@@ -36,6 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { KpiResponse } from "@/types/api";
 
 const kpiSchema = z.object({
@@ -53,13 +54,14 @@ interface KpiFormProps {
 }
 
 export function KpiForm({ open, onOpenChange, kpi }: KpiFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const [processoDialogOpen, setProcessoDialogOpen] = useState(false);
   const [comunidadeDialogOpen, setComunidadeDialogOpen] = useState(false);
 
   const createMutation = usePostKpis();
   const updateMutation = usePutKpisId();
-  const { data: processosData } = useGetProcessos();
-  const { data: comunidadesData } = useGetComunidades();
+  const { data: processosData } = useGetProcessos(empresaParams);
+  const { data: comunidadesData } = useGetComunidades(empresaParams);
 
   const form = useForm<KpiFormValues>({
     resolver: zodResolver(kpiSchema),

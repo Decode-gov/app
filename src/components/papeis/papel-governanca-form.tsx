@@ -36,6 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 import type { PapelResponse } from "@/types/api";
 import { usePostPapeis, usePutPapeisId } from "@/api/generated/endpoints/papéis/papéis";
 import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { CreatePapelSchema, PapelFormData } from "@/schemas";
 
 // Schema alinhado com a especificação do prompt e tipos da API
@@ -55,10 +56,11 @@ interface PapelGovernancaFormProps {
 }
 
 export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernancaFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const [politicaDialogOpen, setPoliticaDialogOpen] = useState(false);
   const createMutation = usePostPapeis();
   const updateMutation = usePutPapeisId();
-  const { data: politicasData } = useGetPoliticasInternas();
+  const { data: politicasData } = useGetPoliticasInternas(empresaParams);
 
   const form = useForm<PapelFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -36,6 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { type CreateRegraQualidadeFormData, CreateRegraQualidadeSchema } from "@/schemas";
 import type { RegraQualidadeResponse } from "@/types/api";
 import { usePostRegrasQualidade, usePutRegrasQualidadeId } from "@/api/generated/endpoints/regras-de-qualidade/regras-de-qualidade";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 
 interface RegraQualidadeFormProps {
   open: boolean;
@@ -44,15 +45,16 @@ interface RegraQualidadeFormProps {
 }
 
 export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidadeFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const isEditing = !!regra;
   const createRegra = usePostRegrasQualidade();
   const updateRegra = usePutRegrasQualidadeId();
 
-  const { data: dimensoesData } = useGetDimensoesQualidade();
+  const { data: dimensoesData } = useGetDimensoesQualidade(empresaParams);
   const { data: tabelasData } = useGetTabelas();
-  const { data: colunasData } = useGetColunas();
-  const { data: papeisData } = useGetPapeis();
-  const { data: regrasNegocioData } = useGetRegrasNegocio();
+  const { data: colunasData } = useGetColunas(empresaParams);
+  const { data: papeisData } = useGetPapeis(empresaParams);
+  const { data: regrasNegocioData } = useGetRegrasNegocio(empresaParams);
 
   const dimensoes = dimensoesData?.data ?? [];
   const tabelas = tabelasData?.data ?? [];

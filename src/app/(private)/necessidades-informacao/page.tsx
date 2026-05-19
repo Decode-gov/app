@@ -9,6 +9,7 @@ import {
   useDeleteNecessidadesInformacaoId,
   useGetNecessidadesInformacao,
 } from "@/api/generated/endpoints/necessidades-de-informação/necessidades-de-informação";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { NecessidadeForm, NecessidadesTable } from "@/components/necessidades";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,13 +17,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { NecessidadeInformacaoResponse } from "@/types/api";
 
 export default function NecessidadesInformacaoPage() {
+  const empresaParams = useEmpresaIdParam();
   const queryClient = useQueryClient();
   const [formOpen, setFormOpen] = useState(false);
   const [selectedNecessidade, setSelectedNecessidade] = useState<
     NecessidadeInformacaoResponse | undefined
   >();
 
-  const { data: necessidadesData, isLoading, error } = useGetNecessidadesInformacao();
+  const { data: necessidadesData, isLoading, error } = useGetNecessidadesInformacao(empresaParams);
   const deleteNecessidade = useDeleteNecessidadesInformacaoId({
     mutation: {
       onSuccess: () => {

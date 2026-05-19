@@ -6,6 +6,7 @@ import {
   useDeleteComunidadesId,
   useGetComunidades,
 } from "@/api/generated/endpoints/comunidades/comunidades";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { createColumns } from "@/components/dominios/columns";
 import { ComunidadeForm } from "@/components/dominios/comunidade-form";
 import { DominiosDataTable } from "@/components/dominios/dominios-data-table";
@@ -14,10 +15,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { ComunidadeResponse } from "@/types/api";
 
 export default function DominiosPage() {
+  const empresaParams = useEmpresaIdParam();
   const [formOpen, setFormOpen] = useState(false);
   const [editingComunidade, setEditingComunidade] = useState<ComunidadeResponse | undefined>();
 
-  const { data: comunidadesData, isLoading, error } = useGetComunidades();
+  const { data: comunidadesData, isLoading, error } = useGetComunidades(empresaParams);
   const deleteMutation = useDeleteComunidadesId();
 
   const comunidades = comunidadesData?.data ?? [];

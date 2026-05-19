@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { type CreateTabelaFormData, CreateTabelaSchema } from "@/schemas";
 import type { TabelaResponse } from "@/types/api";
 
@@ -43,11 +44,12 @@ interface TabelaFormProps {
 }
 
 export function TabelaForm({ open, onOpenChange, tabela }: TabelaFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const [bancoDialogOpen, setBancoDialogOpen] = useState(false);
 
   const createMutation = usePostTabelas();
   const updateMutation = usePutTabelasId();
-  const { data: bancosData } = useGetBancos();
+  const { data: bancosData } = useGetBancos(empresaParams);
 
   const form = useForm<CreateTabelaFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -13,8 +13,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
 import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
 import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 
 export default function MetricasQualidadePage() {
+  const empresaParams = useEmpresaIdParam();
   const [searchTerm, setSearchTerm] = useState("");
   const [page] = useState(1);
   const [limit] = useState(10);
@@ -27,17 +29,17 @@ export default function MetricasQualidadePage() {
     data: dimensoesData,
     isLoading: isLoadingDimensoes,
     error: errorDimensoes,
-  } = useGetDimensoesQualidade();
+  } = useGetDimensoesQualidade(empresaParams);
   const {
     data: regrasData,
     isLoading: isLoadingRegras,
     error: errorRegras,
-  } = useGetRegrasQualidade();
+  } = useGetRegrasQualidade(empresaParams);
 
-  const { data: politicasData } = useGetPoliticasInternas();
+  const { data: politicasData } = useGetPoliticasInternas(empresaParams);
   const { data: tabelasData } = useGetTabelas();
-  const { data: colunasData } = useGetColunas();
-  const { data: papeisData } = useGetPapeis();
+  const { data: colunasData } = useGetColunas(empresaParams);
+  const { data: papeisData } = useGetPapeis(empresaParams);
 
   const politicas = politicasData?.data ?? [];
   const dimensoes = dimensoesData?.data ?? [];

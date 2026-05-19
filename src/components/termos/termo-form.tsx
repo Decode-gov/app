@@ -31,6 +31,7 @@ import { ComunidadeForm } from "../dominios/comunidade-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { usePostDefinicoes, usePutDefinicoesId } from "@/api/generated/endpoints/termos/termos";
 import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 
 type FormData = CreateDefinicaoFormData;
 
@@ -41,11 +42,12 @@ interface TermoFormProps {
 }
 
 export function TermoForm({ open, onOpenChange, termo }: TermoFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const [dominioDialogOpen, setDominioDialogOpen] = useState(false);
 
   const createMutation = usePostDefinicoes();
   const updateMutation = usePutDefinicoesId();
-  const { data: comunidadesData } = useGetComunidades();
+  const { data: comunidadesData } = useGetComunidades(empresaParams);
 
   const form = useForm<FormData>({
     resolver: zodResolver(CreateDefinicaoSchema),

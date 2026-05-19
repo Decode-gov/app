@@ -36,6 +36,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAtividades } from "@/api/generated/endpoints/atividades/atividades";
 import { usePostOperacoes, usePutOperacoesId } from "@/api/generated/endpoints/operações/operações";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { OperacaoResponse } from "@/types/api";
 
 const formSchema = z.object({
@@ -99,6 +100,7 @@ const getComplexidadeLabel = (complexidade: string) => {
 };
 
 export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const isEditing = !!operacao;
   const [atividadeDialogOpen, setAtividadeDialogOpen] = useState(false);
 
@@ -120,7 +122,7 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
   const isPending = isCreating || isUpdating;
 
   // Queries para selects
-  const { data: atividadesData, isLoading: isLoadingAtividades } = useGetAtividades();
+  const { data: atividadesData, isLoading: isLoadingAtividades } = useGetAtividades(empresaParams);
   const atividades = atividadesData?.data ?? [];
 
   const onSubmit = (data: FormData) => {

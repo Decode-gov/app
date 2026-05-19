@@ -36,6 +36,7 @@ import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-in
 import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
 import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
 import { useGetDefinicoes } from "@/api/generated/endpoints/termos/termos";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 
 interface RegraFormProps {
   open: boolean;
@@ -44,12 +45,13 @@ interface RegraFormProps {
 }
 
 export function RegraForm({ open, onOpenChange, regra }: RegraFormProps) {
+  const empresaParams = useEmpresaIdParam();
   const createMutation = usePostRegrasNegocio();
   const updateMutation = usePutRegrasNegocioId();
-  const { data: politicasData } = useGetPoliticasInternas();
-  const { data: sistemasData } = useGetSistemas();
-  const { data: papeisData } = useGetPapeis();
-  const { data: definicoesData } = useGetDefinicoes();
+  const { data: politicasData } = useGetPoliticasInternas(empresaParams);
+  const { data: sistemasData } = useGetSistemas(empresaParams);
+  const { data: papeisData } = useGetPapeis(empresaParams);
+  const { data: definicoesData } = useGetDefinicoes(empresaParams);
 
   const form = useForm<CreateRegraNegocioFormData>({
     resolver: zodResolver(CreateRegraNegocioSchema),

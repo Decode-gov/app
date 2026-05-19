@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
 import { useDeleteKpisId, useGetKpis } from "@/api/generated/endpoints/kpis/kpis";
 import { useGetProcessos } from "@/api/generated/endpoints/processos/processos";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { KpiForm } from "@/components/kpis/kpi-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,15 +37,16 @@ import {
 import type { KpiResponse } from "@/types/api";
 
 export default function KpisPage() {
+  const empresaParams = useEmpresaIdParam();
   const [formOpen, setFormOpen] = useState(false);
   const [editingKpi, setEditingKpi] = useState<KpiResponse | undefined>();
   const [search, setSearch] = useState("");
   const [processoFilter, setProcessoFilter] = useState<string>("all");
   const [comunidadeFilter, setComunidadeFilter] = useState<string>("all");
 
-  const { data: kpisData, isLoading, error } = useGetKpis();
-  const { data: processosData } = useGetProcessos();
-  const { data: comunidadesData } = useGetComunidades();
+  const { data: kpisData, isLoading, error } = useGetKpis(empresaParams);
+  const { data: processosData } = useGetProcessos(empresaParams);
+  const { data: comunidadesData } = useGetComunidades(empresaParams);
   const deleteMutation = useDeleteKpisId();
 
   const kpis = kpisData?.data ?? [];

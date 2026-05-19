@@ -6,6 +6,7 @@ import {
   useDeleteRegulacoesCompletasId,
   useGetRegulacoesCompletas,
 } from "@/api/generated/endpoints/regulações-completas/regulações-completas";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { GetRegulacoesCompletas200Output } from "@/api/generated/model/getRegulacoesCompletas200.zod";
 import { RegulacaoForm } from "@/components/regulacao/regulacao-form";
 import { RegulacoesTable } from "@/components/regulacao/regulacao-table";
@@ -16,10 +17,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 type RegulacaoItem = GetRegulacoesCompletas200Output["data"][number];
 
 export default function RegulacaoPage() {
+  const empresaParams = useEmpresaIdParam();
   const [formOpen, setFormOpen] = useState(false);
   const [selectedRegulacao, setSelectedRegulacao] = useState<RegulacaoItem | undefined>();
 
-  const { data: regulacoesData, isLoading, error } = useGetRegulacoesCompletas();
+  const { data: regulacoesData, isLoading, error } = useGetRegulacoesCompletas(empresaParams);
   const deleteRegulacao = useDeleteRegulacoesCompletasId();
 
   const regulacoes = regulacoesData?.data ?? [];

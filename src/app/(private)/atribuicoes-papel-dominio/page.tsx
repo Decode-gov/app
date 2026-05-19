@@ -8,6 +8,7 @@ import {
 } from "@/api/generated/endpoints/atribuições-papel-domínio/atribuições-papel-domínio";
 import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
 import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { AtribuicaoForm } from "@/components/atribuicoes/atribuicao-form";
 import { AtribuicoesTable } from "@/components/atribuicoes/atribuicoes-table";
 import { getAtribuicoesColumns } from "@/components/atribuicoes/atribuicoes-table-columns";
@@ -17,12 +18,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { AtribuicaoResponse } from "@/types/api";
 
 export default function AtribuicoesPage() {
+  const empresaParams = useEmpresaIdParam();
   const [formOpen, setFormOpen] = useState(false);
   const [selectedAtribuicao, setSelectedAtribuicao] = useState<AtribuicaoResponse | undefined>();
 
-  const { data: atribuicoesData, isLoading, error } = useGetAtribuicoes();
-  const { data: papeisData } = useGetPapeis();
-  const { data: comunidadesData } = useGetComunidades();
+  const { data: atribuicoesData, isLoading, error } = useGetAtribuicoes(empresaParams);
+  const { data: papeisData } = useGetPapeis(empresaParams);
+  const { data: comunidadesData } = useGetComunidades(empresaParams);
   const deleteAtribuicao = useDeleteAtribuicoesId();
 
   // Memoização dos dados
