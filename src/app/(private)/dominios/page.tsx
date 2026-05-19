@@ -6,12 +6,12 @@ import {
   useDeleteComunidadesId,
   useGetComunidades,
 } from "@/api/generated/endpoints/comunidades/comunidades";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { createColumns } from "@/components/dominios/columns";
 import { ComunidadeForm } from "@/components/dominios/comunidade-form";
 import { DominiosDataTable } from "@/components/dominios/dominios-data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { ComunidadeResponse } from "@/types/api";
 
 export default function DominiosPage() {

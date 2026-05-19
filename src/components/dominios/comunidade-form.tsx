@@ -1,10 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import {
+  getGetComunidadesQueryKey,
   useGetComunidades,
   usePostComunidades,
   usePutComunidadesId,
@@ -52,6 +55,7 @@ interface ComunidadeFormProps {
 }
 
 export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFormProps) {
+  const queryClient = useQueryClient();
   const empresaParams = useEmpresaIdParam();
   const createMutation = usePostComunidades();
   const updateMutation = usePutComunidadesId();
@@ -89,14 +93,34 @@ export function ComunidadeForm({ open, onOpenChange, comunidade }: ComunidadeFor
       };
 
       if (comunidade) {
-        await updateMutation.mutateAsync({
-          id: comunidade.id,
-          data: payload,
-        });
+        await updateMutation.mutateAsync(
+          {
+            id: comunidade.id,
+            data: payload,
+          },
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({
+                queryKey: getGetComunidadesQueryKey(),
+              });
+              toast.success("Comunidade atualizada com sucesso!");
+            },
+          },
+        );
       } else {
-        await createMutation.mutateAsync({
-          data: payload,
-        });
+        await createMutation.mutateAsync(
+          {
+            data: payload,
+          },
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({
+                queryKey: getGetComunidadesQueryKey(),
+              });
+              toast.success("Comunidade criada com sucesso!");
+            },
+          },
+        );
       }
       form.reset();
       onOpenChange(false);
