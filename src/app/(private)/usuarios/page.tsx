@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
+  getGetUsuariosQueryKey,
   useDeleteUsuariosId,
   useGetUsuarios,
   usePostUsuariosRegister,
@@ -16,8 +17,8 @@ import { UserFilters } from "@/components/users/user-filters";
 import { UserForm } from "@/components/users/user-form";
 import { UserStatsCards } from "@/components/users/user-stats-cards";
 import { UserTable } from "@/components/users/user-table";
-import type { UsuarioFormData } from "@/schemas";
 import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
+import type { UsuarioFormData } from "@/schemas";
 import type { GetUsuarios200DataItem, Usuario } from "@/types/api";
 
 export default function UsuariosPage() {
@@ -84,8 +85,19 @@ export default function UsuariosPage() {
             email: data.email,
             ativo: data.ativo,
           },
+        }, {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: getGetUsuariosQueryKey()
+            })
+
+            toast.success("Usuário atualizado com sucesso!");
+          },
+          onError: () => {
+            toast.error('Erro ao atualizar os dados do usuário!');
+          }
         });
-        toast.success("Usuário atualizado com sucesso!");
+
       } else {
         // Criar novo usuário
         await createMutation.mutateAsync({
@@ -96,8 +108,19 @@ export default function UsuariosPage() {
             tipo: "USUARIO",
             empresaId: "",
           },
+        }, {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: getGetUsuariosQueryKey()
+            })
+
+            toast.success("Usuário criado com sucesso!");
+          },
+          onError: () => {
+            toast.error('Erro ao criar um novo usuário!');
+          }
         });
-        toast.success("Usuário criado com sucesso!");
+
       }
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
       setIsFormOpen(false);

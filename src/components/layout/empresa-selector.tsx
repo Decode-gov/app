@@ -16,7 +16,7 @@ export function EmpresaSelector() {
 
   return (
     <Select value={selectedEmpresaId ?? ""} onValueChange={(v) => setSelectedEmpresaId(v || null)}>
-      <SelectTrigger className="w-full text-sm">
+      <SelectTrigger className="w-md text-sm">
         <SelectValue placeholder="Selecionar empresa..." />
       </SelectTrigger>
       <SelectContent>

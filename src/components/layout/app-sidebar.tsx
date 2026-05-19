@@ -40,8 +40,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useEmpresaAdmin } from "@/context/empresa-admin-context";
-import { Separator } from "../ui/separator";
-import { EmpresaSelector } from "./empresa-selector";
 
 const menuItems = [
   {
@@ -113,7 +111,7 @@ export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { mutate: logout, isPending: isLoggingOut } = usePostUsuariosLogout();
+  const { mutateAsync: logout, isPending: isLoggingOut } = usePostUsuariosLogout();
   const { isAdmin } = useEmpresaAdmin();
 
   const empresaId = isAdmin ? searchParams.get("empresaId") : null;
@@ -121,7 +119,7 @@ export function AppSidebar() {
   const buildHref = (url: string) => (empresaId ? `${url}?empresaId=${empresaId}` : url);
 
   const handleLogout = () => {
-    logout(undefined as never, {
+    logout(undefined, {
       onSuccess: () => {
         router.push("/login");
       },
@@ -142,8 +140,6 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent className="bg-sidebar/30 backdrop-blur-sm">
-        <EmpresaSelector />
-        <Separator />
         {isAdmin && (
 
           <SidebarMenu>
