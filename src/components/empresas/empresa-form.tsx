@@ -46,7 +46,6 @@ export function EmpresaForm({ open, onOpenChange, empresa }: EmpresaFormProps) {
   const isEdit = !!empresa;
 
   const form = useForm<FormData>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(PostEmpresasBody),
     defaultValues: { nome: "" },
   });

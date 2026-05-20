@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
   usePostRegulacoesCompletas,
@@ -53,38 +52,16 @@ export function RegulacaoForm({ open, onOpenChange, regulacao }: RegulacaoFormPr
   const form = useForm<PostRegulacoesCompletasBody>({
     resolver: zodResolver(PostRegulacoesCompletasBodySchema),
     defaultValues: {
-      epigrafe: "",
-      descricao: "",
-      orgao: "",
-      dataInicio: new Date(),
-      dataFim: new Date(),
+      epigrafe: regulacao?.epigrafe,
+      descricao: regulacao?.descricao,
+      orgao: regulacao?.orgao || "",
+      dataInicio: regulacao?.dataInicio ? new Date(regulacao.dataInicio) : new Date(),
+      dataFim: regulacao?.dataFim ? new Date(regulacao.dataFim) : new Date(),
     },
   });
 
-  useEffect(() => {
-    if (regulacao && open) {
-      form.reset({
-        epigrafe: regulacao.epigrafe,
-        descricao: regulacao.descricao,
-        orgao: regulacao.orgao || "",
-        dataInicio: regulacao.dataInicio ? new Date(regulacao.dataInicio) : new Date(),
-        dataFim: regulacao.dataFim ? new Date(regulacao.dataFim) : new Date(),
-      });
-    } else if (!open) {
-      form.reset({
-        epigrafe: "",
-        descricao: "",
-        orgao: "",
-        dataInicio: new Date(),
-        dataFim: new Date(),
-      });
-    }
-  }, [regulacao, open, form]);
-
   const onSubmit = async (data: PostRegulacoesCompletasBody) => {
     try {
-
-
       if (isEditing) {
         await updateRegulacao.mutateAsync({ id: regulacao.id, data });
       } else {
@@ -180,7 +157,7 @@ export function RegulacaoForm({ open, onOpenChange, regulacao }: RegulacaoFormPr
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP", {
+                            format(field.value as Date, "PPP", {
                               locale: ptBR
                             })
                           ) : (
@@ -193,7 +170,7 @@ export function RegulacaoForm({ open, onOpenChange, regulacao }: RegulacaoFormPr
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={field.value && new Date(field.value)}
+                        selected={field.value as Date | undefined}
                         onSelect={field.onChange}
                         locale={ptBR}
                       />
@@ -221,7 +198,7 @@ export function RegulacaoForm({ open, onOpenChange, regulacao }: RegulacaoFormPr
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP", {
+                            format(field.value as Date, "PPP", {
                               locale: ptBR
                             })
                           ) : (
@@ -234,7 +211,7 @@ export function RegulacaoForm({ open, onOpenChange, regulacao }: RegulacaoFormPr
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={field.value && new Date(field.value)}
+                        selected={field.value as Date | undefined}
                         onSelect={field.onChange}
                         locale={ptBR}
                       />
