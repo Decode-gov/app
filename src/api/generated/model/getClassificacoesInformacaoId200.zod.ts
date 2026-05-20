@@ -32,6 +32,10 @@ export const getClassificacoesInformacaoId200DataClassificacaoPoliticaDominioDad
     "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
   );
 
+export const getClassificacoesInformacaoId200DataClassificacaoPoliticaEmpresaIdRegExp =
+  new RegExp(
+    "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+  );
 export const getClassificacoesInformacaoId200DataTermoIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -119,6 +123,13 @@ export const GetClassificacoesInformacaoId200 = zod.object({
           observacoes: zod
             .union([zod.string(), zod.literal(null).nullable()])
             .optional(),
+          empresaId: zod
+            .uuid()
+            .regex(
+              getClassificacoesInformacaoId200DataClassificacaoPoliticaEmpresaIdRegExp,
+            )
+            .optional()
+            .describe("ID da empresa (obrigatório para ADMIN)"),
         }),
         createdAt: zod.iso
           .datetime({ offset: true })

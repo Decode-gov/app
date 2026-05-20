@@ -9,6 +9,10 @@ import { z as zod } from "zod";
 
 export const putSistemasIdBodyNomeMax = 255;
 
+export const putSistemasIdBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
 export const PutSistemasIdBody = zod.object({
   nome: zod
     .string()
@@ -24,6 +28,11 @@ export const PutSistemasIdBody = zod.object({
     .string()
     .optional()
     .describe("URL do repositório do sistema"),
+  empresaId: zod
+    .uuid()
+    .regex(putSistemasIdBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 export type PutSistemasIdBody = zod.input<typeof PutSistemasIdBody>;

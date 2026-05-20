@@ -24,6 +24,10 @@ export const postOperacoesBodyAutomatizadaDefault = false;
 export const postOperacoesBodyCriticaDefault = false;
 export const postOperacoesBodyDocumentadaDefault = false;
 export const postOperacoesBodyAtivoDefault = true;
+export const postOperacoesBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
 export const PostOperacoesBody = zod.object({
   nome: zod
     .string()
@@ -94,6 +98,11 @@ export const PostOperacoesBody = zod.object({
     .boolean()
     .default(postOperacoesBodyAtivoDefault)
     .describe("Status de ativação"),
+  empresaId: zod
+    .uuid()
+    .regex(postOperacoesBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 export type PostOperacoesBody = zod.input<typeof PostOperacoesBody>;

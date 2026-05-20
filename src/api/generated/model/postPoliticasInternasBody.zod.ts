@@ -15,6 +15,10 @@ export const postPoliticasInternasBodyDominioDadosIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
+export const postPoliticasInternasBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
 export const PostPoliticasInternasBody = zod.object({
   id: zod.uuid().regex(postPoliticasInternasBodyIdRegExp).optional(),
   nome: zod.string().min(1).optional(),
@@ -43,6 +47,11 @@ export const PostPoliticasInternasBody = zod.object({
   observacoes: zod
     .union([zod.string(), zod.literal(null).nullable()])
     .optional(),
+  empresaId: zod
+    .uuid()
+    .regex(postPoliticasInternasBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 export type PostPoliticasInternasBody = zod.input<

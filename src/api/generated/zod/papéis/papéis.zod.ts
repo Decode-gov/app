@@ -102,6 +102,9 @@ export const postPapeisBodyNomeMax = 255;
 export const postPapeisBodyPoliticaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const postPapeisBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const PostPapeisBody = zod.strictObject({
   nome: zod.coerce
@@ -114,6 +117,11 @@ export const PostPapeisBody = zod.strictObject({
     .uuid()
     .regex(postPapeisBodyPoliticaIdRegExp)
     .describe("ID da política"),
+  empresaId: zod
+    .uuid()
+    .regex(postPapeisBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 /**

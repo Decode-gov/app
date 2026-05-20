@@ -14,7 +14,13 @@ export const postBancos201DataSistemaIdOneRegExp = new RegExp(
 );
 export const postBancos201DataSistemaOneNomeMax = 255;
 
+export const postBancos201DataSistemaOneEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const postBancos201DataSistemaOneIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+export const postBancos201DataEmpresaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 export const postBancos201DataIdRegExp = new RegExp(
@@ -49,6 +55,11 @@ export const PostBancos201 = zod.object({
             .optional()
             .describe("Descrição do sistema"),
           repositorio: zod.string().describe("URL do repositório do sistema"),
+          empresaId: zod
+            .uuid()
+            .regex(postBancos201DataSistemaOneEmpresaIdRegExp)
+            .optional()
+            .describe("ID da empresa (obrigatório para ADMIN)"),
           id: zod
             .uuid()
             .regex(postBancos201DataSistemaOneIdRegExp)
@@ -65,6 +76,11 @@ export const PostBancos201 = zod.object({
         zod.literal(null).nullable(),
       ])
       .optional(),
+    empresaId: zod
+      .uuid()
+      .regex(postBancos201DataEmpresaIdRegExp)
+      .optional()
+      .describe("ID da empresa (obrigatório para ADMIN)"),
     id: zod
       .uuid()
       .regex(postBancos201DataIdRegExp)

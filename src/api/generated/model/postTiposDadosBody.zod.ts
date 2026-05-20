@@ -18,6 +18,10 @@ export const postTiposDadosBodyEscalaMin = 0;
 
 export const postTiposDadosBodyPermiteNuloDefault = true;
 export const postTiposDadosBodyAtivoDefault = true;
+export const postTiposDadosBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
 export const PostTiposDadosBody = zod.object({
   nome: zod
     .string()
@@ -63,6 +67,11 @@ export const PostTiposDadosBody = zod.object({
     .boolean()
     .default(postTiposDadosBodyAtivoDefault)
     .describe("Status de ativação"),
+  empresaId: zod
+    .uuid()
+    .regex(postTiposDadosBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 export type PostTiposDadosBody = zod.input<typeof PostTiposDadosBody>;

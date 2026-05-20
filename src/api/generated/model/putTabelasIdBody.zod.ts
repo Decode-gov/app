@@ -12,6 +12,9 @@ export const putTabelasIdBodyNomeMax = 255;
 export const putTabelasIdBodyBancoIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const putTabelasIdBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const PutTabelasIdBody = zod.object({
   nome: zod
@@ -27,6 +30,11 @@ export const PutTabelasIdBody = zod.object({
     ])
     .optional()
     .describe("ID do banco de dados"),
+  empresaId: zod
+    .uuid()
+    .regex(putTabelasIdBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 export type PutTabelasIdBody = zod.input<typeof PutTabelasIdBody>;

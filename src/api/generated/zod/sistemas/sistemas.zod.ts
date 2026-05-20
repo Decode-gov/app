@@ -27,6 +27,9 @@ export const GetSistemasQueryParams = zod.strictObject({
 
 export const getSistemasResponseDataItemNomeMax = 255;
 
+export const getSistemasResponseDataItemEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const getSistemasResponseDataItemIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -46,6 +49,11 @@ export const GetSistemasResponse = zod.object({
           .optional()
           .describe("Descrição do sistema"),
         repositorio: zod.string().describe("URL do repositório do sistema"),
+        empresaId: zod
+          .uuid()
+          .regex(getSistemasResponseDataItemEmpresaIdRegExp)
+          .optional()
+          .describe("ID da empresa (obrigatório para ADMIN)"),
         id: zod
           .uuid()
           .regex(getSistemasResponseDataItemIdRegExp)
@@ -69,6 +77,10 @@ export const GetSistemasResponse = zod.object({
  */
 export const postSistemasBodyNomeMax = 255;
 
+export const postSistemasBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
 export const PostSistemasBody = zod.strictObject({
   nome: zod.coerce
     .string()
@@ -80,6 +92,11 @@ export const PostSistemasBody = zod.strictObject({
     .optional()
     .describe("Descrição do sistema"),
   repositorio: zod.coerce.string().describe("URL do repositório do sistema"),
+  empresaId: zod
+    .uuid()
+    .regex(postSistemasBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 /**
@@ -96,6 +113,9 @@ export const GetSistemasIdParams = zod.strictObject({
 
 export const getSistemasIdResponseDataNomeMax = 255;
 
+export const getSistemasIdResponseDataEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const getSistemasIdResponseDataIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -113,6 +133,11 @@ export const GetSistemasIdResponse = zod.object({
       .optional()
       .describe("Descrição do sistema"),
     repositorio: zod.string().describe("URL do repositório do sistema"),
+    empresaId: zod
+      .uuid()
+      .regex(getSistemasIdResponseDataEmpresaIdRegExp)
+      .optional()
+      .describe("ID da empresa (obrigatório para ADMIN)"),
     id: zod
       .uuid()
       .regex(getSistemasIdResponseDataIdRegExp)
@@ -142,6 +167,10 @@ export const PutSistemasIdParams = zod.strictObject({
 
 export const putSistemasIdBodyNomeMax = 255;
 
+export const putSistemasIdBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
 export const PutSistemasIdBody = zod.strictObject({
   nome: zod.coerce
     .string()
@@ -157,10 +186,18 @@ export const PutSistemasIdBody = zod.strictObject({
     .string()
     .optional()
     .describe("URL do repositório do sistema"),
+  empresaId: zod
+    .uuid()
+    .regex(putSistemasIdBodyEmpresaIdRegExp)
+    .optional()
+    .describe("ID da empresa (obrigatório para ADMIN)"),
 });
 
 export const putSistemasIdResponseDataNomeMax = 255;
 
+export const putSistemasIdResponseDataEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const putSistemasIdResponseDataIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -178,6 +215,11 @@ export const PutSistemasIdResponse = zod.object({
       .optional()
       .describe("Descrição do sistema"),
     repositorio: zod.string().describe("URL do repositório do sistema"),
+    empresaId: zod
+      .uuid()
+      .regex(putSistemasIdResponseDataEmpresaIdRegExp)
+      .optional()
+      .describe("ID da empresa (obrigatório para ADMIN)"),
     id: zod
       .uuid()
       .regex(putSistemasIdResponseDataIdRegExp)
@@ -207,6 +249,9 @@ export const DeleteSistemasIdParams = zod.strictObject({
 
 export const deleteSistemasIdResponseDataNomeMax = 255;
 
+export const deleteSistemasIdResponseDataEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const deleteSistemasIdResponseDataIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -224,6 +269,11 @@ export const DeleteSistemasIdResponse = zod.object({
       .optional()
       .describe("Descrição do sistema"),
     repositorio: zod.string().describe("URL do repositório do sistema"),
+    empresaId: zod
+      .uuid()
+      .regex(deleteSistemasIdResponseDataEmpresaIdRegExp)
+      .optional()
+      .describe("ID da empresa (obrigatório para ADMIN)"),
     id: zod
       .uuid()
       .regex(deleteSistemasIdResponseDataIdRegExp)

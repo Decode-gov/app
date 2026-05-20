@@ -60,6 +60,10 @@ export const GetListasReferenciaResponse = zod.object({
  * @summary Criar nova lista de referência
  */
 
+export const postListasReferenciaBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
 export const PostListasReferenciaBody = zod.strictObject({
   nome: zod.coerce.string().min(1),
   descricao: zod
@@ -71,6 +75,10 @@ export const PostListasReferenciaBody = zod.strictObject({
     .optional(),
   colunaId: zod
     .union([zod.coerce.string(), zod.literal(null).nullable()])
+    .optional(),
+  empresaId: zod
+    .uuid()
+    .regex(postListasReferenciaBodyEmpresaIdRegExp)
     .optional(),
 });
 

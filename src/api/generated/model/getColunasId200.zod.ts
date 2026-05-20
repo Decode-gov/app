@@ -17,6 +17,9 @@ export const getColunasId200DataTabelaNomeMax = 255;
 export const getColunasId200DataTabelaBancoIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const getColunasId200DataTabelaEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const getColunasId200DataTabelaIdRegExpOne = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -80,6 +83,11 @@ export const GetColunasId200 = zod.object({
           ])
           .optional()
           .describe("ID do banco de dados"),
+        empresaId: zod
+          .uuid()
+          .regex(getColunasId200DataTabelaEmpresaIdRegExp)
+          .optional()
+          .describe("ID da empresa (obrigatório para ADMIN)"),
         id: zod
           .uuid()
           .regex(getColunasId200DataTabelaIdRegExpOne)
