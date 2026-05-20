@@ -10,7 +10,6 @@ import {
   Database,
   FileCheck,
   FileText,
-  FlaskConical,
   FolderOpen,
   HelpCircle,
   Home,
@@ -22,7 +21,7 @@ import {
   Tag,
   UserCheck,
   Users,
-  Workflow,
+  Workflow
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -108,7 +107,7 @@ const menuItems = [
     ],
   },
   {
-    title: "Laboratório Governamental",
+    title: "Lab. Governança",
     items: [
       { title: "Arquivos", icon: FolderOpen, url: "/laboratorio-governamental/arquivos" },
     ],
