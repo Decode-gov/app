@@ -41,7 +41,7 @@ export const GetCriticidadesRegulatorias200 = zod.object({
       regraQualidadeId: zod
         .uuid()
         .regex(getCriticidadesRegulatorias200DataItemRegraQualidadeIdRegExp),
-      grauCriticidade: zod.string(),
+      grauCriticidade: zod.enum(["ALTA", "BAIXA", "CRITICA", "MEDIA"]),
       regulacao: zod.object({
         id: zod
           .uuid()
