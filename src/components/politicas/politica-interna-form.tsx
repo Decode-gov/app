@@ -51,11 +51,11 @@ import type { GetPoliticasInternas200DataItem } from "@/types/api";
 
 const politicaInternaFormSchema = z.object({
   nome: z.string().min(1).optional(),
-  descricao: z.string().min(1).optional(),
+  descricao: z.string().optional(),
   categoria: z.string().min(1).optional(),
   objetivo: z.string().min(1).optional(),
   escopo: z.string().min(1).optional(),
-  dominioDadosId: z.uuid().optional(),
+  dominioDadosId: z.uuid().nullable().optional(),
   responsavel: z.string().min(1).optional(),
   dataCriacao: z.coerce.date(),
   dataInicioVigencia: z.coerce.date(),
@@ -122,7 +122,7 @@ export function PoliticaInternaForm({ open, onOpenChange, politica }: PoliticaIn
       categoria: politica ? politica.categoria : "",
       objetivo: politica ? politica.objetivo : "",
       escopo: politica ? politica.escopo : "",
-      dominioDadosId: (politica?.dominioDadosId) ? politica.dominioDadosId : '',
+      dominioDadosId: (politica?.dominioDadosId) ? politica.dominioDadosId : null,
       responsavel: politica ? politica.responsavel : "",
       dataCriacao: politica ? new Date(politica.dataCriacao) : new Date(),
       dataInicioVigencia: politica ? new Date(politica.dataInicioVigencia) : new Date(),

@@ -21,7 +21,7 @@ import {
   Tag,
   UserCheck,
   Users,
-  Workflow
+  Workflow,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -56,30 +56,50 @@ const menuItems = [
   {
     title: "Necessidades de Negócio",
     items: [
-      { title: "Necessidades de Informação", icon: HelpCircle, url: "/necessidades-informacao" },
+      {
+        title: "Necessidades de Informação",
+        icon: HelpCircle,
+        url: "/necessidades-informacao",
+      },
     ],
   },
   {
     title: "Governança",
     items: [
+      { title: "Domínios de dados", icon: Building, url: "/dominios" },
       { title: "Políticas Internas", icon: Shield, url: "/politicas-internas" },
       { title: "Papéis de Governança", icon: UserCheck, url: "/papeis" },
-      { title: "Domínios de dados", icon: Building, url: "/dominios" },
-      { title: "Atribuições Papel/Domínio", icon: Workflow, url: "/atribuicoes-papel-dominio" },
+      {
+        title: "Atribuições Papel/Domínio",
+        icon: Workflow,
+        url: "/atribuicoes-papel-dominio",
+      },
     ],
   },
   {
     title: "Definições e Termos",
     items: [
       { title: "Termos de Negócio", icon: BookOpen, url: "/termos-negocio" },
-      { title: "Nível de Confidencialidade", icon: Tag, url: "/referencial-classificacao" },
-      { title: "Classificação Dos Termos", icon: Tag, url: "/classificacoes-informacao" },
+      {
+        title: "Nível de Confidencialidade",
+        icon: Tag,
+        url: "/referencial-classificacao",
+      },
+      {
+        title: "Classificação Dos Termos",
+        icon: Tag,
+        url: "/classificacoes-informacao",
+      },
     ],
   },
   {
     title: "Ativos Tecnológicos",
     items: [
-      { title: "Ativos Tecnológicos", icon: Server, url: "/ativos-tecnologicos" },
+      {
+        title: "Ativos Tecnológicos",
+        icon: Server,
+        url: "/ativos-tecnologicos",
+      },
       { title: "Tabelas e Colunas", icon: Table, url: "/tabelas-colunas" },
     ],
   },
@@ -87,16 +107,32 @@ const menuItems = [
     title: "Qualidade de dados",
     items: [
       { title: "Regras de Negócio", icon: FileCheck, url: "/regras-negocio" },
-      { title: "Dimensões de Qualidade", icon: BarChart3, url: "/dimensoes-qualidade" },
-      { title: "Regras de Qualidade", icon: CheckCircle, url: "/regras-qualidade" },
-      { title: "Métricas de Qualidade", icon: Activity, url: "/metricas-qualidade" },
+      {
+        title: "Dimensões de Qualidade",
+        icon: BarChart3,
+        url: "/dimensoes-qualidade",
+      },
+      {
+        title: "Regras de Qualidade",
+        icon: CheckCircle,
+        url: "/regras-qualidade",
+      },
+      {
+        title: "Métricas de Qualidade",
+        icon: Activity,
+        url: "/metricas-qualidade",
+      },
     ],
   },
   {
     title: "Regulação e Conformidade",
     items: [
       { title: "Regulação", icon: FileText, url: "/regulacao" },
-      { title: "Criticidade Regulatória", icon: Activity, url: "/criticidade-regulatoria" },
+      {
+        title: "Criticidade Regulatória",
+        icon: Activity,
+        url: "/criticidade-regulatoria",
+      },
     ],
   },
   {
@@ -109,7 +145,11 @@ const menuItems = [
   {
     title: "Lab. Governança",
     items: [
-      { title: "Arquivos", icon: FolderOpen, url: "/laboratorio-governamental/arquivos" },
+      {
+        title: "Arquivos",
+        icon: FolderOpen,
+        url: "/laboratorio-governamental/arquivos",
+      },
     ],
   },
 ];
@@ -118,12 +158,14 @@ export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { mutateAsync: logout, isPending: isLoggingOut } = usePostUsuariosLogout();
+  const { mutateAsync: logout, isPending: isLoggingOut } =
+    usePostUsuariosLogout();
   const { isAdmin } = useEmpresaAdmin();
 
   const empresaId = isAdmin ? searchParams.get("empresaId") : null;
 
-  const buildHref = (url: string) => (empresaId ? `${url}?empresaId=${empresaId}` : url);
+  const buildHref = (url: string) =>
+    empresaId ? `${url}?empresaId=${empresaId}` : url;
 
   const handleLogout = () => {
     logout(undefined, {
@@ -142,21 +184,23 @@ export function AppSidebar() {
             <span className="font-bold text-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               DECODE-GOV
             </span>
-            <span className="text-xs text-muted-foreground">Governança de Dados</span>
+            <span className="text-xs text-muted-foreground">
+              Governança de Dados
+            </span>
           </div>
         </div>
       </SidebarHeader>
       <SidebarContent className="bg-sidebar/30 backdrop-blur-sm">
         {isAdmin && (
-
-          <SidebarMenu>
+          <SidebarMenu className="mt-2">
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                className={`w-auto group transition-all duration-200 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground mx-2 ${pathname === "/empresas"
-                  ? "bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary"
-                  : ""
-                  }`}
+                className={`w-auto group transition-all duration-200 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground mx-2 ${
+                  pathname === "/empresas"
+                    ? "bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary"
+                    : ""
+                }`}
               >
                 <Link href={buildHref("/empresas")}>
                   <Building2 className="group-hover:scale-110 transition-transform duration-200" />
@@ -168,61 +212,122 @@ export function AppSidebar() {
             </SidebarMenuItem>
           </SidebarMenu>
         )}
-        {menuItems.map((item) => (
-          <SidebarGroup key={item.title} className="px-2">
-            {item.title && !item.items && (
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    asChild
-                    className={`group transition-all duration-200 hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground ${pathname === item.url
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
-                      : ""
-                      }`}
-                  >
-                    <Link href={buildHref(item.url ?? "#")}>
-                      {item.icon && (
-                        <item.icon className="group-hover:scale-110 transition-transform duration-200" />
-                      )}
-                      <span className="group-hover:translate-x-1 transition-transform duration-200">
-                        {item.title}
-                      </span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            )}
-            {item.items && (
-              <>
-                <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground/80 px-2 py-1 uppercase tracking-wide">
-                  {item.title}
-                </SidebarGroupLabel>
-                <SidebarGroupContent>
+        {!isAdmin
+          ? menuItems.map((item) => (
+              <SidebarGroup key={item.title} className="px-2">
+                {item.title && !item.items && (
                   <SidebarMenu>
-                    {item.items.map((subItem) => (
-                      <SidebarMenuItem key={subItem.title}>
-                        <SidebarMenuButton
-                          asChild
-                          className={`group transition-all duration-200 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground ml-2 ${pathname === subItem.url
-                            ? "bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary"
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        className={`group transition-all duration-200 hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground ${
+                          pathname === item.url
+                            ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
                             : ""
-                            }`}
-                        >
-                          <Link href={buildHref(subItem.url)}>
-                            <subItem.icon className="group-hover:scale-110 transition-transform duration-200" />
-                            <span className="group-hover:translate-x-1 transition-transform duration-200">
-                              {subItem.title}
-                            </span>
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
+                        }`}
+                      >
+                        <Link href={buildHref(item.url ?? "#")}>
+                          {item.icon && (
+                            <item.icon className="group-hover:scale-110 transition-transform duration-200" />
+                          )}
+                          <span className="group-hover:translate-x-1 transition-transform duration-200">
+                            {item.title}
+                          </span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   </SidebarMenu>
-                </SidebarGroupContent>
-              </>
-            )}
-          </SidebarGroup>
-        ))}
+                )}
+                {item.items && (
+                  <>
+                    <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground/80 px-2 py-1 uppercase tracking-wide">
+                      {item.title}
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      <SidebarMenu>
+                        {item.items.map((subItem) => (
+                          <SidebarMenuItem key={subItem.title}>
+                            <SidebarMenuButton
+                              asChild
+                              className={`group transition-all duration-200 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground ml-2 ${
+                                pathname === subItem.url
+                                  ? "bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary"
+                                  : ""
+                              }`}
+                            >
+                              <Link href={buildHref(subItem.url)}>
+                                <subItem.icon className="group-hover:scale-110 transition-transform duration-200" />
+                                <span className="group-hover:translate-x-1 transition-transform duration-200">
+                                  {subItem.title}
+                                </span>
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        ))}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </>
+                )}
+              </SidebarGroup>
+            ))
+          : empresaId &&
+            menuItems.map((item) => (
+              <SidebarGroup key={item.title} className="px-2">
+                {item.title && !item.items && (
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        className={`group transition-all duration-200 hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground ${
+                          pathname === item.url
+                            ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
+                            : ""
+                        }`}
+                      >
+                        <Link href={buildHref(item.url ?? "#")}>
+                          {item.icon && (
+                            <item.icon className="group-hover:scale-110 transition-transform duration-200" />
+                          )}
+                          <span className="group-hover:translate-x-1 transition-transform duration-200">
+                            {item.title}
+                          </span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                )}
+                {item.items && (
+                  <>
+                    <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground/80 px-2 py-1 uppercase tracking-wide">
+                      {item.title}
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      <SidebarMenu>
+                        {item.items.map((subItem) => (
+                          <SidebarMenuItem key={subItem.title}>
+                            <SidebarMenuButton
+                              asChild
+                              className={`group transition-all duration-200 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground ml-2 ${
+                                pathname === subItem.url
+                                  ? "bg-sidebar-primary/80 text-sidebar-primary-foreground shadow-sm border-l-2 border-primary"
+                                  : ""
+                              }`}
+                            >
+                              <Link href={buildHref(subItem.url)}>
+                                <subItem.icon className="group-hover:scale-110 transition-transform duration-200" />
+                                <span className="group-hover:translate-x-1 transition-transform duration-200">
+                                  {subItem.title}
+                                </span>
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        ))}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </>
+                )}
+              </SidebarGroup>
+            ))}
       </SidebarContent>
       <SidebarFooter className="border-t border-sidebar-border/60 bg-sidebar/50 backdrop-blur-sm">
         <div className="px-4 py-3 space-y-3">
@@ -244,11 +349,13 @@ export function AppSidebar() {
               </>
             )}
           </Button>
-          <div className="text-xs text-muted-foreground/80">Sistema de Governança de Dados</div>
+          <div className="text-xs text-muted-foreground/80">
+            Sistema de Governança de Dados
+          </div>
           <div className="text-xs text-muted-foreground/60 flex items-center gap-1">
             <span>v1.0</span>
             <span className="text-primary">•</span>
-            <span>2025</span>
+            <span>{new Date().getFullYear()}</span>
           </div>
         </div>
       </SidebarFooter>
