@@ -14,7 +14,11 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { EmpresaAdminProvider } from "@/context/empresa-admin-context";
 
-export default function DecodeGovLayout({ children }: { children: React.ReactNode }) {
+export default function DecodeGovLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <Suspense>
       <EmpresaAdminProvider>
@@ -24,7 +28,10 @@ export default function DecodeGovLayout({ children }: { children: React.ReactNod
             <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border/60 bg-card/50 backdrop-blur-sm flex-row justify-between px-4">
               <div className="flex items-center gap-2">
                 <SidebarTrigger className="-ml-1 hover:bg-accent/50 transition-colors duration-200" />
-                <Separator orientation="vertical" className="mr-2 h-4 bg-border/60" />
+                <Separator
+                  orientation="vertical"
+                  className="mr-2 h-4 bg-border/60"
+                />
                 <Breadcrumb>
                   <BreadcrumbList>
                     <BreadcrumbItem className="hidden md:block">
@@ -38,7 +45,8 @@ export default function DecodeGovLayout({ children }: { children: React.ReactNod
                     <BreadcrumbSeparator className="hidden md:block text-muted-foreground/60" />
                     <BreadcrumbItem>
                       <BreadcrumbPage className="text-foreground/80">
-                        Dados, ética, controle, democratização em Governança de dados.
+                        Dados, ética, controle, democratização em Governança de
+                        dados.
                       </BreadcrumbPage>
                     </BreadcrumbItem>
                   </BreadcrumbList>

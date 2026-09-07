@@ -24,7 +24,7 @@ export default defineConfig({
           name: "customInstance",
         },
         query: {
-          useInvalidate: true,
+          signal: true,
         },
       },
     },
