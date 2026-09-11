@@ -8,29 +8,47 @@ import {
 } from "@/api/generated/endpoints/atribuições-papel-domínio/atribuições-papel-domínio";
 import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
 import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { AtribuicaoForm } from "@/components/atribuicoes/atribuicao-form";
 import { AtribuicoesTable } from "@/components/atribuicoes/atribuicoes-table";
 import { getAtribuicoesColumns } from "@/components/atribuicoes/atribuicoes-table-columns";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { AtribuicaoResponse } from "@/types/api";
 
 export default function AtribuicoesPage() {
   const empresaParams = useEmpresaIdParam();
   const [formOpen, setFormOpen] = useState(false);
-  const [selectedAtribuicao, setSelectedAtribuicao] = useState<AtribuicaoResponse | undefined>();
+  const [selectedAtribuicao, setSelectedAtribuicao] = useState<
+    AtribuicaoResponse | undefined
+  >();
 
-  const { data: atribuicoesData, isLoading, error } = useGetAtribuicoes(empresaParams);
+  const {
+    data: atribuicoesData,
+    isLoading,
+    error,
+  } = useGetAtribuicoes(empresaParams);
   const { data: papeisData } = useGetPapeis(empresaParams);
   const { data: comunidadesData } = useGetComunidades(empresaParams);
   const deleteAtribuicao = useDeleteAtribuicoesId();
 
   // Memoização dos dados
   const papeis = useMemo(() => papeisData?.data ?? [], [papeisData?.data]);
-  const dominios = useMemo(() => comunidadesData?.data ?? [], [comunidadesData?.data]);
-  const atribuicoes = useMemo(() => atribuicoesData?.data ?? [], [atribuicoesData?.data]);
+  const dominios = useMemo(
+    () => comunidadesData?.data ?? [],
+    [comunidadesData?.data],
+  );
+  const atribuicoes = useMemo(
+    () => atribuicoesData?.data ?? [],
+    [atribuicoesData?.data],
+  );
 
   // Handlers para as ações da tabela
   const handleEdit = useCallback((atribuicao: AtribuicaoResponse) => {
@@ -124,9 +142,11 @@ export default function AtribuicoesPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-destructive">
-            Atribuições Papel↔Domínio
+            Atribuições Papel - Domínio
           </h1>
-          <p className="text-muted-foreground mt-2">Erro ao carregar atribuições</p>
+          <p className="text-muted-foreground mt-2">
+            Erro ao carregar atribuições
+          </p>
         </div>
       </div>
     );
@@ -136,7 +156,7 @@ export default function AtribuicoesPage() {
     <div className="space-y-6">
       <div className="animate-fade-in">
         <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          Atribuições Papel↔Domínio
+          Atribuições Papel - Domínio
         </h1>
         <p className="text-muted-foreground mt-2">
           Gerencie as atribuições entre papéis e domínios do sistema DECODE-GOV
@@ -147,20 +167,28 @@ export default function AtribuicoesPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Atribuições</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total de Atribuições
+            </CardTitle>
             <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
               <Workflow className="h-4 w-4 text-blue-600 transition-colors duration-300" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{atribuicoes.length}</div>
-            <p className="text-xs text-muted-foreground">atribuições cadastradas</p>
+            <div className="text-2xl font-bold text-blue-600">
+              {atribuicoes.length}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              atribuições cadastradas
+            </p>
           </CardContent>
         </Card>
 
         <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Com Onboarding</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Com Onboarding
+            </CardTitle>
             <div className="p-2 rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors duration-300">
               <Workflow className="h-4 w-4 text-green-600 transition-colors duration-300" />
             </div>
@@ -181,7 +209,9 @@ export default function AtribuicoesPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">{atribuicoes.length}</div>
+            <div className="text-2xl font-bold text-purple-600">
+              {atribuicoes.length}
+            </div>
             <p className="text-xs text-muted-foreground">atribuições ativas</p>
           </CardContent>
         </Card>
@@ -194,7 +224,8 @@ export default function AtribuicoesPage() {
             <div>
               <CardTitle>Atribuições Cadastradas</CardTitle>
               <CardDescription>
-                Lista de todas as atribuições entre papéis e domínios cadastradas
+                Lista de todas as atribuições entre papéis e domínios
+                cadastradas
               </CardDescription>
             </div>
             <Button

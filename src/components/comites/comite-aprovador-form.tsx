@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
+    getGetComitesAprovadoresQueryKey,
   usePostComitesAprovadores,
   usePutComitesAprovadoresId,
 } from "@/api/generated/endpoints/comitês-aprovadores/comitês-aprovadores";
@@ -31,6 +32,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import type { GetComiteAprovador200DataItem } from "@/types/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface ComiteAprovadorFormProps {
   open: boolean;
@@ -39,6 +42,7 @@ interface ComiteAprovadorFormProps {
 }
 
 export function ComiteAprovadorForm({ open, onOpenChange, comite }: ComiteAprovadorFormProps) {
+  const queryClient = useQueryClient()
   const createMutation = usePostComitesAprovadores();
   const updateMutation = usePutComitesAprovadoresId();
 
@@ -78,7 +82,11 @@ export function ComiteAprovadorForm({ open, onOpenChange, comite }: ComiteAprova
       form.reset();
       onOpenChange(false);
     } catch (error) {
-      console.error("Erro ao salvar comitê aprovador:", error);
+      toast.error("Erro ao salvar comitê aprovador");
+    } finally {
+      queryClient.invalidateQueries({
+        queryKey: [getGetComitesAprovadoresQueryKey]
+      })
     }
   };
 

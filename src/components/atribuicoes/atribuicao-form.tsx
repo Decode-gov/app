@@ -1,10 +1,13 @@
 ﻿"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import {
+  getGetAtribuicoesQueryKey,
   usePostAtribuicoes,
   usePutAtribuicoesId,
 } from "@/api/generated/endpoints/atribuições-papel-domínio/atribuições-papel-domínio";
@@ -54,7 +57,12 @@ interface AtribuicaoFormProps {
   atribuicao?: AtribuicaoResponse;
 }
 
-export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFormProps) {
+export function AtribuicaoForm({
+  open,
+  onOpenChange,
+  atribuicao,
+}: AtribuicaoFormProps) {
+  const queryClient = useQueryClient();
   const empresaParams = useEmpresaIdParam();
   const isEditing = !!atribuicao;
   const [papelDialogOpen, setPapelDialogOpen] = useState(false);
@@ -120,7 +128,11 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
       onOpenChange(false);
       form.reset();
     } catch (error) {
-      console.error("Erro ao salvar atribuição:", error);
+      toast.error("Erro ao salvar atribuição");
+    } finally {
+      queryClient.invalidateQueries({
+        queryKey: [getGetAtribuicoesQueryKey],
+      });
     }
   };
 
@@ -128,7 +140,9 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Editar Atribuição" : "Nova Atribuição"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Editar Atribuição" : "Nova Atribuição"}
+          </DialogTitle>
           <DialogDescription>
             {isEditing
               ? "Atualize os dados da atribuição."
@@ -147,7 +161,10 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
                   <FormItem>
                     <FormLabel>Papel *</FormLabel>
                     <div className="flex gap-2">
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecione um papel" />
@@ -184,7 +201,10 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
                   <FormItem>
                     <FormLabel>Domínio *</FormLabel>
                     <div className="flex gap-2">
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecione um domínio" />
@@ -242,7 +262,10 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
                   <FormItem>
                     <FormLabel>Comitê Aprovador *</FormLabel>
                     <div className="flex gap-2">
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecione um comitê" />
@@ -279,7 +302,10 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
                   <FormItem>
                     <FormLabel>Responsável *</FormLabel>
                     <FormControl>
-                      <Input placeholder="Digite o nome do responsável" {...field} />
+                      <Input
+                        placeholder="Digite o nome do responsável"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -300,19 +326,28 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                   </FormControl>
                 </FormItem>
               )}
             />
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                disabled={createAtribuicao.isPending || updateAtribuicao.isPending}
+                disabled={
+                  createAtribuicao.isPending || updateAtribuicao.isPending
+                }
               >
                 {createAtribuicao.isPending || updateAtribuicao.isPending
                   ? "Salvando..."
@@ -326,9 +361,18 @@ export function AtribuicaoForm({ open, onOpenChange, atribuicao }: AtribuicaoFor
       </DialogContent>
 
       {/* Dialogs para criar novos registros */}
-      <PapelGovernancaForm open={papelDialogOpen} onOpenChange={setPapelDialogOpen} />
-      <ComunidadeForm open={dominioDialogOpen} onOpenChange={setDominioDialogOpen} />
-      <ComiteAprovadorForm open={comiteDialogOpen} onOpenChange={setComiteDialogOpen} />
+      <PapelGovernancaForm
+        open={papelDialogOpen}
+        onOpenChange={setPapelDialogOpen}
+      />
+      <ComunidadeForm
+        open={dominioDialogOpen}
+        onOpenChange={setDominioDialogOpen}
+      />
+      <ComiteAprovadorForm
+        open={comiteDialogOpen}
+        onOpenChange={setComiteDialogOpen}
+      />
     </Dialog>
   );
 }
