@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { usePostUsuariosLogin } from "@/api/generated/endpoints/usuários/usuários";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { DecodeGovIcon } from "@/components/ui/decode-gov-icon";
 import {
   Form,
@@ -19,6 +19,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 const loginSchema = z.object({
   email: z.email({ message: "Digite um e-mail válido" }),
@@ -71,7 +73,7 @@ export default function LoginPage() {
         </div>
 
         {/* Login card */}
-        <Card className="border-border/50 shadow-2xl backdrop-blur-sm bg-card/95 animate-slide-in-right">
+        <Card className="border-border/50 shadow-2xl backdrop-blur-sm bg-card/95 animate-slide-in-right space-y-2">
           <CardHeader className="space-y-1 pb-6">
             <CardTitle className="text-2xl font-bold text-center">Bem-vindo</CardTitle>
             <CardDescription className="text-center">
@@ -159,6 +161,12 @@ export default function LoginPage() {
               </form>
             </Form>
           </CardContent>
+          <Separator/>
+          <CardFooter>
+            <Button asChild className="group transition-all duration-200 hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground w-full">
+              <Link href={`https://wa.me/553183713849?text=Ol%C3%A1%2C%20gostaria%20de%20conhecer%20um%20pouco%20mais%20o%20decodegov`}>Solicitar demonstração</Link>
+            </Button>
+          </CardFooter>
         </Card>
 
         {/* Footer */}
