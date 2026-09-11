@@ -37,10 +37,9 @@ export default defineConfig({
     output: {
       mode: "tags-split",
       target: "./src/api/generated/zod",
-
       client: "zod",
       fileExtension: ".zod.ts",
-      formatter: 'prettier',
+      formatter: 'biome',
       clean: true,
       override: {
         zod: {
