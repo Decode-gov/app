@@ -1,10 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import {
+  getGetPapeisQueryKey,
   usePostPapeis,
   usePutPapeisId,
 } from "@/api/generated/endpoints/papéis/papéis";
@@ -52,6 +55,7 @@ export function PapelGovernancaForm({
   onOpenChange,
   papel,
 }: PapelGovernancaFormProps) {
+  const queryClient = useQueryClient();
   const empresaParams = useEmpresaIdParam();
   const [politicaDialogOpen, setPoliticaDialogOpen] = useState(false);
   const createMutation = usePostPapeis();
@@ -91,18 +95,28 @@ export function PapelGovernancaForm({
   const onSubmit = async (data: PostPapeisBody) => {
     try {
       if (papel) {
-        await updateMutation.mutateAsync({
-          id: papel.id,
-          data: data,
-        });
+        await updateMutation
+          .mutateAsync({
+            id: papel.id,
+            data: data,
+          })
+          .then(() => {
+            queryClient.invalidateQueries({
+              queryKey: [getGetPapeisQueryKey],
+            });
+          });
       } else {
-        await createMutation.mutateAsync({ data });
+        await createMutation.mutateAsync({ data }).then(() => {
+          queryClient.invalidateQueries({
+            queryKey: [getGetPapeisQueryKey],
+          });
+        });
       }
 
       form.reset();
       onOpenChange(false);
-    } catch (error) {
-      console.error("Erro ao salvar papel:", error);
+    } catch (error: any) {
+      toast.error("Erro ao tentar salvar novo papel de governança!");
     }
   };
 
