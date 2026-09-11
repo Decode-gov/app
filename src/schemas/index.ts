@@ -61,7 +61,6 @@ export const UpdatePoliticaInternaSchema = PoliticaInternaSchema.partial();
 // ============================================================================
 
 export const PapelSchema = z.object({
-  listaPapelId: uuidRequired("Lista de Papel").optional(),
   nome: stringRequired(1, "Nome"),
   descricao: stringOptional(),
   politicaId: uuidRequired("Política"),

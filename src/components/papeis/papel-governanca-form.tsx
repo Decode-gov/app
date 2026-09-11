@@ -4,50 +4,42 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import {
+  usePostPapeis,
+  usePutPapeisId,
+} from "@/api/generated/endpoints/papéis/papéis";
+import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import { PostPapeisBody } from "@/api/generated/model";
 import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form";
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import type { PapelResponse } from "@/types/api";
-import { usePostPapeis, usePutPapeisId } from "@/api/generated/endpoints/papéis/papéis";
-import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
 import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
-import { CreatePapelSchema, PapelFormData } from "@/schemas";
-
-// Schema alinhado com a especificação do prompt e tipos da API
-const papelSchema = z.object({
-  listaPapelId: z.uuid("Lista de Papel é obrigatória").optional(),
-  nome: z.string().min(1, "Nome é obrigatório").max(255, "Nome deve ter no máximo 255 caracteres"),
-  descricao: z.string().max(2000, "Descrição deve ter no máximo 2000 caracteres").optional(),
-  politicaId: z.uuid("Política é obrigatória"),
-});
-
-type PapelFormValues = z.infer<typeof papelSchema>;
+import type { PapelResponse } from "@/types/api";
 
 interface PapelGovernancaFormProps {
   open: boolean;
@@ -55,21 +47,24 @@ interface PapelGovernancaFormProps {
   papel?: PapelResponse;
 }
 
-export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernancaFormProps) {
+export function PapelGovernancaForm({
+  open,
+  onOpenChange,
+  papel,
+}: PapelGovernancaFormProps) {
   const empresaParams = useEmpresaIdParam();
   const [politicaDialogOpen, setPoliticaDialogOpen] = useState(false);
   const createMutation = usePostPapeis();
   const updateMutation = usePutPapeisId();
   const { data: politicasData } = useGetPoliticasInternas(empresaParams);
 
-  const form = useForm<PapelFormData>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // biome-ignore lint/suspicious/noExplicitAny: form type workaround
-    resolver: zodResolver(CreatePapelSchema) as any,
+  const form = useForm<PostPapeisBody>({
+    resolver: zodResolver(PostPapeisBody),
     defaultValues: {
       nome: "",
       descricao: "",
       politicaId: "",
+      empresaId: empresaParams.empresaId,
     },
     mode: "onChange",
   });
@@ -93,19 +88,15 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
     }
   }, [open, papel, form]);
 
-  const onSubmit = async (data: PapelFormValues) => {
+  const onSubmit = async (data: PostPapeisBody) => {
     try {
       if (papel) {
         await updateMutation.mutateAsync({
           id: papel.id,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          // biome-ignore lint/suspicious/noExplicitAny: form type workaround
-          data: data as any,
+          data: data,
         });
       } else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        // biome-ignore lint/suspicious/noExplicitAny: form type workaround
-        await createMutation.mutateAsync(data as any);
+        await createMutation.mutateAsync({ data });
       }
 
       form.reset();
@@ -133,7 +124,9 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
         <DialogContent className="overflow-y-auto bg-background/95 backdrop-blur-sm border-border/60">
           <DialogHeader>
             <DialogTitle className="text-foreground">
-              {papel ? "Editar Papel de Governança" : "Novo Papel de Governança"}
+              {papel
+                ? "Editar Papel de Governança"
+                : "Novo Papel de Governança"}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground">
               {papel
@@ -172,7 +165,9 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
                 name="descricao"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">Descrição *</FormLabel>
+                    <FormLabel className="text-foreground">
+                      Descrição *
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Descreva as responsabilidades e atribuições deste papel..."
@@ -194,10 +189,15 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
                 name="politicaId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">Política Associada *</FormLabel>
+                    <FormLabel className="text-foreground">
+                      Política Associada *
+                    </FormLabel>
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <Select onValueChange={field.onChange} value={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger className="bg-background/50 border-border/60 w-full">
                               <SelectValue placeholder="Selecione a política" />
@@ -210,7 +210,10 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
                               </div>
                             ) : (
                               politicasAtivas.map((politica) => (
-                                <SelectItem key={politica.id ?? ""} value={politica.id ?? ""}>
+                                <SelectItem
+                                  key={politica.id ?? ""}
+                                  value={politica.id ?? ""}
+                                >
                                   {politica.nome}
                                 </SelectItem>
                               ))
@@ -252,7 +255,11 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
                   disabled={isSubmitting}
                   className="bg-primary hover:bg-primary/90"
                 >
-                  {isSubmitting ? "Salvando..." : papel ? "Salvar Alterações" : "Criar Papel"}
+                  {isSubmitting
+                    ? "Salvando..."
+                    : papel
+                      ? "Salvar Alterações"
+                      : "Criar Papel"}
                 </Button>
               </DialogFooter>
             </form>
@@ -261,7 +268,10 @@ export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernan
       </Dialog>
 
       {/* Dialog para criar política inline */}
-      <PoliticaInternaForm open={politicaDialogOpen} onOpenChange={setPoliticaDialogOpen} />
+      <PoliticaInternaForm
+        open={politicaDialogOpen}
+        onOpenChange={setPoliticaDialogOpen}
+      />
     </>
   );
 }
