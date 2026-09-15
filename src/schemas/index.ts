@@ -338,7 +338,7 @@ export const UpdateRegulacaoSchema = RegulacaoSchema.partial();
 export const CriticidadeRegulatoriaSchema = z.object({
   regulacaoId: uuidRequired("Regulação"),
   regraQualidadeId: uuidRequired("Regra de Qualidade"),
-  grauCriticidade: z.enum(["BAIXA", "MEDIA", "ALTA", "CRITICA"]),
+  grauCriticidade: z.string(),
 });
 
 export const CreateCriticidadeRegulatoriaSchema = CriticidadeRegulatoriaSchema;
