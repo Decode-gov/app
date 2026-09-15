@@ -10,7 +10,6 @@ import {
   useGetRegrasQualidade,
 } from "@/api/generated/endpoints/regras-de-qualidade/regras-de-qualidade";
 import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { RegraQualidadeForm } from "@/components/regras-qualidade/regra-qualidade-form";
 import { RegrasQualidadeTable } from "@/components/regras-qualidade/regras-qualidade-table";
 import { Button } from "@/components/ui/button";
@@ -23,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { RegraQualidadeResponse } from "@/types/api";
 
 export default function RegrasQualidadePage() {
@@ -139,16 +139,16 @@ export default function RegrasQualidadePage() {
             </div>
 
             <RegrasQualidadeTable
-                data={regras}
-                dimensoes={dimensoes}
-                tabelas={tabelas}
-                colunas={colunas}
-                papeis={papeis}
-                isLoading={isLoading}
-                error={error}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
+              data={regras}
+              dimensoes={dimensoes}
+              tabelas={tabelas}
+              colunas={colunas}
+              papeis={papeis}
+              isLoading={isLoading}
+              error={error}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           </CardContent>
         </Card>
       </div>

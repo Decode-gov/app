@@ -50,11 +50,7 @@ interface PapelGovernancaFormProps {
   papel?: PapelResponse;
 }
 
-export function PapelGovernancaForm({
-  open,
-  onOpenChange,
-  papel,
-}: PapelGovernancaFormProps) {
+export function PapelGovernancaForm({ open, onOpenChange, papel }: PapelGovernancaFormProps) {
   const queryClient = useQueryClient();
   const empresaParams = useEmpresaIdParam();
   const [politicaDialogOpen, setPoliticaDialogOpen] = useState(false);
@@ -111,7 +107,7 @@ export function PapelGovernancaForm({
       onOpenChange(false);
       // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (error) {
-      console.error('Erro ao salvar papel!', error)
+      console.error("Erro ao salvar papel!", error);
       toast.error("Erro ao tentar salvar novo papel de governança!");
     }
   };
@@ -134,9 +130,7 @@ export function PapelGovernancaForm({
         <DialogContent className="overflow-y-auto bg-background/95 backdrop-blur-sm border-border/60">
           <DialogHeader>
             <DialogTitle className="text-foreground">
-              {papel
-                ? "Editar Papel de Governança"
-                : "Novo Papel de Governança"}
+              {papel ? "Editar Papel de Governança" : "Novo Papel de Governança"}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground">
               {papel
@@ -175,9 +169,7 @@ export function PapelGovernancaForm({
                 name="descricao"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Descrição *
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Descrição *</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Descreva as responsabilidades e atribuições deste papel..."
@@ -199,15 +191,10 @@ export function PapelGovernancaForm({
                 name="politicaId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground">
-                      Política Associada *
-                    </FormLabel>
+                    <FormLabel className="text-foreground">Política Associada *</FormLabel>
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
+                        <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger className="bg-background/50 border-border/60 w-full">
                               <SelectValue placeholder="Selecione a política" />
@@ -220,10 +207,7 @@ export function PapelGovernancaForm({
                               </div>
                             ) : (
                               politicasAtivas.map((politica) => (
-                                <SelectItem
-                                  key={politica.id ?? ""}
-                                  value={politica.id ?? ""}
-                                >
+                                <SelectItem key={politica.id ?? ""} value={politica.id ?? ""}>
                                   {politica.nome}
                                 </SelectItem>
                               ))
@@ -265,11 +249,7 @@ export function PapelGovernancaForm({
                   disabled={isSubmitting}
                   className="bg-primary hover:bg-primary/90"
                 >
-                  {isSubmitting
-                    ? "Salvando..."
-                    : papel
-                      ? "Salvar Alterações"
-                      : "Criar Papel"}
+                  {isSubmitting ? "Salvando..." : papel ? "Salvar Alterações" : "Criar Papel"}
                 </Button>
               </DialogFooter>
             </form>
@@ -278,10 +258,7 @@ export function PapelGovernancaForm({
       </Dialog>
 
       {/* Dialog para criar política inline */}
-      <PoliticaInternaForm
-        open={politicaDialogOpen}
-        onOpenChange={setPoliticaDialogOpen}
-      />
+      <PoliticaInternaForm open={politicaDialogOpen} onOpenChange={setPoliticaDialogOpen} />
     </>
   );
 }

@@ -4,6 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
+import {
+  usePostPartesEnvolvidas,
+  usePutPartesEnvolvidasId,
+} from "@/api/generated/endpoints/partes-envolvidas/partes-envolvidas";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,11 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
-import {
-  usePostPartesEnvolvidas,
-  usePutPartesEnvolvidasId,
-} from "@/api/generated/endpoints/partes-envolvidas/partes-envolvidas";
 import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { ParteEnvolvidaResponse } from "@/types/api";
 

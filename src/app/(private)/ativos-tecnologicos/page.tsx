@@ -11,7 +11,6 @@ import {
   useGetRepositoriosDocumento,
 } from "@/api/generated/endpoints/repositórios-de-documento/repositórios-de-documento";
 import { useDeleteSistemasId, useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { BancoForm } from "@/components/bancos/banco-form";
 import { BancoTable } from "@/components/bancos/banco-table";
 import { RepositorioForm } from "@/components/repositorios-documento/repositorio-form";
@@ -21,6 +20,7 @@ import { SistemaTable } from "@/components/sistemas/sistema-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { BancoResponse, RepositorioDocumentoResponse, SistemaResponse } from "@/types/api";
 
 export default function AtivosTecnologicosPage() {
@@ -39,7 +39,11 @@ export default function AtivosTecnologicosPage() {
     isLoading: isLoadingSistemas,
     error: errorSistemas,
   } = useGetSistemas(empresaParams);
-  const { data: bancosData, isLoading: isLoadingBancos, error: errorBancos } = useGetBancos(empresaParams);
+  const {
+    data: bancosData,
+    isLoading: isLoadingBancos,
+    error: errorBancos,
+  } = useGetBancos(empresaParams);
   const {
     data: repositoriosData,
     isLoading: isLoadingRepositorios,
@@ -157,7 +161,6 @@ export default function AtivosTecnologicosPage() {
               <p className="text-xs text-muted-foreground">repositórios cadastrados</p>
             </CardContent>
           </Card>
-
         </div>
 
         <Tabs defaultValue="sistemas" className="w-full">

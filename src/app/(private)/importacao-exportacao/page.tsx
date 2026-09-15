@@ -89,8 +89,7 @@ export default function ImportacaoExportacaoPage() {
   const filteredOperacoes = useMemo(() => {
     return operacoes.filter((operacao) => {
       const matchesSearch =
-        search === "" ||
-        operacao.tipoEntidade.toLowerCase().includes(search.toLowerCase());
+        search === "" || operacao.tipoEntidade.toLowerCase().includes(search.toLowerCase());
 
       const matchesFormato = formatoFilter === "all" || operacao.formato === formatoFilter;
 

@@ -22,7 +22,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -49,18 +49,16 @@ export function ProdutoForm({ open, onOpenChange, produto }: ProdutoFormProps) {
   const createProduto = usePostProdutosDados();
   const updateProduto = usePutProdutosDadosId();
 
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nome: produto?.nome ?? '',
+      nome: produto?.nome ?? "",
       descricao: produto?.descricao ?? "",
     },
   });
 
   const onSubmit = async (data: FormValues) => {
     try {
-
       if (isEditing) {
         await updateProduto.mutateAsync({ id: produto.id, data });
       } else {

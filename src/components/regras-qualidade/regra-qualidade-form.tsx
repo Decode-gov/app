@@ -7,6 +7,10 @@ import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
 import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensões-de-qualidade/dimensões-de-qualidade";
 import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
 import { useGetRegrasNegocio } from "@/api/generated/endpoints/regras-de-negócio/regras-de-negócio";
+import {
+  usePostRegrasQualidade,
+  usePutRegrasQualidadeId,
+} from "@/api/generated/endpoints/regras-de-qualidade/regras-de-qualidade";
 import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,10 +37,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { type CreateRegraQualidadeFormData, CreateRegraQualidadeSchema } from "@/schemas";
 import type { RegraQualidadeResponse } from "@/types/api";
-import { usePostRegrasQualidade, usePutRegrasQualidadeId } from "@/api/generated/endpoints/regras-de-qualidade/regras-de-qualidade";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 
 interface RegraQualidadeFormProps {
   open: boolean;

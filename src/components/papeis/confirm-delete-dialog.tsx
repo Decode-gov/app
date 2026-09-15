@@ -40,9 +40,7 @@ export function ConfirmDeleteDialog({
               <AlertTriangle className="h-5 w-5 text-destructive" />
             </div>
             <div>
-              <DialogTitle className="text-foreground">
-                Confirmar Exclusão
-              </DialogTitle>
+              <DialogTitle className="text-foreground">Confirmar Exclusão</DialogTitle>
               <DialogDescription className="text-muted-foreground">
                 Esta ação não pode ser desfeita.
               </DialogDescription>
@@ -58,28 +56,20 @@ export function ConfirmDeleteDialog({
           <div className="rounded-lg border border-border/60 bg-muted/30 p-4 space-y-3">
             <div className="flex items-start justify-between">
               <div className="space-y-1 flex-1">
-                <h4 className="text-sm font-semibold text-foreground">
-                  {papel.nome}
-                </h4>
+                <h4 className="text-sm font-semibold text-foreground">{papel.nome}</h4>
                 <p className="text-xs text-muted-foreground">ID: {papel.id}</p>
               </div>
             </div>
 
             <div className="space-y-2">
               <div>
-                <span className="text-xs text-muted-foreground">
-                  Descrição:
-                </span>
-                <p className="text-sm text-foreground mt-1">
-                  {papel.descricao}
-                </p>
+                <span className="text-xs text-muted-foreground">Descrição:</span>
+                <p className="text-sm text-foreground mt-1">{papel.descricao}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border/60">
                 <div>
-                  <span className="text-xs text-muted-foreground">
-                    Criado em:
-                  </span>
+                  <span className="text-xs text-muted-foreground">Criado em:</span>
                   <p className="text-sm text-foreground">
                     {format(papel.criadoEm, "dd/MM/yyyy 'às' HH:mm", {
                       locale: ptBR,
@@ -87,9 +77,7 @@ export function ConfirmDeleteDialog({
                   </p>
                 </div>
                 <div>
-                  <span className="text-xs text-muted-foreground">
-                    Atualizado em:
-                  </span>
+                  <span className="text-xs text-muted-foreground">Atualizado em:</span>
                   <p className="text-sm text-foreground">
                     {format(papel.atualizadoEm, "dd/MM/yyyy 'às' HH:mm", {
                       locale: ptBR,
@@ -105,8 +93,7 @@ export function ConfirmDeleteDialog({
               ⚠️ Atenção: Esta ação é permanente
             </p>
             <p className="text-xs text-destructive/80 mt-1">
-              O papel será removido definitivamente do sistema e não poderá ser
-              recuperado.
+              O papel será removido definitivamente do sistema e não poderá ser recuperado.
             </p>
           </div>
         </div>

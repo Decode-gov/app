@@ -86,7 +86,7 @@ export function ReferencialForm({ open, onOpenChange, referencial }: Referencial
         await updateReferencial.mutateAsync({ id: referencial.id, data });
       } else {
         await createReferencial.mutateAsync({
-          data
+          data,
         });
       }
       onOpenChange(false);

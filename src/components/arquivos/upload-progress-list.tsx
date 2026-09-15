@@ -1,7 +1,7 @@
 "use client";
 
-import { UploadProgressItem } from "./upload-progress-item";
 import type { UploadItem } from "./upload-progress-item";
+import { UploadProgressItem } from "./upload-progress-item";
 
 interface UploadProgressListProps {
   uploads: UploadItem[];

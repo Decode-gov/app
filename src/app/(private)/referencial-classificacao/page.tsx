@@ -7,13 +7,13 @@ import {
   useGetListasClassificacao,
 } from "@/api/generated/endpoints/listas-de-classificação/listas-de-classificação";
 import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { ReferencialForm } from "@/components/referencial/referencial-form";
 import { ReferencialTable } from "@/components/referencial/referencial-table";
 import { getReferencialColumns } from "@/components/referencial/referencial-table-columns";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { ListaClassificacaoResponse } from "@/types/api";
 
 export default function ReferencialClassificacaoPage() {

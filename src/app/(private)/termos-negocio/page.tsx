@@ -3,13 +3,13 @@
 import { BookOpen, Plus } from "lucide-react";
 import { useState } from "react";
 import { useDeleteDefinicoesId, useGetDefinicoes } from "@/api/generated/endpoints/termos/termos";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { createColumns } from "@/components/termos/columns";
 import { TermoForm } from "@/components/termos/termo-form";
 import { TermosDataTable } from "@/components/termos/termos-data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { DefinicaoResponse } from "@/types/api";
 
 export default function TermosNegocioPage() {

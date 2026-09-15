@@ -5,6 +5,8 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useGetAtividades } from "@/api/generated/endpoints/atividades/atividades";
+import { usePostOperacoes, usePutOperacoesId } from "@/api/generated/endpoints/operações/operações";
 import { AtividadeForm } from "@/components/atividades/atividade-form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -34,8 +36,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetAtividades } from "@/api/generated/endpoints/atividades/atividades";
-import { usePostOperacoes, usePutOperacoesId } from "@/api/generated/endpoints/operações/operações";
 import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { OperacaoResponse } from "@/types/api";
 
@@ -147,12 +147,15 @@ export function OperacaoForm({ open, onOpenChange, operacao }: OperacaoFormProps
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       // biome-ignore lint/suspicious/noExplicitAny: form type workaround
-      createOperacao({ data: payload as any }, {
-        onSuccess: () => {
-          onOpenChange(false);
-          form.reset();
+      createOperacao(
+        { data: payload as any },
+        {
+          onSuccess: () => {
+            onOpenChange(false);
+            form.reset();
+          },
         },
-      });
+      );
     }
   };
 

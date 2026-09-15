@@ -158,14 +158,12 @@ export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { mutateAsync: logout, isPending: isLoggingOut } =
-    usePostUsuariosLogout();
+  const { mutateAsync: logout, isPending: isLoggingOut } = usePostUsuariosLogout();
   const { isAdmin } = useEmpresaAdmin();
 
   const empresaId = isAdmin ? searchParams.get("empresaId") : null;
 
-  const buildHref = (url: string) =>
-    empresaId ? `${url}?empresaId=${empresaId}` : url;
+  const buildHref = (url: string) => (empresaId ? `${url}?empresaId=${empresaId}` : url);
 
   const handleLogout = () => {
     logout(undefined, {
@@ -184,9 +182,7 @@ export function AppSidebar() {
             <span className="font-bold text-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               DECODE-GOV
             </span>
-            <span className="text-xs text-muted-foreground">
-              Governança de Dados
-            </span>
+            <span className="text-xs text-muted-foreground">Governança de Dados</span>
           </div>
         </div>
       </SidebarHeader>
@@ -349,9 +345,7 @@ export function AppSidebar() {
               </>
             )}
           </Button>
-          <div className="text-xs text-muted-foreground/80">
-            Sistema de Governança de Dados
-          </div>
+          <div className="text-xs text-muted-foreground/80">Sistema de Governança de Dados</div>
           <div className="text-xs text-muted-foreground/60 flex items-center gap-1">
             <span>v1.0</span>
             <span className="text-primary">•</span>

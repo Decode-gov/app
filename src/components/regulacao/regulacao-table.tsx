@@ -29,9 +29,7 @@ function buildColumns(
     {
       accessorKey: "epigrafe",
       header: "Epígrafe",
-      cell: ({ row }) => (
-        <span className="font-medium">{row.original.epigrafe}</span>
-      ),
+      cell: ({ row }) => <span className="font-medium">{row.original.epigrafe}</span>,
     },
     {
       accessorKey: "descricao",
@@ -50,24 +48,19 @@ function buildColumns(
     {
       accessorKey: "dataInicio",
       header: "Início da Vigência",
-      cell: ({ row }) =>
-        new Date(row.original.dataInicio).toLocaleDateString("pt-BR"),
+      cell: ({ row }) => new Date(row.original.dataInicio).toLocaleDateString("pt-BR"),
     },
     {
       accessorKey: "dataFim",
       header: "Fim da Vigência",
       cell: ({ row }) =>
-        row.original.dataFim
-          ? new Date(row.original.dataFim).toLocaleDateString("pt-BR")
-          : "-",
+        row.original.dataFim ? new Date(row.original.dataFim).toLocaleDateString("pt-BR") : "-",
     },
     {
       accessorKey: "createdAt",
       header: "Criado em",
       cell: ({ row }) =>
-        row.original.createdAt
-          ? new Date(row.original.createdAt).toLocaleDateString("pt-BR")
-          : "-",
+        row.original.createdAt ? new Date(row.original.createdAt).toLocaleDateString("pt-BR") : "-",
     },
     {
       id: "actions",

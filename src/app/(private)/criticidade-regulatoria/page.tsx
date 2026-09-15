@@ -6,7 +6,6 @@ import {
   useDeleteCriticidadesRegulatoriasId,
   useGetCriticidadesRegulatorias,
 } from "@/api/generated/endpoints/criticidades-regulatórias/criticidades-regulatórias";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { CriticidadeRegulatoriaForm } from "@/components/criticidade-regulatoria/criticidade-regulatoria-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { CriticidadeRegulatoriaResponse } from "@/types/api";
 
 const getGrauColor = (grau: string) => {

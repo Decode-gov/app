@@ -1,21 +1,21 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { FolderOpen } from "lucide-react";
+import { toast } from "sonner";
 import {
   deleteArquivosId,
   getGetArquivosQueryKey,
   useGetArquivos,
 } from "@/api/generated/endpoints/arquivos/arquivos";
+import { ArquivoUploadWidget } from "@/components/arquivos/arquivo-upload-widget";
+import type { ArquivoItem } from "@/components/arquivos/columns";
+import { createColumns } from "@/components/arquivos/columns";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { DataTable } from "@/components/ui/data-table";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { api } from "@/lib/api";
-import { ArquivoUploadWidget } from "@/components/arquivos/arquivo-upload-widget";
-import { createColumns } from "@/components/arquivos/columns";
-import type { ArquivoItem } from "@/components/arquivos/columns";
 
 export default function ArquivosPage() {
   const queryClient = useQueryClient();
@@ -127,9 +127,7 @@ function PageHeader() {
       <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
         Arquivos
       </h1>
-      <p className="text-muted-foreground mt-2">
-        Gerencie os arquivos enviados pela empresa
-      </p>
+      <p className="text-muted-foreground mt-2">Gerencie os arquivos enviados pela empresa</p>
     </div>
   );
 }

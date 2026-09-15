@@ -5,6 +5,11 @@ import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import {
+  usePostAtividades,
+  usePutAtividadesId,
+} from "@/api/generated/endpoints/atividades/atividades";
+import { useGetProcessos } from "@/api/generated/endpoints/processos/processos";
 import { ProcessoForm } from "@/components/processos/processo-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,8 +37,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { usePostAtividades, usePutAtividadesId } from "@/api/generated/endpoints/atividades/atividades";
-import { useGetProcessos } from "@/api/generated/endpoints/processos/processos";
 import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { AtividadeResponse } from "@/types/api";
 

@@ -57,7 +57,7 @@ export type Usuario = GetUsuarios200DataItem;
 
 export type GetPoliticasInternas200DataItem = GetPoliticasInternas200["data"][number];
 export type PoliticaInternaResponse = GetPoliticasInternas200DataItem;
-export type GetComiteAprovador200DataItem = GetComitesAprovadores200['data'][number];
+export type GetComiteAprovador200DataItem = GetComitesAprovadores200["data"][number];
 
 export type AtividadeResponse = GetAtividades200["data"][number];
 export type DocumentoResponse = GetDocumentos200["data"][number];

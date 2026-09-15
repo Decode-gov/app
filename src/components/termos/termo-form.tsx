@@ -4,7 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
+import { usePostDefinicoes, usePutDefinicoesId } from "@/api/generated/endpoints/termos/termos";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,13 +26,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { type CreateDefinicaoFormData, CreateDefinicaoSchema } from "@/schemas";
 import type { DefinicaoResponse } from "@/types/api";
 import { ComunidadeForm } from "../dominios/comunidade-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { usePostDefinicoes, usePutDefinicoesId } from "@/api/generated/endpoints/termos/termos";
-import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 
 type FormData = CreateDefinicaoFormData;
 

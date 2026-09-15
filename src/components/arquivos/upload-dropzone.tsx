@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { UploadCloud } from "lucide-react";
+import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface UploadDropzoneProps {
@@ -30,13 +30,17 @@ export function UploadDropzone({ onFileSelected, disabled }: UploadDropzoneProps
   };
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: <explanation>
     <div
       role="button"
       tabIndex={disabled ? -1 : 0}
       aria-disabled={disabled}
       onClick={() => !disabled && inputRef.current?.click()}
       onKeyDown={(e) => e.key === "Enter" && !disabled && inputRef.current?.click()}
-      onDragOver={(e) => { e.preventDefault(); if (!disabled) setDragOver(true); }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        if (!disabled) setDragOver(true);
+      }}
       onDragLeave={() => setDragOver(false)}
       onDrop={handleDrop}
       className={cn(

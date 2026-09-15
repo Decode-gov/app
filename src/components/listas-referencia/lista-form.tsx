@@ -2,6 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import {
+  usePostListasReferencia,
+  usePutListasReferenciaId,
+} from "@/api/generated/endpoints/listas-de-referência/listas-de-referência";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,10 +25,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  usePostListasReferencia,
-  usePutListasReferenciaId,
-} from "@/api/generated/endpoints/listas-de-referência/listas-de-referência";
 import { type CreateListaReferenciaFormData, CreateListaReferenciaSchema } from "@/schemas";
 import type { ListaReferenciaResponse } from "@/types/api";
 
@@ -72,12 +72,15 @@ export function ListaForm({ open, onOpenChange, lista }: ListaFormProps) {
     } else {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       // biome-ignore lint/suspicious/noExplicitAny: form type workaround
-      createLista({ data: payload as any }, {
-        onSuccess: () => {
-          onOpenChange(false);
-          form.reset();
+      createLista(
+        { data: payload as any },
+        {
+          onSuccess: () => {
+            onOpenChange(false);
+            form.reset();
+          },
         },
-      });
+      );
     }
   };
 

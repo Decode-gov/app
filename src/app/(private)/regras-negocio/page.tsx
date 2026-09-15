@@ -10,7 +10,6 @@ import {
 } from "@/api/generated/endpoints/regras-de-negócio/regras-de-negócio";
 import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
 import { useGetDefinicoes } from "@/api/generated/endpoints/termos/termos";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { RegraForm } from "@/components/regras/regra-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,6 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { RegraNegocioResponse } from "@/types/api";
 
 export default function RegrasNegocioPage() {

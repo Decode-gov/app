@@ -4,6 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
+import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
+import {
+  usePostRegrasNegocio,
+  usePutRegrasNegocioId,
+} from "@/api/generated/endpoints/regras-de-negócio/regras-de-negócio";
+import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
+import { useGetDefinicoes } from "@/api/generated/endpoints/termos/termos";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,14 +37,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { type CreateRegraNegocioFormData, CreateRegraNegocioSchema } from "@/schemas";
 import type { RegraNegocioResponse } from "@/types/api";
-import { usePostRegrasNegocio, usePutRegrasNegocioId } from "@/api/generated/endpoints/regras-de-negócio/regras-de-negócio";
-import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
-import { useGetSistemas } from "@/api/generated/endpoints/sistemas/sistemas";
-import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
-import { useGetDefinicoes } from "@/api/generated/endpoints/termos/termos";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 
 interface RegraFormProps {
   open: boolean;
@@ -95,7 +98,7 @@ export function RegraForm({ open, onOpenChange, regra }: RegraFormProps) {
         await updateMutation.mutateAsync({ id: regra.id, data: submitData });
       } else {
         await createMutation.mutateAsync({
-          data: submitData
+          data: submitData,
         });
       }
       onOpenChange(false);

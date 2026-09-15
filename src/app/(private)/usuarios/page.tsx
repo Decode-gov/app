@@ -78,49 +78,53 @@ export default function UsuariosPage() {
     try {
       if (editingUser) {
         // Editar usuário existente
-        await updateMutation.mutateAsync({
-          id: editingUser.id,
-          data: {
-            nome: data.nome,
-            email: data.email,
-            ativo: data.ativo,
+        await updateMutation.mutateAsync(
+          {
+            id: editingUser.id,
+            data: {
+              nome: data.nome,
+              email: data.email,
+              ativo: data.ativo,
+            },
           },
-        }, {
-          onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: getGetUsuariosQueryKey()
-            })
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({
+                queryKey: getGetUsuariosQueryKey(),
+              });
 
-            toast.success("Usuário atualizado com sucesso!");
+              toast.success("Usuário atualizado com sucesso!");
+            },
+            onError: () => {
+              toast.error("Erro ao atualizar os dados do usuário!");
+            },
           },
-          onError: () => {
-            toast.error('Erro ao atualizar os dados do usuário!');
-          }
-        });
-
+        );
       } else {
         // Criar novo usuário
-        await createMutation.mutateAsync({
-          data: {
-            nome: data.nome,
-            email: data.email,
-            senha: data.senha ?? "mudar123",
-            tipo: "USUARIO",
-            empresaId: "",
+        await createMutation.mutateAsync(
+          {
+            data: {
+              nome: data.nome,
+              email: data.email,
+              senha: data.senha ?? "mudar123",
+              tipo: "USUARIO",
+              empresaId: "",
+            },
           },
-        }, {
-          onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: getGetUsuariosQueryKey()
-            })
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({
+                queryKey: getGetUsuariosQueryKey(),
+              });
 
-            toast.success("Usuário criado com sucesso!");
+              toast.success("Usuário criado com sucesso!");
+            },
+            onError: () => {
+              toast.error("Erro ao criar um novo usuário!");
+            },
           },
-          onError: () => {
-            toast.error('Erro ao criar um novo usuário!');
-          }
-        });
-
+        );
       }
       queryClient.invalidateQueries({ queryKey: ["usuarios"] });
       setIsFormOpen(false);

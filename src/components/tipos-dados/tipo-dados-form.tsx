@@ -4,6 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import {
+  usePostTiposDados,
+  usePutTiposDadosId,
+} from "@/api/generated/endpoints/tipos-de-dados/tipos-de-dados";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -32,10 +36,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  usePostTiposDados,
-  usePutTiposDadosId,
-} from "@/api/generated/endpoints/tipos-de-dados/tipos-de-dados";
 import type { TipoDadosResponse } from "@/types/api";
 
 const tipoDadosSchema = z.object({

@@ -6,13 +6,13 @@ import {
   useDeletePoliticasInternasId,
   useGetPoliticasInternas,
 } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { PoliticaInternaForm } from "@/components/politicas/politica-interna-form";
 import { createColumns } from "@/components/politicas/politicas-internas-columns";
 import { PoliticasInternasDataTable } from "@/components/politicas/politicas-internas-data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { GetPoliticasInternas200DataItem } from "@/types/api";
 
 export default function PoliticasPage() {

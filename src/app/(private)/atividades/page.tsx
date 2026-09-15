@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  AlertTriangle,
-  Clock,
-  ListTodo,
-  Plus,
-  Search
-} from "lucide-react";
+import { AlertTriangle, Clock, ListTodo, Plus, Search } from "lucide-react";
 import { useState } from "react";
 import {
   useDeleteAtividadesId,
@@ -183,9 +177,12 @@ export default function AtividadesPage() {
                 <CardTitle>Atividades</CardTitle>
                 <CardDescription>Lista de todas as atividades cadastradas</CardDescription>
               </div>
-              <Button className="gap-2" onClick={() => {
-                // handleNew
-              }}>
+              <Button
+                className="gap-2"
+                onClick={() => {
+                  // handleNew
+                }}
+              >
                 <Plus className="h-4 w-4" />
                 Nova Atividade
               </Button>

@@ -43,7 +43,7 @@ export function UserForm({ open, onClose, user, onSubmit }: UserFormProps) {
       nome: user?.nome || "",
       email: user?.email || "",
       senha: "",
-      ativo: user?.ativo
+      ativo: user?.ativo,
     },
   });
 

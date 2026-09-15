@@ -7,7 +7,6 @@ import {
   useGetDimensoesQualidade,
 } from "@/api/generated/endpoints/dimensões-de-qualidade/dimensões-de-qualidade";
 import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { DimensaoQualidadeForm } from "@/components/dimensoes/dimensao-form";
 import { DimensoesTable } from "@/components/dimensoes/dimensoes-table";
 import { Button } from "@/components/ui/button";
@@ -20,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { DimensaoQualidadeResponse } from "@/types/api";
 
 export default function DimensoesQualidadePage() {

@@ -2,13 +2,21 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Lock, Mail, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { usePostUsuariosLogin } from "@/api/generated/endpoints/usuários/usuários";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { DecodeGovIcon } from "@/components/ui/decode-gov-icon";
 import {
   Form,
@@ -20,7 +28,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
 
 const loginSchema = z.object({
   email: z.email({ message: "Digite um e-mail válido" }),
@@ -161,10 +168,17 @@ export default function LoginPage() {
               </form>
             </Form>
           </CardContent>
-          <Separator/>
+          <Separator />
           <CardFooter>
-            <Button asChild className="group transition-all duration-200 hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground w-full">
-              <Link href={`https://wa.me/553183713849?text=Ol%C3%A1%2C%20gostaria%20de%20conhecer%20um%20pouco%20mais%20o%20decodegov`}>Solicitar demonstração</Link>
+            <Button
+              asChild
+              className="group transition-all duration-200 hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground w-full"
+            >
+              <Link
+                href={`https://wa.me/553183713849?text=Ol%C3%A1%2C%20gostaria%20de%20conhecer%20um%20pouco%20mais%20o%20decodegov`}
+              >
+                Solicitar demonstração
+              </Link>
             </Button>
           </CardFooter>
         </Card>

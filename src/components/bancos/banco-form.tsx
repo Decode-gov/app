@@ -83,7 +83,7 @@ export function BancoForm({ open, onOpenChange, banco }: BancoFormProps) {
         });
       } else {
         await createMutation.mutateAsync({
-          data
+          data,
         });
       }
       form.reset();

@@ -54,7 +54,7 @@ export default function AuditoriaPage() {
 
   // Filtros
   const filteredLogs = useMemo(() => {
-    return null
+    return null;
     // return logs.filter((log) => {
     //   const matchesSearch =
     //     search === "" ||

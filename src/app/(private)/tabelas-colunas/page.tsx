@@ -4,7 +4,6 @@ import { Database, Plus } from "lucide-react";
 import { useState } from "react";
 import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
 import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { ColunaForm } from "@/components/colunas/coluna-form";
 import { DataTableColunas } from "@/components/colunas/data-table-colunas";
 import { DataTableTabelas } from "@/components/tabelas/data-table-tabelas";
@@ -12,6 +11,7 @@ import { TabelaForm } from "@/components/tabelas/tabela-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { ColunaResponse, TabelaResponse } from "@/types/api";
 
 export default function TabelasColunasPage() {

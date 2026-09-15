@@ -4,6 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import {
+  usePostDocumentos,
+  usePutDocumentosId,
+} from "@/api/generated/endpoints/documentos-polimórficos/documentos-polimórficos";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,7 +36,6 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { usePostDocumentos, usePutDocumentosId } from "@/api/generated/endpoints/documentos-polimórficos/documentos-polimórficos";
 import type { DocumentoResponse } from "@/types/api";
 
 // Schema baseado nos requisitos

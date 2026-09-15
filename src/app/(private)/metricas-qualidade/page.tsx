@@ -2,17 +2,17 @@
 
 import { Activity, BarChart3, Search } from "lucide-react";
 import { useState } from "react";
+import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
 import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensões-de-qualidade/dimensões-de-qualidade";
+import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
 import { useGetPoliticasInternas } from "@/api/generated/endpoints/políticas-internas/políticas-internas";
 import { useGetRegrasQualidade } from "@/api/generated/endpoints/regras-de-qualidade/regras-de-qualidade";
+import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
 import { DimensoesTable } from "@/components/dimensoes/dimensoes-table";
 import { RegrasQualidadeTable } from "@/components/regras-qualidade/regras-qualidade-table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetTabelas } from "@/api/generated/endpoints/tabelas/tabelas";
-import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
-import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
 import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 
 export default function MetricasQualidadePage() {
@@ -47,7 +47,7 @@ export default function MetricasQualidadePage() {
   const colunas = colunasData?.data ?? [];
   const papeis = papeisData?.data ?? [];
   const regras = regrasData?.data ?? [];
-  
+
   const isLoading = isLoadingDimensoes || isLoadingRegras;
   const error = errorDimensoes || errorRegras;
 

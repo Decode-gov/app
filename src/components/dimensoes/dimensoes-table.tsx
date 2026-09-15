@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
 import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +31,14 @@ interface DimensoesTableProps {
   onDelete?: (id: string) => void;
 }
 
-export function DimensoesTable({ data, politicas, isLoading, error, onEdit, onDelete }: DimensoesTableProps) {
+export function DimensoesTable({
+  data,
+  politicas,
+  isLoading,
+  error,
+  onEdit,
+  onDelete,
+}: DimensoesTableProps) {
   const columns = useMemo<ColumnDef<DimensaoQualidadeResponse>[]>(
     () => [
       {
@@ -74,7 +76,9 @@ export function DimensoesTable({ data, politicas, isLoading, error, onEdit, onDe
         header: "Data de Criação",
         cell: ({ row }) => (
           <span className="text-muted-foreground">
-            {row.original.createdAt ? new Date(row.original.createdAt).toLocaleDateString("pt-BR") : "-"}
+            {row.original.createdAt
+              ? new Date(row.original.createdAt).toLocaleDateString("pt-BR")
+              : "-"}
           </span>
         ),
       },
@@ -90,25 +94,21 @@ export function DimensoesTable({ data, politicas, isLoading, error, onEdit, onDe
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {
-                onEdit && (
-                  <DropdownMenuItem onClick={() => onEdit(row.original)}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Editar
-                  </DropdownMenuItem>
-                )
-              }
-              {
-                onDelete && (
-                  <DropdownMenuItem
-                    className="text-destructive"
-                    onClick={() => onDelete(row.original.id)}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Excluir
-                  </DropdownMenuItem>
-                )
-              }
+              {onEdit && (
+                <DropdownMenuItem onClick={() => onEdit(row.original)}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Editar
+                </DropdownMenuItem>
+              )}
+              {onDelete && (
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => onDelete(row.original.id)}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Excluir
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         ),
@@ -146,22 +146,38 @@ export function DimensoesTable({ data, politicas, isLoading, error, onEdit, onDe
           {isLoading ? (
             Array.from({ length: 5 }, (_, i) => i).map((key) => (
               <TableRow key={key}>
-                <TableCell><Skeleton className="h-4 w-[200px]" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-[300px]" /></TableCell>
-                <TableCell><Skeleton className="h-5 w-[100px]" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[200px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[300px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-5 w-[100px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-[100px]" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-8 w-8" />
+                </TableCell>
               </TableRow>
             ))
           ) : error ? (
             <TableRow>
-              <TableCell colSpan={columns.length} className="text-center text-muted-foreground py-8">
+              <TableCell
+                colSpan={columns.length}
+                className="text-center text-muted-foreground py-8"
+              >
                 Erro ao carregar dimensões. Tente novamente.
               </TableCell>
             </TableRow>
           ) : table.getRowModel().rows.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={columns.length} className="text-center text-muted-foreground py-8">
+              <TableCell
+                colSpan={columns.length}
+                className="text-center text-muted-foreground py-8"
+              >
                 Nenhuma dimensão encontrada
               </TableCell>
             </TableRow>

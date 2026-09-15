@@ -7,7 +7,6 @@ import { useState } from "react";
 import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
 import { useDeleteKpisId, useGetKpis } from "@/api/generated/endpoints/kpis/kpis";
 import { useGetProcessos } from "@/api/generated/endpoints/processos/processos";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { KpiForm } from "@/components/kpis/kpi-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { KpiResponse } from "@/types/api";
 
 export default function KpisPage() {

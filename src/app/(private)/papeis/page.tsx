@@ -13,13 +13,7 @@ import { createColumns } from "@/components/papeis/columns";
 import { PapeisDataTable } from "@/components/papeis/papeis-data-table";
 import { PapelGovernancaForm } from "@/components/papeis/papel-governanca-form";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { PapelResponse } from "@/types/api";
@@ -28,9 +22,7 @@ export default function PapeisPage() {
   const queryClient = useQueryClient();
   const empresaParams = useEmpresaIdParam();
   const [formOpen, setFormOpen] = useState(false);
-  const [selectedPapel, setSelectedPapel] = useState<
-    PapelResponse | undefined
-  >();
+  const [selectedPapel, setSelectedPapel] = useState<PapelResponse | undefined>();
 
   const { data: papeisData, isLoading, error } = useGetPapeis(empresaParams);
   const { data: politicasData } = useGetPoliticasInternas(empresaParams);
@@ -142,9 +134,7 @@ export default function PapeisPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Papéis
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Papéis</CardTitle>
             <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
               <UserCheck className="h-4 w-4 text-primary transition-colors duration-300" />
             </div>
@@ -157,20 +147,14 @@ export default function PapeisPage() {
 
         <Card className="group hover:shadow-lg transition-all duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Políticas Associadas
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Políticas Associadas</CardTitle>
             <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-300">
               <UserCheck className="h-4 w-4 text-blue-600 transition-colors duration-300" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
-              {politicas.length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              políticas disponíveis
-            </p>
+            <div className="text-2xl font-bold text-blue-600">{politicas.length}</div>
+            <p className="text-xs text-muted-foreground">políticas disponíveis</p>
           </CardContent>
         </Card>
       </div>
@@ -181,9 +165,7 @@ export default function PapeisPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Papéis de Governança</CardTitle>
-              <CardDescription>
-                Lista de todos os papéis cadastrados no sistema
-              </CardDescription>
+              <CardDescription>Lista de todos os papéis cadastrados no sistema</CardDescription>
             </div>
             <Button
               className="gap-2"
@@ -198,11 +180,7 @@ export default function PapeisPage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <PapeisDataTable
-            columns={columns}
-            data={papeis}
-            politicaOptions={politicaOptions}
-          />
+          <PapeisDataTable columns={columns} data={papeis} politicaOptions={politicaOptions} />
         </CardContent>
       </Card>
 

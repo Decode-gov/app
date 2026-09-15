@@ -7,7 +7,6 @@ import {
   useGetClassificacoesInformacao,
 } from "@/api/generated/endpoints/classificações-de-informação/classificações-de-informação";
 import { useGetListasClassificacao } from "@/api/generated/endpoints/listas-de-classificação/listas-de-classificação";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { ClassificacaoInfoForm } from "@/components/classificacoes-info/classificacao-info-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { ClassificacaoInformacaoResponse } from "@/types/api";
 
 export default function ClassificacoesInformacaoPage() {
@@ -52,7 +52,11 @@ export default function ClassificacoesInformacaoPage() {
   void searchTerm;
   void listaFilter;
 
-  const { data: classificacoesData, isLoading, error } = useGetClassificacoesInformacao(empresaParams);
+  const {
+    data: classificacoesData,
+    isLoading,
+    error,
+  } = useGetClassificacoesInformacao(empresaParams);
   const { data: listasData } = useGetListasClassificacao(empresaParams);
 
   const deleteClassificacao = useDeleteClassificacoesInformacaoId();

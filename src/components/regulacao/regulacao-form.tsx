@@ -66,7 +66,7 @@ export function RegulacaoForm({ open, onOpenChange, regulacao }: RegulacaoFormPr
         await updateRegulacao.mutateAsync({ id: regulacao.id, data });
       } else {
         await createRegulacao.mutateAsync({
-          data
+          data,
         });
       }
       onOpenChange(false);
@@ -158,7 +158,7 @@ export function RegulacaoForm({ open, onOpenChange, regulacao }: RegulacaoFormPr
                         >
                           {field.value ? (
                             format(field.value as Date, "PPP", {
-                              locale: ptBR
+                              locale: ptBR,
                             })
                           ) : (
                             <span>Selecione a data de inicio</span>
@@ -199,7 +199,7 @@ export function RegulacaoForm({ open, onOpenChange, regulacao }: RegulacaoFormPr
                         >
                           {field.value ? (
                             format(field.value as Date, "PPP", {
-                              locale: ptBR
+                              locale: ptBR,
                             })
                           ) : (
                             <span>Selecione a data de final da vigencia</span>
@@ -221,7 +221,6 @@ export function RegulacaoForm({ open, onOpenChange, regulacao }: RegulacaoFormPr
                 </FormItem>
               )}
             />
-
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

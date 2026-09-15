@@ -1,11 +1,11 @@
 "use client";
 
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { useEmpresaAdmin } from "@/context/empresa-admin-context";
 import { cn } from "@/lib/utils";
@@ -17,7 +17,9 @@ export function EmpresaSelector() {
 
   return (
     <Select value={selectedEmpresaId ?? ""} onValueChange={(v) => setSelectedEmpresaId(v || null)}>
-      <SelectTrigger className={cn("w-auto text-sm", !selectedEmpresaId && "border border-red-400")}>
+      <SelectTrigger
+        className={cn("w-auto text-sm", !selectedEmpresaId && "border border-red-400")}
+      >
         <SelectValue placeholder="Selecionar empresa..." />
       </SelectTrigger>
       <SelectContent>

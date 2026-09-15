@@ -92,11 +92,7 @@ export function getAtribuicoesColumns({
       header: "Aprovador",
       cell: ({ row }) => {
         const comite = row.original.comiteAprovador;
-        return (
-          <div className="text-muted-foreground">
-            {comite ?? "—"}
-          </div>
-        );
+        return <div className="text-muted-foreground">{comite ?? "—"}</div>;
       },
     },
     {

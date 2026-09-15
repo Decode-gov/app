@@ -1,16 +1,11 @@
 "use client";
 
-import {
-  Edit,
-  MoreHorizontal,
-  Package,
-  Plus,
-  Search,
-  Trash2
-} from "lucide-react";
+import { Edit, MoreHorizontal, Package, Plus, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useDeleteProdutosDadosId, useGetProdutosDados } from "@/api/generated/endpoints/produtos-de-dados/produtos-de-dados";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
+import {
+  useDeleteProdutosDadosId,
+  useGetProdutosDados,
+} from "@/api/generated/endpoints/produtos-de-dados/produtos-de-dados";
 import { ProdutoForm } from "@/components/produtos/produto-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,6 +25,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { ProdutoDadosResponse } from "@/types/api";
 
 export default function ProdutosDadosPage() {

@@ -47,16 +47,12 @@ export const createColumns = ({ onDownload, onDelete }: ColumnsProps): ColumnDef
   {
     accessorKey: "tamanhoBytes",
     header: "Tamanho",
-    cell: ({ row }) => (
-      <span className="text-sm">{formatBytes(row.getValue("tamanhoBytes"))}</span>
-    ),
+    cell: ({ row }) => <span className="text-sm">{formatBytes(row.getValue("tamanhoBytes"))}</span>,
   },
   {
     accessorKey: "createdAt",
     header: "Data de Upload",
-    cell: ({ row }) => (
-      <span className="text-sm">{formatDate(row.getValue("createdAt"))}</span>
-    ),
+    cell: ({ row }) => <span className="text-sm">{formatDate(row.getValue("createdAt"))}</span>,
   },
   {
     id: "actions",
@@ -65,19 +61,11 @@ export const createColumns = ({ onDownload, onDelete }: ColumnsProps): ColumnDef
       const arquivo = row.original;
       return (
         <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onDownload(arquivo)}
-          >
+          <Button size="sm" variant="outline" onClick={() => onDownload(arquivo)}>
             <Download className="h-4 w-4 mr-1" />
             Baixar
           </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => onDelete(arquivo.id)}
-          >
+          <Button size="sm" variant="destructive" onClick={() => onDelete(arquivo.id)}>
             <Trash2 className="h-4 w-4 mr-1" />
             Excluir
           </Button>

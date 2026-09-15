@@ -1,24 +1,10 @@
 "use client";
 
-import {
-  BookOpen,
-  Building,
-  Database,
-  FolderOpen,
-  InfoIcon,
-  Shield,
-  Users,
-} from "lucide-react";
+import { BookOpen, Building, Database, FolderOpen, InfoIcon, Shield, Users } from "lucide-react";
 import { useGetDashboardMetricas } from "@/api/generated/endpoints/dashboard/dashboard";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatsCards } from "@/components/ui/stats-cards";
 import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
@@ -50,10 +36,7 @@ function MetricCard({
       <CardContent>
         <div className="space-y-3">
           {Object.entries(data).map(([categoria, quantidade]) => (
-            <div
-              key={categoria}
-              className="flex items-center justify-between group/item"
-            >
+            <div key={categoria} className="flex items-center justify-between group/item">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-primary/60 group-hover/item:bg-primary transition-colors duration-200" />
                 <span className="text-sm font-medium group-hover/item:text-primary transition-colors duration-200">
@@ -75,11 +58,7 @@ function MetricCard({
 }
 
 export default function DashboardPage() {
-  const {
-    data: dashboardResponse,
-    isLoading,
-    error,
-  } = useGetDashboardMetricas();
+  const { data: dashboardResponse, isLoading, error } = useGetDashboardMetricas();
   const dashboardData = dashboardResponse?.data;
 
   if (!useEmpresaIdParam().empresaId) {
@@ -88,8 +67,7 @@ export default function DashboardPage() {
         <InfoIcon color="var(--color-white)" />
         <AlertTitle className="text-white">Selecione uma empresa</AlertTitle>
         <AlertDescription className="text-white">
-          Para visualizar os dados da empresa selecione no menu superior
-          direito!
+          Para visualizar os dados da empresa selecione no menu superior direito!
         </AlertDescription>
       </Alert>
     );
@@ -166,12 +144,8 @@ export default function DashboardPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-destructive">
-            Dashboard
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Erro ao carregar dados do dashboard
-          </p>
+          <h1 className="text-4xl font-bold tracking-tight text-destructive">Dashboard</h1>
+          <p className="text-muted-foreground mt-2">Erro ao carregar dados do dashboard</p>
         </div>
       </div>
     );
@@ -190,9 +164,7 @@ export default function DashboardPage() {
 
       {/* Segunda linha de cards secundários */}
       <div className="space-y-6">
-        <h2 className="text-xl font-semibold text-foreground">
-          Estruturas e Políticas
-        </h2>
+        <h2 className="text-xl font-semibold text-foreground">Estruturas e Políticas</h2>
         <StatsCards
           cards={[
             {

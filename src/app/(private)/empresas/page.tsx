@@ -1,66 +1,70 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "sonner"
-import { Building2, Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { DataTable } from "@/components/ui/data-table"
-import { useEmpresaAdmin } from "@/context/empresa-admin-context"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Building2, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   deleteEmpresasId,
   getGetEmpresasQueryKey,
   useGetEmpresas,
-} from "@/api/generated/endpoints/empresas/empresas"
-import { createColumns } from "@/components/empresas/columns"
-import { EmpresaForm } from "@/components/empresas/empresa-form"
-import type { GetEmpresas200 } from "@/api/generated/model"
+} from "@/api/generated/endpoints/empresas/empresas";
+import type { GetEmpresas200 } from "@/api/generated/model";
+import { createColumns } from "@/components/empresas/columns";
+import { EmpresaForm } from "@/components/empresas/empresa-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DataTable } from "@/components/ui/data-table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useEmpresaAdmin } from "@/context/empresa-admin-context";
 
-type GetEmpresas200DataItem = GetEmpresas200["data"][number]
+type GetEmpresas200DataItem = GetEmpresas200["data"][number];
 
 export default function EmpresasPage() {
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const { isAdmin, isLoading: isLoadingAdmin } = useEmpresaAdmin()
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { isAdmin, isLoading: isLoadingAdmin } = useEmpresaAdmin();
 
-  const [formOpen, setFormOpen] = useState(false)
-  const [selectedEmpresa, setSelectedEmpresa] = useState<GetEmpresas200DataItem | undefined>()
+  const [formOpen, setFormOpen] = useState(false);
+  const [selectedEmpresa, setSelectedEmpresa] = useState<GetEmpresas200DataItem | undefined>();
 
-  const { data: empresasData, isLoading, error } = useGetEmpresas({
+  const {
+    data: empresasData,
+    isLoading,
+    error,
+  } = useGetEmpresas({
     query: { enabled: isAdmin },
-  })
+  });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteEmpresasId(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getGetEmpresasQueryKey() })
-      toast.success("Empresa excluída com sucesso!")
+      queryClient.invalidateQueries({ queryKey: getGetEmpresasQueryKey() });
+      toast.success("Empresa excluída com sucesso!");
     },
     onError: () => toast.error("Erro ao excluir empresa"),
-  })
+  });
 
   if (!isLoadingAdmin && !isAdmin) {
-    router.push("/")
-    return null
+    router.push("/");
+    return null;
   }
 
-  const empresas = empresasData?.data ?? []
+  const empresas = empresasData?.data ?? [];
 
   const handleEdit = (empresa: GetEmpresas200DataItem) => {
-    setSelectedEmpresa(empresa)
-    setFormOpen(true)
-  }
+    setSelectedEmpresa(empresa);
+    setFormOpen(true);
+  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta empresa?")) {
-      await deleteMutation.mutateAsync(id)
+      await deleteMutation.mutateAsync(id);
     }
-  }
+  };
 
-  const columns = createColumns({ onEdit: handleEdit, onDelete: handleDelete })
+  const columns = createColumns({ onEdit: handleEdit, onDelete: handleDelete });
 
   if (isLoading || isLoadingAdmin) {
     return (
@@ -90,7 +94,7 @@ export default function EmpresasPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -112,7 +116,7 @@ export default function EmpresasPage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -151,8 +155,8 @@ export default function EmpresasPage() {
             <Button
               className="gap-2"
               onClick={() => {
-                setSelectedEmpresa(undefined)
-                setFormOpen(true)
+                setSelectedEmpresa(undefined);
+                setFormOpen(true);
               }}
             >
               <Plus className="h-4 w-4" />
@@ -173,11 +177,11 @@ export default function EmpresasPage() {
       <EmpresaForm
         open={formOpen}
         onOpenChange={(open) => {
-          setFormOpen(open)
-          if (!open) setSelectedEmpresa(undefined)
+          setFormOpen(open);
+          if (!open) setSelectedEmpresa(undefined);
         }}
         empresa={selectedEmpresa}
       />
     </div>
-  )
+  );
 }

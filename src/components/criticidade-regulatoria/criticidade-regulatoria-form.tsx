@@ -56,7 +56,8 @@ export function CriticidadeRegulatoriaForm({
   });
 
   const empresaParams = useEmpresaIdParam();
-  const { data: regulacoes, isLoading: loadingRegulacoes } = useGetRegulacoesCompletas(empresaParams);
+  const { data: regulacoes, isLoading: loadingRegulacoes } =
+    useGetRegulacoesCompletas(empresaParams);
   const { data: regrasQualidade, isLoading: loadingRegras } = useGetRegrasQualidade(empresaParams);
 
   const createMutation = usePostCriticidadesRegulatorias();

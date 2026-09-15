@@ -1,14 +1,14 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getGetArquivosQueryKey } from "@/api/generated/endpoints/arquivos/arquivos";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import { UploadDropzone } from "./upload-dropzone";
-import { UploadProgressList } from "./upload-progress-list";
 import type { UploadItem } from "./upload-progress-item";
+import { UploadProgressList } from "./upload-progress-list";
 
 function uploadFileWithProgress(
   file: File,
@@ -64,9 +64,7 @@ export function ArquivoUploadWidget() {
 
       try {
         await uploadFileWithProgress(file, empresaId, (pct) => {
-          setUploads((prev) =>
-            prev.map((u) => (u.id === id ? { ...u, progress: pct } : u)),
-          );
+          setUploads((prev) => prev.map((u) => (u.id === id ? { ...u, progress: pct } : u)));
         });
 
         setUploads((prev) =>
@@ -76,9 +74,7 @@ export function ArquivoUploadWidget() {
         await queryClient.invalidateQueries({ queryKey: getGetArquivosQueryKey() });
         toast.success(`${file.name} enviado com sucesso`);
       } catch {
-        setUploads((prev) =>
-          prev.map((u) => (u.id === id ? { ...u, status: "error" } : u)),
-        );
+        setUploads((prev) => prev.map((u) => (u.id === id ? { ...u, status: "error" } : u)));
         toast.error(`Erro ao enviar ${file.name}`);
       } finally {
         setUploading(false);

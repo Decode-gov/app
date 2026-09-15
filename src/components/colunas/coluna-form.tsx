@@ -98,19 +98,19 @@ export function ColunaForm({ open, onOpenChange, coluna, preSelectedTabelaId }: 
           id: coluna.id,
           data: {
             ...data,
-            necessidadeInformacaoId: data.necessidadeInformacaoId ?? '',
+            necessidadeInformacaoId: data.necessidadeInformacaoId ?? "",
             tabelaId: data.tabelaId,
-            termoId: data.termoId ?? ''
+            termoId: data.termoId ?? "",
           },
         });
       } else {
         await createMutation.mutateAsync({
           data: {
             ...data,
-            necessidadeInformacaoId: data.necessidadeInformacaoId ?? '',
+            necessidadeInformacaoId: data.necessidadeInformacaoId ?? "",
             tabelaId: data.tabelaId,
-            termoId: data.termoId ?? ''
-          }
+            termoId: data.termoId ?? "",
+          },
         });
       }
       form.reset();

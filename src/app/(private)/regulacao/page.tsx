@@ -6,13 +6,13 @@ import {
   useDeleteRegulacoesCompletasId,
   useGetRegulacoesCompletas,
 } from "@/api/generated/endpoints/regulações-completas/regulações-completas";
-import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { GetRegulacoesCompletas200Output } from "@/api/generated/model/getRegulacoesCompletas200.zod";
 import { RegulacaoForm } from "@/components/regulacao/regulacao-form";
 import { RegulacoesTable } from "@/components/regulacao/regulacao-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 
 type RegulacaoItem = GetRegulacoesCompletas200Output["data"][number];
 
@@ -136,11 +136,7 @@ export default function RegulacaoPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <RegulacoesTable
-            data={regulacoes}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          <RegulacoesTable data={regulacoes} onEdit={handleEdit} onDelete={handleDelete} />
         </CardContent>
       </Card>
 

@@ -128,25 +128,21 @@ export function RegrasQualidadeTable({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {
-                onEdit && (
-                  <DropdownMenuItem onClick={() => onEdit(row.original)}>
-                    <Edit className="mr-2 h-4 w-4" />
-                    Editar
-                  </DropdownMenuItem>
-                )
-              }
-              {
-                onDelete && (
-                  <DropdownMenuItem
-                    className="text-destructive"
-                    onClick={() => onDelete(row.original.id)}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Excluir
-                  </DropdownMenuItem>
-                )
-              }
+              {onEdit && (
+                <DropdownMenuItem onClick={() => onEdit(row.original)}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Editar
+                </DropdownMenuItem>
+              )}
+              {onDelete && (
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => onDelete(row.original.id)}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Excluir
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         ),
