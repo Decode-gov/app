@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -205,22 +204,6 @@ export function useGetProdutosDados<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar produtos de dados
- */
-export const invalidateGetProdutosDados = async (
-  queryClient: QueryClient,
-  params?: GetProdutosDadosParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetProdutosDadosQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar um novo produto de dados no sistema
@@ -477,22 +460,6 @@ export function useGetProdutosDadosId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar produto por ID
- */
-export const invalidateGetProdutosDadosId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetProdutosDadosIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar um produto de dados existente

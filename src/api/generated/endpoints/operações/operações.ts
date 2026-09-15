@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -182,22 +181,6 @@ export function useGetOperacoes<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar operações
- */
-export const invalidateGetOperacoes = async (
-  queryClient: QueryClient,
-  params?: GetOperacoesParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetOperacoesQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar nova operação no sistema
@@ -434,22 +417,6 @@ export function useGetOperacoesId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar operação por ID
- */
-export const invalidateGetOperacoesId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetOperacoesIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar operação existente

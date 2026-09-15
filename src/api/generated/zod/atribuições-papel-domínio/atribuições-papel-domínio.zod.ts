@@ -5,314 +5,204 @@
  * API completa para gestão de dados governamentais.
  * OpenAPI spec version: 1.0.0
  */
-import * as zod from "zod";
+import * as zod from 'zod';
+
 
 /**
- * Listar todas as atribuições de papel a domínio com relacionamentos (papel e domínio)
+ * Listar todas as atribuições de papel a domínio com relacionamentos (papel e domínio). Filtros opcionais: empresaId, papelId, dominioId, comiteAprovador (busca parcial) e onboarding
  * @summary Listar atribuições
  */
-export const getAtribuicoesQueryEmpresaIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getAtribuicoesQueryEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesQueryPapelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesQueryDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetAtribuicoesQueryParams = zod.strictObject({
-  empresaId: zod
-    .uuid()
-    .regex(getAtribuicoesQueryEmpresaIdRegExp)
-    .optional()
-    .describe(
-      "Filtrar por empresa (somente ADMIN; USUARIO usa o empresaId do token automaticamente)",
-    ),
-});
+  "empresaId": zod.uuid().regex(getAtribuicoesQueryEmpresaIdRegExp).optional().describe('Filtrar por empresa (somente ADMIN; USUARIO usa o empresaId do token automaticamente)'),
+  "papelId": zod.uuid().regex(getAtribuicoesQueryPapelIdRegExp).optional().describe('Filtrar por papel'),
+  "dominioId": zod.uuid().regex(getAtribuicoesQueryDominioIdRegExp).optional().describe('Filtrar por domínio'),
+  "comiteAprovador": zod.coerce.string().optional().describe('Filtrar por comitê aprovador (busca parcial, sem diferenciar maiúsculas\/minúsculas)'),
+  "onboarding": zod.enum(['true', 'false']).optional().describe('Filtrar por onboarding')
+})
 
-export const getAtribuicoesResponseDataItemIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesResponseDataItemPapelIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesResponseDataItemDominioIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesResponseDataItemComiteAprovadorIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesResponseDataItemPapelIdRegExpOne = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesResponseDataItemDominioIdRegExpOne = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesResponseDataItemComiteAprovadorIdRegExpOne =
-  new RegExp(
-    "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-  );
+export const getAtribuicoesResponseDataItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesResponseDataItemPapelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesResponseDataItemDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesResponseDataItemEmpresaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesResponseDataItemPapelIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesResponseDataItemDominioIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetAtribuicoesResponse = zod.object({
-  message: zod.string(),
-  data: zod.array(
-    zod.object({
-      id: zod.uuid().regex(getAtribuicoesResponseDataItemIdRegExp),
-      papelId: zod.uuid().regex(getAtribuicoesResponseDataItemPapelIdRegExp),
-      dominioId: zod
-        .uuid()
-        .regex(getAtribuicoesResponseDataItemDominioIdRegExp),
-      documentoAtribuicao: zod.string(),
-      comiteAprovadorId: zod
-        .uuid()
-        .regex(getAtribuicoesResponseDataItemComiteAprovadorIdRegExp),
-      onboarding: zod.boolean(),
-      responsavel: zod.string(),
-      createdAt: zod.union([
-        zod.iso.datetime({ offset: true }),
-        zod.literal(null).nullable(),
-      ]),
-      updatedAt: zod.union([
-        zod.iso.datetime({ offset: true }),
-        zod.literal(null).nullable(),
-      ]),
-      papel: zod.object({
-        id: zod.uuid().regex(getAtribuicoesResponseDataItemPapelIdRegExpOne),
-        nome: zod.string(),
-        descricao: zod.union([zod.string(), zod.literal(null).nullable()]),
-      }),
-      dominio: zod.object({
-        id: zod.uuid().regex(getAtribuicoesResponseDataItemDominioIdRegExpOne),
-        nome: zod.string(),
-      }),
-      comiteAprovador: zod.object({
-        id: zod
-          .uuid()
-          .regex(getAtribuicoesResponseDataItemComiteAprovadorIdRegExpOne),
-        nome: zod.string(),
-      }),
-    }),
-  ),
-});
+  "message": zod.string(),
+  "data": zod.array(zod.object({
+  "id": zod.uuid().regex(getAtribuicoesResponseDataItemIdRegExp),
+  "papelId": zod.uuid().regex(getAtribuicoesResponseDataItemPapelIdRegExp),
+  "dominioId": zod.uuid().regex(getAtribuicoesResponseDataItemDominioIdRegExp),
+  "empresaId": zod.union([zod.uuid().regex(getAtribuicoesResponseDataItemEmpresaIdOneRegExp),zod.literal(null).nullable()]),
+  "documentoAtribuicao": zod.string(),
+  "comiteAprovador": zod.string(),
+  "onboarding": zod.boolean(),
+  "responsavel": zod.string(),
+  "createdAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]),
+  "papel": zod.object({
+  "id": zod.uuid().regex(getAtribuicoesResponseDataItemPapelIdRegExpOne),
+  "nome": zod.string(),
+  "descricao": zod.union([zod.string(),zod.literal(null).nullable()])
+}),
+  "dominio": zod.object({
+  "id": zod.uuid().regex(getAtribuicoesResponseDataItemDominioIdRegExpOne),
+  "nome": zod.string()
+})
+}))
+})
 
 /**
  * Criar uma nova atribuição de papel a domínio
  * @summary Criar atribuição
  */
-export const postAtribuicoesBodyPapelIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const postAtribuicoesBodyDominioIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const postAtribuicoesBodyComiteAprovadorIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const postAtribuicoesBodyPapelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const postAtribuicoesBodyDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 export const postAtribuicoesBodyOnboardingDefault = false;
+export const postAtribuicoesBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PostAtribuicoesBody = zod.strictObject({
-  papelId: zod.uuid().regex(postAtribuicoesBodyPapelIdRegExp),
-  dominioId: zod.uuid().regex(postAtribuicoesBodyDominioIdRegExp),
-  documentoAtribuicao: zod.coerce.string(),
-  comiteAprovadorId: zod
-    .uuid()
-    .regex(postAtribuicoesBodyComiteAprovadorIdRegExp),
-  onboarding: zod.coerce
-    .boolean()
-    .default(postAtribuicoesBodyOnboardingDefault),
-  responsavel: zod.coerce.string(),
-});
+  "papelId": zod.uuid().regex(postAtribuicoesBodyPapelIdRegExp),
+  "dominioId": zod.uuid().regex(postAtribuicoesBodyDominioIdRegExp),
+  "documentoAtribuicao": zod.coerce.string(),
+  "comiteAprovador": zod.coerce.string().min(1),
+  "onboarding": zod.coerce.boolean().default(postAtribuicoesBodyOnboardingDefault),
+  "responsavel": zod.coerce.string(),
+  "empresaId": zod.uuid().regex(postAtribuicoesBodyEmpresaIdRegExp).optional()
+})
 
 /**
  * Buscar atribuição por ID com relacionamentos (papel e domínio)
  * @summary Buscar atribuição por ID
  */
-export const getAtribuicoesIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getAtribuicoesIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetAtribuicoesIdParams = zod.strictObject({
-  id: zod.uuid().regex(getAtribuicoesIdPathIdRegExp),
-});
+  "id": zod.uuid().regex(getAtribuicoesIdPathIdRegExp)
+})
 
-export const getAtribuicoesIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesIdResponseDataPapelIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesIdResponseDataDominioIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesIdResponseDataComiteAprovadorIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesIdResponseDataPapelIdRegExpOne = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesIdResponseDataDominioIdRegExpOne = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesIdResponseDataComiteAprovadorIdRegExpOne =
-  new RegExp(
-    "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-  );
+export const getAtribuicoesIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesIdResponseDataPapelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesIdResponseDataDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesIdResponseDataEmpresaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesIdResponseDataPapelIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getAtribuicoesIdResponseDataDominioIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetAtribuicoesIdResponse = zod.object({
-  message: zod.string(),
-  data: zod.object({
-    id: zod.uuid().regex(getAtribuicoesIdResponseDataIdRegExp),
-    papelId: zod.uuid().regex(getAtribuicoesIdResponseDataPapelIdRegExp),
-    dominioId: zod.uuid().regex(getAtribuicoesIdResponseDataDominioIdRegExp),
-    documentoAtribuicao: zod.string(),
-    comiteAprovadorId: zod
-      .uuid()
-      .regex(getAtribuicoesIdResponseDataComiteAprovadorIdRegExp),
-    onboarding: zod.boolean(),
-    responsavel: zod.string(),
-    createdAt: zod.union([
-      zod.iso.datetime({ offset: true }),
-      zod.literal(null).nullable(),
-    ]),
-    updatedAt: zod.union([
-      zod.iso.datetime({ offset: true }),
-      zod.literal(null).nullable(),
-    ]),
-    papel: zod.object({
-      id: zod.uuid().regex(getAtribuicoesIdResponseDataPapelIdRegExpOne),
-      nome: zod.string(),
-      descricao: zod.union([zod.string(), zod.literal(null).nullable()]),
-    }),
-    dominio: zod.object({
-      id: zod.uuid().regex(getAtribuicoesIdResponseDataDominioIdRegExpOne),
-      nome: zod.string(),
-    }),
-    comiteAprovador: zod.object({
-      id: zod
-        .uuid()
-        .regex(getAtribuicoesIdResponseDataComiteAprovadorIdRegExpOne),
-      nome: zod.string(),
-    }),
-  }),
-});
+  "message": zod.string(),
+  "data": zod.object({
+  "id": zod.uuid().regex(getAtribuicoesIdResponseDataIdRegExp),
+  "papelId": zod.uuid().regex(getAtribuicoesIdResponseDataPapelIdRegExp),
+  "dominioId": zod.uuid().regex(getAtribuicoesIdResponseDataDominioIdRegExp),
+  "empresaId": zod.union([zod.uuid().regex(getAtribuicoesIdResponseDataEmpresaIdOneRegExp),zod.literal(null).nullable()]),
+  "documentoAtribuicao": zod.string(),
+  "comiteAprovador": zod.string(),
+  "onboarding": zod.boolean(),
+  "responsavel": zod.string(),
+  "createdAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]),
+  "papel": zod.object({
+  "id": zod.uuid().regex(getAtribuicoesIdResponseDataPapelIdRegExpOne),
+  "nome": zod.string(),
+  "descricao": zod.union([zod.string(),zod.literal(null).nullable()])
+}),
+  "dominio": zod.object({
+  "id": zod.uuid().regex(getAtribuicoesIdResponseDataDominioIdRegExpOne),
+  "nome": zod.string()
+})
+})
+})
 
 /**
  * Atualizar uma atribuição existente
  * @summary Atualizar atribuição
  */
-export const putAtribuicoesIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const putAtribuicoesIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PutAtribuicoesIdParams = zod.strictObject({
-  id: zod.uuid().regex(putAtribuicoesIdPathIdRegExp),
-});
+  "id": zod.uuid().regex(putAtribuicoesIdPathIdRegExp)
+})
 
-export const putAtribuicoesIdBodyPapelIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const putAtribuicoesIdBodyDominioIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const putAtribuicoesIdBodyComiteAprovadorIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const putAtribuicoesIdBodyPapelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putAtribuicoesIdBodyDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
 
 export const PutAtribuicoesIdBody = zod.strictObject({
-  papelId: zod.uuid().regex(putAtribuicoesIdBodyPapelIdRegExp).optional(),
-  dominioId: zod.uuid().regex(putAtribuicoesIdBodyDominioIdRegExp).optional(),
-  documentoAtribuicao: zod.coerce.string().optional(),
-  comiteAprovadorId: zod
-    .uuid()
-    .regex(putAtribuicoesIdBodyComiteAprovadorIdRegExp)
-    .optional(),
-  onboarding: zod.coerce.boolean().optional(),
-  responsavel: zod.coerce.string().optional(),
-});
+  "papelId": zod.uuid().regex(putAtribuicoesIdBodyPapelIdRegExp).optional(),
+  "dominioId": zod.uuid().regex(putAtribuicoesIdBodyDominioIdRegExp).optional(),
+  "documentoAtribuicao": zod.coerce.string().optional(),
+  "comiteAprovador": zod.coerce.string().min(1).optional(),
+  "onboarding": zod.coerce.boolean().optional(),
+  "responsavel": zod.coerce.string().optional()
+})
 
-export const putAtribuicoesIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const putAtribuicoesIdResponseDataPapelIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const putAtribuicoesIdResponseDataDominioIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const putAtribuicoesIdResponseDataComiteAprovadorIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const putAtribuicoesIdResponseDataPapelIdRegExpOne = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const putAtribuicoesIdResponseDataDominioIdRegExpOne = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const putAtribuicoesIdResponseDataComiteAprovadorIdRegExpOne =
-  new RegExp(
-    "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-  );
+export const putAtribuicoesIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putAtribuicoesIdResponseDataPapelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putAtribuicoesIdResponseDataDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putAtribuicoesIdResponseDataEmpresaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putAtribuicoesIdResponseDataPapelIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putAtribuicoesIdResponseDataDominioIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PutAtribuicoesIdResponse = zod.object({
-  message: zod.string(),
-  data: zod.object({
-    id: zod.uuid().regex(putAtribuicoesIdResponseDataIdRegExp),
-    papelId: zod.uuid().regex(putAtribuicoesIdResponseDataPapelIdRegExp),
-    dominioId: zod.uuid().regex(putAtribuicoesIdResponseDataDominioIdRegExp),
-    documentoAtribuicao: zod.string(),
-    comiteAprovadorId: zod
-      .uuid()
-      .regex(putAtribuicoesIdResponseDataComiteAprovadorIdRegExp),
-    onboarding: zod.boolean(),
-    responsavel: zod.string(),
-    createdAt: zod.union([
-      zod.iso.datetime({ offset: true }),
-      zod.literal(null).nullable(),
-    ]),
-    updatedAt: zod.union([
-      zod.iso.datetime({ offset: true }),
-      zod.literal(null).nullable(),
-    ]),
-    papel: zod.object({
-      id: zod.uuid().regex(putAtribuicoesIdResponseDataPapelIdRegExpOne),
-      nome: zod.string(),
-      descricao: zod.union([zod.string(), zod.literal(null).nullable()]),
-    }),
-    dominio: zod.object({
-      id: zod.uuid().regex(putAtribuicoesIdResponseDataDominioIdRegExpOne),
-      nome: zod.string(),
-    }),
-    comiteAprovador: zod.object({
-      id: zod
-        .uuid()
-        .regex(putAtribuicoesIdResponseDataComiteAprovadorIdRegExpOne),
-      nome: zod.string(),
-    }),
-  }),
-});
+  "message": zod.string(),
+  "data": zod.object({
+  "id": zod.uuid().regex(putAtribuicoesIdResponseDataIdRegExp),
+  "papelId": zod.uuid().regex(putAtribuicoesIdResponseDataPapelIdRegExp),
+  "dominioId": zod.uuid().regex(putAtribuicoesIdResponseDataDominioIdRegExp),
+  "empresaId": zod.union([zod.uuid().regex(putAtribuicoesIdResponseDataEmpresaIdOneRegExp),zod.literal(null).nullable()]),
+  "documentoAtribuicao": zod.string(),
+  "comiteAprovador": zod.string(),
+  "onboarding": zod.boolean(),
+  "responsavel": zod.string(),
+  "createdAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]),
+  "papel": zod.object({
+  "id": zod.uuid().regex(putAtribuicoesIdResponseDataPapelIdRegExpOne),
+  "nome": zod.string(),
+  "descricao": zod.union([zod.string(),zod.literal(null).nullable()])
+}),
+  "dominio": zod.object({
+  "id": zod.uuid().regex(putAtribuicoesIdResponseDataDominioIdRegExpOne),
+  "nome": zod.string()
+})
+})
+})
 
 /**
  * Deletar uma atribuição
  * @summary Deletar atribuição
  */
-export const deleteAtribuicoesIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const deleteAtribuicoesIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const DeleteAtribuicoesIdParams = zod.strictObject({
-  id: zod.uuid().regex(deleteAtribuicoesIdPathIdRegExp),
-});
+  "id": zod.uuid().regex(deleteAtribuicoesIdPathIdRegExp)
+})
 
-export const deleteAtribuicoesIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const deleteAtribuicoesIdResponseDataPapelIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const deleteAtribuicoesIdResponseDataDominioIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const deleteAtribuicoesIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const deleteAtribuicoesIdResponseDataPapelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const deleteAtribuicoesIdResponseDataDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const DeleteAtribuicoesIdResponse = zod.object({
-  message: zod.string(),
-  data: zod.object({
-    id: zod.uuid().regex(deleteAtribuicoesIdResponseDataIdRegExp),
-    papelId: zod.uuid().regex(deleteAtribuicoesIdResponseDataPapelIdRegExp),
-    dominioId: zod.uuid().regex(deleteAtribuicoesIdResponseDataDominioIdRegExp),
-  }),
-});
+  "message": zod.string(),
+  "data": zod.object({
+  "id": zod.uuid().regex(deleteAtribuicoesIdResponseDataIdRegExp),
+  "papelId": zod.uuid().regex(deleteAtribuicoesIdResponseDataPapelIdRegExp),
+  "dominioId": zod.uuid().regex(deleteAtribuicoesIdResponseDataDominioIdRegExp)
+})
+})
+

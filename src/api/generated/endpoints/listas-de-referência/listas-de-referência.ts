@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -206,22 +205,6 @@ export function useGetListasReferencia<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar todas as listas de referência
- */
-export const invalidateGetListasReferencia = async (
-  queryClient: QueryClient,
-  params?: GetListasReferenciaParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetListasReferenciaQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Cria uma nova lista de referência com valores únicos validados
@@ -485,22 +468,6 @@ export function useGetListasReferenciaId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar lista de referência por ID
- */
-export const invalidateGetListasReferenciaId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetListasReferenciaIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualiza uma lista de referência existente

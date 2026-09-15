@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -206,22 +205,6 @@ export function useGetPoliticasInternas<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar políticas internas
- */
-export const invalidateGetPoliticasInternas = async (
-  queryClient: QueryClient,
-  params?: GetPoliticasInternasParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetPoliticasInternasQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar nova política interna
@@ -485,22 +468,6 @@ export function useGetPoliticasInternasId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar política interna por ID
- */
-export const invalidateGetPoliticasInternasId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetPoliticasInternasIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar dados de uma política interna específica

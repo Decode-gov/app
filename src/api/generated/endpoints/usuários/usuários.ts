@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -485,21 +484,6 @@ export function useGetUsuariosPerfil<
 }
 
 /**
- * @summary Perfil do usuário logado
- */
-export const invalidateGetUsuariosPerfil = async (
-  queryClient: QueryClient,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetUsuariosPerfilQueryKey() },
-    options,
-  );
-
-  return queryClient;
-};
-
-/**
  * Atualizar dados do próprio perfil
  * @summary Atualizar perfil próprio
  */
@@ -848,22 +832,6 @@ export function useGetUsuarios<
 }
 
 /**
- * @summary Listar usuários
- */
-export const invalidateGetUsuarios = async (
-  queryClient: QueryClient,
-  params?: GetUsuariosParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetUsuariosQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
-
-/**
  * Buscar usuário específico por ID
  * @summary Buscar usuário por ID
  */
@@ -1008,22 +976,6 @@ export function useGetUsuariosId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar usuário por ID
- */
-export const invalidateGetUsuariosId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetUsuariosIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar dados de um usuário específico

@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -206,22 +205,6 @@ export function useGetDimensoesQualidade<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar dimensões de qualidade
- */
-export const invalidateGetDimensoesQualidade = async (
-  queryClient: QueryClient,
-  params?: GetDimensoesQualidadeParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetDimensoesQualidadeQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar uma nova dimensão de qualidade
@@ -485,22 +468,6 @@ export function useGetDimensoesQualidadeId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar dimensão por ID
- */
-export const invalidateGetDimensoesQualidadeId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetDimensoesQualidadeIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar uma dimensão de qualidade existente

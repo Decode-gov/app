@@ -5,15 +5,16 @@
  * API completa para gestão de dados governamentais.
  * OpenAPI spec version: 1.0.0
  */
-import * as zod from "zod";
+import * as zod from 'zod';
+
 
 /**
  * Obter métricas gerais do sistema para dashboard
  * @summary Métricas gerais
  */
 export const GetDashboardMetricasQueryParams = zod.strictObject({
-  periodo: zod.enum(["semana", "mes", "trimestre", "ano"]).optional(),
-});
+  "periodo": zod.enum(['semana', 'mes', 'trimestre', 'ano']).optional()
+})
 
 export const getDashboardMetricasResponseDataTotalUsuariosMin = 0;
 export const getDashboardMetricasResponseDataTotalUsuariosMax = 9007199254740991;
@@ -39,70 +40,36 @@ export const getDashboardMetricasResponseDataTotalPoliticasMax = 900719925474099
 export const getDashboardMetricasResponseDataTotalComunidadesMin = 0;
 export const getDashboardMetricasResponseDataTotalComunidadesMax = 9007199254740991;
 
+
+
 export const GetDashboardMetricasResponse = zod.object({
-  message: zod.string(),
-  data: zod.object({
-    totalUsuarios: zod
-      .number()
-      .min(getDashboardMetricasResponseDataTotalUsuariosMin)
-      .max(getDashboardMetricasResponseDataTotalUsuariosMax)
-      .describe("Total de usuários"),
-    totalSistemas: zod
-      .number()
-      .min(getDashboardMetricasResponseDataTotalSistemasMin)
-      .max(getDashboardMetricasResponseDataTotalSistemasMax)
-      .describe("Total de sistemas"),
-    totalProcessos: zod
-      .number()
-      .min(getDashboardMetricasResponseDataTotalProcessosMin)
-      .max(getDashboardMetricasResponseDataTotalProcessosMax)
-      .describe("Total de processos"),
-    totalTabelas: zod
-      .number()
-      .min(getDashboardMetricasResponseDataTotalTabelasMin)
-      .max(getDashboardMetricasResponseDataTotalTabelasMax)
-      .describe("Total de tabelas"),
-    totalColunas: zod
-      .number()
-      .min(getDashboardMetricasResponseDataTotalColunasMin)
-      .max(getDashboardMetricasResponseDataTotalColunasMax)
-      .describe("Total de colunas"),
-    totalTermos: zod
-      .number()
-      .min(getDashboardMetricasResponseDataTotalTermosMin)
-      .max(getDashboardMetricasResponseDataTotalTermosMax)
-      .describe("Total de termos"),
-    totalPoliticas: zod
-      .number()
-      .min(getDashboardMetricasResponseDataTotalPoliticasMin)
-      .max(getDashboardMetricasResponseDataTotalPoliticasMax)
-      .describe("Total de políticas"),
-    totalComunidades: zod
-      .number()
-      .min(getDashboardMetricasResponseDataTotalComunidadesMin)
-      .max(getDashboardMetricasResponseDataTotalComunidadesMax)
-      .describe("Total de comunidades"),
-  }),
-});
+  "message": zod.string(),
+  "data": zod.object({
+  "totalUsuarios": zod.number().min(getDashboardMetricasResponseDataTotalUsuariosMin).max(getDashboardMetricasResponseDataTotalUsuariosMax).describe('Total de usuários'),
+  "totalSistemas": zod.number().min(getDashboardMetricasResponseDataTotalSistemasMin).max(getDashboardMetricasResponseDataTotalSistemasMax).describe('Total de sistemas'),
+  "totalProcessos": zod.number().min(getDashboardMetricasResponseDataTotalProcessosMin).max(getDashboardMetricasResponseDataTotalProcessosMax).describe('Total de processos'),
+  "totalTabelas": zod.number().min(getDashboardMetricasResponseDataTotalTabelasMin).max(getDashboardMetricasResponseDataTotalTabelasMax).describe('Total de tabelas'),
+  "totalColunas": zod.number().min(getDashboardMetricasResponseDataTotalColunasMin).max(getDashboardMetricasResponseDataTotalColunasMax).describe('Total de colunas'),
+  "totalTermos": zod.number().min(getDashboardMetricasResponseDataTotalTermosMin).max(getDashboardMetricasResponseDataTotalTermosMax).describe('Total de termos'),
+  "totalPoliticas": zod.number().min(getDashboardMetricasResponseDataTotalPoliticasMin).max(getDashboardMetricasResponseDataTotalPoliticasMax).describe('Total de políticas'),
+  "totalComunidades": zod.number().min(getDashboardMetricasResponseDataTotalComunidadesMin).max(getDashboardMetricasResponseDataTotalComunidadesMax).describe('Total de comunidades')
+})
+})
 
 /**
  * Obter dashboard específico de um usuário
  * @summary Dashboard do usuário
  */
-export const getDashboardUsuarioUsuarioIdPathUsuarioIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getDashboardUsuarioUsuarioIdPathUsuarioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetDashboardUsuarioUsuarioIdParams = zod.strictObject({
-  usuarioId: zod
-    .uuid()
-    .regex(getDashboardUsuarioUsuarioIdPathUsuarioIdRegExp)
-    .describe("ID do usuário"),
-});
+  "usuarioId": zod.uuid().regex(getDashboardUsuarioUsuarioIdPathUsuarioIdRegExp).describe('ID do usuário')
+})
 
 export const GetDashboardUsuarioUsuarioIdQueryParams = zod.strictObject({
-  periodo: zod.enum(["semana", "mes", "trimestre", "ano"]).optional(),
-});
+  "periodo": zod.enum(['semana', 'mes', 'trimestre', 'ano']).optional()
+})
 
 export const getDashboardUsuarioUsuarioIdResponseDataMetricasTotalSistemasMin = 0;
 export const getDashboardUsuarioUsuarioIdResponseDataMetricasTotalSistemasMax = 9007199254740991;
@@ -113,63 +80,42 @@ export const getDashboardUsuarioUsuarioIdResponseDataMetricasTotalProcessosMax =
 export const getDashboardUsuarioUsuarioIdResponseDataMetricasTotalComunidadesMin = 0;
 export const getDashboardUsuarioUsuarioIdResponseDataMetricasTotalComunidadesMax = 9007199254740991;
 
+
+
 export const GetDashboardUsuarioUsuarioIdResponse = zod.object({
-  message: zod.string(),
-  data: zod.object({
-    metricas: zod
-      .object({
-        totalSistemas: zod
-          .number()
-          .min(getDashboardUsuarioUsuarioIdResponseDataMetricasTotalSistemasMin)
-          .max(getDashboardUsuarioUsuarioIdResponseDataMetricasTotalSistemasMax)
-          .describe("Total de sistemas"),
-        totalProcessos: zod
-          .number()
-          .min(
-            getDashboardUsuarioUsuarioIdResponseDataMetricasTotalProcessosMin,
-          )
-          .max(
-            getDashboardUsuarioUsuarioIdResponseDataMetricasTotalProcessosMax,
-          )
-          .describe("Total de processos"),
-        totalComunidades: zod
-          .number()
-          .min(
-            getDashboardUsuarioUsuarioIdResponseDataMetricasTotalComunidadesMin,
-          )
-          .max(
-            getDashboardUsuarioUsuarioIdResponseDataMetricasTotalComunidadesMax,
-          )
-          .describe("Total de comunidades"),
-      })
-      .describe("Métricas do dashboard"),
-    usuario: zod
-      .object({
-        id: zod.string().describe("ID do usuário"),
-      })
-      .describe("Dados do usuário"),
-  }),
-});
+  "message": zod.string(),
+  "data": zod.object({
+  "metricas": zod.object({
+  "totalSistemas": zod.number().min(getDashboardUsuarioUsuarioIdResponseDataMetricasTotalSistemasMin).max(getDashboardUsuarioUsuarioIdResponseDataMetricasTotalSistemasMax).describe('Total de sistemas'),
+  "totalProcessos": zod.number().min(getDashboardUsuarioUsuarioIdResponseDataMetricasTotalProcessosMin).max(getDashboardUsuarioUsuarioIdResponseDataMetricasTotalProcessosMax).describe('Total de processos'),
+  "totalComunidades": zod.number().min(getDashboardUsuarioUsuarioIdResponseDataMetricasTotalComunidadesMin).max(getDashboardUsuarioUsuarioIdResponseDataMetricasTotalComunidadesMax).describe('Total de comunidades')
+}).describe('Métricas do dashboard'),
+  "usuario": zod.object({
+  "id": zod.string().describe('ID do usuário')
+}).describe('Dados do usuário')
+})
+})
 
 /**
  * Obter dashboard de qualidade de dados
  * @summary Dashboard de qualidade
  */
 export const GetDashboardQualidadeQueryParams = zod.strictObject({
-  periodo: zod.enum(["semana", "mes", "trimestre", "ano"]).optional(),
-});
+  "periodo": zod.enum(['semana', 'mes', 'trimestre', 'ano']).optional()
+})
 
 export const GetDashboardQualidadeResponse = zod.object({
-  message: zod.string(),
-  data: zod.object({
-    periodo: zod.string(),
-    dataInicio: zod.string(),
-    resumo: zod.object({
-      totalDimensoes: zod.number(),
-      totalRegras: zod.number(),
-      regrasAtivas: zod.number(),
-      regrasInativas: zod.number(),
-      percentualAtivo: zod.number(),
-    }),
-  }),
-});
+  "message": zod.string(),
+  "data": zod.object({
+  "periodo": zod.string(),
+  "dataInicio": zod.string(),
+  "resumo": zod.object({
+  "totalDimensoes": zod.number(),
+  "totalRegras": zod.number(),
+  "regrasAtivas": zod.number(),
+  "regrasInativas": zod.number(),
+  "percentualAtivo": zod.number()
+})
+})
+})
+

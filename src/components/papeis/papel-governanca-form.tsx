@@ -95,27 +95,23 @@ export function PapelGovernancaForm({
   const onSubmit = async (data: PostPapeisBody) => {
     try {
       if (papel) {
-        await updateMutation
-          .mutateAsync({
-            id: papel.id,
-            data: data,
-          })
-          .then(() => {
-            queryClient.invalidateQueries({
-              queryKey: [getGetPapeisQueryKey],
-            });
-          });
-      } else {
-        await createMutation.mutateAsync({ data }).then(() => {
-          queryClient.invalidateQueries({
-            queryKey: [getGetPapeisQueryKey],
-          });
+        await updateMutation.mutateAsync({
+          id: papel.id,
+          data: data,
         });
+      } else {
+        await createMutation.mutateAsync({ data });
       }
+
+      queryClient.invalidateQueries({
+        queryKey: [getGetPapeisQueryKey(empresaParams)],
+      });
 
       form.reset();
       onOpenChange(false);
-    } catch (error: any) {
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    } catch (error) {
+      console.error('Erro ao salvar papel!', error)
       toast.error("Erro ao tentar salvar novo papel de governança!");
     }
   };

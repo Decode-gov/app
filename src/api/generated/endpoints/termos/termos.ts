@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -182,22 +181,6 @@ export function useGetDefinicoes<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar termos
- */
-export const invalidateGetDefinicoes = async (
-  queryClient: QueryClient,
-  params?: GetDefinicoesParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetDefinicoesQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar nova definição no sistema
@@ -454,22 +437,6 @@ export function useGetDefinicoesId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar definição por ID
- */
-export const invalidateGetDefinicoesId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetDefinicoesIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar dados de uma definição específica

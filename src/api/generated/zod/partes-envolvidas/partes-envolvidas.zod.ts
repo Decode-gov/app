@@ -5,158 +5,127 @@
  * API completa para gestão de dados governamentais.
  * OpenAPI spec version: 1.0.0
  */
-import * as zod from "zod";
+import * as zod from 'zod';
+
 
 /**
  * Listar todas as partes envolvidas cadastradas no sistema
  * @summary Listar partes envolvidas
  */
-export const getPartesEnvolvidasQueryEmpresaIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getPartesEnvolvidasQueryEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetPartesEnvolvidasQueryParams = zod.strictObject({
-  empresaId: zod
-    .uuid()
-    .regex(getPartesEnvolvidasQueryEmpresaIdRegExp)
-    .optional()
-    .describe(
-      "Filtrar por empresa (somente ADMIN; USUARIO usa o empresaId do token automaticamente)",
-    ),
-});
+  "empresaId": zod.uuid().regex(getPartesEnvolvidasQueryEmpresaIdRegExp).optional().describe('Filtrar por empresa (somente ADMIN; USUARIO usa o empresaId do token automaticamente)')
+})
 
-export const getPartesEnvolvidasResponseDataItemIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getPartesEnvolvidasResponseDataItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetPartesEnvolvidasResponse = zod.object({
-  data: zod.array(
-    zod.object({
-      id: zod.uuid().regex(getPartesEnvolvidasResponseDataItemIdRegExp),
-      nome: zod.string(),
-      descricao: zod.union([zod.string(), zod.literal(null).nullable()]),
-      contato: zod.string(),
-      createdAt: zod.union([
-        zod.iso.datetime({ offset: true }),
-        zod.literal(null).nullable(),
-      ]),
-      updatedAt: zod.union([
-        zod.iso.datetime({ offset: true }),
-        zod.literal(null).nullable(),
-      ]),
-    }),
-  ),
-});
+  "data": zod.array(zod.object({
+  "id": zod.uuid().regex(getPartesEnvolvidasResponseDataItemIdRegExp),
+  "nome": zod.string(),
+  "descricao": zod.union([zod.string(),zod.literal(null).nullable()]),
+  "contato": zod.string(),
+  "createdAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()])
+}))
+})
 
 /**
  * Criar nova parte envolvida no sistema
  * @summary Criar parte envolvida
  */
 
+
+
+
 export const PostPartesEnvolvidasBody = zod.strictObject({
-  nome: zod.coerce.string().min(1).describe("Nome da parte envolvida"),
-  descricao: zod.coerce
-    .string()
-    .optional()
-    .describe("Descrição da parte envolvida"),
-  contato: zod.coerce
-    .string()
-    .min(1)
-    .describe("Informação de contato (email, telefone, etc)"),
-});
+  "nome": zod.coerce.string().min(1).describe('Nome da parte envolvida'),
+  "descricao": zod.coerce.string().optional().describe('Descrição da parte envolvida'),
+  "contato": zod.coerce.string().min(1).describe('Informação de contato (email, telefone, etc)')
+})
 
 /**
  * Buscar parte envolvida específica por ID
  * @summary Buscar parte envolvida por ID
  */
-export const getPartesEnvolvidasIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getPartesEnvolvidasIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetPartesEnvolvidasIdParams = zod.strictObject({
-  id: zod.uuid().regex(getPartesEnvolvidasIdPathIdRegExp),
-});
+  "id": zod.uuid().regex(getPartesEnvolvidasIdPathIdRegExp)
+})
 
-export const getPartesEnvolvidasIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getPartesEnvolvidasIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetPartesEnvolvidasIdResponse = zod.object({
-  data: zod.object({
-    id: zod.uuid().regex(getPartesEnvolvidasIdResponseDataIdRegExp),
-    nome: zod.string(),
-    descricao: zod.union([zod.string(), zod.literal(null).nullable()]),
-    contato: zod.string(),
-    createdAt: zod.union([
-      zod.iso.datetime({ offset: true }),
-      zod.literal(null).nullable(),
-    ]),
-    updatedAt: zod.union([
-      zod.iso.datetime({ offset: true }),
-      zod.literal(null).nullable(),
-    ]),
-  }),
-});
+  "data": zod.object({
+  "id": zod.uuid().regex(getPartesEnvolvidasIdResponseDataIdRegExp),
+  "nome": zod.string(),
+  "descricao": zod.union([zod.string(),zod.literal(null).nullable()]),
+  "contato": zod.string(),
+  "createdAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()])
+})
+})
 
 /**
  * Atualizar parte envolvida existente
  * @summary Atualizar parte envolvida
  */
-export const putPartesEnvolvidasIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const putPartesEnvolvidasIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PutPartesEnvolvidasIdParams = zod.strictObject({
-  id: zod.uuid().regex(putPartesEnvolvidasIdPathIdRegExp),
-});
+  "id": zod.uuid().regex(putPartesEnvolvidasIdPathIdRegExp)
+})
+
+
+
+
 
 export const PutPartesEnvolvidasIdBody = zod.strictObject({
-  nome: zod.coerce.string().min(1).optional(),
-  descricao: zod.coerce.string().optional(),
-  contato: zod.coerce.string().min(1).optional(),
-});
+  "nome": zod.coerce.string().min(1).optional(),
+  "descricao": zod.coerce.string().optional(),
+  "contato": zod.coerce.string().min(1).optional()
+})
 
-export const putPartesEnvolvidasIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const putPartesEnvolvidasIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PutPartesEnvolvidasIdResponse = zod.object({
-  data: zod.object({
-    id: zod.uuid().regex(putPartesEnvolvidasIdResponseDataIdRegExp),
-    nome: zod.string(),
-    descricao: zod.union([zod.string(), zod.literal(null).nullable()]),
-    contato: zod.string(),
-    createdAt: zod.union([
-      zod.iso.datetime({ offset: true }),
-      zod.literal(null).nullable(),
-    ]),
-    updatedAt: zod.union([
-      zod.iso.datetime({ offset: true }),
-      zod.literal(null).nullable(),
-    ]),
-  }),
-});
+  "data": zod.object({
+  "id": zod.uuid().regex(putPartesEnvolvidasIdResponseDataIdRegExp),
+  "nome": zod.string(),
+  "descricao": zod.union([zod.string(),zod.literal(null).nullable()]),
+  "contato": zod.string(),
+  "createdAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()])
+})
+})
 
 /**
  * Remover parte envolvida do sistema
  * @summary Deletar parte envolvida
  */
-export const deletePartesEnvolvidasIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const deletePartesEnvolvidasIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const DeletePartesEnvolvidasIdParams = zod.strictObject({
-  id: zod.uuid().regex(deletePartesEnvolvidasIdPathIdRegExp),
-});
+  "id": zod.uuid().regex(deletePartesEnvolvidasIdPathIdRegExp)
+})
 
-export const deletePartesEnvolvidasIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const deletePartesEnvolvidasIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const DeletePartesEnvolvidasIdResponse = zod.object({
-  message: zod.string(),
-  data: zod.object({
-    id: zod.uuid().regex(deletePartesEnvolvidasIdResponseDataIdRegExp),
-    nome: zod.string(),
-  }),
-});
+  "message": zod.string(),
+  "data": zod.object({
+  "id": zod.uuid().regex(deletePartesEnvolvidasIdResponseDataIdRegExp),
+  "nome": zod.string()
+})
+})
+

@@ -5,59 +5,35 @@
  * API completa para gestão de dados governamentais.
  * OpenAPI spec version: 1.0.0
  */
-import * as zod from "zod";
+import * as zod from 'zod';
+
 
 /**
  * Listar todos os processos do sistema com relacionamentos
  * @summary Listar processos
  */
-export const getProcessosQueryEmpresaIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getProcessosQueryEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetProcessosQueryParams = zod.strictObject({
-  empresaId: zod
-    .uuid()
-    .regex(getProcessosQueryEmpresaIdRegExp)
-    .optional()
-    .describe("Filtrar por empresa"),
-});
+  "empresaId": zod.uuid().regex(getProcessosQueryEmpresaIdRegExp).optional().describe('Filtrar por empresa')
+})
 
-export const getProcessosResponseDataItemIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getProcessosResponseDataItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getProcessosResponseDataItemNomeMax = 255;
 
+
+
 export const GetProcessosResponse = zod.object({
-  message: zod.string().describe("Mensagem de resposta"),
-  data: zod
-    .array(
-      zod.object({
-        id: zod
-          .uuid()
-          .regex(getProcessosResponseDataItemIdRegExp)
-          .describe("Identificador único do processo"),
-        nome: zod
-          .string()
-          .min(1)
-          .max(getProcessosResponseDataItemNomeMax)
-          .describe("Nome do processo"),
-        descricao: zod
-          .union([zod.string(), zod.literal(null).nullable()])
-          .describe("Descrição do processo"),
-        createdAt: zod.iso
-          .datetime({ offset: true })
-          .describe("Data de criação"),
-        updatedAt: zod
-          .union([
-            zod.iso.datetime({ offset: true }),
-            zod.literal(null).nullable(),
-          ])
-          .describe("Data de última atualização"),
-      }),
-    )
-    .describe("Lista de processos"),
-});
+  "message": zod.string().describe('Mensagem de resposta'),
+  "data": zod.array(zod.object({
+  "id": zod.uuid().regex(getProcessosResponseDataItemIdRegExp).describe('Identificador único do processo'),
+  "nome": zod.string().min(1).max(getProcessosResponseDataItemNomeMax).describe('Nome do processo'),
+  "descricao": zod.union([zod.string(),zod.literal(null).nullable()]).describe('Descrição do processo'),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Data de criação'),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).describe('Data de última atualização')
+})).describe('Lista de processos')
+})
 
 /**
  * Criar novo processo no sistema
@@ -65,123 +41,88 @@ export const GetProcessosResponse = zod.object({
  */
 export const postProcessosBodyNomeMax = 255;
 
+
+
 export const PostProcessosBody = zod.strictObject({
-  nome: zod.coerce
-    .string()
-    .min(1)
-    .max(postProcessosBodyNomeMax)
-    .describe("Nome do processo"),
-  descricao: zod.coerce
-    .string()
-    .optional()
-    .describe("Descrição opcional do processo"),
-});
+  "nome": zod.coerce.string().min(1).max(postProcessosBodyNomeMax).describe('Nome do processo'),
+  "descricao": zod.coerce.string().optional().describe('Descrição opcional do processo')
+})
 
 /**
  * Buscar processo específico por ID com relacionamentos
  * @summary Buscar processo por ID
  */
-export const getProcessosIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getProcessosIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetProcessosIdParams = zod.strictObject({
-  id: zod.uuid().regex(getProcessosIdPathIdRegExp).describe("ID do processo"),
-});
+  "id": zod.uuid().regex(getProcessosIdPathIdRegExp).describe('ID do processo')
+})
 
-export const getProcessosIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getProcessosIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getProcessosIdResponseDataNomeMax = 255;
 
+
+
 export const GetProcessosIdResponse = zod.object({
-  message: zod.string().describe("Mensagem de resposta"),
-  data: zod.object({
-    id: zod
-      .uuid()
-      .regex(getProcessosIdResponseDataIdRegExp)
-      .describe("Identificador único do processo"),
-    nome: zod
-      .string()
-      .min(1)
-      .max(getProcessosIdResponseDataNomeMax)
-      .describe("Nome do processo"),
-    descricao: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .describe("Descrição do processo"),
-    createdAt: zod.iso.datetime({ offset: true }).describe("Data de criação"),
-    updatedAt: zod
-      .union([zod.iso.datetime({ offset: true }), zod.literal(null).nullable()])
-      .describe("Data de última atualização"),
-  }),
-});
+  "message": zod.string().describe('Mensagem de resposta'),
+  "data": zod.object({
+  "id": zod.uuid().regex(getProcessosIdResponseDataIdRegExp).describe('Identificador único do processo'),
+  "nome": zod.string().min(1).max(getProcessosIdResponseDataNomeMax).describe('Nome do processo'),
+  "descricao": zod.union([zod.string(),zod.literal(null).nullable()]).describe('Descrição do processo'),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Data de criação'),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).describe('Data de última atualização')
+})
+})
 
 /**
  * Atualizar dados de um processo específico
  * @summary Atualizar processo
  */
-export const putProcessosIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const putProcessosIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PutProcessosIdParams = zod.strictObject({
-  id: zod.uuid().regex(putProcessosIdPathIdRegExp).describe("ID do processo"),
-});
+  "id": zod.uuid().regex(putProcessosIdPathIdRegExp).describe('ID do processo')
+})
 
 export const putProcessosIdBodyNomeMax = 255;
 
-export const PutProcessosIdBody = zod.strictObject({
-  nome: zod.coerce
-    .string()
-    .min(1)
-    .max(putProcessosIdBodyNomeMax)
-    .optional()
-    .describe("Nome do processo"),
-  descricao: zod.coerce.string().optional().describe("Descrição do processo"),
-});
 
-export const putProcessosIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+
+export const PutProcessosIdBody = zod.strictObject({
+  "nome": zod.coerce.string().min(1).max(putProcessosIdBodyNomeMax).optional().describe('Nome do processo'),
+  "descricao": zod.coerce.string().optional().describe('Descrição do processo')
+})
+
+export const putProcessosIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putProcessosIdResponseDataNomeMax = 255;
 
+
+
 export const PutProcessosIdResponse = zod.object({
-  message: zod.string().describe("Mensagem de resposta"),
-  data: zod.object({
-    id: zod
-      .uuid()
-      .regex(putProcessosIdResponseDataIdRegExp)
-      .describe("Identificador único do processo"),
-    nome: zod
-      .string()
-      .min(1)
-      .max(putProcessosIdResponseDataNomeMax)
-      .describe("Nome do processo"),
-    descricao: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .describe("Descrição do processo"),
-    createdAt: zod.iso.datetime({ offset: true }).describe("Data de criação"),
-    updatedAt: zod
-      .union([zod.iso.datetime({ offset: true }), zod.literal(null).nullable()])
-      .describe("Data de última atualização"),
-  }),
-});
+  "message": zod.string().describe('Mensagem de resposta'),
+  "data": zod.object({
+  "id": zod.uuid().regex(putProcessosIdResponseDataIdRegExp).describe('Identificador único do processo'),
+  "nome": zod.string().min(1).max(putProcessosIdResponseDataNomeMax).describe('Nome do processo'),
+  "descricao": zod.union([zod.string(),zod.literal(null).nullable()]).describe('Descrição do processo'),
+  "createdAt": zod.iso.datetime({"offset":true}).describe('Data de criação'),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).describe('Data de última atualização')
+})
+})
 
 /**
  * Deletar um processo do sistema
  * @summary Deletar processo
  */
-export const deleteProcessosIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const deleteProcessosIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const DeleteProcessosIdParams = zod.strictObject({
-  id: zod
-    .uuid()
-    .regex(deleteProcessosIdPathIdRegExp)
-    .describe("ID do processo"),
-});
+  "id": zod.uuid().regex(deleteProcessosIdPathIdRegExp).describe('ID do processo')
+})
 
 export const DeleteProcessosIdResponse = zod.object({
-  message: zod.string(),
-});
+  "message": zod.string()
+})
+

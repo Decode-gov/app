@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -205,22 +204,6 @@ export function useGetImportacaoExportacao<
 }
 
 /**
- * @summary Listar operações
- */
-export const invalidateGetImportacaoExportacao = async (
-  queryClient: QueryClient,
-  params?: GetImportacaoExportacaoParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetImportacaoExportacaoQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
-
-/**
  * Buscar operação de importação/exportação por ID
  * @summary Buscar operação
  */
@@ -387,22 +370,6 @@ export function useGetImportacaoExportacaoId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar operação
- */
-export const invalidateGetImportacaoExportacaoId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetImportacaoExportacaoIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Exportar dados do sistema em diferentes formatos

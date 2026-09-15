@@ -86,10 +86,10 @@ export const UpdateComunidadeSchema = ComunidadeSchema;
 // ============================================================================
 
 export const AtribuicaoSchema = z.object({
-  papelId: stringRequired(1, "Papel"),
-  dominioId: stringRequired(1, "Domínio"),
+  papelId: uuidRequired("Papel"),
+  dominioId: uuidRequired("Domínio"),
   documentoAtribuicao: stringRequired(1, "Documento de atribuição"),
-  comiteAprovadorId: stringRequired(1, "Comitê aprovador"),
+  comiteAprovador: stringRequired(1, "Comitê aprovador"),
   onboarding: z.boolean().default(false),
   responsavel: stringRequired(1, "Responsável"),
 });
@@ -99,7 +99,7 @@ export const UpdateAtribuicaoSchema = z.object({
   papelId: stringOptional(),
   dominioId: stringOptional(),
   documentoAtribuicao: stringOptional(),
-  comiteAprovadorId: stringOptional(),
+  comiteAprovador: stringOptional(),
   onboarding: z.boolean().optional(),
   responsavel: stringOptional(),
 });

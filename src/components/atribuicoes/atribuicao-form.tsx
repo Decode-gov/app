@@ -11,10 +11,8 @@ import {
   usePostAtribuicoes,
   usePutAtribuicoesId,
 } from "@/api/generated/endpoints/atribuições-papel-domínio/atribuições-papel-domínio";
-import { useGetComitesAprovadores } from "@/api/generated/endpoints/comitês-aprovadores/comitês-aprovadores";
 import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
 import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
-import { ComiteAprovadorForm } from "@/components/comites/comite-aprovador-form";
 import { ComunidadeForm } from "@/components/dominios/comunidade-form";
 import { PapelGovernancaForm } from "@/components/papeis/papel-governanca-form";
 import { Button } from "@/components/ui/button";
@@ -67,18 +65,15 @@ export function AtribuicaoForm({
   const isEditing = !!atribuicao;
   const [papelDialogOpen, setPapelDialogOpen] = useState(false);
   const [dominioDialogOpen, setDominioDialogOpen] = useState(false);
-  const [comiteDialogOpen, setComiteDialogOpen] = useState(false);
 
   const createAtribuicao = usePostAtribuicoes();
   const updateAtribuicao = usePutAtribuicoesId();
 
   const { data: papeisData } = useGetPapeis(empresaParams);
   const { data: comunidadesData } = useGetComunidades(empresaParams);
-  const { data: comitesData } = useGetComitesAprovadores(empresaParams);
 
   const papeis = papeisData?.data ?? [];
   const dominios = comunidadesData?.data ?? [];
-  const comites = comitesData?.data ?? [];
 
   const form = useForm<CreateAtribuicaoFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,7 +83,7 @@ export function AtribuicaoForm({
       papelId: "",
       dominioId: "",
       documentoAtribuicao: "",
-      comiteAprovadorId: "",
+      comiteAprovador: "",
       onboarding: false,
       responsavel: "",
     },
@@ -100,7 +95,7 @@ export function AtribuicaoForm({
         papelId: atribuicao.papelId,
         dominioId: atribuicao.dominioId,
         documentoAtribuicao: atribuicao.documentoAtribuicao,
-        comiteAprovadorId: atribuicao.comiteAprovadorId,
+        comiteAprovador: atribuicao.comiteAprovador,
         onboarding: atribuicao.onboarding,
         responsavel: atribuicao.responsavel,
       });
@@ -109,7 +104,7 @@ export function AtribuicaoForm({
         papelId: "",
         dominioId: "",
         documentoAtribuicao: "",
-        comiteAprovadorId: "",
+        comiteAprovador: "",
         onboarding: false,
         responsavel: "",
       });
@@ -122,12 +117,16 @@ export function AtribuicaoForm({
         await updateAtribuicao.mutateAsync({ id: atribuicao.id, data });
       } else {
         await createAtribuicao.mutateAsync({
-          data,
+          data: {
+            ...data,
+            empresaId: empresaParams.empresaId,
+          },
         });
       }
       onOpenChange(false);
       form.reset();
     } catch (error) {
+      console.error(error);
       toast.error("Erro ao salvar atribuição");
     } finally {
       queryClient.invalidateQueries({
@@ -257,38 +256,24 @@ export function AtribuicaoForm({
               {/* Comitê Aprovador */}
               <FormField
                 control={form.control}
-                name="comiteAprovadorId"
+                name="comiteAprovador"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Comitê Aprovador *</FormLabel>
-                    <div className="flex gap-2">
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Selecione um comitê" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {comites.map((comite) => (
-                            <SelectItem key={comite.id} value={comite.id}>
-                              {comite.nome}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setComiteDialogOpen(true)}
-                        title="Criar novo comitê aprovador"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <FormLabel>Aprovador *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {papeis.map((papel) => (
+                          <SelectItem key={papel.id} value={papel.nome}>
+                            {papel.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -368,10 +353,6 @@ export function AtribuicaoForm({
       <ComunidadeForm
         open={dominioDialogOpen}
         onOpenChange={setDominioDialogOpen}
-      />
-      <ComiteAprovadorForm
-        open={comiteDialogOpen}
-        onOpenChange={setComiteDialogOpen}
       />
     </Dialog>
   );

@@ -16,16 +16,13 @@ export const getAtribuicoesId200DataPapelIdRegExp = new RegExp(
 export const getAtribuicoesId200DataDominioIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
-export const getAtribuicoesId200DataComiteAprovadorIdRegExp = new RegExp(
+export const getAtribuicoesId200DataEmpresaIdOneRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 export const getAtribuicoesId200DataPapelIdRegExpOne = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 export const getAtribuicoesId200DataDominioIdRegExpOne = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
-export const getAtribuicoesId200DataComiteAprovadorIdRegExpOne = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 
@@ -35,10 +32,12 @@ export const GetAtribuicoesId200 = zod.object({
     id: zod.uuid().regex(getAtribuicoesId200DataIdRegExp),
     papelId: zod.uuid().regex(getAtribuicoesId200DataPapelIdRegExp),
     dominioId: zod.uuid().regex(getAtribuicoesId200DataDominioIdRegExp),
+    empresaId: zod.union([
+      zod.uuid().regex(getAtribuicoesId200DataEmpresaIdOneRegExp),
+      zod.literal(null).nullable(),
+    ]),
     documentoAtribuicao: zod.string(),
-    comiteAprovadorId: zod
-      .uuid()
-      .regex(getAtribuicoesId200DataComiteAprovadorIdRegExp),
+    comiteAprovador: zod.string(),
     onboarding: zod.boolean(),
     responsavel: zod.string(),
     createdAt: zod.union([
@@ -56,10 +55,6 @@ export const GetAtribuicoesId200 = zod.object({
     }),
     dominio: zod.object({
       id: zod.uuid().regex(getAtribuicoesId200DataDominioIdRegExpOne),
-      nome: zod.string(),
-    }),
-    comiteAprovador: zod.object({
-      id: zod.uuid().regex(getAtribuicoesId200DataComiteAprovadorIdRegExpOne),
       nome: zod.string(),
     }),
   }),

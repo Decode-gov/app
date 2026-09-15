@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -182,22 +181,6 @@ export function useGetKpis<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar KPIs
- */
-export const invalidateGetKpis = async (
-  queryClient: QueryClient,
-  params?: GetKpisParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetKpisQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar novo KPI no sistema
@@ -432,22 +415,6 @@ export function useGetKpisId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar KPI por ID
- */
-export const invalidateGetKpisId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetKpisIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar dados de um KPI específico

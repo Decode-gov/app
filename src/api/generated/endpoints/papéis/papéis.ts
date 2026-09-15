@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -182,22 +181,6 @@ export function useGetPapeis<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar papéis de governança
- */
-export const invalidateGetPapeis = async (
-  queryClient: QueryClient,
-  params?: GetPapeisParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetPapeisQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Permitir o registro dos papéis formais no modelo de governança de dados, conforme definido nas políticas institucionais
@@ -434,22 +417,6 @@ export function useGetPapeisId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar papel de governança
- */
-export const invalidateGetPapeisId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetPapeisIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar dados de um papel específico

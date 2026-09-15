@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -205,22 +204,6 @@ export function useGetRegulacoesCompletas<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar regulações
- */
-export const invalidateGetRegulacoesCompletas = async (
-  queryClient: QueryClient,
-  params?: GetRegulacoesCompletasParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetRegulacoesCompletasQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar nova regulação completa no sistema
@@ -484,22 +467,6 @@ export function useGetRegulacoesCompletasId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar regulação
- */
-export const invalidateGetRegulacoesCompletasId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetRegulacoesCompletasIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar regulação completa existente

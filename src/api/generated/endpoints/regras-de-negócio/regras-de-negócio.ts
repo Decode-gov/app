@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -205,22 +204,6 @@ export function useGetRegrasNegocio<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar regras de negócio
- */
-export const invalidateGetRegrasNegocio = async (
-  queryClient: QueryClient,
-  params?: GetRegrasNegocioParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetRegrasNegocioQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar nova regra de negócio no sistema
@@ -477,22 +460,6 @@ export function useGetRegrasNegocioId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar regra de negócio
- */
-export const invalidateGetRegrasNegocioId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetRegrasNegocioIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar regra de negócio existente

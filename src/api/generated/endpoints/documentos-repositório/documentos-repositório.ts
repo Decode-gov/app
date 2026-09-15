@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -206,22 +205,6 @@ export function useGetDocumentosRepositorio<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar documentos
- */
-export const invalidateGetDocumentosRepositorio = async (
-  queryClient: QueryClient,
-  params?: GetDocumentosRepositorioParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetDocumentosRepositorioQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar novo documento associando termo de negócio a repositório
@@ -485,22 +468,6 @@ export function useGetDocumentosRepositorioId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar documento por ID
- */
-export const invalidateGetDocumentosRepositorioId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetDocumentosRepositorioIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar documento existente

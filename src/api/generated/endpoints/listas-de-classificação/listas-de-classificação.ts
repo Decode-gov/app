@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -205,22 +204,6 @@ export function useGetListasClassificacao<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar listas de classificação
- */
-export const invalidateGetListasClassificacao = async (
-  queryClient: QueryClient,
-  params?: GetListasClassificacaoParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetListasClassificacaoQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar uma nova lista de classificação de segurança
@@ -484,22 +467,6 @@ export function useGetListasClassificacaoId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar lista por ID
- */
-export const invalidateGetListasClassificacaoId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetListasClassificacaoIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar uma lista de classificação existente

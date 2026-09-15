@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -184,21 +183,6 @@ export function useGetEmpresas<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar empresas
- */
-export const invalidateGetEmpresas = async (
-  queryClient: QueryClient,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetEmpresasQueryKey() },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar nova empresa no sistema. Acesso restrito a administradores.
@@ -439,22 +423,6 @@ export function useGetEmpresasId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar empresa por ID
- */
-export const invalidateGetEmpresasId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetEmpresasIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar dados de uma empresa. Acesso restrito a administradores.

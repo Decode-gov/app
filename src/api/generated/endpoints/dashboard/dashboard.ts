@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   QueryClient,
   QueryFunction,
   QueryKey,
@@ -198,22 +197,6 @@ export function useGetDashboardMetricas<
 }
 
 /**
- * @summary Métricas gerais
- */
-export const invalidateGetDashboardMetricas = async (
-  queryClient: QueryClient,
-  params?: GetDashboardMetricasParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetDashboardMetricasQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
-
-/**
  * Obter dashboard específico de um usuário
  * @summary Dashboard do usuário
  */
@@ -399,23 +382,6 @@ export function useGetDashboardUsuarioUsuarioId<
 }
 
 /**
- * @summary Dashboard do usuário
- */
-export const invalidateGetDashboardUsuarioUsuarioId = async (
-  queryClient: QueryClient,
-  usuarioId: string,
-  params?: GetDashboardUsuarioUsuarioIdParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetDashboardUsuarioUsuarioIdQueryKey(usuarioId, params) },
-    options,
-  );
-
-  return queryClient;
-};
-
-/**
  * Obter dashboard de qualidade de dados
  * @summary Dashboard de qualidade
  */
@@ -578,19 +544,3 @@ export function useGetDashboardQualidade<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Dashboard de qualidade
- */
-export const invalidateGetDashboardQualidade = async (
-  queryClient: QueryClient,
-  params?: GetDashboardQualidadeParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetDashboardQualidadeQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};

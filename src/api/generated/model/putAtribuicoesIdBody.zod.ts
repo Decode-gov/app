@@ -13,18 +13,12 @@ export const putAtribuicoesIdBodyPapelIdRegExp = new RegExp(
 export const putAtribuicoesIdBodyDominioIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
-export const putAtribuicoesIdBodyComiteAprovadorIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
 
 export const PutAtribuicoesIdBody = zod.object({
   papelId: zod.uuid().regex(putAtribuicoesIdBodyPapelIdRegExp).optional(),
   dominioId: zod.uuid().regex(putAtribuicoesIdBodyDominioIdRegExp).optional(),
   documentoAtribuicao: zod.string().optional(),
-  comiteAprovadorId: zod
-    .uuid()
-    .regex(putAtribuicoesIdBodyComiteAprovadorIdRegExp)
-    .optional(),
+  comiteAprovador: zod.string().min(1).optional(),
   onboarding: zod.boolean().optional(),
   responsavel: zod.string().optional(),
 });

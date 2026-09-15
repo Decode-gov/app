@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -183,22 +182,6 @@ export function useGetDocumentos<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar documentos
- */
-export const invalidateGetDocumentos = async (
-  queryClient: QueryClient,
-  params?: GetDocumentosParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetDocumentosQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Anexar um novo documento a uma entidade
@@ -594,40 +577,6 @@ export function useGetDocumentosEntidadeTipoEntidadeEntidadeId<
 }
 
 /**
- * @summary Listar documentos por entidade
- */
-export const invalidateGetDocumentosEntidadeTipoEntidadeEntidadeId = async (
-  queryClient: QueryClient,
-  tipoEntidade:
-    | "Politica"
-    | "Papel"
-    | "Atribuicao"
-    | "Processo"
-    | "Termo"
-    | "KPI"
-    | "RegraNegocio"
-    | "RegraQualidade"
-    | "Dominio"
-    | "Sistema"
-    | "Tabela"
-    | "Coluna",
-  entidadeId: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    {
-      queryKey: getGetDocumentosEntidadeTipoEntidadeEntidadeIdQueryKey(
-        tipoEntidade,
-        entidadeId,
-      ),
-    },
-    options,
-  );
-
-  return queryClient;
-};
-
-/**
  * Buscar documento por ID
  * @summary Buscar documento por ID
  */
@@ -792,22 +741,6 @@ export function useGetDocumentosId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar documento por ID
- */
-export const invalidateGetDocumentosId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetDocumentosIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar metadados de um documento

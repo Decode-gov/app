@@ -1,8 +1,10 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { Plus, Workflow } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import {
+  getGetAtribuicoesQueryKey,
   useDeleteAtribuicoesId,
   useGetAtribuicoes,
 } from "@/api/generated/endpoints/atribuições-papel-domínio/atribuições-papel-domínio";
@@ -24,6 +26,8 @@ import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
 import type { AtribuicaoResponse } from "@/types/api";
 
 export default function AtribuicoesPage() {
+  const queryClient = useQueryClient();
+
   const empresaParams = useEmpresaIdParam();
   const [formOpen, setFormOpen] = useState(false);
   const [selectedAtribuicao, setSelectedAtribuicao] = useState<
@@ -60,9 +64,13 @@ export default function AtribuicoesPage() {
     async (id: string) => {
       if (confirm("Tem certeza que deseja excluir esta atribuição?")) {
         await deleteAtribuicao.mutateAsync({ id });
+
+        queryClient.invalidateQueries({
+          queryKey: [getGetAtribuicoesQueryKey(empresaParams)],
+        });
       }
     },
-    [deleteAtribuicao],
+    [deleteAtribuicao, queryClient.invalidateQueries, empresaParams],
   );
 
   // Colunas da tabela

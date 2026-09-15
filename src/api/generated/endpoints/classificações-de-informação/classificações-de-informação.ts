@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -209,22 +208,6 @@ export function useGetClassificacoesInformacao<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar classificações de informação
- */
-export const invalidateGetClassificacoesInformacao = async (
-  queryClient: QueryClient,
-  params?: GetClassificacoesInformacaoParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetClassificacoesInformacaoQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar nova classificação de informação no sistema
@@ -491,22 +474,6 @@ export function useGetClassificacoesInformacaoId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar classificação de informação
- */
-export const invalidateGetClassificacoesInformacaoId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetClassificacoesInformacaoIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar classificação de informação existente

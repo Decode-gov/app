@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -175,21 +174,6 @@ export function useGetTabelas<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar tabelas
- */
-export const invalidateGetTabelas = async (
-  queryClient: QueryClient,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetTabelasQueryKey() },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar nova tabela no catálogo de dados
@@ -426,22 +410,6 @@ export function useGetTabelasId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar tabela por ID
- */
-export const invalidateGetTabelasId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetTabelasIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar dados de uma tabela específica

@@ -5,345 +5,234 @@
  * API completa para gestão de dados governamentais.
  * OpenAPI spec version: 1.0.0
  */
-import * as zod from "zod";
+import * as zod from 'zod';
+
 
 /**
  * Listar todas as políticas internas cadastradas
  * @summary Listar políticas internas
  */
-export const getPoliticasInternasQueryEmpresaIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getPoliticasInternasQueryEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetPoliticasInternasQueryParams = zod.strictObject({
-  empresaId: zod
-    .uuid()
-    .regex(getPoliticasInternasQueryEmpresaIdRegExp)
-    .optional()
-    .describe(
-      "Filtrar por empresa (somente ADMIN; USUARIO usa o empresaId do token automaticamente)",
-    ),
-});
+  "empresaId": zod.uuid().regex(getPoliticasInternasQueryEmpresaIdRegExp).optional().describe('Filtrar por empresa (somente ADMIN; USUARIO usa o empresaId do token automaticamente)')
+})
 
-export const getPoliticasInternasResponseDataItemIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getPoliticasInternasResponseDataItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
-export const getPoliticasInternasResponseDataItemDominioDadosIdOneRegExp =
-  new RegExp(
-    "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-  );
 
-export const getPoliticasInternasResponseDataItemEmpresaIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+
+
+
+export const getPoliticasInternasResponseDataItemDominioDadosIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const getPoliticasInternasResponseDataItemEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetPoliticasInternasResponse = zod.object({
-  message: zod.string(),
-  data: zod.array(
-    zod.object({
-      id: zod
-        .uuid()
-        .regex(getPoliticasInternasResponseDataItemIdRegExp)
-        .optional(),
-      nome: zod.string().min(1).optional(),
-      descricao: zod.string().min(1).optional(),
-      categoria: zod.string().min(1).optional(),
-      objetivo: zod.string().min(1).optional(),
-      escopo: zod.string().min(1).optional(),
-      dominioDadosId: zod
-        .union([
-          zod
-            .uuid()
-            .regex(getPoliticasInternasResponseDataItemDominioDadosIdOneRegExp),
-          zod.literal(null).nullable(),
-        ])
-        .optional(),
-      responsavel: zod.string().min(1).optional(),
-      dataCriacao: zod.iso.datetime({ offset: true }),
-      dataInicioVigencia: zod.iso.datetime({ offset: true }),
-      dataTermino: zod
-        .union([
-          zod.iso.datetime({ offset: true }),
-          zod.literal(null).nullable(),
-        ])
-        .optional(),
-      status: zod.enum(["Em_elaboracao", "Vigente", "Revogada"]),
-      versao: zod.string().min(1),
-      anexosUrl: zod
-        .union([zod.string(), zod.literal(null).nullable()])
-        .optional(),
-      relacionamento: zod
-        .union([zod.string(), zod.literal(null).nullable()])
-        .optional(),
-      observacoes: zod
-        .union([zod.string(), zod.literal(null).nullable()])
-        .optional(),
-      empresaId: zod
-        .uuid()
-        .regex(getPoliticasInternasResponseDataItemEmpresaIdRegExp)
-        .optional()
-        .describe("ID da empresa (obrigatório para ADMIN)"),
-    }),
-  ),
-});
+  "message": zod.string(),
+  "data": zod.array(zod.object({
+  "id": zod.uuid().regex(getPoliticasInternasResponseDataItemIdRegExp).optional(),
+  "nome": zod.string().min(1).optional(),
+  "descricao": zod.string().min(1).optional(),
+  "categoria": zod.string().min(1).optional(),
+  "objetivo": zod.string().min(1).optional(),
+  "escopo": zod.string().min(1).optional(),
+  "dominioDadosId": zod.union([zod.uuid().regex(getPoliticasInternasResponseDataItemDominioDadosIdOneRegExp),zod.literal(null).nullable()]).optional(),
+  "responsavel": zod.string().min(1).optional(),
+  "dataCriacao": zod.iso.datetime({"offset":true}),
+  "dataInicioVigencia": zod.iso.datetime({"offset":true}),
+  "dataTermino": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).optional(),
+  "status": zod.enum(['Em_elaboracao', 'Vigente', 'Revogada']),
+  "versao": zod.string().min(1),
+  "anexosUrl": zod.union([zod.string(),zod.literal(null).nullable()]).optional(),
+  "relacionamento": zod.union([zod.string(),zod.literal(null).nullable()]).optional(),
+  "observacoes": zod.union([zod.string(),zod.literal(null).nullable()]).optional(),
+  "empresaId": zod.uuid().regex(getPoliticasInternasResponseDataItemEmpresaIdRegExp).optional().describe('ID da empresa (obrigatório para ADMIN)')
+}))
+})
 
 /**
  * Criar nova política interna
  * @summary Criar política interna
  */
-export const postPoliticasInternasBodyIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const postPoliticasInternasBodyIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
-export const postPoliticasInternasBodyDominioDadosIdOneRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
 
-export const postPoliticasInternasBodyEmpresaIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+
+
+
+export const postPoliticasInternasBodyDominioDadosIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const postPoliticasInternasBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PostPoliticasInternasBody = zod.strictObject({
-  id: zod.uuid().regex(postPoliticasInternasBodyIdRegExp).optional(),
-  nome: zod.coerce.string().min(1).optional(),
-  descricao: zod.coerce.string().min(1).optional(),
-  categoria: zod.coerce.string().min(1).optional(),
-  objetivo: zod.coerce.string().min(1).optional(),
-  escopo: zod.coerce.string().min(1).optional(),
-  dominioDadosId: zod
-    .union([
-      zod.uuid().regex(postPoliticasInternasBodyDominioDadosIdOneRegExp),
-      zod.literal(null).nullable(),
-    ])
-    .optional(),
-  responsavel: zod.coerce.string().min(1).optional(),
-  dataCriacao: zod.unknown(),
-  dataInicioVigencia: zod.unknown(),
-  dataTermino: zod
-    .union([zod.unknown(), zod.literal(null).nullable()])
-    .optional(),
-  status: zod.enum(["Em_elaboracao", "Vigente", "Revogada"]),
-  versao: zod.coerce.string().min(1),
-  anexosUrl: zod
-    .union([zod.coerce.string(), zod.literal(null).nullable()])
-    .optional(),
-  relacionamento: zod
-    .union([zod.coerce.string(), zod.literal(null).nullable()])
-    .optional(),
-  observacoes: zod
-    .union([zod.coerce.string(), zod.literal(null).nullable()])
-    .optional(),
-  empresaId: zod
-    .uuid()
-    .regex(postPoliticasInternasBodyEmpresaIdRegExp)
-    .optional()
-    .describe("ID da empresa (obrigatório para ADMIN)"),
-});
+  "id": zod.uuid().regex(postPoliticasInternasBodyIdRegExp).optional(),
+  "nome": zod.coerce.string().min(1).optional(),
+  "descricao": zod.coerce.string().min(1).optional(),
+  "categoria": zod.coerce.string().min(1).optional(),
+  "objetivo": zod.coerce.string().min(1).optional(),
+  "escopo": zod.coerce.string().min(1).optional(),
+  "dominioDadosId": zod.union([zod.uuid().regex(postPoliticasInternasBodyDominioDadosIdOneRegExp),zod.literal(null).nullable()]).optional(),
+  "responsavel": zod.coerce.string().min(1).optional(),
+  "dataCriacao": zod.unknown(),
+  "dataInicioVigencia": zod.unknown(),
+  "dataTermino": zod.union([zod.unknown(),zod.literal(null).nullable()]).optional(),
+  "status": zod.enum(['Em_elaboracao', 'Vigente', 'Revogada']),
+  "versao": zod.coerce.string().min(1),
+  "anexosUrl": zod.union([zod.coerce.string(),zod.literal(null).nullable()]).optional(),
+  "relacionamento": zod.union([zod.coerce.string(),zod.literal(null).nullable()]).optional(),
+  "observacoes": zod.union([zod.coerce.string(),zod.literal(null).nullable()]).optional(),
+  "empresaId": zod.uuid().regex(postPoliticasInternasBodyEmpresaIdRegExp).optional().describe('ID da empresa (obrigatório para ADMIN)')
+})
 
 /**
  * Buscar política interna específica por ID
  * @summary Buscar política interna por ID
  */
-export const getPoliticasInternasIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getPoliticasInternasIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetPoliticasInternasIdParams = zod.strictObject({
-  id: zod.uuid().regex(getPoliticasInternasIdPathIdRegExp),
-});
+  "id": zod.uuid().regex(getPoliticasInternasIdPathIdRegExp)
+})
 
-export const getPoliticasInternasIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getPoliticasInternasIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
-export const getPoliticasInternasIdResponseDataDominioDadosIdOneRegExp =
-  new RegExp(
-    "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-  );
 
-export const getPoliticasInternasIdResponseDataEmpresaIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+
+
+
+export const getPoliticasInternasIdResponseDataDominioDadosIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const getPoliticasInternasIdResponseDataEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetPoliticasInternasIdResponse = zod.object({
-  message: zod.string(),
-  data: zod.object({
-    id: zod.uuid().regex(getPoliticasInternasIdResponseDataIdRegExp).optional(),
-    nome: zod.string().min(1).optional(),
-    descricao: zod.string().min(1).optional(),
-    categoria: zod.string().min(1).optional(),
-    objetivo: zod.string().min(1).optional(),
-    escopo: zod.string().min(1).optional(),
-    dominioDadosId: zod
-      .union([
-        zod
-          .uuid()
-          .regex(getPoliticasInternasIdResponseDataDominioDadosIdOneRegExp),
-        zod.literal(null).nullable(),
-      ])
-      .optional(),
-    responsavel: zod.string().min(1).optional(),
-    dataCriacao: zod.iso.datetime({ offset: true }),
-    dataInicioVigencia: zod.iso.datetime({ offset: true }),
-    dataTermino: zod
-      .union([zod.iso.datetime({ offset: true }), zod.literal(null).nullable()])
-      .optional(),
-    status: zod.enum(["Em_elaboracao", "Vigente", "Revogada"]),
-    versao: zod.string().min(1),
-    anexosUrl: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .optional(),
-    relacionamento: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .optional(),
-    observacoes: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .optional(),
-    empresaId: zod
-      .uuid()
-      .regex(getPoliticasInternasIdResponseDataEmpresaIdRegExp)
-      .optional()
-      .describe("ID da empresa (obrigatório para ADMIN)"),
-  }),
-});
+  "message": zod.string(),
+  "data": zod.object({
+  "id": zod.uuid().regex(getPoliticasInternasIdResponseDataIdRegExp).optional(),
+  "nome": zod.string().min(1).optional(),
+  "descricao": zod.string().min(1).optional(),
+  "categoria": zod.string().min(1).optional(),
+  "objetivo": zod.string().min(1).optional(),
+  "escopo": zod.string().min(1).optional(),
+  "dominioDadosId": zod.union([zod.uuid().regex(getPoliticasInternasIdResponseDataDominioDadosIdOneRegExp),zod.literal(null).nullable()]).optional(),
+  "responsavel": zod.string().min(1).optional(),
+  "dataCriacao": zod.iso.datetime({"offset":true}),
+  "dataInicioVigencia": zod.iso.datetime({"offset":true}),
+  "dataTermino": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).optional(),
+  "status": zod.enum(['Em_elaboracao', 'Vigente', 'Revogada']),
+  "versao": zod.string().min(1),
+  "anexosUrl": zod.union([zod.string(),zod.literal(null).nullable()]).optional(),
+  "relacionamento": zod.union([zod.string(),zod.literal(null).nullable()]).optional(),
+  "observacoes": zod.union([zod.string(),zod.literal(null).nullable()]).optional(),
+  "empresaId": zod.uuid().regex(getPoliticasInternasIdResponseDataEmpresaIdRegExp).optional().describe('ID da empresa (obrigatório para ADMIN)')
+})
+})
 
 /**
  * Atualizar dados de uma política interna específica
  * @summary Atualizar política interna
  */
-export const putPoliticasInternasIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const putPoliticasInternasIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PutPoliticasInternasIdParams = zod.strictObject({
-  id: zod.uuid().regex(putPoliticasInternasIdPathIdRegExp),
-});
+  "id": zod.uuid().regex(putPoliticasInternasIdPathIdRegExp)
+})
 
-export const putPoliticasInternasIdBodyIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const putPoliticasInternasIdBodyIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
-export const putPoliticasInternasIdBodyDominioDadosIdOneRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
 
-export const putPoliticasInternasIdBodyEmpresaIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+
+
+
+export const putPoliticasInternasIdBodyDominioDadosIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const putPoliticasInternasIdBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PutPoliticasInternasIdBody = zod.strictObject({
-  id: zod.uuid().regex(putPoliticasInternasIdBodyIdRegExp).optional(),
-  nome: zod.coerce.string().min(1).optional(),
-  descricao: zod.coerce.string().min(1).optional(),
-  categoria: zod.coerce.string().min(1).optional(),
-  objetivo: zod.coerce.string().min(1).optional(),
-  escopo: zod.coerce.string().min(1).optional(),
-  dominioDadosId: zod
-    .union([
-      zod.uuid().regex(putPoliticasInternasIdBodyDominioDadosIdOneRegExp),
-      zod.literal(null).nullable(),
-    ])
-    .optional(),
-  responsavel: zod.coerce.string().min(1).optional(),
-  dataCriacao: zod.unknown(),
-  dataInicioVigencia: zod.unknown(),
-  dataTermino: zod
-    .union([zod.unknown(), zod.literal(null).nullable()])
-    .optional(),
-  status: zod.enum(["Em_elaboracao", "Vigente", "Revogada"]),
-  versao: zod.coerce.string().min(1),
-  anexosUrl: zod
-    .union([zod.coerce.string(), zod.literal(null).nullable()])
-    .optional(),
-  relacionamento: zod
-    .union([zod.coerce.string(), zod.literal(null).nullable()])
-    .optional(),
-  observacoes: zod
-    .union([zod.coerce.string(), zod.literal(null).nullable()])
-    .optional(),
-  empresaId: zod
-    .uuid()
-    .regex(putPoliticasInternasIdBodyEmpresaIdRegExp)
-    .optional()
-    .describe("ID da empresa (obrigatório para ADMIN)"),
-});
+  "id": zod.uuid().regex(putPoliticasInternasIdBodyIdRegExp).optional(),
+  "nome": zod.coerce.string().min(1).optional(),
+  "descricao": zod.coerce.string().min(1).optional(),
+  "categoria": zod.coerce.string().min(1).optional(),
+  "objetivo": zod.coerce.string().min(1).optional(),
+  "escopo": zod.coerce.string().min(1).optional(),
+  "dominioDadosId": zod.union([zod.uuid().regex(putPoliticasInternasIdBodyDominioDadosIdOneRegExp),zod.literal(null).nullable()]).optional(),
+  "responsavel": zod.coerce.string().min(1).optional(),
+  "dataCriacao": zod.unknown(),
+  "dataInicioVigencia": zod.unknown(),
+  "dataTermino": zod.union([zod.unknown(),zod.literal(null).nullable()]).optional(),
+  "status": zod.enum(['Em_elaboracao', 'Vigente', 'Revogada']),
+  "versao": zod.coerce.string().min(1),
+  "anexosUrl": zod.union([zod.coerce.string(),zod.literal(null).nullable()]).optional(),
+  "relacionamento": zod.union([zod.coerce.string(),zod.literal(null).nullable()]).optional(),
+  "observacoes": zod.union([zod.coerce.string(),zod.literal(null).nullable()]).optional(),
+  "empresaId": zod.uuid().regex(putPoliticasInternasIdBodyEmpresaIdRegExp).optional().describe('ID da empresa (obrigatório para ADMIN)')
+})
 
-export const putPoliticasInternasIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const putPoliticasInternasIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
-export const putPoliticasInternasIdResponseDataDominioDadosIdOneRegExp =
-  new RegExp(
-    "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-  );
 
-export const putPoliticasInternasIdResponseDataEmpresaIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+
+
+
+export const putPoliticasInternasIdResponseDataDominioDadosIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const putPoliticasInternasIdResponseDataEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PutPoliticasInternasIdResponse = zod.object({
-  message: zod.string(),
-  data: zod.object({
-    id: zod.uuid().regex(putPoliticasInternasIdResponseDataIdRegExp).optional(),
-    nome: zod.string().min(1).optional(),
-    descricao: zod.string().min(1).optional(),
-    categoria: zod.string().min(1).optional(),
-    objetivo: zod.string().min(1).optional(),
-    escopo: zod.string().min(1).optional(),
-    dominioDadosId: zod
-      .union([
-        zod
-          .uuid()
-          .regex(putPoliticasInternasIdResponseDataDominioDadosIdOneRegExp),
-        zod.literal(null).nullable(),
-      ])
-      .optional(),
-    responsavel: zod.string().min(1).optional(),
-    dataCriacao: zod.iso.datetime({ offset: true }),
-    dataInicioVigencia: zod.iso.datetime({ offset: true }),
-    dataTermino: zod
-      .union([zod.iso.datetime({ offset: true }), zod.literal(null).nullable()])
-      .optional(),
-    status: zod.enum(["Em_elaboracao", "Vigente", "Revogada"]),
-    versao: zod.string().min(1),
-    anexosUrl: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .optional(),
-    relacionamento: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .optional(),
-    observacoes: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .optional(),
-    empresaId: zod
-      .uuid()
-      .regex(putPoliticasInternasIdResponseDataEmpresaIdRegExp)
-      .optional()
-      .describe("ID da empresa (obrigatório para ADMIN)"),
-  }),
-});
+  "message": zod.string(),
+  "data": zod.object({
+  "id": zod.uuid().regex(putPoliticasInternasIdResponseDataIdRegExp).optional(),
+  "nome": zod.string().min(1).optional(),
+  "descricao": zod.string().min(1).optional(),
+  "categoria": zod.string().min(1).optional(),
+  "objetivo": zod.string().min(1).optional(),
+  "escopo": zod.string().min(1).optional(),
+  "dominioDadosId": zod.union([zod.uuid().regex(putPoliticasInternasIdResponseDataDominioDadosIdOneRegExp),zod.literal(null).nullable()]).optional(),
+  "responsavel": zod.string().min(1).optional(),
+  "dataCriacao": zod.iso.datetime({"offset":true}),
+  "dataInicioVigencia": zod.iso.datetime({"offset":true}),
+  "dataTermino": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).optional(),
+  "status": zod.enum(['Em_elaboracao', 'Vigente', 'Revogada']),
+  "versao": zod.string().min(1),
+  "anexosUrl": zod.union([zod.string(),zod.literal(null).nullable()]).optional(),
+  "relacionamento": zod.union([zod.string(),zod.literal(null).nullable()]).optional(),
+  "observacoes": zod.union([zod.string(),zod.literal(null).nullable()]).optional(),
+  "empresaId": zod.uuid().regex(putPoliticasInternasIdResponseDataEmpresaIdRegExp).optional().describe('ID da empresa (obrigatório para ADMIN)')
+})
+})
 
 /**
  * Excluir política interna
  * @summary Excluir política interna
  */
-export const deletePoliticasInternasIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const deletePoliticasInternasIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const DeletePoliticasInternasIdParams = zod.strictObject({
-  id: zod.uuid().regex(deletePoliticasInternasIdPathIdRegExp),
-});
+  "id": zod.uuid().regex(deletePoliticasInternasIdPathIdRegExp)
+})
 
-export const deletePoliticasInternasIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const deletePoliticasInternasIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const DeletePoliticasInternasIdResponse = zod.object({
-  message: zod.string(),
-  data: zod.object({
-    id: zod.uuid().regex(deletePoliticasInternasIdResponseDataIdRegExp),
-    nome: zod.string(),
-  }),
-});
+  "message": zod.string(),
+  "data": zod.object({
+  "id": zod.uuid().regex(deletePoliticasInternasIdResponseDataIdRegExp),
+  "nome": zod.string()
+})
+})
+

@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -44,7 +43,7 @@ import type { ErrorType, BodyType } from "../../../../lib/api-mutator";
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * Listar todas as atribuições de papel a domínio com relacionamentos (papel e domínio)
+ * Listar todas as atribuições de papel a domínio com relacionamentos (papel e domínio). Filtros opcionais: empresaId, papelId, dominioId, comiteAprovador (busca parcial) e onboarding
  * @summary Listar atribuições
  */
 export const getAtribuicoes = (
@@ -183,22 +182,6 @@ export function useGetAtribuicoes<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar atribuições
- */
-export const invalidateGetAtribuicoes = async (
-  queryClient: QueryClient,
-  params?: GetAtribuicoesParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetAtribuicoesQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar uma nova atribuição de papel a domínio
@@ -455,22 +438,6 @@ export function useGetAtribuicoesId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar atribuição por ID
- */
-export const invalidateGetAtribuicoesId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetAtribuicoesIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar uma atribuição existente

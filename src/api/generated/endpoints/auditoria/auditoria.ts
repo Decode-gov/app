@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -182,22 +181,6 @@ export function useGetAuditoria<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar logs de auditoria
- */
-export const invalidateGetAuditoria = async (
-  queryClient: QueryClient,
-  params?: GetAuditoriaParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetAuditoriaQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar log de auditoria manualmente (uso interno do sistema)
@@ -436,22 +419,6 @@ export function useGetAuditoriaId<
 }
 
 /**
- * @summary Buscar log de auditoria
- */
-export const invalidateGetAuditoriaId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetAuditoriaIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
-
-/**
  * Gerar relatório de auditoria para uma entidade específica
  * @summary Relatório de auditoria por entidade
  */
@@ -648,28 +615,6 @@ export function useGetAuditoriaRelatorioEntidadeEntidadeId<
 }
 
 /**
- * @summary Relatório de auditoria por entidade
- */
-export const invalidateGetAuditoriaRelatorioEntidadeEntidadeId = async (
-  queryClient: QueryClient,
-  entidade: string,
-  entidadeId: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    {
-      queryKey: getGetAuditoriaRelatorioEntidadeEntidadeIdQueryKey(
-        entidade,
-        entidadeId,
-      ),
-    },
-    options,
-  );
-
-  return queryClient;
-};
-
-/**
  * Listar atividades recentes de um usuário específico
  * @summary Atividades do usuário
  */
@@ -864,25 +809,3 @@ export function useGetAuditoriaUsuarioUsuarioIdAtividades<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Atividades do usuário
- */
-export const invalidateGetAuditoriaUsuarioUsuarioIdAtividades = async (
-  queryClient: QueryClient,
-  usuarioId: string,
-  params?: GetAuditoriaUsuarioUsuarioIdAtividadesParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    {
-      queryKey: getGetAuditoriaUsuarioUsuarioIdAtividadesQueryKey(
-        usuarioId,
-        params,
-      ),
-    },
-    options,
-  );
-
-  return queryClient;
-};

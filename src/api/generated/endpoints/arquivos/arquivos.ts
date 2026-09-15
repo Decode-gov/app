@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -179,22 +178,6 @@ export function useGetArquivos<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar arquivos
- */
-export const invalidateGetArquivos = async (
-  queryClient: QueryClient,
-  params?: GetArquivosParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetArquivosQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Enviar arquivo via multipart/form-data. Campo obrigatório: `file`. Imagens são redimensionadas automaticamente (máx. 1920px largura) via sharp antes de salvar em disco.
@@ -452,22 +435,6 @@ export function useGetArquivosIdDownload<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Download de arquivo
- */
-export const invalidateGetArquivosIdDownload = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetArquivosIdDownloadQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Excluir arquivo do banco de dados e do disco

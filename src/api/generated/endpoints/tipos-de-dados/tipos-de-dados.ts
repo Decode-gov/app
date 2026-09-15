@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -182,22 +181,6 @@ export function useGetTiposDados<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar tipos de dados
- */
-export const invalidateGetTiposDados = async (
-  queryClient: QueryClient,
-  params?: GetTiposDadosParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetTiposDadosQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar novo tipo de dados no sistema
@@ -454,22 +437,6 @@ export function useGetTiposDadosId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar tipo de dados por ID
- */
-export const invalidateGetTiposDadosId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetTiposDadosIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar tipo de dados existente

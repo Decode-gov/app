@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -209,22 +208,6 @@ export function useGetCriticidadesRegulatorias<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar criticidades
- */
-export const invalidateGetCriticidadesRegulatorias = async (
-  queryClient: QueryClient,
-  params?: GetCriticidadesRegulatoriasParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetCriticidadesRegulatoriasQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar nova criticidade regulatória no sistema
@@ -491,22 +474,6 @@ export function useGetCriticidadesRegulatoriasId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar criticidade
- */
-export const invalidateGetCriticidadesRegulatoriasId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetCriticidadesRegulatoriasIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar criticidade regulatória existente

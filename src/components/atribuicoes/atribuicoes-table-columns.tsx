@@ -89,12 +89,12 @@ export function getAtribuicoesColumns({
     },
     {
       accessorKey: "comiteAprovador",
-      header: "Comitê Aprovador",
+      header: "Aprovador",
       cell: ({ row }) => {
         const comite = row.original.comiteAprovador;
         return (
           <div className="text-muted-foreground">
-            {comite?.nome || row.original.comiteAprovadorId || "—"}
+            {comite ?? "—"}
           </div>
         );
       },
@@ -105,7 +105,7 @@ export function getAtribuicoesColumns({
       cell: ({ row }) => {
         const onboarding = row.getValue("onboarding") as boolean;
         return (
-          <div className="text-center">
+          <div>
             {onboarding ? (
               <span className="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
                 Sim
@@ -121,7 +121,7 @@ export function getAtribuicoesColumns({
     },
     {
       id: "actions",
-      header: () => <div className="text-center">Ações</div>,
+      header: "Ações",
       cell: ({ row }) => {
         const atribuicao = row.original;
         return (

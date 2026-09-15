@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -184,22 +183,6 @@ export function useGetBancos<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar bancos
- */
-export const invalidateGetBancos = async (
-  queryClient: QueryClient,
-  params?: GetBancosParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetBancosQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar novo banco de dados no catálogo
@@ -436,22 +419,6 @@ export function useGetBancosId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar banco por ID
- */
-export const invalidateGetBancosId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetBancosIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar dados de um banco específico

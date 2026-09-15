@@ -10,9 +10,19 @@ import { z as zod } from "zod";
 export const getAtribuicoesParamsEmpresaIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const getAtribuicoesParamsPapelIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+export const getAtribuicoesParamsDominioIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const GetAtribuicoesParams = zod.object({
   empresaId: zod.uuid().regex(getAtribuicoesParamsEmpresaIdRegExp).optional(),
+  papelId: zod.uuid().regex(getAtribuicoesParamsPapelIdRegExp).optional(),
+  dominioId: zod.uuid().regex(getAtribuicoesParamsDominioIdRegExp).optional(),
+  comiteAprovador: zod.string().optional(),
+  onboarding: zod.enum(["true", "false"]).optional(),
 });
 
 export type GetAtribuicoesParams = zod.input<typeof GetAtribuicoesParams>;

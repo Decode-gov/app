@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -188,22 +187,6 @@ export function useGetMfa<
 }
 
 /**
- * @summary Listar configurações MFA
- */
-export const invalidateGetMfa = async (
-  queryClient: QueryClient,
-  params?: GetMfaParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetMfaQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
-
-/**
  * Buscar configuração MFA por ID
  * @summary Buscar configuração MFA
  */
@@ -346,22 +329,6 @@ export function useGetMfaId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar configuração MFA
- */
-export const invalidateGetMfaId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetMfaIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Configurar autenticação multi-fator para um usuário

@@ -5,235 +5,151 @@
  * API completa para gestão de dados governamentais.
  * OpenAPI spec version: 1.0.0
  */
-import * as zod from "zod";
+import * as zod from 'zod';
+
 
 /**
  * Listar todas as necessidades de informação cadastradas
  * @summary Listar necessidades de informação
  */
-export const getNecessidadesInformacaoQueryEmpresaIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getNecessidadesInformacaoQueryEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetNecessidadesInformacaoQueryParams = zod.strictObject({
-  empresaId: zod
-    .uuid()
-    .regex(getNecessidadesInformacaoQueryEmpresaIdRegExp)
-    .optional()
-    .describe("Filtrar por empresa"),
-  search: zod.coerce.string().optional().describe("Busca em questão gerencial"),
-});
+  "empresaId": zod.uuid().regex(getNecessidadesInformacaoQueryEmpresaIdRegExp).optional().describe('Filtrar por empresa'),
+  "search": zod.coerce.string().optional().describe('Busca em questão gerencial')
+})
 
-export const getNecessidadesInformacaoResponseDataItemIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getNecessidadesInformacaoResponseDataItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+
 
 export const GetNecessidadesInformacaoResponse = zod.object({
-  message: zod.string().describe("Mensagem de resposta"),
-  data: zod
-    .array(
-      zod.object({
-        id: zod
-          .uuid()
-          .regex(getNecessidadesInformacaoResponseDataItemIdRegExp)
-          .describe("Identificador único da necessidade de informação"),
-        questaoGerencial: zod.string().min(1).describe("Questão gerencial"),
-        elementoEstrategico: zod
-          .union([zod.string(), zod.literal(null).nullable()])
-          .describe("Elemento estratégico"),
-        elementoTatico: zod
-          .union([zod.string(), zod.literal(null).nullable()])
-          .describe("Elemento tático"),
-        origemQuestao: zod.string().min(1).describe("Origem da questão"),
-        createdAt: zod
-          .union([
-            zod.iso.datetime({ offset: true }),
-            zod.literal(null).nullable(),
-          ])
-          .describe("Data de criação"),
-        updatedAt: zod
-          .union([
-            zod.iso.datetime({ offset: true }),
-            zod.literal(null).nullable(),
-          ])
-          .describe("Data de última atualização"),
-      }),
-    )
-    .describe("Lista de necessidades de informação"),
-});
+  "message": zod.string().describe('Mensagem de resposta'),
+  "data": zod.array(zod.object({
+  "id": zod.uuid().regex(getNecessidadesInformacaoResponseDataItemIdRegExp).describe('Identificador único da necessidade de informação'),
+  "questaoGerencial": zod.string().min(1).describe('Questão gerencial'),
+  "elementoEstrategico": zod.union([zod.string(),zod.literal(null).nullable()]).describe('Elemento estratégico'),
+  "elementoTatico": zod.union([zod.string(),zod.literal(null).nullable()]).describe('Elemento tático'),
+  "origemQuestao": zod.string().min(1).describe('Origem da questão'),
+  "createdAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).describe('Data de criação'),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).describe('Data de última atualização')
+})).describe('Lista de necessidades de informação')
+})
 
 /**
  * Criar nova necessidade de informação no sistema
  * @summary Criar necessidade de informação
  */
 
-export const postNecessidadesInformacaoBodyEmpresaIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+
+export const postNecessidadesInformacaoBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PostNecessidadesInformacaoBody = zod.strictObject({
-  questaoGerencial: zod.coerce.string().min(1).describe("Questão gerencial"),
-  elementoEstrategico: zod
-    .union([zod.coerce.string(), zod.literal(null).nullable()])
-    .optional()
-    .describe("Elemento estratégico"),
-  elementoTatico: zod
-    .union([zod.coerce.string(), zod.literal(null).nullable()])
-    .optional()
-    .describe("Elemento tático"),
-  origemQuestao: zod.coerce.string().min(1).describe("Origem da questão"),
-  empresaId: zod
-    .uuid()
-    .regex(postNecessidadesInformacaoBodyEmpresaIdRegExp)
-    .optional(),
-});
+  "questaoGerencial": zod.coerce.string().min(1).describe('Questão gerencial'),
+  "elementoEstrategico": zod.union([zod.coerce.string(),zod.literal(null).nullable()]).optional().describe('Elemento estratégico'),
+  "elementoTatico": zod.union([zod.coerce.string(),zod.literal(null).nullable()]).optional().describe('Elemento tático'),
+  "origemQuestao": zod.coerce.string().min(1).describe('Origem da questão'),
+  "empresaId": zod.uuid().regex(postNecessidadesInformacaoBodyEmpresaIdRegExp).optional()
+})
 
 /**
  * Buscar necessidade de informação específica por ID
  * @summary Buscar necessidade de informação
  */
-export const getNecessidadesInformacaoIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getNecessidadesInformacaoIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const GetNecessidadesInformacaoIdParams = zod.strictObject({
-  id: zod
-    .uuid()
-    .regex(getNecessidadesInformacaoIdPathIdRegExp)
-    .describe("ID da necessidade de informação"),
-});
+  "id": zod.uuid().regex(getNecessidadesInformacaoIdPathIdRegExp).describe('ID da necessidade de informação')
+})
 
-export const getNecessidadesInformacaoIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const getNecessidadesInformacaoIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+
 
 export const GetNecessidadesInformacaoIdResponse = zod.object({
-  message: zod.string().describe("Mensagem de resposta"),
-  data: zod.object({
-    id: zod
-      .uuid()
-      .regex(getNecessidadesInformacaoIdResponseDataIdRegExp)
-      .describe("Identificador único da necessidade de informação"),
-    questaoGerencial: zod.string().min(1).describe("Questão gerencial"),
-    elementoEstrategico: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .describe("Elemento estratégico"),
-    elementoTatico: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .describe("Elemento tático"),
-    origemQuestao: zod.string().min(1).describe("Origem da questão"),
-    createdAt: zod
-      .union([zod.iso.datetime({ offset: true }), zod.literal(null).nullable()])
-      .describe("Data de criação"),
-    updatedAt: zod
-      .union([zod.iso.datetime({ offset: true }), zod.literal(null).nullable()])
-      .describe("Data de última atualização"),
-  }),
-});
+  "message": zod.string().describe('Mensagem de resposta'),
+  "data": zod.object({
+  "id": zod.uuid().regex(getNecessidadesInformacaoIdResponseDataIdRegExp).describe('Identificador único da necessidade de informação'),
+  "questaoGerencial": zod.string().min(1).describe('Questão gerencial'),
+  "elementoEstrategico": zod.union([zod.string(),zod.literal(null).nullable()]).describe('Elemento estratégico'),
+  "elementoTatico": zod.union([zod.string(),zod.literal(null).nullable()]).describe('Elemento tático'),
+  "origemQuestao": zod.string().min(1).describe('Origem da questão'),
+  "createdAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).describe('Data de criação'),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).describe('Data de última atualização')
+})
+})
 
 /**
  * Atualizar necessidade de informação existente
  * @summary Atualizar necessidade de informação
  */
-export const putNecessidadesInformacaoIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const putNecessidadesInformacaoIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PutNecessidadesInformacaoIdParams = zod.strictObject({
-  id: zod
-    .uuid()
-    .regex(putNecessidadesInformacaoIdPathIdRegExp)
-    .describe("ID da necessidade de informação"),
-});
+  "id": zod.uuid().regex(putNecessidadesInformacaoIdPathIdRegExp).describe('ID da necessidade de informação')
+})
+
+
+
+
 
 export const PutNecessidadesInformacaoIdBody = zod.strictObject({
-  questaoGerencial: zod.coerce
-    .string()
-    .min(1)
-    .optional()
-    .describe("Questão gerencial"),
-  elementoEstrategico: zod
-    .union([zod.coerce.string(), zod.literal(null).nullable()])
-    .optional()
-    .describe("Elemento estratégico"),
-  elementoTatico: zod
-    .union([zod.coerce.string(), zod.literal(null).nullable()])
-    .optional()
-    .describe("Elemento tático"),
-  origemQuestao: zod.coerce
-    .string()
-    .min(1)
-    .optional()
-    .describe("Origem da questão"),
-});
+  "questaoGerencial": zod.coerce.string().min(1).optional().describe('Questão gerencial'),
+  "elementoEstrategico": zod.union([zod.coerce.string(),zod.literal(null).nullable()]).optional().describe('Elemento estratégico'),
+  "elementoTatico": zod.union([zod.coerce.string(),zod.literal(null).nullable()]).optional().describe('Elemento tático'),
+  "origemQuestao": zod.coerce.string().min(1).optional().describe('Origem da questão')
+})
 
-export const putNecessidadesInformacaoIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const putNecessidadesInformacaoIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+
 
 export const PutNecessidadesInformacaoIdResponse = zod.object({
-  message: zod.string().describe("Mensagem de resposta"),
-  data: zod.object({
-    id: zod
-      .uuid()
-      .regex(putNecessidadesInformacaoIdResponseDataIdRegExp)
-      .describe("Identificador único da necessidade de informação"),
-    questaoGerencial: zod.string().min(1).describe("Questão gerencial"),
-    elementoEstrategico: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .describe("Elemento estratégico"),
-    elementoTatico: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .describe("Elemento tático"),
-    origemQuestao: zod.string().min(1).describe("Origem da questão"),
-    createdAt: zod
-      .union([zod.iso.datetime({ offset: true }), zod.literal(null).nullable()])
-      .describe("Data de criação"),
-    updatedAt: zod
-      .union([zod.iso.datetime({ offset: true }), zod.literal(null).nullable()])
-      .describe("Data de última atualização"),
-  }),
-});
+  "message": zod.string().describe('Mensagem de resposta'),
+  "data": zod.object({
+  "id": zod.uuid().regex(putNecessidadesInformacaoIdResponseDataIdRegExp).describe('Identificador único da necessidade de informação'),
+  "questaoGerencial": zod.string().min(1).describe('Questão gerencial'),
+  "elementoEstrategico": zod.union([zod.string(),zod.literal(null).nullable()]).describe('Elemento estratégico'),
+  "elementoTatico": zod.union([zod.string(),zod.literal(null).nullable()]).describe('Elemento tático'),
+  "origemQuestao": zod.string().min(1).describe('Origem da questão'),
+  "createdAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).describe('Data de criação'),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).describe('Data de última atualização')
+})
+})
 
 /**
  * Remover necessidade de informação do sistema
  * @summary Deletar necessidade de informação
  */
-export const deleteNecessidadesInformacaoIdPathIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const deleteNecessidadesInformacaoIdPathIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const DeleteNecessidadesInformacaoIdParams = zod.strictObject({
-  id: zod
-    .uuid()
-    .regex(deleteNecessidadesInformacaoIdPathIdRegExp)
-    .describe("ID da necessidade de informação"),
-});
+  "id": zod.uuid().regex(deleteNecessidadesInformacaoIdPathIdRegExp).describe('ID da necessidade de informação')
+})
 
-export const deleteNecessidadesInformacaoIdResponseDataIdRegExp = new RegExp(
-  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-);
+export const deleteNecessidadesInformacaoIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+
 
 export const DeleteNecessidadesInformacaoIdResponse = zod.object({
-  message: zod.string(),
-  data: zod.object({
-    id: zod
-      .uuid()
-      .regex(deleteNecessidadesInformacaoIdResponseDataIdRegExp)
-      .describe("Identificador único da necessidade de informação"),
-    questaoGerencial: zod.string().min(1).describe("Questão gerencial"),
-    elementoEstrategico: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .describe("Elemento estratégico"),
-    elementoTatico: zod
-      .union([zod.string(), zod.literal(null).nullable()])
-      .describe("Elemento tático"),
-    origemQuestao: zod.string().min(1).describe("Origem da questão"),
-    createdAt: zod
-      .union([zod.iso.datetime({ offset: true }), zod.literal(null).nullable()])
-      .describe("Data de criação"),
-    updatedAt: zod
-      .union([zod.iso.datetime({ offset: true }), zod.literal(null).nullable()])
-      .describe("Data de última atualização"),
-  }),
-});
+  "message": zod.string(),
+  "data": zod.object({
+  "id": zod.uuid().regex(deleteNecessidadesInformacaoIdResponseDataIdRegExp).describe('Identificador único da necessidade de informação'),
+  "questaoGerencial": zod.string().min(1).describe('Questão gerencial'),
+  "elementoEstrategico": zod.union([zod.string(),zod.literal(null).nullable()]).describe('Elemento estratégico'),
+  "elementoTatico": zod.union([zod.string(),zod.literal(null).nullable()]).describe('Elemento tático'),
+  "origemQuestao": zod.string().min(1).describe('Origem da questão'),
+  "createdAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).describe('Data de criação'),
+  "updatedAt": zod.union([zod.iso.datetime({"offset":true}),zod.literal(null).nullable()]).describe('Data de última atualização')
+})
+})
+

@@ -10,7 +10,6 @@ import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  InvalidateOptions,
   MutationFunction,
   QueryClient,
   QueryFunction,
@@ -204,22 +203,6 @@ export function useGetNecessidadesInformacao<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Listar necessidades de informação
- */
-export const invalidateGetNecessidadesInformacao = async (
-  queryClient: QueryClient,
-  params?: GetNecessidadesInformacaoParams,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetNecessidadesInformacaoQueryKey(params) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Criar nova necessidade de informação no sistema
@@ -481,22 +464,6 @@ export function useGetNecessidadesInformacaoId<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary Buscar necessidade de informação
- */
-export const invalidateGetNecessidadesInformacaoId = async (
-  queryClient: QueryClient,
-  id: string,
-  options?: InvalidateOptions,
-): Promise<QueryClient> => {
-  await queryClient.invalidateQueries(
-    { queryKey: getGetNecessidadesInformacaoIdQueryKey(id) },
-    options,
-  );
-
-  return queryClient;
-};
 
 /**
  * Atualizar necessidade de informação existente
