@@ -175,7 +175,7 @@ export default function LoginPage() {
               className="group transition-all duration-200 hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground w-full"
             >
               <Link
-                href={`https://wa.me/553183713849?text=Ol%C3%A1%2C%20gostaria%20de%20conhecer%20um%20pouco%20mais%20o%20decodegov`}
+                href={`mailto:deangeology@gmail.com?subject=Solicitação de Demonstração do DECODE-GOV&body=Olá,%0D%0A%0D%0AEstou interessado em solicitar uma demonstração do sistema DECODE-GOV.%0D%0A%0D%0APor favor, entre em contato comigo para agendar uma demonstração.%0D%0A%0D%0AAtenciosamente,%0D%0A`}
               >
                 Solicitar demonstração
               </Link>
