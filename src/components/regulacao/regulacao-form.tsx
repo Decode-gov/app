@@ -56,7 +56,7 @@ export function RegulacaoForm({ open, onOpenChange, regulacao }: RegulacaoFormPr
       descricao: regulacao?.descricao,
       orgao: regulacao?.orgao || "",
       dataInicio: regulacao?.dataInicio ? new Date(regulacao.dataInicio) : new Date(),
-      dataFim: regulacao?.dataFim ? new Date(regulacao.dataFim) : new Date(),
+      dataFim: regulacao?.dataFim ? new Date(regulacao.dataFim) : undefined,
     },
   });
 

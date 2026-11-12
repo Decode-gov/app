@@ -38,7 +38,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useEmpresaIdParam } from "@/hooks/use-empresa-id-param";
-import { type CreateRegraQualidadeFormData, CreateRegraQualidadeSchema } from "@/schemas";
+import {
+  type CreateRegraQualidadeFormData,
+  CreateRegraQualidadeSchema,
+} from "@/schemas";
 import type { RegraQualidadeResponse } from "@/types/api";
 
 interface RegraQualidadeFormProps {
@@ -47,7 +50,11 @@ interface RegraQualidadeFormProps {
   regra?: RegraQualidadeResponse;
 }
 
-export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidadeFormProps) {
+export function RegraQualidadeForm({
+  open,
+  onOpenChange,
+  regra,
+}: RegraQualidadeFormProps) {
   const empresaParams = useEmpresaIdParam();
   const isEditing = !!regra;
   const createRegra = usePostRegrasQualidade();
@@ -117,9 +124,11 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="w-full max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Editar" : "Nova"} Regra de Qualidade</DialogTitle>
+          <DialogTitle>
+            {isEditing ? "Editar" : "Nova"} Regra de Qualidade
+          </DialogTitle>
           <DialogDescription>
             {isEditing
               ? "Edite as informações da regra de qualidade"
@@ -155,7 +164,9 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
                 <FormItem>
                   <FormLabel>Regra de Negócio</FormLabel>
                   <Select
-                    onValueChange={(value) => field.onChange(value === "none" ? null : value)}
+                    onValueChange={(value) =>
+                      field.onChange(value === "none" ? null : value)
+                    }
                     value={field.value || "none"}
                   >
                     <FormControl>
@@ -168,7 +179,9 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
                       {regrasNegocio.map((regra) => (
                         <SelectItem key={regra.id} value={regra.id}>
                           <div className="flex flex-col">
-                            <span className="line-clamp-1">{regra.descricao}</span>
+                            <span className="line-clamp-1">
+                              {regra.descricao}
+                            </span>
                           </div>
                         </SelectItem>
                       ))}
@@ -210,7 +223,10 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tabela</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value ?? ""}
+                  >
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione a tabela" />
@@ -235,7 +251,10 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Coluna</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value ?? ""}
+                  >
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione a coluna" />
@@ -280,11 +299,20 @@ export function RegraQualidadeForm({ open, onOpenChange, regra }: RegraQualidade
             />
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={createRegra.isPending || updateRegra.isPending}>
-                {createRegra.isPending || updateRegra.isPending ? "Salvando..." : "Salvar"}
+              <Button
+                type="submit"
+                disabled={createRegra.isPending || updateRegra.isPending}
+              >
+                {createRegra.isPending || updateRegra.isPending
+                  ? "Salvando..."
+                  : "Salvar"}
               </Button>
             </DialogFooter>
           </form>
