@@ -170,7 +170,7 @@ export function RegraQualidadeForm({
                     value={field.value || "none"}
                   >
                     <FormControl>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-auto truncate">
                         <SelectValue placeholder="Selecione a regra de negócio" />
                       </SelectTrigger>
                     </FormControl>
