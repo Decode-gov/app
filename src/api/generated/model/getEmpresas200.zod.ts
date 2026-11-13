@@ -7,8 +7,6 @@
  */
 import { z as zod } from "zod";
 
-export const getEmpresas200DataItemNomeMax = 255;
-
 export const getEmpresas200DataItemIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -18,11 +16,7 @@ export const GetEmpresas200 = zod.object({
   data: zod
     .array(
       zod.object({
-        nome: zod
-          .string()
-          .min(1)
-          .max(getEmpresas200DataItemNomeMax)
-          .describe("Nome da empresa"),
+        nome: zod.string(),
         id: zod
           .uuid()
           .regex(getEmpresas200DataItemIdRegExp)

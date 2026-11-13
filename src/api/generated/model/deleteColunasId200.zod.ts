@@ -93,6 +93,11 @@ export const DeleteColunasId200 = zod.object({
           .uuid()
           .regex(deleteColunasId200DataTabelaIdRegExpOne)
           .describe("Identificador único da tabela"),
+        banco: zod
+          .object({
+            nome: zod.string(),
+          })
+          .optional(),
         createdAt: zod.iso
           .datetime({ offset: true })
           .optional()

@@ -26,6 +26,7 @@ export const getRepositoriosDocumentoResponseDataItemNomeMax = 255;
 
 export const getRepositoriosDocumentoResponseDataItemGedDefault = false;
 export const getRepositoriosDocumentoResponseDataItemRedeDefault = false;
+export const getRepositoriosDocumentoResponseDataItemEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRepositoriosDocumentoResponseDataItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
@@ -35,6 +36,7 @@ export const GetRepositoriosDocumentoResponse = zod.object({
   "nome": zod.string().min(1).max(getRepositoriosDocumentoResponseDataItemNomeMax).describe('Nome do repositório de documentos'),
   "ged": zod.boolean().default(getRepositoriosDocumentoResponseDataItemGedDefault).describe('Indica se é um repositório GED (Gerenciamento Eletrônico de Documentos)'),
   "rede": zod.boolean().default(getRepositoriosDocumentoResponseDataItemRedeDefault).describe('Indica se é um repositório em rede'),
+  "empresaId": zod.uuid().regex(getRepositoriosDocumentoResponseDataItemEmpresaIdRegExp).optional(),
   "id": zod.uuid().regex(getRepositoriosDocumentoResponseDataItemIdRegExp).describe('Identificador único do repositório'),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização')
@@ -49,11 +51,14 @@ export const postRepositoriosDocumentoBodyNomeMax = 255;
 
 export const postRepositoriosDocumentoBodyGedDefault = false;
 export const postRepositoriosDocumentoBodyRedeDefault = false;
+export const postRepositoriosDocumentoBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PostRepositoriosDocumentoBody = zod.strictObject({
   "nome": zod.coerce.string().min(1).max(postRepositoriosDocumentoBodyNomeMax).describe('Nome do repositório de documentos'),
   "ged": zod.coerce.boolean().default(postRepositoriosDocumentoBodyGedDefault).describe('Indica se é um repositório GED (Gerenciamento Eletrônico de Documentos)'),
-  "rede": zod.coerce.boolean().default(postRepositoriosDocumentoBodyRedeDefault).describe('Indica se é um repositório em rede')
+  "rede": zod.coerce.boolean().default(postRepositoriosDocumentoBodyRedeDefault).describe('Indica se é um repositório em rede'),
+  "empresaId": zod.uuid().regex(postRepositoriosDocumentoBodyEmpresaIdRegExp).optional()
 })
 
 /**
@@ -71,6 +76,7 @@ export const getRepositoriosDocumentoIdResponseDataNomeMax = 255;
 
 export const getRepositoriosDocumentoIdResponseDataGedDefault = false;
 export const getRepositoriosDocumentoIdResponseDataRedeDefault = false;
+export const getRepositoriosDocumentoIdResponseDataEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRepositoriosDocumentoIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
@@ -80,6 +86,7 @@ export const GetRepositoriosDocumentoIdResponse = zod.object({
   "nome": zod.string().min(1).max(getRepositoriosDocumentoIdResponseDataNomeMax).describe('Nome do repositório de documentos'),
   "ged": zod.boolean().default(getRepositoriosDocumentoIdResponseDataGedDefault).describe('Indica se é um repositório GED (Gerenciamento Eletrônico de Documentos)'),
   "rede": zod.boolean().default(getRepositoriosDocumentoIdResponseDataRedeDefault).describe('Indica se é um repositório em rede'),
+  "empresaId": zod.uuid().regex(getRepositoriosDocumentoIdResponseDataEmpresaIdRegExp).optional(),
   "id": zod.uuid().regex(getRepositoriosDocumentoIdResponseDataIdRegExp).describe('Identificador único do repositório'),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização')
@@ -101,17 +108,21 @@ export const putRepositoriosDocumentoIdBodyNomeMax = 255;
 
 export const putRepositoriosDocumentoIdBodyGedDefault = false;
 export const putRepositoriosDocumentoIdBodyRedeDefault = false;
+export const putRepositoriosDocumentoIdBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
 
 export const PutRepositoriosDocumentoIdBody = zod.strictObject({
   "nome": zod.coerce.string().min(1).max(putRepositoriosDocumentoIdBodyNomeMax).optional().describe('Nome do repositório de documentos'),
   "ged": zod.coerce.boolean().default(putRepositoriosDocumentoIdBodyGedDefault).describe('Indica se é um repositório GED (Gerenciamento Eletrônico de Documentos)'),
-  "rede": zod.coerce.boolean().default(putRepositoriosDocumentoIdBodyRedeDefault).describe('Indica se é um repositório em rede')
+  "rede": zod.coerce.boolean().default(putRepositoriosDocumentoIdBodyRedeDefault).describe('Indica se é um repositório em rede'),
+  "empresaId": zod.uuid().regex(putRepositoriosDocumentoIdBodyEmpresaIdRegExp).optional()
 })
 
 export const putRepositoriosDocumentoIdResponseDataNomeMax = 255;
 
 export const putRepositoriosDocumentoIdResponseDataGedDefault = false;
 export const putRepositoriosDocumentoIdResponseDataRedeDefault = false;
+export const putRepositoriosDocumentoIdResponseDataEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRepositoriosDocumentoIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
@@ -121,6 +132,7 @@ export const PutRepositoriosDocumentoIdResponse = zod.object({
   "nome": zod.string().min(1).max(putRepositoriosDocumentoIdResponseDataNomeMax).describe('Nome do repositório de documentos'),
   "ged": zod.boolean().default(putRepositoriosDocumentoIdResponseDataGedDefault).describe('Indica se é um repositório GED (Gerenciamento Eletrônico de Documentos)'),
   "rede": zod.boolean().default(putRepositoriosDocumentoIdResponseDataRedeDefault).describe('Indica se é um repositório em rede'),
+  "empresaId": zod.uuid().regex(putRepositoriosDocumentoIdResponseDataEmpresaIdRegExp).optional(),
   "id": zod.uuid().regex(putRepositoriosDocumentoIdResponseDataIdRegExp).describe('Identificador único do repositório'),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização')

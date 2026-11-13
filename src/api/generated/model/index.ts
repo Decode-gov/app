@@ -428,6 +428,7 @@ export * from "./putRegrasNegocioId200.zod";
 export * from "./putRegrasNegocioId404.zod";
 export * from "./putRegrasNegocioIdBody.zod";
 export * from "./putRegrasQualidadeId200.zod";
+export * from "./putRegrasQualidadeId400.zod";
 export * from "./putRegrasQualidadeId404.zod";
 export * from "./putRegrasQualidadeIdBody.zod";
 export * from "./putRegulacoesCompletasId200.zod";

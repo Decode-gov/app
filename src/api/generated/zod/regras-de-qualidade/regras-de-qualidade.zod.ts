@@ -18,6 +18,7 @@ export const getRegrasQualidadeQueryDimensaoIdRegExp = new RegExp('^([0-9a-fA-F]
 export const getRegrasQualidadeQueryTabelaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasQualidadeQueryColunaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasQualidadeQueryResponsavelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getRegrasQualidadeQueryDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const GetRegrasQualidadeQueryParams = zod.strictObject({
@@ -26,7 +27,8 @@ export const GetRegrasQualidadeQueryParams = zod.strictObject({
   "dimensaoId": zod.uuid().regex(getRegrasQualidadeQueryDimensaoIdRegExp).optional(),
   "tabelaId": zod.uuid().regex(getRegrasQualidadeQueryTabelaIdRegExp).optional(),
   "colunaId": zod.uuid().regex(getRegrasQualidadeQueryColunaIdRegExp).optional(),
-  "responsavelId": zod.uuid().regex(getRegrasQualidadeQueryResponsavelIdRegExp).optional()
+  "responsavelId": zod.uuid().regex(getRegrasQualidadeQueryResponsavelIdRegExp).optional(),
+  "dominioId": zod.uuid().regex(getRegrasQualidadeQueryDominioIdRegExp).optional()
 })
 
 
@@ -35,6 +37,8 @@ export const getRegrasQualidadeResponseDataItemDimensaoIdRegExp = new RegExp('^(
 export const getRegrasQualidadeResponseDataItemTabelaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasQualidadeResponseDataItemColunaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasQualidadeResponseDataItemResponsavelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getRegrasQualidadeResponseDataItemDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getRegrasQualidadeResponseDataItemEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasQualidadeResponseDataItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasQualidadeResponseDataItemRegraNegocioOneIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -51,6 +55,10 @@ export const getRegrasQualidadeResponseDataItemResponsavelIdRegExpOne = new RegE
 export const getRegrasQualidadeResponseDataItemResponsavelNomeMax = 255;
 
 
+export const getRegrasQualidadeResponseDataItemDominioIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getRegrasQualidadeResponseDataItemDominioNomeMax = 255;
+
+export const getRegrasQualidadeResponseDataItemDominioParentIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const GetRegrasQualidadeResponse = zod.object({
@@ -62,6 +70,8 @@ export const GetRegrasQualidadeResponse = zod.object({
   "tabelaId": zod.union([zod.uuid().regex(getRegrasQualidadeResponseDataItemTabelaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID da tabela'),
   "colunaId": zod.union([zod.uuid().regex(getRegrasQualidadeResponseDataItemColunaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID da coluna'),
   "responsavelId": zod.uuid().regex(getRegrasQualidadeResponseDataItemResponsavelIdRegExp).describe('ID do papel responsável'),
+  "dominioId": zod.uuid().regex(getRegrasQualidadeResponseDataItemDominioIdRegExp).describe('ID do domínio (comunidade)'),
+  "empresaId": zod.uuid().regex(getRegrasQualidadeResponseDataItemEmpresaIdRegExp).optional(),
   "id": zod.uuid().regex(getRegrasQualidadeResponseDataItemIdRegExp).describe('Identificador único da regra de qualidade'),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização'),
@@ -89,6 +99,11 @@ export const GetRegrasQualidadeResponse = zod.object({
   "id": zod.uuid().regex(getRegrasQualidadeResponseDataItemResponsavelIdRegExpOne).describe('Identificador único do papel'),
   "nome": zod.string().min(1).max(getRegrasQualidadeResponseDataItemResponsavelNomeMax).describe('Nome do papel'),
   "descricao": zod.string().min(1).describe('Descrição do papel')
+}),
+  "dominio": zod.object({
+  "id": zod.uuid().regex(getRegrasQualidadeResponseDataItemDominioIdRegExpOne).describe('Identificador único da comunidade'),
+  "nome": zod.string().min(1).max(getRegrasQualidadeResponseDataItemDominioNomeMax).describe('Nome da comunidade'),
+  "parentId": zod.union([zod.uuid().regex(getRegrasQualidadeResponseDataItemDominioParentIdOneRegExp),zod.literal(null).nullable()]).describe('ID da comunidade pai')
 })
 })).describe('Lista de regras de qualidade')
 })
@@ -103,6 +118,8 @@ export const postRegrasQualidadeBodyDimensaoIdRegExp = new RegExp('^([0-9a-fA-F]
 export const postRegrasQualidadeBodyTabelaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const postRegrasQualidadeBodyColunaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const postRegrasQualidadeBodyResponsavelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const postRegrasQualidadeBodyDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const postRegrasQualidadeBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const PostRegrasQualidadeBody = zod.strictObject({
@@ -111,7 +128,9 @@ export const PostRegrasQualidadeBody = zod.strictObject({
   "dimensaoId": zod.uuid().regex(postRegrasQualidadeBodyDimensaoIdRegExp).describe('ID da dimensão de qualidade'),
   "tabelaId": zod.union([zod.uuid().regex(postRegrasQualidadeBodyTabelaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID da tabela'),
   "colunaId": zod.union([zod.uuid().regex(postRegrasQualidadeBodyColunaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID da coluna'),
-  "responsavelId": zod.uuid().regex(postRegrasQualidadeBodyResponsavelIdRegExp).describe('ID do papel responsável')
+  "responsavelId": zod.uuid().regex(postRegrasQualidadeBodyResponsavelIdRegExp).describe('ID do papel responsável'),
+  "dominioId": zod.uuid().regex(postRegrasQualidadeBodyDominioIdRegExp).describe('ID do domínio (comunidade)'),
+  "empresaId": zod.uuid().regex(postRegrasQualidadeBodyEmpresaIdRegExp).optional()
 })
 
 /**
@@ -131,6 +150,8 @@ export const getRegrasQualidadeIdResponseDataDimensaoIdRegExp = new RegExp('^([0
 export const getRegrasQualidadeIdResponseDataTabelaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasQualidadeIdResponseDataColunaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasQualidadeIdResponseDataResponsavelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getRegrasQualidadeIdResponseDataDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getRegrasQualidadeIdResponseDataEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasQualidadeIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasQualidadeIdResponseDataRegraNegocioOneIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -147,6 +168,10 @@ export const getRegrasQualidadeIdResponseDataResponsavelIdRegExpOne = new RegExp
 export const getRegrasQualidadeIdResponseDataResponsavelNomeMax = 255;
 
 
+export const getRegrasQualidadeIdResponseDataDominioIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getRegrasQualidadeIdResponseDataDominioNomeMax = 255;
+
+export const getRegrasQualidadeIdResponseDataDominioParentIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const GetRegrasQualidadeIdResponse = zod.object({
@@ -158,6 +183,8 @@ export const GetRegrasQualidadeIdResponse = zod.object({
   "tabelaId": zod.union([zod.uuid().regex(getRegrasQualidadeIdResponseDataTabelaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID da tabela'),
   "colunaId": zod.union([zod.uuid().regex(getRegrasQualidadeIdResponseDataColunaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID da coluna'),
   "responsavelId": zod.uuid().regex(getRegrasQualidadeIdResponseDataResponsavelIdRegExp).describe('ID do papel responsável'),
+  "dominioId": zod.uuid().regex(getRegrasQualidadeIdResponseDataDominioIdRegExp).describe('ID do domínio (comunidade)'),
+  "empresaId": zod.uuid().regex(getRegrasQualidadeIdResponseDataEmpresaIdRegExp).optional(),
   "id": zod.uuid().regex(getRegrasQualidadeIdResponseDataIdRegExp).describe('Identificador único da regra de qualidade'),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização'),
@@ -185,6 +212,11 @@ export const GetRegrasQualidadeIdResponse = zod.object({
   "id": zod.uuid().regex(getRegrasQualidadeIdResponseDataResponsavelIdRegExpOne).describe('Identificador único do papel'),
   "nome": zod.string().min(1).max(getRegrasQualidadeIdResponseDataResponsavelNomeMax).describe('Nome do papel'),
   "descricao": zod.string().min(1).describe('Descrição do papel')
+}),
+  "dominio": zod.object({
+  "id": zod.uuid().regex(getRegrasQualidadeIdResponseDataDominioIdRegExpOne).describe('Identificador único da comunidade'),
+  "nome": zod.string().min(1).max(getRegrasQualidadeIdResponseDataDominioNomeMax).describe('Nome da comunidade'),
+  "parentId": zod.union([zod.uuid().regex(getRegrasQualidadeIdResponseDataDominioParentIdOneRegExp),zod.literal(null).nullable()]).describe('ID da comunidade pai')
 })
 })
 })
@@ -206,6 +238,8 @@ export const putRegrasQualidadeIdBodyDimensaoIdRegExp = new RegExp('^([0-9a-fA-F
 export const putRegrasQualidadeIdBodyTabelaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasQualidadeIdBodyColunaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasQualidadeIdBodyResponsavelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putRegrasQualidadeIdBodyDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putRegrasQualidadeIdBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const PutRegrasQualidadeIdBody = zod.strictObject({
@@ -214,7 +248,9 @@ export const PutRegrasQualidadeIdBody = zod.strictObject({
   "dimensaoId": zod.uuid().regex(putRegrasQualidadeIdBodyDimensaoIdRegExp).optional().describe('ID da dimensão de qualidade'),
   "tabelaId": zod.union([zod.uuid().regex(putRegrasQualidadeIdBodyTabelaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID da tabela'),
   "colunaId": zod.union([zod.uuid().regex(putRegrasQualidadeIdBodyColunaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID da coluna'),
-  "responsavelId": zod.uuid().regex(putRegrasQualidadeIdBodyResponsavelIdRegExp).optional().describe('ID do papel responsável')
+  "responsavelId": zod.uuid().regex(putRegrasQualidadeIdBodyResponsavelIdRegExp).optional().describe('ID do papel responsável'),
+  "dominioId": zod.uuid().regex(putRegrasQualidadeIdBodyDominioIdRegExp).optional().describe('ID do domínio (comunidade)'),
+  "empresaId": zod.uuid().regex(putRegrasQualidadeIdBodyEmpresaIdRegExp).optional()
 })
 
 
@@ -223,6 +259,8 @@ export const putRegrasQualidadeIdResponseDataDimensaoIdRegExp = new RegExp('^([0
 export const putRegrasQualidadeIdResponseDataTabelaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasQualidadeIdResponseDataColunaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasQualidadeIdResponseDataResponsavelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putRegrasQualidadeIdResponseDataDominioIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putRegrasQualidadeIdResponseDataEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasQualidadeIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasQualidadeIdResponseDataRegraNegocioOneIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -239,6 +277,10 @@ export const putRegrasQualidadeIdResponseDataResponsavelIdRegExpOne = new RegExp
 export const putRegrasQualidadeIdResponseDataResponsavelNomeMax = 255;
 
 
+export const putRegrasQualidadeIdResponseDataDominioIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putRegrasQualidadeIdResponseDataDominioNomeMax = 255;
+
+export const putRegrasQualidadeIdResponseDataDominioParentIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const PutRegrasQualidadeIdResponse = zod.object({
@@ -250,6 +292,8 @@ export const PutRegrasQualidadeIdResponse = zod.object({
   "tabelaId": zod.union([zod.uuid().regex(putRegrasQualidadeIdResponseDataTabelaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID da tabela'),
   "colunaId": zod.union([zod.uuid().regex(putRegrasQualidadeIdResponseDataColunaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID da coluna'),
   "responsavelId": zod.uuid().regex(putRegrasQualidadeIdResponseDataResponsavelIdRegExp).describe('ID do papel responsável'),
+  "dominioId": zod.uuid().regex(putRegrasQualidadeIdResponseDataDominioIdRegExp).describe('ID do domínio (comunidade)'),
+  "empresaId": zod.uuid().regex(putRegrasQualidadeIdResponseDataEmpresaIdRegExp).optional(),
   "id": zod.uuid().regex(putRegrasQualidadeIdResponseDataIdRegExp).describe('Identificador único da regra de qualidade'),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização'),
@@ -277,6 +321,11 @@ export const PutRegrasQualidadeIdResponse = zod.object({
   "id": zod.uuid().regex(putRegrasQualidadeIdResponseDataResponsavelIdRegExpOne).describe('Identificador único do papel'),
   "nome": zod.string().min(1).max(putRegrasQualidadeIdResponseDataResponsavelNomeMax).describe('Nome do papel'),
   "descricao": zod.string().min(1).describe('Descrição do papel')
+}),
+  "dominio": zod.object({
+  "id": zod.uuid().regex(putRegrasQualidadeIdResponseDataDominioIdRegExpOne).describe('Identificador único da comunidade'),
+  "nome": zod.string().min(1).max(putRegrasQualidadeIdResponseDataDominioNomeMax).describe('Nome da comunidade'),
+  "parentId": zod.union([zod.uuid().regex(putRegrasQualidadeIdResponseDataDominioParentIdOneRegExp),zod.literal(null).nullable()]).describe('ID da comunidade pai')
 })
 })
 })

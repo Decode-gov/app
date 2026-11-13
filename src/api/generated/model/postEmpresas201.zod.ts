@@ -7,8 +7,6 @@
  */
 import { z as zod } from "zod";
 
-export const postEmpresas201DataNomeMax = 255;
-
 export const postEmpresas201DataIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -16,11 +14,7 @@ export const postEmpresas201DataIdRegExp = new RegExp(
 export const PostEmpresas201 = zod.object({
   message: zod.string().describe("Mensagem de resposta"),
   data: zod.object({
-    nome: zod
-      .string()
-      .min(1)
-      .max(postEmpresas201DataNomeMax)
-      .describe("Nome da empresa"),
+    nome: zod.string(),
     id: zod
       .uuid()
       .regex(postEmpresas201DataIdRegExp)

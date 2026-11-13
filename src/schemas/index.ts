@@ -299,6 +299,9 @@ export const RegraQualidadeSchema = z.object({
   tabelaId: z.uuid().optional().nullable(),
   colunaId: z.uuid().optional().nullable(),
   responsavelId: z.uuid(),
+  dominioId: z.uuid({
+    error: "Domínio de dados é obrigatório",
+  }),
 });
 
 export const CreateRegraQualidadeSchema = RegraQualidadeSchema;

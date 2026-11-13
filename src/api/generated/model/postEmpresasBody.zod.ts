@@ -7,14 +7,8 @@
  */
 import { z as zod } from "zod";
 
-export const postEmpresasBodyNomeMax = 255;
-
 export const PostEmpresasBody = zod.object({
-  nome: zod
-    .string()
-    .min(1)
-    .max(postEmpresasBodyNomeMax)
-    .describe("Nome da empresa"),
+  nome: zod.string(),
 });
 
 export type PostEmpresasBody = zod.input<typeof PostEmpresasBody>;

@@ -1,9 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useGetColunas } from "@/api/generated/endpoints/colunas/colunas";
+import { useGetComunidades } from "@/api/generated/endpoints/comunidades/comunidades";
 import { useGetDimensoesQualidade } from "@/api/generated/endpoints/dimensões-de-qualidade/dimensões-de-qualidade";
 import { useGetPapeis } from "@/api/generated/endpoints/papéis/papéis";
 import { useGetRegrasNegocio } from "@/api/generated/endpoints/regras-de-negócio/regras-de-negócio";
@@ -24,6 +26,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -43,6 +46,7 @@ import {
   CreateRegraQualidadeSchema,
 } from "@/schemas";
 import type { RegraQualidadeResponse } from "@/types/api";
+import { ComunidadeForm } from "../dominios/comunidade-form";
 
 interface RegraQualidadeFormProps {
   open: boolean;
@@ -60,11 +64,14 @@ export function RegraQualidadeForm({
   const createRegra = usePostRegrasQualidade();
   const updateRegra = usePutRegrasQualidadeId();
 
+  const [dominioDialogOpen, setDominioDialogOpen] = useState(false);
+
   const { data: dimensoesData } = useGetDimensoesQualidade(empresaParams);
   const { data: tabelasData } = useGetTabelas();
   const { data: colunasData } = useGetColunas(empresaParams);
   const { data: papeisData } = useGetPapeis(empresaParams);
   const { data: regrasNegocioData } = useGetRegrasNegocio(empresaParams);
+  const { data: comunidadesData } = useGetComunidades(empresaParams);
 
   const dimensoes = dimensoesData?.data ?? [];
   const tabelas = tabelasData?.data ?? [];
@@ -77,36 +84,15 @@ export function RegraQualidadeForm({
     // biome-ignore lint/suspicious/noExplicitAny: form type workaround
     resolver: zodResolver(CreateRegraQualidadeSchema) as any,
     defaultValues: {
-      descricao: "",
-      regraNegocioId: null,
-      dimensaoId: "",
-      tabelaId: null,
-      colunaId: null,
-      responsavelId: "",
+      descricao: regra?.descricao ?? "",
+      regraNegocioId: regra?.regraNegocioId ?? null,
+      dimensaoId: regra?.dimensaoId ?? "",
+      tabelaId: regra?.tabelaId ?? null,
+      colunaId: regra?.colunaId ?? null,
+      responsavelId: regra?.responsavelId ?? "",
+      dominioId: regra?.dominioId ?? undefined,
     },
   });
-
-  useEffect(() => {
-    if (regra) {
-      form.reset({
-        descricao: regra.descricao || "",
-        regraNegocioId: regra.regraNegocioId || null,
-        dimensaoId: regra.dimensaoId || "",
-        tabelaId: regra.tabelaId || null,
-        colunaId: regra.colunaId || null,
-        responsavelId: regra.responsavelId || "",
-      });
-    } else {
-      form.reset({
-        descricao: "",
-        regraNegocioId: null,
-        dimensaoId: "",
-        tabelaId: null,
-        colunaId: null,
-        responsavelId: "",
-      });
-    }
-  }, [regra, form]);
 
   const onSubmit = async (data: CreateRegraQualidadeFormData) => {
     try {
@@ -123,201 +109,266 @@ export function RegraQualidadeForm({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {isEditing ? "Editar" : "Nova"} Regra de Qualidade
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Edite as informações da regra de qualidade"
-              : "Preencha os campos para criar uma nova regra de qualidade"}
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="w-full max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {isEditing ? "Editar" : "Nova"} Regra de Qualidade
+            </DialogTitle>
+            <DialogDescription>
+              {isEditing
+                ? "Edite as informações da regra de qualidade"
+                : "Preencha os campos para criar uma nova regra de qualidade"}
+            </DialogDescription>
+          </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="descricao"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descrição *</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Ex: Os valores da coluna devem estar entre 0 e 100"
-                      className="resize-none"
-                      rows={4}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="regraNegocioId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Regra de Negócio</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === "none" ? null : value)
-                    }
-                    value={field.value || "none"}
-                  >
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="descricao"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição *</FormLabel>
                     <FormControl>
-                      <SelectTrigger className="w-auto truncate">
-                        <SelectValue placeholder="Selecione a regra de negócio" />
-                      </SelectTrigger>
+                      <Textarea
+                        placeholder="Ex: Os valores da coluna devem estar entre 0 e 100"
+                        className="resize-none"
+                        rows={4}
+                        {...field}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="none">Nenhuma</SelectItem>
-                      {regrasNegocio.map((regra) => (
-                        <SelectItem key={regra.id} value={regra.id}>
-                          <div className="flex flex-col">
-                            <span className="line-clamp-1">
-                              {regra.descricao}
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="dimensaoId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Dimensão de Qualidade *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecione a dimensão" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {dimensoes.map((dimensao) => (
-                        <SelectItem key={dimensao.id} value={dimensao.id}>
-                          {dimensao.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="dominioId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">
+                      Domínio de Dados
+                    </FormLabel>
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <Select
+                          onValueChange={(value) =>
+                            field.onChange(value || undefined)
+                          }
+                          value={field.value || undefined}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="bg-background/50 border-border/60 w-full">
+                              <SelectValue placeholder="Selecione o domínio de dados" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {comunidadesData?.data.length === 0 ? (
+                              <div className="p-2 text-sm text-muted-foreground text-center">
+                                Nenhum domínio encontrado
+                              </div>
+                            ) : (
+                              comunidadesData?.data.map((comunidade) => (
+                                <SelectItem
+                                  key={comunidade.id}
+                                  value={comunidade.id}
+                                >
+                                  {comunidade.nome}
+                                </SelectItem>
+                              ))
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setDominioDialogOpen(true)}
+                        className="bg-background/50 border-border/60 hover:bg-accent/50 flex-shrink-0"
+                        title="Criar novo domínio"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <FormDescription className="text-xs text-muted-foreground">
+                      Selecione o domínio de dados associado a este termo.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="tabelaId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tabela</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value ?? ""}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecione a tabela" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {tabelas.map((tabela) => (
-                        <SelectItem key={tabela.id} value={tabela.id}>
-                          {tabela.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="regraNegocioId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Regra de Negócio</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(value === "none" ? null : value)
+                      }
+                      value={field.value || "none"}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-auto truncate">
+                          <SelectValue placeholder="Selecione a regra de negócio" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">Nenhuma</SelectItem>
+                        {regrasNegocio.map((regra) => (
+                          <SelectItem key={regra.id} value={regra.id}>
+                            <div className="flex flex-col">
+                              <span className="line-clamp-1">
+                                {regra.descricao}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="colunaId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Coluna</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value ?? ""}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecione a coluna" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {colunas.map((coluna) => (
-                        <SelectItem key={coluna.id} value={coluna.id}>
-                          {coluna.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="dimensaoId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Dimensão de Qualidade *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione a dimensão" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {dimensoes.map((dimensao) => (
+                          <SelectItem key={dimensao.id} value={dimensao.id}>
+                            {dimensao.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="responsavelId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Responsável *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecione o responsável" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {papeis.map((papel) => (
-                        <SelectItem key={papel.id} value={papel.id}>
-                          {papel.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="tabelaId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tabela</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value ?? ""}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione a tabela" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {tabelas.map((tabela) => (
+                          <SelectItem key={tabela.id} value={tabela.id}>
+                            {tabela.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                disabled={createRegra.isPending || updateRegra.isPending}
-              >
-                {createRegra.isPending || updateRegra.isPending
-                  ? "Salvando..."
-                  : "Salvar"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+              <FormField
+                control={form.control}
+                name="colunaId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Coluna</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value ?? ""}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione a coluna" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {colunas.map((coluna) => (
+                          <SelectItem key={coluna.id} value={coluna.id}>
+                            {coluna.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="responsavelId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Responsável *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione o responsável" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {papeis.map((papel) => (
+                          <SelectItem key={papel.id} value={papel.id}>
+                            {papel.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={createRegra.isPending || updateRegra.isPending}
+                >
+                  {createRegra.isPending || updateRegra.isPending
+                    ? "Salvando..."
+                    : "Salvar"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <ComunidadeForm
+        open={dominioDialogOpen}
+        onOpenChange={setDominioDialogOpen}
+      />
+    </>
   );
 }

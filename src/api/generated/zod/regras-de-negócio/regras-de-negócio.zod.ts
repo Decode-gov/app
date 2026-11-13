@@ -32,6 +32,7 @@ export const getRegrasNegocioResponseDataItemPoliticaIdRegExp = new RegExp('^([0
 export const getRegrasNegocioResponseDataItemSistemaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasNegocioResponseDataItemResponsavelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasNegocioResponseDataItemTermoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getRegrasNegocioResponseDataItemEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasNegocioResponseDataItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasNegocioResponseDataItemPoliticaIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -55,6 +56,7 @@ export const GetRegrasNegocioResponse = zod.object({
   "sistemaId": zod.union([zod.uuid().regex(getRegrasNegocioResponseDataItemSistemaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID do sistema relacionado (opcional)'),
   "responsavelId": zod.uuid().regex(getRegrasNegocioResponseDataItemResponsavelIdRegExp).describe('ID do papel responsável'),
   "termoId": zod.uuid().regex(getRegrasNegocioResponseDataItemTermoIdRegExp).describe('ID do termo (definição) relacionado'),
+  "empresaId": zod.uuid().regex(getRegrasNegocioResponseDataItemEmpresaIdRegExp).optional(),
   "id": zod.uuid().regex(getRegrasNegocioResponseDataItemIdRegExp).describe('Identificador único da regra de negócio'),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização'),
@@ -90,6 +92,7 @@ export const postRegrasNegocioBodyPoliticaIdRegExp = new RegExp('^([0-9a-fA-F]{8
 export const postRegrasNegocioBodySistemaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const postRegrasNegocioBodyResponsavelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const postRegrasNegocioBodyTermoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const postRegrasNegocioBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const PostRegrasNegocioBody = zod.strictObject({
@@ -97,7 +100,8 @@ export const PostRegrasNegocioBody = zod.strictObject({
   "politicaId": zod.uuid().regex(postRegrasNegocioBodyPoliticaIdRegExp).describe('ID da política interna relacionada'),
   "sistemaId": zod.union([zod.uuid().regex(postRegrasNegocioBodySistemaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID do sistema relacionado (opcional)'),
   "responsavelId": zod.uuid().regex(postRegrasNegocioBodyResponsavelIdRegExp).describe('ID do papel responsável'),
-  "termoId": zod.uuid().regex(postRegrasNegocioBodyTermoIdRegExp).describe('ID do termo (definição) relacionado')
+  "termoId": zod.uuid().regex(postRegrasNegocioBodyTermoIdRegExp).describe('ID do termo (definição) relacionado'),
+  "empresaId": zod.uuid().regex(postRegrasNegocioBodyEmpresaIdRegExp).optional()
 })
 
 /**
@@ -116,6 +120,7 @@ export const getRegrasNegocioIdResponseDataPoliticaIdRegExp = new RegExp('^([0-9
 export const getRegrasNegocioIdResponseDataSistemaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasNegocioIdResponseDataResponsavelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasNegocioIdResponseDataTermoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const getRegrasNegocioIdResponseDataEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasNegocioIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const getRegrasNegocioIdResponseDataPoliticaIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -139,6 +144,7 @@ export const GetRegrasNegocioIdResponse = zod.object({
   "sistemaId": zod.union([zod.uuid().regex(getRegrasNegocioIdResponseDataSistemaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID do sistema relacionado (opcional)'),
   "responsavelId": zod.uuid().regex(getRegrasNegocioIdResponseDataResponsavelIdRegExp).describe('ID do papel responsável'),
   "termoId": zod.uuid().regex(getRegrasNegocioIdResponseDataTermoIdRegExp).describe('ID do termo (definição) relacionado'),
+  "empresaId": zod.uuid().regex(getRegrasNegocioIdResponseDataEmpresaIdRegExp).optional(),
   "id": zod.uuid().regex(getRegrasNegocioIdResponseDataIdRegExp).describe('Identificador único da regra de negócio'),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização'),
@@ -181,6 +187,7 @@ export const putRegrasNegocioIdBodyPoliticaIdRegExp = new RegExp('^([0-9a-fA-F]{
 export const putRegrasNegocioIdBodySistemaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasNegocioIdBodyResponsavelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasNegocioIdBodyTermoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putRegrasNegocioIdBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const PutRegrasNegocioIdBody = zod.strictObject({
@@ -188,7 +195,8 @@ export const PutRegrasNegocioIdBody = zod.strictObject({
   "politicaId": zod.uuid().regex(putRegrasNegocioIdBodyPoliticaIdRegExp).optional().describe('ID da política interna relacionada'),
   "sistemaId": zod.union([zod.uuid().regex(putRegrasNegocioIdBodySistemaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID do sistema relacionado (opcional)'),
   "responsavelId": zod.uuid().regex(putRegrasNegocioIdBodyResponsavelIdRegExp).optional().describe('ID do papel responsável'),
-  "termoId": zod.uuid().regex(putRegrasNegocioIdBodyTermoIdRegExp).optional().describe('ID do termo (definição) relacionado')
+  "termoId": zod.uuid().regex(putRegrasNegocioIdBodyTermoIdRegExp).optional().describe('ID do termo (definição) relacionado'),
+  "empresaId": zod.uuid().regex(putRegrasNegocioIdBodyEmpresaIdRegExp).optional()
 })
 
 
@@ -196,6 +204,7 @@ export const putRegrasNegocioIdResponseDataPoliticaIdRegExp = new RegExp('^([0-9
 export const putRegrasNegocioIdResponseDataSistemaIdOneRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasNegocioIdResponseDataResponsavelIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasNegocioIdResponseDataTermoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const putRegrasNegocioIdResponseDataEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasNegocioIdResponseDataIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const putRegrasNegocioIdResponseDataPoliticaIdRegExpOne = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -219,6 +228,7 @@ export const PutRegrasNegocioIdResponse = zod.object({
   "sistemaId": zod.union([zod.uuid().regex(putRegrasNegocioIdResponseDataSistemaIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID do sistema relacionado (opcional)'),
   "responsavelId": zod.uuid().regex(putRegrasNegocioIdResponseDataResponsavelIdRegExp).describe('ID do papel responsável'),
   "termoId": zod.uuid().regex(putRegrasNegocioIdResponseDataTermoIdRegExp).describe('ID do termo (definição) relacionado'),
+  "empresaId": zod.uuid().regex(putRegrasNegocioIdResponseDataEmpresaIdRegExp).optional(),
   "id": zod.uuid().regex(putRegrasNegocioIdResponseDataIdRegExp).describe('Identificador único da regra de negócio'),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização'),

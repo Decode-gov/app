@@ -19,6 +19,9 @@ export const getRegrasNegocioId200DataResponsavelIdRegExp = new RegExp(
 export const getRegrasNegocioId200DataTermoIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const getRegrasNegocioId200DataEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const getRegrasNegocioId200DataIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -66,6 +69,10 @@ export const GetRegrasNegocioId200 = zod.object({
       .uuid()
       .regex(getRegrasNegocioId200DataTermoIdRegExp)
       .describe("ID do termo (definição) relacionado"),
+    empresaId: zod
+      .uuid()
+      .regex(getRegrasNegocioId200DataEmpresaIdRegExp)
+      .optional(),
     id: zod
       .uuid()
       .regex(getRegrasNegocioId200DataIdRegExp)

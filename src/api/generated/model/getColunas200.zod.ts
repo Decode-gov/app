@@ -94,6 +94,11 @@ export const GetColunas200 = zod.object({
               .uuid()
               .regex(getColunas200DataItemTabelaIdRegExpOne)
               .describe("Identificador único da tabela"),
+            banco: zod
+              .object({
+                nome: zod.string(),
+              })
+              .optional(),
             createdAt: zod.iso
               .datetime({ offset: true })
               .optional()

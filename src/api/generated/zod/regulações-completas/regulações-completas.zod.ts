@@ -63,6 +63,7 @@ export const GetRegulacoesCompletasResponse = zod.object({
 
 
 
+export const postRegulacoesCompletasBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const PostRegulacoesCompletasBody = zod.strictObject({
@@ -70,7 +71,8 @@ export const PostRegulacoesCompletasBody = zod.strictObject({
   "orgao": zod.coerce.string().min(1).describe('Órgão regulador'),
   "descricao": zod.coerce.string().min(1).describe('Descrição da regulação'),
   "dataInicio": zod.unknown().describe('Data de início da vigência'),
-  "dataFim": zod.unknown().optional().describe('Data de fim da vigência (opcional)')
+  "dataFim": zod.unknown().optional().describe('Data de fim da vigência (opcional)'),
+  "empresaId": zod.uuid().regex(postRegulacoesCompletasBodyEmpresaIdRegExp).optional()
 })
 
 /**

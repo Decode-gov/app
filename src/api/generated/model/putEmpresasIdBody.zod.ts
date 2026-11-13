@@ -7,15 +7,8 @@
  */
 import { z as zod } from "zod";
 
-export const putEmpresasIdBodyNomeMax = 255;
-
 export const PutEmpresasIdBody = zod.object({
-  nome: zod
-    .string()
-    .min(1)
-    .max(putEmpresasIdBodyNomeMax)
-    .optional()
-    .describe("Nome da empresa"),
+  nome: zod.string().optional(),
 });
 
 export type PutEmpresasIdBody = zod.input<typeof PutEmpresasIdBody>;

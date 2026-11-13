@@ -22,6 +22,12 @@ export const postRegrasQualidade201DataColunaIdOneRegExp = new RegExp(
 export const postRegrasQualidade201DataResponsavelIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const postRegrasQualidade201DataDominioIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+export const postRegrasQualidade201DataEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const postRegrasQualidade201DataIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -53,6 +59,15 @@ export const postRegrasQualidade201DataResponsavelIdRegExpOne = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 export const postRegrasQualidade201DataResponsavelNomeMax = 255;
+
+export const postRegrasQualidade201DataDominioIdRegExpOne = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+export const postRegrasQualidade201DataDominioNomeMax = 255;
+
+export const postRegrasQualidade201DataDominioParentIdOneRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const PostRegrasQualidade201 = zod.object({
   message: zod.string().describe("Mensagem de resposta"),
@@ -87,6 +102,14 @@ export const PostRegrasQualidade201 = zod.object({
       .uuid()
       .regex(postRegrasQualidade201DataResponsavelIdRegExp)
       .describe("ID do papel responsável"),
+    dominioId: zod
+      .uuid()
+      .regex(postRegrasQualidade201DataDominioIdRegExp)
+      .describe("ID do domínio (comunidade)"),
+    empresaId: zod
+      .uuid()
+      .regex(postRegrasQualidade201DataEmpresaIdRegExp)
+      .optional(),
     id: zod
       .uuid()
       .regex(postRegrasQualidade201DataIdRegExp)
@@ -161,6 +184,23 @@ export const PostRegrasQualidade201 = zod.object({
         .max(postRegrasQualidade201DataResponsavelNomeMax)
         .describe("Nome do papel"),
       descricao: zod.string().min(1).describe("Descrição do papel"),
+    }),
+    dominio: zod.object({
+      id: zod
+        .uuid()
+        .regex(postRegrasQualidade201DataDominioIdRegExpOne)
+        .describe("Identificador único da comunidade"),
+      nome: zod
+        .string()
+        .min(1)
+        .max(postRegrasQualidade201DataDominioNomeMax)
+        .describe("Nome da comunidade"),
+      parentId: zod
+        .union([
+          zod.uuid().regex(postRegrasQualidade201DataDominioParentIdOneRegExp),
+          zod.literal(null).nullable(),
+        ])
+        .describe("ID da comunidade pai"),
     }),
   }),
 });

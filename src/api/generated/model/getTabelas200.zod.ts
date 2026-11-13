@@ -45,6 +45,11 @@ export const GetTabelas200 = zod.object({
           .uuid()
           .regex(getTabelas200DataItemIdRegExp)
           .describe("Identificador único da tabela"),
+        banco: zod
+          .object({
+            nome: zod.string(),
+          })
+          .optional(),
         createdAt: zod.iso
           .datetime({ offset: true })
           .optional()

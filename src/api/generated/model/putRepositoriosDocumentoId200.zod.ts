@@ -11,6 +11,9 @@ export const putRepositoriosDocumentoId200DataNomeMax = 255;
 
 export const putRepositoriosDocumentoId200DataGedDefault = false;
 export const putRepositoriosDocumentoId200DataRedeDefault = false;
+export const putRepositoriosDocumentoId200DataEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const putRepositoriosDocumentoId200DataIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -33,6 +36,10 @@ export const PutRepositoriosDocumentoId200 = zod.object({
       .boolean()
       .default(putRepositoriosDocumentoId200DataRedeDefault)
       .describe("Indica se é um repositório em rede"),
+    empresaId: zod
+      .uuid()
+      .regex(putRepositoriosDocumentoId200DataEmpresaIdRegExp)
+      .optional(),
     id: zod
       .uuid()
       .regex(putRepositoriosDocumentoId200DataIdRegExp)

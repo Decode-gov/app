@@ -22,6 +22,12 @@ export const getRegrasQualidade200DataItemColunaIdOneRegExp = new RegExp(
 export const getRegrasQualidade200DataItemResponsavelIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const getRegrasQualidade200DataItemDominioIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+export const getRegrasQualidade200DataItemEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const getRegrasQualidade200DataItemIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -53,6 +59,15 @@ export const getRegrasQualidade200DataItemResponsavelIdRegExpOne = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
 export const getRegrasQualidade200DataItemResponsavelNomeMax = 255;
+
+export const getRegrasQualidade200DataItemDominioIdRegExpOne = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+export const getRegrasQualidade200DataItemDominioNomeMax = 255;
+
+export const getRegrasQualidade200DataItemDominioParentIdOneRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const GetRegrasQualidade200 = zod.object({
   message: zod.string().describe("Mensagem de resposta"),
@@ -91,6 +106,14 @@ export const GetRegrasQualidade200 = zod.object({
           .uuid()
           .regex(getRegrasQualidade200DataItemResponsavelIdRegExp)
           .describe("ID do papel responsável"),
+        dominioId: zod
+          .uuid()
+          .regex(getRegrasQualidade200DataItemDominioIdRegExp)
+          .describe("ID do domínio (comunidade)"),
+        empresaId: zod
+          .uuid()
+          .regex(getRegrasQualidade200DataItemEmpresaIdRegExp)
+          .optional(),
         id: zod
           .uuid()
           .regex(getRegrasQualidade200DataItemIdRegExp)
@@ -169,6 +192,25 @@ export const GetRegrasQualidade200 = zod.object({
             .max(getRegrasQualidade200DataItemResponsavelNomeMax)
             .describe("Nome do papel"),
           descricao: zod.string().min(1).describe("Descrição do papel"),
+        }),
+        dominio: zod.object({
+          id: zod
+            .uuid()
+            .regex(getRegrasQualidade200DataItemDominioIdRegExpOne)
+            .describe("Identificador único da comunidade"),
+          nome: zod
+            .string()
+            .min(1)
+            .max(getRegrasQualidade200DataItemDominioNomeMax)
+            .describe("Nome da comunidade"),
+          parentId: zod
+            .union([
+              zod
+                .uuid()
+                .regex(getRegrasQualidade200DataItemDominioParentIdOneRegExp),
+              zod.literal(null).nullable(),
+            ])
+            .describe("ID da comunidade pai"),
         }),
       }),
     )

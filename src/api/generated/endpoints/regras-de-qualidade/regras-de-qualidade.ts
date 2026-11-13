@@ -32,6 +32,7 @@ import type {
   PostRegrasQualidade400,
   PostRegrasQualidadeBody,
   PutRegrasQualidadeId200,
+  PutRegrasQualidadeId400,
   PutRegrasQualidadeId404,
   PutRegrasQualidadeIdBody,
 } from "../../model";
@@ -489,7 +490,7 @@ export const putRegrasQualidadeId = (
 };
 
 export const getPutRegrasQualidadeIdMutationOptions = <
-  TError = ErrorType<PutRegrasQualidadeId404>,
+  TError = ErrorType<PutRegrasQualidadeId400 | PutRegrasQualidadeId404>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -532,14 +533,15 @@ export type PutRegrasQualidadeIdMutationResult = NonNullable<
 export type PutRegrasQualidadeIdMutationBody =
   | BodyType<PutRegrasQualidadeIdBody>
   | undefined;
-export type PutRegrasQualidadeIdMutationError =
-  ErrorType<PutRegrasQualidadeId404>;
+export type PutRegrasQualidadeIdMutationError = ErrorType<
+  PutRegrasQualidadeId400 | PutRegrasQualidadeId404
+>;
 
 /**
  * @summary Atualizar regra de qualidade
  */
 export const usePutRegrasQualidadeId = <
-  TError = ErrorType<PutRegrasQualidadeId404>,
+  TError = ErrorType<PutRegrasQualidadeId400 | PutRegrasQualidadeId404>,
   TContext = unknown,
 >(
   options?: {

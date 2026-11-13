@@ -26,6 +26,9 @@ export const GetTabelasResponse = zod.object({
   "bancoId": zod.union([zod.uuid().regex(getTabelasResponseDataItemBancoIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID do banco de dados'),
   "empresaId": zod.uuid().regex(getTabelasResponseDataItemEmpresaIdRegExp).optional().describe('ID da empresa (obrigatório para ADMIN)'),
   "id": zod.uuid().regex(getTabelasResponseDataItemIdRegExp).describe('Identificador único da tabela'),
+  "banco": zod.object({
+  "nome": zod.string()
+}).optional(),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização')
 })).describe('Lista de tabelas')
@@ -72,6 +75,9 @@ export const GetTabelasIdResponse = zod.object({
   "bancoId": zod.union([zod.uuid().regex(getTabelasIdResponseDataBancoIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID do banco de dados'),
   "empresaId": zod.uuid().regex(getTabelasIdResponseDataEmpresaIdRegExp).optional().describe('ID da empresa (obrigatório para ADMIN)'),
   "id": zod.uuid().regex(getTabelasIdResponseDataIdRegExp).describe('Identificador único da tabela'),
+  "banco": zod.object({
+  "nome": zod.string()
+}).optional(),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização')
 })
@@ -114,6 +120,9 @@ export const PutTabelasIdResponse = zod.object({
   "bancoId": zod.union([zod.uuid().regex(putTabelasIdResponseDataBancoIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID do banco de dados'),
   "empresaId": zod.uuid().regex(putTabelasIdResponseDataEmpresaIdRegExp).optional().describe('ID da empresa (obrigatório para ADMIN)'),
   "id": zod.uuid().regex(putTabelasIdResponseDataIdRegExp).describe('Identificador único da tabela'),
+  "banco": zod.object({
+  "nome": zod.string()
+}).optional(),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização')
 })
@@ -144,6 +153,9 @@ export const DeleteTabelasIdResponse = zod.object({
   "bancoId": zod.union([zod.uuid().regex(deleteTabelasIdResponseDataBancoIdOneRegExp),zod.literal(null).nullable()]).optional().describe('ID do banco de dados'),
   "empresaId": zod.uuid().regex(deleteTabelasIdResponseDataEmpresaIdRegExp).optional().describe('ID da empresa (obrigatório para ADMIN)'),
   "id": zod.uuid().regex(deleteTabelasIdResponseDataIdRegExp).describe('Identificador único da tabela'),
+  "banco": zod.object({
+  "nome": zod.string()
+}).optional(),
   "createdAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora de criação'),
   "updatedAt": zod.iso.datetime({"offset":true}).optional().describe('Data e hora da última atualização')
 })

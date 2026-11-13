@@ -43,6 +43,11 @@ export const PutTabelasId200 = zod.object({
       .uuid()
       .regex(putTabelasId200DataIdRegExp)
       .describe("Identificador único da tabela"),
+    banco: zod
+      .object({
+        nome: zod.string(),
+      })
+      .optional(),
     createdAt: zod.iso
       .datetime({ offset: true })
       .optional()

@@ -19,6 +19,9 @@ export const putRegrasNegocioIdBodyResponsavelIdRegExp = new RegExp(
 export const putRegrasNegocioIdBodyTermoIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const putRegrasNegocioIdBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const PutRegrasNegocioIdBody = zod.object({
   descricao: zod
@@ -48,6 +51,7 @@ export const PutRegrasNegocioIdBody = zod.object({
     .regex(putRegrasNegocioIdBodyTermoIdRegExp)
     .optional()
     .describe("ID do termo (definição) relacionado"),
+  empresaId: zod.uuid().regex(putRegrasNegocioIdBodyEmpresaIdRegExp).optional(),
 });
 
 export type PutRegrasNegocioIdBody = zod.input<typeof PutRegrasNegocioIdBody>;

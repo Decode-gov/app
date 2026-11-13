@@ -11,6 +11,9 @@ export const postRepositoriosDocumento201DataNomeMax = 255;
 
 export const postRepositoriosDocumento201DataGedDefault = false;
 export const postRepositoriosDocumento201DataRedeDefault = false;
+export const postRepositoriosDocumento201DataEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 export const postRepositoriosDocumento201DataIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
@@ -33,6 +36,10 @@ export const PostRepositoriosDocumento201 = zod.object({
       .boolean()
       .default(postRepositoriosDocumento201DataRedeDefault)
       .describe("Indica se é um repositório em rede"),
+    empresaId: zod
+      .uuid()
+      .regex(postRepositoriosDocumento201DataEmpresaIdRegExp)
+      .optional(),
     id: zod
       .uuid()
       .regex(postRepositoriosDocumento201DataIdRegExp)

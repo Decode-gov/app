@@ -7,10 +7,15 @@
  */
 import { z as zod } from "zod";
 
+export const postKpisBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+
 export const PostKpisBody = zod.object({
   nome: zod.string().min(1),
   comunidadeId: zod.string().optional(),
   processoId: zod.string().optional(),
+  empresaId: zod.uuid().regex(postKpisBodyEmpresaIdRegExp).optional(),
 });
 
 export type PostKpisBody = zod.input<typeof PostKpisBody>;

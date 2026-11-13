@@ -22,6 +22,12 @@ export const putRegrasQualidadeIdBodyColunaIdOneRegExp = new RegExp(
 export const putRegrasQualidadeIdBodyResponsavelIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const putRegrasQualidadeIdBodyDominioIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
+export const putRegrasQualidadeIdBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const PutRegrasQualidadeIdBody = zod.object({
   descricao: zod
@@ -60,6 +66,15 @@ export const PutRegrasQualidadeIdBody = zod.object({
     .regex(putRegrasQualidadeIdBodyResponsavelIdRegExp)
     .optional()
     .describe("ID do papel responsável"),
+  dominioId: zod
+    .uuid()
+    .regex(putRegrasQualidadeIdBodyDominioIdRegExp)
+    .optional()
+    .describe("ID do domínio (comunidade)"),
+  empresaId: zod
+    .uuid()
+    .regex(putRegrasQualidadeIdBodyEmpresaIdRegExp)
+    .optional(),
 });
 
 export type PutRegrasQualidadeIdBody = zod.input<

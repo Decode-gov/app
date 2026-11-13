@@ -63,12 +63,14 @@ export const GetCriticidadesRegulatoriasResponse = zod.object({
 export const postCriticidadesRegulatoriasBodyRegulacaoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const postCriticidadesRegulatoriasBodyRegraQualidadeIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
+export const postCriticidadesRegulatoriasBodyEmpresaIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const PostCriticidadesRegulatoriasBody = zod.strictObject({
   "regulacaoId": zod.uuid().regex(postCriticidadesRegulatoriasBodyRegulacaoIdRegExp).describe('ID da regulação'),
   "regraQualidadeId": zod.uuid().regex(postCriticidadesRegulatoriasBodyRegraQualidadeIdRegExp).describe('ID da regra de qualidade'),
-  "grauCriticidade": zod.coerce.string().min(1).describe('Grau de criticidade (ex: Alta, Média, Baixa)')
+  "grauCriticidade": zod.coerce.string().min(1).describe('Grau de criticidade (ex: Alta, Média, Baixa)'),
+  "empresaId": zod.uuid().regex(postCriticidadesRegulatoriasBodyEmpresaIdRegExp).optional()
 })
 
 /**

@@ -1,6 +1,11 @@
 "use client";
 
-import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
 import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +41,12 @@ interface RegrasQualidadeTableProps {
   onDelete?: (id: string) => void;
 }
 
-function BadgeOrDash({ item }: { item: Lookup | undefined; variant?: "secondary" | "outline" }) {
+function BadgeOrDash({
+  item,
+}: {
+  item: Lookup | undefined;
+  variant?: "secondary" | "outline";
+}) {
   return item ? (
     <Badge variant="secondary">{item.nome}</Badge>
   ) : (
@@ -64,7 +74,10 @@ export function RegrasQualidadeTable({
         accessorKey: "descricao",
         header: "Descrição",
         cell: ({ row }) => (
-          <div className="truncate font-medium max-w-[300px]" title={row.original.descricao}>
+          <div
+            className="truncate font-medium max-w-[300px]"
+            title={row.original.descricao}
+          >
             {row.original.descricao}
           </div>
         ),
@@ -74,7 +87,8 @@ export function RegrasQualidadeTable({
         header: "Dimensão",
         cell: ({ row }) => {
           const r = row.original;
-          const item = r.dimensao ?? dimensoes.find((d) => d.id === r.dimensaoId);
+          const item =
+            r.dimensao ?? dimensoes.find((d) => d.id === r.dimensaoId);
           return <BadgeOrDash item={item} />;
         },
       },
@@ -86,6 +100,18 @@ export function RegrasQualidadeTable({
           const item = r.tabela ?? tabelas.find((t) => t.id === r.tabelaId);
           return item ? (
             <Badge variant="outline">{item.nome}</Badge>
+          ) : (
+            <span className="text-muted-foreground">-</span>
+          );
+        },
+      },
+      {
+        id: "dominio",
+        header: "Domínio",
+        cell: ({ row }) => {
+          const r = row.original;
+          return r.dominio.nome ? (
+            <Badge variant="outline">{r.dominio.nome}</Badge>
           ) : (
             <span className="text-muted-foreground">-</span>
           );
@@ -109,7 +135,8 @@ export function RegrasQualidadeTable({
         header: "Responsável",
         cell: ({ row }) => {
           const r = row.original;
-          const item = r.responsavel ?? papeis.find((p) => p.id === r.responsavelId);
+          const item =
+            r.responsavel ?? papeis.find((p) => p.id === r.responsavelId);
           return item ? (
             <Badge variant="outline">{item.nome}</Badge>
           ) : (
@@ -167,7 +194,10 @@ export function RegrasQualidadeTable({
                 <TableHead key={header.id}>
                   {header.isPlaceholder
                     ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                 </TableHead>
               ))}
             </TableRow>
@@ -192,13 +222,19 @@ export function RegrasQualidadeTable({
             ))
           ) : error ? (
             <TableRow>
-              <TableCell colSpan={COLUMN_COUNT} className="text-center text-muted-foreground py-8">
+              <TableCell
+                colSpan={COLUMN_COUNT}
+                className="text-center text-muted-foreground py-8"
+              >
                 Erro ao carregar regras. Tente novamente.
               </TableCell>
             </TableRow>
           ) : table.getRowModel().rows.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={COLUMN_COUNT} className="text-center text-muted-foreground py-8">
+              <TableCell
+                colSpan={COLUMN_COUNT}
+                className="text-center text-muted-foreground py-8"
+              >
                 Nenhuma regra encontrada
               </TableCell>
             </TableRow>

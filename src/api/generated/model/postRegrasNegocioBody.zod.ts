@@ -19,6 +19,9 @@ export const postRegrasNegocioBodyResponsavelIdRegExp = new RegExp(
 export const postRegrasNegocioBodyTermoIdRegExp = new RegExp(
   "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
 );
+export const postRegrasNegocioBodyEmpresaIdRegExp = new RegExp(
+  "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+);
 
 export const PostRegrasNegocioBody = zod.object({
   descricao: zod
@@ -44,6 +47,7 @@ export const PostRegrasNegocioBody = zod.object({
     .uuid()
     .regex(postRegrasNegocioBodyTermoIdRegExp)
     .describe("ID do termo (definição) relacionado"),
+  empresaId: zod.uuid().regex(postRegrasNegocioBodyEmpresaIdRegExp).optional(),
 });
 
 export type PostRegrasNegocioBody = zod.input<typeof PostRegrasNegocioBody>;
