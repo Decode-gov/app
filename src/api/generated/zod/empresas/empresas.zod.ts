@@ -29,7 +29,7 @@ export const GetEmpresasResponse = zod.object({
  * @summary Criar empresa
  */
 export const PostEmpresasBody = zod.strictObject({
-  "nome": zod.coerce.string()
+  "nome": zod.string()
 })
 
 /**
